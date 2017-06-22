@@ -143,7 +143,7 @@ export default {
 
   // FooterTab
   tabBarTextColor: '#8694ab',
-  tabBarTextSize: (platform === 'ios') ? 9 : 8,
+  tabBarTextSize: (platform === 'ios') ? 8 : 6,
   activeTab: (platform === 'ios') ? '#007aff' : '#fff',
   sTabBarActiveTextColor: '#007aff',
   tabBarActiveTextColor: PLColors.main,
@@ -171,7 +171,7 @@ export default {
   toolbarDefaultBorder: (platform === 'ios') ? '#a7a6ab' : '#3F51B5',
   iosStatusbar: (platform === 'ios') ? 'light-content' : 'light-content',
   get statusBarColor() {
-    return color(this.toolbarDefaultBg).darken(0.2).hexString();
+    return color(this.toolbarDefaultBg).darken(0.2).string();
   },
 
 
@@ -244,7 +244,7 @@ export default {
   radioColor: '#7e7e7e',
 
   get radioSelectedColor() {
-    return color(this.radioColor).darken(0.2).hexString();
+    return color(this.radioColor).darken(0.2).string();
   },
 
 
@@ -281,7 +281,7 @@ export default {
   contentPadding: 10,
 
   get darkenHeader() {
-    return color(this.tabBgColor).darken(0.03).hexString();
+    return color(this.tabBgColor).darken(0.03).string();
   },
 
   dropdownBg: '#000',
