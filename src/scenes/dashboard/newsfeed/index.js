@@ -663,9 +663,9 @@ class Newsfeed extends Component {
             return (
                 <Container>
                 <View style={styles.groupHeaderContainer}>
-                    {this.state.showAvatar && this.props.groupAvatar != '' && this.props.groupAvatar != null?
-                    <Thumbnail square source={{uri: this.props.groupAvatar}} style={styles.groupAvatar}/>: null}
-                    <Text style={styles.groupName}>{this.props.groupName}</Text>
+                    {this.state.showAvatar && this.props.savedGroup && this.props.savedGroup.groupAvatar != '' && this.props.savedGroup.groupAvatar != null ?
+                        <Thumbnail square source={{ uri: this.props.savedGroup.groupAvatar }} style={styles.groupAvatar} /> : null}
+                    <Text style={styles.groupName}>{this.props.savedGroup.groupName}</Text>
                 </View>
                 <Content
                     onScroll={(e) => {                           
@@ -721,12 +721,14 @@ class Newsfeed extends Component {
         }else{
             return (
                 <Container>
-                {this.props.group != 'all'?
-                <View style={styles.groupHeaderContainer}>
-                    {this.state.showAvatar && this.props.groupAvatar != '' && this.props.groupAvatar != null?
-                    <Thumbnail square source={{uri: this.props.groupAvatar}} style={styles.groupAvatar}/>: null}
-                    <Text style={styles.groupName}>{this.props.groupName}</Text>
-                </View>:null}
+                {
+                    this.props.savedGroup && this.props.savedGroup.group != 'all' &&
+                    <View style={styles.groupHeaderContainer}>
+                        {this.state.showAvatar && this.props.savedGroup.groupAvatar != '' && this.props.savedGroup.groupAvatar != null ?
+                            <Thumbnail square source={{ uri: this.props.savedGroup.groupAvatar }} style={styles.groupAvatar} /> : null}
+                        <Text style={styles.groupName}>{this.props.savedGroup.groupName}</Text>
+                    </View>
+                }
                 <Content
                     refreshControl={
                         <RefreshControl
@@ -793,7 +795,8 @@ const mapStateToProps = state => ({
     group: state.activities.group,
     groupName: state.activities.groupName,
     groupAvatar: state.activities.groupAvatar,
-    groupLimit: state.activities.groupLimit
+    groupLimit: state.activities.groupLimit,
+    savedGroup: state.activities.savedGroup,
 });
 
 export default connect(mapStateToProps)(Newsfeed);
