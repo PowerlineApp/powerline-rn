@@ -909,7 +909,7 @@ class ItemDetail extends Component {
         if (backTo) {
             Actions.popTo(backTo);
         } else {
-            Action.pop();
+            Actions.pop();
         }
     }
 

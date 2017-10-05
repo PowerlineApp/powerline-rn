@@ -4,4 +4,7 @@ use_frameworks!
 target 'Powerline' do
   pod 'Fabric'
   pod 'Crashlytics'
+  pod 'FBSDKCoreKit'
+  pod 'FBSDKLoginKit'
+  pod 'FBSDKShareKit'
 end
