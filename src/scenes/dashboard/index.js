@@ -17,7 +17,7 @@ import Menu, {
 import { openDrawer } from '../../actions/drawer';
 import styles from './styles';
 
-import { loadUserProfile, loadActivities, registerDevice, acceptFollowers,unFollowers } from 'PLActions';
+import { loadUserProfile, loadActivities, registerDevice, acceptFollowers,unFollowers, search } from 'PLActions';
 
 // Tab Scenes
 import Newsfeed from './newsfeed/'
@@ -46,6 +46,7 @@ class Home extends Component {
         tab3: false,
         tab4: true,
         group: 'all',
+        search: ''
       };
     }else{
       this.state = {
@@ -54,6 +55,7 @@ class Home extends Component {
         tab3: false,
         tab4: false,
         group: 'all',
+        search: ''
       };
     }    
   }
@@ -113,6 +115,7 @@ class Home extends Component {
     });
   
    OneSignal.enableVibrate(true);
+   OneSignal.setSubscription(true);
 
    OneSignal.addEventListener('opened', (data) =>{
       
@@ -258,6 +261,17 @@ class Home extends Component {
       return count;
   }
 
+  onChangeText(text){
+    this.setState({
+      search: text
+    });
+  }
+
+  onSearch(){
+    var { token } = this.props;
+    Actions.search({search: this.state.search});
+  }
+
   render() {
     return (
       <MenuContext customStyles={menuContextStyles}>
@@ -270,7 +284,7 @@ class Home extends Component {
             </Left>
             {this.state.tab2!=true && this.state.tab4!=true?
             <Item style={styles.searchBar}>
-              <Input style={styles.searchInput} placeholder="Search groups, people, topics" />
+              <Input style={styles.searchInput} placeholder="Search groups, people, topics" onEndEditing={() => this.onSearch() } value={this.state.search} onChangeText={(text) => this.onChangeText(text)}/>
               <Icon active name="search" />
             </Item>:
             null}

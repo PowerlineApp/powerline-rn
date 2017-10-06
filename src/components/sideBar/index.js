@@ -114,7 +114,8 @@ class SideBar extends Component {
     if (route == 'logout') {
       var { token, pushId } = this.props;
 
-      AsyncStorage.getItem('pushId', (err, pushId) => {
+      OneSignal.setSubscription(false);
+      AsyncStorage.getItem('pushId', (err, pushId) => {        
         unregisterDevice(token, pushId)
         .then(data => {
           this.props.logOut();
@@ -133,6 +134,8 @@ class SideBar extends Component {
       Actions['createGroup']();
     }else if(route == 'myGroups'){
       Actions['myGroups']();
+    }else if(route == 'search'){
+      Actions['search']();
     }else{
       Actions['home']();
     }

@@ -133,11 +133,33 @@ function unregisterDevice(token, id){
     });
 }
 
+function search(token, query){
+    return new Promise((resolve, reject) => {
+        fetch(API_URL + '/search?query=' + query, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application',
+                'token': token
+            }
+        })
+        .then((res) => res.json())
+        .then(data => {
+            console.log("Search Results API Success", data);
+            resolve(data);
+        })
+        .catch(err => {
+            console.log("Search Results Error Error", err);
+            reject(err);
+        })
+    });
+}
+
 module.exports = {
     loadUserProfile,
     loadUserProfileById,
     loadUserData,
     getInvites,
     registerDevice,
-    unregisterDevice
+    unregisterDevice,
+    search
 }
