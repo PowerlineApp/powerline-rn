@@ -22,6 +22,7 @@ export type Action =
   | { type: 'LOADED_ACTIVITIES', data: { page: number; items: number; totalItems: number; payload: Array<Object> } }
   | { type: 'RESET_ACTIVITIES' }
   | { type: 'LOADED_USER_PROFILE', data: Object }
+  | { type: 'DELETE_ACTIVITY', id: number };
 
 export type Dispatch = (action: Action | ThunkAction | PromiseAction | Array<Action>) => any;
 export type GetState = () => Object;

@@ -82,6 +82,15 @@ function activities(state: State = initialState, action: Action): State {
             payload: []
         }
     }
+
+    if (action.type == 'DELETE_ACTIVITY') {
+        payloadStack = state.payload.filter(activity => activity.id !== action.id);
+        return {
+            ...state,
+            payload: payloadStack,
+            count: state.payload.count - 1,
+        }
+    }
     return state;
 }
 

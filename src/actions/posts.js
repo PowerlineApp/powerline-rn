@@ -1,3 +1,4 @@
+import api from '../utils/api';
 var { API_URL, PER_PAGE } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
 
@@ -178,6 +179,36 @@ function getPetitionConfig(token, groupId){
     });
 }
 
+function deletePost(token: string, postId: number, activityId: number): ThunkAction {
+    return async (dispatch) => {
+        try {
+            const response = await api.delete(token, `/v2/posts/${postId}`);
+            console.log("delete Post API  Success", response);
+
+            if (response.status === 204 && response.ok) {
+                dispatch({ type: 'DELETE_ACTIVITY', id: activityId });
+            }
+        } catch (error) {
+            console.log("delete Post API Error", error);
+        }
+    };
+}
+
+function deletePetition(token: string, petitionId: number, activityId: number): ThunkAction {
+    return async (dispatch) => {
+        try {
+            const response = await api.delete(token, `/v2/micro-petitions/${petitionId}`);
+            console.log("delete Petition API  Success", response);
+
+            if (response.status === 204 && response.ok) {
+                dispatch({ type: 'DELETE_ACTIVITY', id: activityId });
+            }
+        } catch (error) {
+            console.log("delete Petition API Error", error);
+        }
+    };
+}
+
 module.exports = {
     votePost,
     loadPostComments,
@@ -187,4 +218,6 @@ module.exports = {
     createPetition,
     getPetitionConfig,
     loadPost,
+    deletePost,
+    deletePetition,
 };
