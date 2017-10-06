@@ -179,9 +179,10 @@ function getPetitionConfig(token, groupId){
     });
 }
 
-function deletePost(token: string, postId: number, activityId: number): ThunkAction {
-    return async (dispatch) => {
+function deletePost(postId: number, activityId: number): ThunkAction {
+    return async (dispatch, getState) => {
         try {
+            const token = getState().user.token;
             const response = await api.delete(token, `/v2/posts/${postId}`);
             console.log("delete Post API  Success", response);
 
@@ -194,9 +195,10 @@ function deletePost(token: string, postId: number, activityId: number): ThunkAct
     };
 }
 
-function deletePetition(token: string, petitionId: number, activityId: number): ThunkAction {
-    return async (dispatch) => {
+function deletePetition(petitionId: number, activityId: number): ThunkAction {
+    return async (dispatch, getState) => {
         try {
+            const token = getState().user.token; 
             const response = await api.delete(token, `/v2/micro-petitions/${petitionId}`);
             console.log("delete Petition API  Success", response);
 

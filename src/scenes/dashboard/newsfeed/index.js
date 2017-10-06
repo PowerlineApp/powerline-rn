@@ -69,7 +69,6 @@ class Newsfeed extends Component {
     }
 
     mute(item) {
-        //console.log(item);
         var { token, dispatch } = this.props;
         ActionSheet.show(
             {
@@ -98,18 +97,15 @@ class Newsfeed extends Component {
     }
 
     edit(item) {
-        console.log('edit', JSON.stringify(item, null, 2));
         this.menu && this.menu.close();
     }
     
     delete(item) {
-        const { dispatch, token } = this.props;
-
         if (item.entity.type === 'post') {
-            this.props.dispatch(deletePost(token, item.entity.id, item.id));
+            this.props.dispatch(deletePost(item.entity.id, item.id));
         }
         if (item.entity.type === 'user-petition') {
-            this.props.dispatch(deletePetition(token, item.entity.id, item.id));
+            this.props.dispatch(deletePetition(item.entity.id, item.id));
         }
 
         this.menu && this.menu.close();
@@ -413,6 +409,7 @@ class Newsfeed extends Component {
         var thumbnail: string = '';
         var title: string = '';
         let isBoosted: boolean = false;
+        const isOwner: boolean = item.owner.id === this.props.userId;
         
         switch (item.entity.type) {
             case 'post' || 'user-petition':
@@ -458,7 +455,7 @@ class Newsfeed extends Component {
                                     </Button>
                                 </MenuOption>
                                 {
-                                    !isBoosted &&
+                                    isOwner && !isBoosted &&
                                     <MenuOption>
                                         <Button iconLeft transparent dark onPress={() => this.edit(item)}>
                                             <Icon name="md-create" style={styles.menuIcon} />
@@ -466,12 +463,15 @@ class Newsfeed extends Component {
                                         </Button>
                                     </MenuOption>
                                 }
-                                <MenuOption onSelect={() => this.delete(item)}>
-                                    <Button iconLeft transparent dark onPress={() => this.delete(item)}>
-                                        <Icon name="md-trash" style={styles.menuIcon} />
-                                        <Text style={styles.menuText}>Delete Post</Text>
-                                    </Button>
-                                </MenuOption>
+                                {
+                                    isOwner &&
+                                    <MenuOption onSelect={() => this.delete(item)}>
+                                        <Button iconLeft transparent dark onPress={() => this.delete(item)}>
+                                            <Icon name="md-trash" style={styles.menuIcon} />
+                                            <Text style={styles.menuText}>Delete Post</Text>
+                                        </Button>
+                                    </MenuOption>
+                                }
                             </MenuOptions>
                         </Menu>
                     </Right>
@@ -822,6 +822,7 @@ const mapStateToProps = state => ({
     payload: state.activities.payload,
     count: state.activities.count,
     profile: state.user.profile,
+    userId: state.user.id,
     group: state.activities.group,
     groupName: state.activities.groupName,
     groupAvatar: state.activities.groupAvatar,
