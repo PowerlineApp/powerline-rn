@@ -11,7 +11,7 @@ var { Provider } = require('react-redux');
 var configureStore = require('./store/configureStore');
 
 function setup(): ReactClass<{}> {
-  console.disableYellowBox = true;
+  // console.disableYellowBox = true;
 
   class Root extends React.Component {
     state: {
@@ -45,6 +45,13 @@ global.LOG = (...args) => {
   console.log('/------------------------------\\');
   console.log(...args);
   console.log('\\------------------------------/');
+  return args[args.length - 1];
+};
+
+global.WARN = (...args) => {
+  console.warn('/------------------------------\\');
+  console.warn(...args);
+  console.warn('\\------------------------------/');
   return args[args.length - 1];
 };
 

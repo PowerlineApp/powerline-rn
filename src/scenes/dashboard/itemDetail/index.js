@@ -18,7 +18,7 @@ import Menu, {
     renderers
 } from 'react-native-popup-menu';
 import OrientationLoadingOverlay from 'react-native-orientation-loading-overlay';
-import { getComments, votePost, addComment, rateComment, loadActivityByEntityId } from 'PLActions';
+import { getComments, votePost, addComment, rateComment, loadActivityByEntityId, deletePost, deletePetition } from 'PLActions';
 
 const { youTubeAPIKey } = require('PLEnv');
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
@@ -304,6 +304,22 @@ class ItemDetail extends Component {
             setTimeout(() => alert(message), 1000);
         }
     }
+    
+    edit(item) {
+        this.menu && this.menu.close();
+    }
+
+    delete(item) {
+        if (item.entity.type === 'post') {
+            this.props.dispatch(deletePost(item.entity.id, item.id));
+        }
+        if (item.entity.type === 'user-petition') {
+            this.props.dispatch(deletePetition(item.entity.id, item.id));
+        }
+
+        this.onBackPress();
+        this.menu && this.menu.close();
+    }
 
     // Private Functions    
     youtubeGetID(url) {
@@ -483,6 +499,8 @@ class ItemDetail extends Component {
     _renderHeader(item) {
         var thumbnail: string = '';
         var title: string = '';
+        let isBoosted: boolean = false;
+        const isOwner: boolean = item.owner.id === this.props.userId;
 
         switch (item.entity.type) {
             case 'post' || 'user-petition':
@@ -503,7 +521,7 @@ class ItemDetail extends Component {
                         <Text note style={styles.subtitle}>{item.group.official_name} • <TimeAgo time={item.sent_at} hideAgo={true} /></Text>
                     </Body>
                     <Right style={{ flex: 0.2 }}>
-                        <Menu>
+                        <Menu ref={(ref) => { this.menu = ref; }}>
                             <MenuTrigger>
                                 <Icon name="ios-arrow-down" style={styles.dropDownIcon} />
                             </MenuTrigger>
@@ -526,6 +544,24 @@ class ItemDetail extends Component {
                                         <Text style={styles.menuText}>Add to Contact</Text>
                                     </Button>
                                 </MenuOption>
+                                {
+                                    isOwner && !isBoosted &&
+                                    <MenuOption>
+                                        <Button iconLeft transparent dark onPress={() => this.edit(item)}>
+                                            <Icon name="md-create" style={styles.menuIcon} />
+                                            <Text style={styles.menuText}>Edit Post</Text>
+                                        </Button>
+                                    </MenuOption>
+                                }
+                                {
+                                    isOwner &&
+                                    <MenuOption onSelect={() => this.delete(item)}>
+                                        <Button iconLeft transparent dark onPress={() => this.delete(item)}>
+                                            <Icon name="md-trash" style={styles.menuIcon} />
+                                            <Text style={styles.menuText}>Delete Post</Text>
+                                        </Button>
+                                    </MenuOption>
+                                }
                             </MenuOptions>
                         </Menu>
                     </Right>
@@ -999,6 +1035,7 @@ const menuContextStyles = {
 const mapStateToProps = state => ({
     token: state.user.token,
     profile: state.user.profile,
+    userId: state.user.id,
 });
 
 export default connect(mapStateToProps)(ItemDetail);
