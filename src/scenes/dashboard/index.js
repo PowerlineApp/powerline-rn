@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import { Container, Header, Title, Content, Button, Footer, FooterTab, Text, Body, Left, Right, Icon, Item, Input, Grid, Row, Col, Badge, Label } from 'native-base';
 
-import { View, Image } from 'react-native';
+import { View, Image, AsyncStorage, Alert } from 'react-native';
 
 import Menu, {
   MenuContext,
@@ -17,7 +17,7 @@ import Menu, {
 import { openDrawer } from '../../actions/drawer';
 import styles from './styles';
 
-import { loadUserProfile, loadActivities, registerDevice } from 'PLActions';
+import { loadUserProfile, loadActivities, registerDevice, acceptFollowers,unFollowers } from 'PLActions';
 
 // Tab Scenes
 import Newsfeed from './newsfeed/'
@@ -28,6 +28,8 @@ const { SlideInMenu } = renderers;
 import ShareExtension from 'react-native-share-extension';
 import OneSignal from 'react-native-onesignal';
 var DeviceInfo = require('react-native-device-info');
+var Platform = require('Platform');
+import { ToastAndroid } from 'react-native';
 
 class Home extends Component {
 
@@ -37,17 +39,27 @@ class Home extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      tab1: true,
-      tab2: false,
-      tab3: false,
-      tab4: false,
-      group: 'all',
-    };
+    if(props.notification){
+      this.state = {
+        tab1: false,
+        tab2: false,
+        tab3: false,
+        tab4: true,
+        group: 'all',
+      };
+    }else{
+      this.state = {
+        tab1: true,
+        tab2: false,
+        tab3: false,
+        tab4: false,
+        group: 'all',
+      };
+    }    
   }
 
   componentWillMount() {
-    const { props: { profile, token } } = this;
+    const { props: { profile, token, dispatch } } = this;
     if (!profile) {
       this.loadCurrentUserProfile();
     }
@@ -58,11 +70,9 @@ class Home extends Component {
         }        
     });
 
-    //register device
     OneSignal.addEventListener('ids', function(data){
-      //alert("push ids");
       console.log("push ids", data);
-      //alert("device " + data.userId);
+      AsyncStorage.setItem('pushId', data.userId);
 
       var params = {
         id: data.userId,
@@ -71,27 +81,66 @@ class Home extends Component {
         version: DeviceInfo.getVersion(),
         os: DeviceInfo.getSystemName(),
         model: DeviceInfo.getModel(),
-        type: "android"
+        type: Platform.OS
       };
-
+  
       registerDevice(token, params)
       .then(data => {
-        //alert("register result " + JSON.stringify(data));
       })
       .catch(err => {
-
       });
-   });
+    });
 
-   //define push notification
-   OneSignal.addEventListener('received', (data) =>{
-      console.log("push notification received", JSON.stringify(data));
+    //register device 
+    AsyncStorage.getItem('pushId', (err, pushId) => {
+        if(pushId){
+          var params = {
+            id: pushId,
+            identifier: DeviceInfo.getUniqueID(),
+            timezone: (new Date()).getTimezoneOffset()* 60,
+            version: DeviceInfo.getVersion(),
+            os: DeviceInfo.getSystemName(),
+            model: DeviceInfo.getModel(),
+            type: Platform.OS
+          };
       
-   });
+          registerDevice(token, params)
+          .then(data => {
+          })
+          .catch(err => {
+          });
+        }
+    });
+  
+   OneSignal.enableVibrate(true);
 
    OneSignal.addEventListener('opened', (data) =>{
-      console.log("push notification opened", JSON.stringify(data));
       
+      console.log("push notification opened", data);
+
+      if(data.action.actionID == 'approve-follow-request-button'){
+        console.log("accept button", data.notification.payload.additionalData.entity.target.id);
+        console.log("token", token);
+        acceptFollowers(token, data.notification.payload.additionalData.entity.target.id)
+        .then((ret) => {
+          Actions.home({notification: true});
+        })
+        .catch(err => {
+            console.log(err);
+        });
+      }else if(data.action.actionID == 'ignore-follow-request-button'){
+        console.log("ignore button", data.notification.payload.additionalData.entity.target.id);
+        unFollowers(token, data.notification.payload.additionalData.entity.target.id)
+        .then((ret) => {                        
+          Actions.home({notification: true});                    
+        })
+        .catch(err => {
+
+        });
+      }else if(data.notification.payload.additionalData.type == 'follow-request'){
+        console.log("notification click");
+        Actions.home({notification: true});
+      }
    });
   }
 
@@ -386,7 +435,8 @@ async function timeout(ms: number): Promise {
 const mapStateToProps = state => ({
   token: state.user.token,
   profile: state.user.profile,
-  activities: state.activities.payload
+  activities: state.activities.payload,
+  pushId: state.user.pushId
 });
 
 export default connect(mapStateToProps, bindAction)(Home);

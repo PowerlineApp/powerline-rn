@@ -94,11 +94,11 @@ function acceptFollowers(token, id){
             }
         })        
         .then(() => {
-            console.log("UnFollowing API call Success:");
+            console.log("Accept Following API call Success:");
             resolve();
         })
         .catch(err => {
-            console.log("UnFollowing API call Error", err);
+            console.log("Accept Following API call Error", err);
             reject(err);
         });
     });

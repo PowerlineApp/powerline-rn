@@ -23,13 +23,14 @@ var initialState = {
   id: null,
   username: null,
   token: null,
-  profile: null,
+  profile: null
 };
 
 function user(state: State = initialState, action: Action): State {
   if (action.type === 'LOGGED_IN') {
     let { id, username, token } = action.data;
     return {
+      ...state,
       isLoggedIn: true,
       token,
       id,
