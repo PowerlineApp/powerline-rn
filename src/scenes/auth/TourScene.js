@@ -49,10 +49,12 @@ var styles = StyleSheet.create({
     },
     nextBtn: {
         color: 'white',
+        backgroundColor: 'transparent',
         marginRight: 10
     },
     skitBtn: {
         color: 'white',
+        backgroundColor: 'transparent',
         marginLeft: 10
     },
 
@@ -61,20 +63,22 @@ var styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         width: width,
-        height: 45
+        height: 45,
     },
     goBtn: {
-        color: '#006',
-        textAlign: 'center',
-        width: 140,
-        height: 45,
         borderWidth: 2,
         borderColor: PLColors.activeText,
         borderRadius: 10,
+        width: 140,
+        height: 45,
         backgroundColor: 'white',
         justifyContent: 'center',
         alignItems: 'center',
-        lineHeight: 32
+    },
+    goTxt: {
+        lineHeight: 32,
+        color: '#006',
+        textAlign: 'center',
     }
 });
 
@@ -147,8 +151,8 @@ class TourScene extends Component{
                     {
                     pos == 5?
                     <View style={styles.goBtnContainer}>
-                        <TouchableOpacity onPress={this.onSkip}>
-                            <Text style={styles.goBtn}>Let's GO</Text>
+                        <TouchableOpacity style={styles.goBtn} onPress={this.onSkip}>
+                            <Text style={styles.goTxt}>Let's GO</Text>
                         </TouchableOpacity>
                     </View>: null
                     }
