@@ -456,7 +456,7 @@ class Newsfeed extends Component {
                                 </MenuOption>
                                 {
                                     isOwner && !isBoosted &&
-                                    <MenuOption>
+                                    <MenuOption onSelect={() => this.edit(item)}>
                                         <Button iconLeft transparent dark onPress={() => this.edit(item)}>
                                             <Icon name="md-create" style={styles.menuIcon} />
                                             <Text style={styles.menuText}>Edit Post</Text>

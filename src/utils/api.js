@@ -4,7 +4,7 @@
  */
 import { API_URL } from 'PLEnv';
 
-type Method = 'GET' | 'POST' | 'DELETE';
+type Method = 'GET' | 'POST' | 'DELETE' | 'PUT';
 
 const api = {
     _request: (method: Method, token: string, endpoint: string, data: ?object): Promise => {
@@ -29,7 +29,10 @@ const api = {
     },
     delete: (token: string, url: string): Promise => {
         return api._request('DELETE', token, url);
-    }
+    },
+    put: (token: string, url: string, data: object): Promise => {
+        return api._request('PUT', token, url, data);
+    },
 };
 
 export default api;

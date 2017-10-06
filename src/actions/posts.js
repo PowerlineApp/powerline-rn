@@ -211,6 +211,26 @@ function deletePetition(petitionId: number, activityId: number): ThunkAction {
     };
 }
 
+function changePost(postId: number, activityId: number, value: string): ThunkAction {
+    return async (dispatch, getState) => {
+        try {
+            const token = getState().user.token;
+            const response = await api.put(
+                token,
+                `/v2/posts/${postId}`,
+                { body: value }
+            );
+            console.log("put Post API  Success", response);
+
+            // if (response.status === 204 && response.ok) {
+            //     dispatch({ type: 'DELETE_ACTIVITY', id: activityId });
+            // }
+        } catch (error) {
+            console.log("put Post API Error", error);
+        }
+    };
+}
+
 module.exports = {
     votePost,
     loadPostComments,
@@ -222,4 +242,5 @@ module.exports = {
     loadPost,
     deletePost,
     deletePetition,
+    changePost,
 };
