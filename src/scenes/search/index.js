@@ -29,6 +29,7 @@ import styles from './styles';
 import { openDrawer, search } from 'PLActions';
 
 import SearchGroups from './groups';
+import SearchUsers from './users';
 
 class Search extends Component{
     constructor(props){
@@ -94,7 +95,7 @@ class Search extends Component{
                             <SearchGroups groups={this.state.groups}/>
                         </Tab>
                         <Tab heading="People" tabStyle={styles.tabStyle} activeTabStyle={styles.tabStyle}>
-                            
+                            <SearchUsers users={this.state.users}/>
                         </Tab>
                         <Tab heading="Hashtags" tabStyle={styles.tabStyle} activeTabStyle={styles.tabStyle}>
                             

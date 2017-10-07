@@ -11,6 +11,7 @@ import user from './user';
 import groups from './groups';
 import bookmarks from './bookmarks';
 import activities from './activities';
+import notifications from './notifications';
 
 module.exports = combineReducers({
   user,
@@ -18,4 +19,5 @@ module.exports = combineReducers({
   groups,
   bookmarks,
   activities,
+  notifications
 });

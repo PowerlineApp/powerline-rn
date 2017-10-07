@@ -1,0 +1,30 @@
+const initialState = {
+    page: 0,
+    payload: [],
+    items: 0,
+    totalItems: 0
+}
+
+const payloadStack: Array<Object> = [];
+
+function notifications(state = initialState, action){
+    if(action.type == 'LOAD_NOTIFICATION'){
+        payloadStack = payloadStack.concat(action.data.payload);
+
+        return {
+            page: action.data.page,
+            items: action.data.items,
+            totalItems: action.data.totalItems,
+            payload: payloadStack
+        }
+    }
+
+    if(action.type == 'RESET_NOTIFICATION' || action.type == 'LOGGED_OUT'){
+        payloadStack = [];
+        return initialState;
+    }
+
+    return state;
+}
+
+module.exports = notifications;

@@ -28,7 +28,6 @@ var PLApp = React.createClass({
 
   componentDidMount: function () { 
 
-
     if (Platform.OS === 'android') {
       SplashScreen.hide();
       

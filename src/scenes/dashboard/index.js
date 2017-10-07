@@ -17,7 +17,7 @@ import Menu, {
 import { openDrawer } from '../../actions/drawer';
 import styles from './styles';
 
-import { loadUserProfile, loadActivities, registerDevice, acceptFollowers,unFollowers, search } from 'PLActions';
+import { loadUserProfile, loadActivities, registerDevice, acceptFollowers,unFollowers, search, getActivities } from 'PLActions';
 
 // Tab Scenes
 import Newsfeed from './newsfeed/'
@@ -29,7 +29,6 @@ import ShareExtension from 'react-native-share-extension';
 import OneSignal from 'react-native-onesignal';
 var DeviceInfo = require('react-native-device-info');
 var Platform = require('Platform');
-import { ToastAndroid } from 'react-native';
 
 class Home extends Component {
 
@@ -57,11 +56,23 @@ class Home extends Component {
         group: 'all',
         search: ''
       };
-    }    
+    }
+
+    this.onIds = this.onIds.bind(this);
+    this.onOpened = this.onOpened.bind(this);
   }
 
   componentWillMount() {
     const { props: { profile, token, dispatch } } = this;
+
+    OneSignal.configure();
+
+    OneSignal.setSubscription(true);
+    
+    OneSignal.addEventListener('ids', this.onIds);
+
+    OneSignal.addEventListener('opened', this.onOpened);
+
     if (!profile) {
       this.loadCurrentUserProfile();
     }
@@ -71,80 +82,70 @@ class Home extends Component {
           Actions.newpost({data: data});
         }        
     });
+  }
 
-    OneSignal.addEventListener('ids', function(data){
-      console.log("push ids", data);
-      AsyncStorage.setItem('pushId', data.userId);
+  onIds(data){
+    var { token } = this.props;
+    console.log("push ids", data);
+    AsyncStorage.setItem('pushId', data.userId);
 
-      var params = {
-        id: data.userId,
-        identifier: DeviceInfo.getUniqueID(),
-        timezone: (new Date()).getTimezoneOffset()* 60,
-        version: DeviceInfo.getVersion(),
-        os: DeviceInfo.getSystemName(),
-        model: DeviceInfo.getModel(),
-        type: Platform.OS
-      };
-  
-      registerDevice(token, params)
-      .then(data => {
+    var params = {
+      id: data.userId,
+      identifier: DeviceInfo.getUniqueID(),
+      timezone: (new Date()).getTimezoneOffset()* 60,
+      version: DeviceInfo.getVersion(),
+      os: DeviceInfo.getSystemName(),
+      model: DeviceInfo.getModel(),
+      type: Platform.OS
+    };
+
+    registerDevice(token, params)
+    .then(data => {
+    })
+    .catch(err => {
+    });
+  }
+
+  onOpened(data){
+    var { token,dispatch } = this.props;
+    console.log("push notification opened", data);    
+    if(data.action.actionID == 'approve-follow-request-button'){
+      console.log("accept button", data.notification.payload.additionalData.entity.target.id);
+      console.log("token", token);
+      acceptFollowers(token, data.notification.payload.additionalData.entity.target.id)
+      .then((ret) => {
+        dispatch({type: 'RESET_NOTIFICATION'});
+        getActivities(token).then(res => {
+          dispatch({type: 'LOAD_NOTIFICATION', data: res});
+        })
+        .catch(err => {
+
+        });
+        Actions.home({notification: true});
       })
       .catch(err => {
+          console.log(err);
       });
-    });
-
-    //register device 
-    AsyncStorage.getItem('pushId', (err, pushId) => {
-        if(pushId){
-          var params = {
-            id: pushId,
-            identifier: DeviceInfo.getUniqueID(),
-            timezone: (new Date()).getTimezoneOffset()* 60,
-            version: DeviceInfo.getVersion(),
-            os: DeviceInfo.getSystemName(),
-            model: DeviceInfo.getModel(),
-            type: Platform.OS
-          };
-      
-          registerDevice(token, params)
-          .then(data => {
-          })
-          .catch(err => {
-          });
-        }
-    });
-  
-   OneSignal.enableVibrate(true);
-   OneSignal.setSubscription(true);
-
-   OneSignal.addEventListener('opened', (data) =>{
-      
-      console.log("push notification opened", data);
-
-      if(data.action.actionID == 'approve-follow-request-button'){
-        console.log("accept button", data.notification.payload.additionalData.entity.target.id);
-        console.log("token", token);
-        acceptFollowers(token, data.notification.payload.additionalData.entity.target.id)
-        .then((ret) => {
-          Actions.home({notification: true});
-        })
-        .catch(err => {
-            console.log(err);
-        });
-      }else if(data.action.actionID == 'ignore-follow-request-button'){
-        console.log("ignore button", data.notification.payload.additionalData.entity.target.id);
-        unFollowers(token, data.notification.payload.additionalData.entity.target.id)
-        .then((ret) => {                        
-          Actions.home({notification: true});                    
+    }else if(data.action.actionID == 'ignore-follow-request-button'){
+      console.log("ignore button", data.notification.payload.additionalData.entity.target.id);
+      unFollowers(token, data.notification.payload.additionalData.entity.target.id)
+      .then((ret) => {      
+        dispatch({type: 'RESET_NOTIFICATION'});
+        getActivities(token).then(res => {
+          dispatch({type: 'LOAD_NOTIFICATION', data: res});
         })
         .catch(err => {
 
-        });
-      }else if(data.notification.payload.additionalData.type == 'follow-request'){
-        console.log("notification click");
-        Actions.home({notification: true});
-      }
-   });
+        });                  
+        Actions.home({notification: true});                    
+      })
+      .catch(err => {
+
+      });
+    }else if(data.notification.payload.additionalData.type == 'follow-request'){
+      console.log("notification click");
+      Actions.home({notification: true});
+    }
   }
 
   async loadCurrentUserProfile() {
