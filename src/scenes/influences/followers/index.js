@@ -32,11 +32,6 @@ class Followers extends Component{
         super(props);
 
         this.state = {
-            followers: [],
-            page: 1,
-            per_page: 10,
-            items: 10,
-            totalItems: 0,
             refreshing: false
         }
     }
@@ -46,16 +41,15 @@ class Followers extends Component{
     }
 
     loadFollowers(){
-        var { token } = this.props;
+        var { token, dispatch } = this.props;
         var { page, per_page } = this.state;
+
+        dispatch({type: 'RESET_FOLLOWERS'});
 
         getFollowers(token, page, per_page)
         .then(ret => {
+            dispatch({type: 'LOAD_FOLLOWERS', data: ret});
             this.setState({
-                followers: ret.payload,
-                page: ret.page,
-                items: ret.items,
-                totalItems: ret.totalItems,
                 refreshing: false
             });
         })
@@ -70,21 +64,22 @@ class Followers extends Component{
     }
 
     unFollowers(index){
-        var { token } = this.props;
+        var { token, dispatch } = this.props;
 
-        Alert.alert("Confirm", "Do you want to stop " + this.state.followers[index].username + " from following you ?", [
+        Alert.alert("Confirm", "Do you want to stop " + this.props.followers[index].username + " from following you ?", [
             {
                 text: 'Cancel'
             },
             {
                 text: 'OK',
                 onPress: () => {
-                    unFollowers(token, this.state.followers[index].id)
+                    unFollowers(token, this.props.followers[index].id)
                     .then((ret) => {                        
-                        this.state.followers.splice(index, 1);  
-                        this.setState({
-                            per_page: this.state.per_page
-                        });                      
+                        var followerDATA = JSON.parse(JSON.stringify(this.props.followers));
+                        followerDATA.splice(index, 1);
+                        dispatch({type: 'RESET_FOLLOWERS'});
+                        dispatch({type: 'CHANGE_FOLLOWERS', data: followerDATA});
+
                     })
                     .catch(err => {
 
@@ -106,10 +101,10 @@ class Followers extends Component{
                 onPress: () => {
                     acceptFollowers(token, this.state.followers[index].id)
                     .then((ret) => {
-                        this.state.followers[index].status = 'active';
-                        this.setState({
-                            per_page: this.state.per_page
-                        });
+                        var followerDATA = JSON.parse(JSON.stringify(this.props.followers));
+                        followerDATA[index].status = 'active';
+                        dispatch({type: 'RESET_FOLLOWERS'});
+                        dispatch({type: 'CHANGE_FOLLOWERS', data: followerDATA});
                     })
                     .catch(err => {
 
@@ -132,10 +127,10 @@ class Followers extends Component{
                             onRefresh={this._onRefresh.bind(this)}
                         />
                 }>
-                {this.state.followers.length > 0?
+                {this.props.followers.length > 0?
                 <List>
                     {
-                        this.state.followers.map((follow, index) => {
+                        this.props.followers.map((follow, index) => {
                             return (
                                 <ListItem avatar key={index} onPress={() => this.goToProfile(follow.id)}>
                                     <Left>
@@ -178,7 +173,8 @@ class Followers extends Component{
 }
 
 const mapStateToProps = state => ({
-    token: state.user.token
+    token: state.user.token,
+    followers: state.followers.payload
 });
 
 export default connect(mapStateToProps)(Followers);

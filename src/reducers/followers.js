@@ -7,10 +7,9 @@ const initialState = {
 
 const payloadStack: Array<Object> = [];
 
-function notifications(state = initialState, action){
-    if(action.type == 'LOAD_NOTIFICATION'){
+function followers(state = initialState, action){
+    if(action.type == 'LOAD_FOLLOWERS'){
         payloadStack = payloadStack.concat(action.data.payload);
-
         return {
             page: action.data.page,
             items: action.data.items,
@@ -19,12 +18,12 @@ function notifications(state = initialState, action){
         }
     }
 
-    if(action.type == 'RESET_NOTIFICATION' || action.type == 'LOGGED_OUT'){
+    if(action.type == 'RESET_FOLLOWERS' || action.type == 'LOGGED_OUT'){
         payloadStack = [];
         return initialState;
     }
 
-    if(action.type == 'CHANGE_NOTIFICATION'){
+    if(action.type == 'CHANGE_FOLLOWERS'){
         payloadStack = payloadStack.concat(action.data);
         return {
             ...state,
@@ -35,4 +34,4 @@ function notifications(state = initialState, action){
     return state;
 }
 
-module.exports = notifications;
+module.exports = followers;

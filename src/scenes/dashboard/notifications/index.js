@@ -18,7 +18,8 @@ var TimeAgo = require('react-native-timeago');
 import {
     TouchableOpacity,
     View,
-    Alert
+    Alert,
+    RefreshControl
 } from 'react-native';
 import styles from './styles';
 
@@ -27,15 +28,25 @@ class Notifications extends Component{
     constructor(props){
         super(props);
         this.state = {
-            invites: []
-        };
+            invites: [],
+            refreshing: false
+        };             
+    }
 
+    componentWillMount(){
+        this.onRefresh();
+    }
+
+    loadActivities(){
         var { token, dispatch } = this.props;
 
         dispatch({type: 'RESET_NOTIFICATION'});
         getActivities(token).then(res => {
             console.log(res);
             dispatch({type: 'LOAD_NOTIFICATION', data: res});
+            this.setState({
+                refreshing: false
+            });
         })
         .catch(err => {
             console.log(err);
@@ -77,7 +88,7 @@ class Notifications extends Component{
     }
 
     acceptFollower(target, index, notifiId){
-        var { token } = this.props;
+        var { token, dispatch } = this.props;
 
         Alert.alert("Confirm", "Do you want to approve " + target.full_name + " ?", [
             {
@@ -87,16 +98,14 @@ class Notifications extends Component{
                 text: 'OK',
                 onPress: () => {
                     acceptFollowers(token, target.id)
-                    .then((ret) => {
-                        this.state.notifications[index].ignore = true;
-                        this.setState({
-                            notifications: this.state.notifications
-                        });
-
+                    .then((ret) => {                        
                         //mark
                         putSocialActivity(token, notifiId, true)
                         .then(data => {
-
+                            var notiDATA = JSON.parse(JSON.stringify(this.props.notifications));
+                            dispatch({type: 'RESET_NOTIFICATION'});         
+                            notiDATA[index].ignore = true;
+                            dispatch({type: 'CHANGE_NOTIFICATION', data: notiDATA});                  
                         })
                         .catch(err => {
 
@@ -111,7 +120,7 @@ class Notifications extends Component{
     }
 
     unFollowers(target, index, notifiId){
-        var { token } = this.props;
+        var { token, dispatch } = this.props;
 
         Alert.alert("Confirm", "Do you want to stop " + target.full_name + " from following you ?", [
             {
@@ -122,15 +131,13 @@ class Notifications extends Component{
                 onPress: () => {
                     unFollowers(token, target.id)
                     .then((ret) => {                        
-                        this.state.notifications[index].ignore = true;
-                        this.setState({
-                            notifications: this.state.notifications
-                        });
-
                         //mark
                         putSocialActivity(token, notifiId, true)
                         .then(data => {
-
+                            var notiDATA = JSON.parse(JSON.stringify(this.props.notifications));
+                            dispatch({type: 'RESET_NOTIFICATION'});  
+                            notiDATA[index].ignore = true;       
+                            dispatch({type: 'CHANGE_NOTIFICATION', data: notiDATA});
                         })
                         .catch(err => {
 
@@ -170,9 +177,21 @@ class Notifications extends Component{
         
     }
 
+    onRefresh(){
+        this.setState({
+            refreshing: true
+        });
+        this.loadActivities();
+    }
+
     render (){
         return (
-            <Content>
+            <Content
+                refreshControl={
+                    <RefreshControl
+                        refreshing={this.state.refreshing}
+                        onRefresh={this.onRefresh.bind(this)}
+                        />}>
                 <List style={{backgroundColor: 'white'}}>
                     {
                         this.state.invites.map((value, index) => {
