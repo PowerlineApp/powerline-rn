@@ -16,11 +16,29 @@ import {
     Body,
     View
 } from 'native-base';
-
+import { joinGroup } from 'PLActions';
 const PLColors = require('PLColors');
 import styles from './styles';
 
 class SearchGroups extends Component{
+
+    goToProfile(group){
+        Actions.groupprofile(group);
+    }
+
+    join(id){
+        var { token } = this.props;
+        joinGroup(token, id).then(data => {
+            if(data.join_status == 'active'){
+                Actions.myGroups();
+            }else{
+                Actions.myGroups();
+            }
+        })
+        .catch(err => {
+
+        })
+    }
 
     render(){
         return (
@@ -30,7 +48,7 @@ class SearchGroups extends Component{
                         {
                             this.props.groups.map((group, index) => {
                                 return (
-                                    <ListItem style={styles.listItem} key={index}>
+                                    <ListItem style={styles.listItem} key={index} onPress={() => this.goToProfile(group)}>
                                         {
                                             group.avatar_file_path?
                                             <Thumbnail square source={{uri: group.avatar_file_path}}/>:
@@ -41,7 +59,7 @@ class SearchGroups extends Component{
                                         </Body>
                                         <Right>
                                             <Button transparent>
-                                                <Icon active name="add-circle" style={{color: '#11c1f3'}}/>
+                                                <Icon active name="add-circle" style={{color: '#11c1f3'}} onPress={() => this.join(group.id)}/>
                                             </Button>
                                         </Right>
                                     </ListItem>

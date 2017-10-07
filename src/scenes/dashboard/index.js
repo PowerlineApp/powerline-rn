@@ -17,7 +17,7 @@ import Menu, {
 import { openDrawer } from '../../actions/drawer';
 import styles from './styles';
 
-import { loadUserProfile, loadActivities, registerDevice, acceptFollowers,unFollowers, search, getActivities } from 'PLActions';
+import { loadUserProfile, loadActivities, registerDevice, acceptFollowers,unFollowers, search, getActivities, getFollowers } from 'PLActions';
 
 // Tab Scenes
 import Newsfeed from './newsfeed/'
@@ -113,15 +113,15 @@ class Home extends Component {
       console.log("accept button", data.notification.payload.additionalData.entity.target.id);
       console.log("token", token);
       acceptFollowers(token, data.notification.payload.additionalData.entity.target.id)
-      .then((ret) => {
-        dispatch({type: 'RESET_NOTIFICATION'});
-        getActivities(token).then(res => {
-          dispatch({type: 'LOAD_NOTIFICATION', data: res});
+      .then((ret) => {  
+        dispatch({type: 'RESET_FOLLOWERS'});
+        getFollowers(token, 1, 20).then(ret1 => {
+          dispatch({type: 'LOAD_FOLLOWERS', data: ret1});
         })
         .catch(err => {
-
-        });
-        Actions.home({notification: true});
+          
+        });      
+        Actions.myInfluences();
       })
       .catch(err => {
           console.log(err);
@@ -129,15 +129,15 @@ class Home extends Component {
     }else if(data.action.actionID == 'ignore-follow-request-button'){
       console.log("ignore button", data.notification.payload.additionalData.entity.target.id);
       unFollowers(token, data.notification.payload.additionalData.entity.target.id)
-      .then((ret) => {      
-        dispatch({type: 'RESET_NOTIFICATION'});
-        getActivities(token).then(res => {
-          dispatch({type: 'LOAD_NOTIFICATION', data: res});
+      .then((ret) => {   
+        dispatch({type: 'RESET_FOLLOWERS'});
+        getFollowers(token, 1, 20).then(ret1 => {
+          dispatch({type: 'LOAD_FOLLOWERS', data: ret1});
         })
         .catch(err => {
-
-        });                  
-        Actions.home({notification: true});                    
+          
+        });               
+        Actions.myInfluences();                    
       })
       .catch(err => {
 

@@ -26,7 +26,7 @@ import {
     MenuContext
 } from 'react-native-popup-menu';
 import styles from './styles';
-import { openDrawer, search } from 'PLActions';
+import { openDrawer, searchGroup, searchForUsersFollowableByCurrentUser } from 'PLActions';
 
 import SearchGroups from './groups';
 import SearchUsers from './users';
@@ -42,6 +42,7 @@ class Search extends Component{
         }
 
         this.onQuery(props.search?props.search: '');
+        this.onRemoveUser = this.onRemoveUser.bind();
     }
 
     onChangeText(text){
@@ -62,17 +63,33 @@ class Search extends Component{
             });
 
             var { token } = this.props;
-            search(token, text)
+            searchForUsersFollowableByCurrentUser(token, text, 1, 20)
             .then(data => {
                 this.setState({
-                    groups: data.groups,
-                    users: data.users
+                    users: data
+                });
+            })
+            .catch(err => {
+
+            });
+
+            searchGroup(token, text)
+            .then(data => {
+                this.setState({
+                    groups: data.payload
                 })
             })
             .catch(err => {
 
             });
         }
+    }
+
+    onRemoveUser(index){
+        this.state.users.splice(index, 1);
+        this.setState({
+            users: this.state.users
+        });
     }
 
     render(){
@@ -95,7 +112,7 @@ class Search extends Component{
                             <SearchGroups groups={this.state.groups}/>
                         </Tab>
                         <Tab heading="People" tabStyle={styles.tabStyle} activeTabStyle={styles.tabStyle}>
-                            <SearchUsers users={this.state.users}/>
+                            <SearchUsers users={this.state.users} onRemove={(index) => this.onRemoveUser(index)}/>
                         </Tab>
                         <Tab heading="Hashtags" tabStyle={styles.tabStyle} activeTabStyle={styles.tabStyle}>
                             
