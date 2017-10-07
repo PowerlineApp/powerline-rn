@@ -36,6 +36,7 @@ import GroupSearch from './scenes/dashboard/grouplist/search/';
 import GroupMembers from './scenes/dashboard/groupmembers/';
 import NewPost from './scenes/dashboard/newpost/';
 import NewPetition from './scenes/dashboard/newpetition';
+import Search from './scenes/search/';
 
 var RouterWithRedux = connect()(Router);
 
@@ -80,6 +81,8 @@ class PLNavigator extends React.Component {
         return <CreateGroup />;
       case 'myGroups':
         return <GroupList />;
+      case 'search':
+        return <Search/>;
       default:
         return <Home />;
     }
@@ -134,6 +137,7 @@ class PLNavigator extends React.Component {
               <Scene key="groupmembers" component={GroupMembers} />
               <Scene key="newpost" component={NewPost} />
               <Scene key="newpetition" component={NewPetition} />
+              <Scene key="search" component={Search}/>
             </Scene>
           </RouterWithRedux>
         </Drawer>

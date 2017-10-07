@@ -9,6 +9,7 @@ import { logOut, logOutWithPrompt, unregisterDevice } from 'PLActions';
 
 import styles from './style';
 import OneSignal from 'react-native-onesignal';
+import { AsyncStorage } from 'react-native';
 
 const datas = [
   {
@@ -111,18 +112,18 @@ class SideBar extends Component {
 
   onSelectItem(route: string) {
     if (route == 'logout') {
-      var { token } = this.props;
+      var { token, pushId } = this.props;
 
-      OneSignal.addEventListener('ids', function(data){
-          unregisterDevice(token, data.userId)
-          .then(data => {
-            //alert("Success");
-            this.props.logOut();
-          })
-          .catch(err => {
-             
-          });
-      });            
+      OneSignal.setSubscription(false);
+      AsyncStorage.getItem('pushId', (err, pushId) => {        
+        unregisterDevice(token, pushId)
+        .then(data => {
+          this.props.logOut();
+        })
+        .catch(err => {
+            
+        });
+      });               
     } else if(route == 'takeTour'){
       Actions['takeTour']();
     }else if(route == 'myInfluences'){
@@ -133,6 +134,8 @@ class SideBar extends Component {
       Actions['createGroup']();
     }else if(route == 'myGroups'){
       Actions['myGroups']();
+    }else if(route == 'search'){
+      Actions['search']();
     }else{
       Actions['home']();
     }
@@ -175,7 +178,8 @@ function bindAction(dispatch) {
 }
 
 const mapStateToProps = state => ({
-  token: state.user.token
+  token: state.user.token,
+  pushId: state.user.pushId
 });
 
 export default connect(mapStateToProps, bindAction)(SideBar);

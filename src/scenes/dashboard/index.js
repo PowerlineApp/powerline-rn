@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import { Container, Header, Title, Content, Button, Footer, FooterTab, Text, Body, Left, Right, Icon, Item, Input, Grid, Row, Col, Badge, Label } from 'native-base';
 
-import { View, Image } from 'react-native';
+import { View, Image, AsyncStorage, Alert } from 'react-native';
 
 import Menu, {
   MenuContext,
@@ -17,7 +17,7 @@ import Menu, {
 import { openDrawer } from '../../actions/drawer';
 import styles from './styles';
 
-import { loadUserProfile, loadActivities, registerDevice } from 'PLActions';
+import { loadUserProfile, loadActivities, registerDevice, acceptFollowers,unFollowers, search, getActivities } from 'PLActions';
 
 // Tab Scenes
 import Newsfeed from './newsfeed/'
@@ -28,6 +28,7 @@ const { SlideInMenu } = renderers;
 import ShareExtension from 'react-native-share-extension';
 import OneSignal from 'react-native-onesignal';
 var DeviceInfo = require('react-native-device-info');
+var Platform = require('Platform');
 
 class Home extends Component {
 
@@ -37,17 +38,41 @@ class Home extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      tab1: true,
-      tab2: false,
-      tab3: false,
-      tab4: false,
-      group: 'all',
-    };
+    if(props.notification){
+      this.state = {
+        tab1: false,
+        tab2: false,
+        tab3: false,
+        tab4: true,
+        group: 'all',
+        search: ''
+      };
+    }else{
+      this.state = {
+        tab1: true,
+        tab2: false,
+        tab3: false,
+        tab4: false,
+        group: 'all',
+        search: ''
+      };
+    }
+
+    this.onIds = this.onIds.bind(this);
+    this.onOpened = this.onOpened.bind(this);
   }
 
   componentWillMount() {
-    const { props: { profile, token } } = this;
+    const { props: { profile, token, dispatch } } = this;
+
+    OneSignal.configure();
+
+    OneSignal.setSubscription(true);
+    
+    OneSignal.addEventListener('ids', this.onIds);
+
+    OneSignal.addEventListener('opened', this.onOpened);
+
     if (!profile) {
       this.loadCurrentUserProfile();
     }
@@ -57,42 +82,70 @@ class Home extends Component {
           Actions.newpost({data: data});
         }        
     });
+  }
 
-    //register device
-    OneSignal.addEventListener('ids', function(data){
-      //alert("push ids");
-      console.log("push ids", data);
-      //alert("device " + data.userId);
+  onIds(data){
+    var { token } = this.props;
+    console.log("push ids", data);
+    AsyncStorage.setItem('pushId', data.userId);
 
-      var params = {
-        id: data.userId,
-        identifier: DeviceInfo.getUniqueID(),
-        timezone: (new Date()).getTimezoneOffset()* 60,
-        version: DeviceInfo.getVersion(),
-        os: DeviceInfo.getSystemName(),
-        model: DeviceInfo.getModel(),
-        type: "android"
-      };
+    var params = {
+      id: data.userId,
+      identifier: DeviceInfo.getUniqueID(),
+      timezone: (new Date()).getTimezoneOffset()* 60,
+      version: DeviceInfo.getVersion(),
+      os: DeviceInfo.getSystemName(),
+      model: DeviceInfo.getModel(),
+      type: Platform.OS
+    };
 
-      registerDevice(token, params)
-      .then(data => {
-        //alert("register result " + JSON.stringify(data));
+    registerDevice(token, params)
+    .then(data => {
+    })
+    .catch(err => {
+    });
+  }
+
+  onOpened(data){
+    var { token,dispatch } = this.props;
+    console.log("push notification opened", data);    
+    if(data.action.actionID == 'approve-follow-request-button'){
+      console.log("accept button", data.notification.payload.additionalData.entity.target.id);
+      console.log("token", token);
+      acceptFollowers(token, data.notification.payload.additionalData.entity.target.id)
+      .then((ret) => {
+        dispatch({type: 'RESET_NOTIFICATION'});
+        getActivities(token).then(res => {
+          dispatch({type: 'LOAD_NOTIFICATION', data: res});
+        })
+        .catch(err => {
+
+        });
+        Actions.home({notification: true});
+      })
+      .catch(err => {
+          console.log(err);
+      });
+    }else if(data.action.actionID == 'ignore-follow-request-button'){
+      console.log("ignore button", data.notification.payload.additionalData.entity.target.id);
+      unFollowers(token, data.notification.payload.additionalData.entity.target.id)
+      .then((ret) => {      
+        dispatch({type: 'RESET_NOTIFICATION'});
+        getActivities(token).then(res => {
+          dispatch({type: 'LOAD_NOTIFICATION', data: res});
+        })
+        .catch(err => {
+
+        });                  
+        Actions.home({notification: true});                    
       })
       .catch(err => {
 
       });
-   });
-
-   //define push notification
-   OneSignal.addEventListener('received', (data) =>{
-      console.log("push notification received", JSON.stringify(data));
-      
-   });
-
-   OneSignal.addEventListener('opened', (data) =>{
-      console.log("push notification opened", JSON.stringify(data));
-      
-   });
+    }else if(data.notification.payload.additionalData.type == 'follow-request'){
+      console.log("notification click");
+      Actions.home({notification: true});
+    }
   }
 
   async loadCurrentUserProfile() {
@@ -209,6 +262,17 @@ class Home extends Component {
       return count;
   }
 
+  onChangeText(text){
+    this.setState({
+      search: text
+    });
+  }
+
+  onSearch(){
+    var { token } = this.props;
+    Actions.search({search: this.state.search});
+  }
+
   render() {
     return (
       <MenuContext customStyles={menuContextStyles}>
@@ -221,7 +285,7 @@ class Home extends Component {
             </Left>
             {this.state.tab2!=true && this.state.tab4!=true?
             <Item style={styles.searchBar}>
-              <Input style={styles.searchInput} placeholder="Search groups, people, topics" />
+              <Input style={styles.searchInput} placeholder="Search groups, people, topics" onEndEditing={() => this.onSearch() } value={this.state.search} onChangeText={(text) => this.onChangeText(text)}/>
               <Icon active name="search" />
             </Item>:
             null}
@@ -386,7 +450,8 @@ async function timeout(ms: number): Promise {
 const mapStateToProps = state => ({
   token: state.user.token,
   profile: state.user.profile,
-  activities: state.activities.payload
+  activities: state.activities.payload,
+  pushId: state.user.pushId
 });
 
 export default connect(mapStateToProps, bindAction)(Home);

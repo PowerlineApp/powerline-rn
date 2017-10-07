@@ -27,21 +27,15 @@ class Notifications extends Component{
     constructor(props){
         super(props);
         this.state = {
-            notifications: [],
-            page: 1,
-            items: 10,
-            totalItems: 36,
             invites: []
         };
 
-        var { token } = this.props;
+        var { token, dispatch } = this.props;
+
+        dispatch({type: 'RESET_NOTIFICATION'});
         getActivities(token).then(res => {
             console.log(res);
-            this.setState({
-                notifications: res.payload,
-                page: res.page,
-                totalItems: res.totalItems
-            });
+            dispatch({type: 'LOAD_NOTIFICATION', data: res});
         })
         .catch(err => {
             console.log(err);
@@ -209,7 +203,7 @@ class Notifications extends Component{
                         })
                     }
                     {
-                        this.state.notifications.map((value, index)=> {
+                        this.props.notifications.map((value, index)=> {
                             if(value.type == 'comment-mentioned' || value.type == 'post-mentioned' || value.type == 'own-post-commented' || value.type == 'follow-request')
                             return (
                                 <ListItem avatar key={index} style={styles.listItem}>
@@ -263,7 +257,8 @@ class Notifications extends Component{
 }
 
 const mapStateToProps = state => ({
-    token: state.user.token
+    token: state.user.token,
+    notifications: state.notifications.payload
 });
 
 export default connect(mapStateToProps)(Notifications);

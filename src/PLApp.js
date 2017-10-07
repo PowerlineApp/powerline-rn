@@ -21,14 +21,12 @@ var { version } = require('./PLEnv.js');
 var { StackNavigator } = require('react-navigation');
 var RegisterScene  = require('./scenes/auth/RegisterScene');
 var TourScene = require('./scenes/auth/TourScene');
+import OneSignal from 'react-native-onesignal';
 
 var PLApp = React.createClass({
   displayName: 'PLApp',
-  componentWillMount: function() {
-  },
 
   componentDidMount: function () { 
-
 
     if (Platform.OS === 'android') {
       SplashScreen.hide();
@@ -81,7 +79,7 @@ TermsPolicyScene.navigationOptions = props => {
 };
 
 const mapStateToProps = state => ({
-  isLoggedIn: state.user.isLoggedIn,
+  isLoggedIn: state.user.isLoggedIn
 });
 
 module.exports = connect(mapStateToProps)(PLApp);
