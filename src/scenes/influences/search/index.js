@@ -1,3 +1,6 @@
+//GH36 User should be able to search for other users. Tapping on a user avatar or name loads the user profile
+//Each search result should include easy ability to request to follow user
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
@@ -34,6 +37,7 @@ class SearchFollowing extends Component {
         this.setState({
             queryText: text
         });
+        //Results will only show users who are not already being followed
         searchForUsersFollowableByCurrentUser(token, text, page, max_count)
         .then(data => {
             this.setState({
