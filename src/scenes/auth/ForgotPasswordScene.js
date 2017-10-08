@@ -1,3 +1,4 @@
+//GH5 - User has ability to reset password. Sent via e-mail.
 var React = require('react');
 var { Component, PropTypes } = require('react');
 var { StyleSheet, View, TextInput } = require('react-native');

@@ -1,3 +1,5 @@
+//GH10, GH11, GH12... User registration
+//E-mail registration requires user to setup account username, password, provide e-mail... FB registration does not. Both require basic address info.
 var React  = require('react');
 var {
     Component,
@@ -25,6 +27,8 @@ class RegisterScene extends Component{
         header: null
     };
 
+    // After user registers, he is brought directly to the Tourguide
+    // User can register with e-mail or with Facebook. Easier to register with Facebook.
     render(){
         var {navigate, dispatch, state} = this.props.navigation;
         var { params } = state;
