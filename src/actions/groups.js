@@ -2,6 +2,7 @@
 var { API_URL, PER_PAGE } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
 
+//Loads user's current joined groups
 async function loadUserGroups(token: string, page: ?number = 0, perPage: ?number = PER_PAGE): Promise<Action> {
     try {
         var response = await fetch(`${API_URL}/v2/user/groups?_format=json&page=${page + 1}&per_page=${perPage}`, {
@@ -41,6 +42,7 @@ async function loadUserGroups(token: string, page: ?number = 0, perPage: ?number
     }
 }
 
+//I think this only happens on logout, but cache should be updated whenever user joins/leaves a group or logs in so that group selector is up to date
 function clearGroupsInCache(): ThunkAction {
     return (dispatch) => {
         return dispatch({
@@ -49,6 +51,7 @@ function clearGroupsInCache(): ThunkAction {
     };
 }
 
+//User can create a new group. He is owner of group by default.
 function createGroup(token, groupData){
     return new Promise((resolve, reject) => {
         var payload = JSON.stringify(groupData);
@@ -178,6 +181,7 @@ function getGroupMembers(token, id){
     });
 }
 
+//Invites all followers to a group
 function inviteAllFollowers(token, id, users){
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2/groups/' + id + '/invites', {
@@ -201,6 +205,7 @@ function inviteAllFollowers(token, id, users){
     });
 }
 
+//Function to follow all members of a group at once
 function followAllMembers(token, id){
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2/user/group-followers/' + id, {
@@ -244,9 +249,11 @@ function unJoinGroup(token, id){
 
 function joinGroup(token, id, passcode, answeredFields){
     var payload = {};
+    //user must provide correct passcode if required
     if(passcode){
         payload['passcode'] = passcode;
     }
+    //user must provide info in required fields if requested
     if(answeredFields){
         payload['answered_fields'] = answeredFields.map(function(f){
             return {
@@ -276,6 +283,7 @@ function joinGroup(token, id, passcode, answeredFields){
     });
 }
 
+//User must provide info in required fields if requested
 function loadFieldsToFillOnJoin(token, groupId){
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2/groups/' + groupId + '/fields', {
@@ -297,6 +305,7 @@ function loadFieldsToFillOnJoin(token, groupId){
     });
 }
 
+//User must be alerted to information shared with group when joining. User must accept to be joined.
 function getGroupPermissions(token, groupId){
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2/groups/' + groupId + '/permission-settings', {

@@ -91,6 +91,7 @@ function getInvites(token){
     });
 }
 
+//for registering for push notifications with Powerline backend. NOT for OneSignal
 function registerDevice(token, params){
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2/devices', {
@@ -113,6 +114,7 @@ function registerDevice(token, params){
     })
 }
 
+//for unregistering for push notifications with Powerline backend. NOT for OneSignal
 function unregisterDevice(token, id){
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2/devices/' + id, {

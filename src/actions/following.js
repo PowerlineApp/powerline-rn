@@ -2,6 +2,7 @@ var { API_URL } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
 
 
+//Shows who the user is following (User A is following User B... User B returned)
 function getFollowings(token, page, per_page){
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2/user/followings?_format=json&page='+ page +'&per_page=' + per_page, {
@@ -23,6 +24,7 @@ function getFollowings(token, page, per_page){
     });    
 }
 
+//Shows who follows the logged-in user (User A is following User B... User A is returned)
 function getFollowers(token, page,per_page){
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2/user/followers?_format=json&page='+page +'&per_page=' + per_page, {
@@ -44,6 +46,7 @@ function getFollowers(token, page,per_page){
     });
 }
 
+//To stop following someone
 function unFollowings(token, id){
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2/user/followings/' + id, {
@@ -64,6 +67,7 @@ function unFollowings(token, id){
     });
 }
 
+//To stop allowing a user to follow you. All users must be approved to be followers. this undoes an approved follower
 function unFollowers(token, id){
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2/user/followers/' + id, {
@@ -84,6 +88,7 @@ function unFollowers(token, id){
     });
 }
 
+//To accept a follower request
 function acceptFollowers(token, id){
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2/user/followers/' + id, {
@@ -104,6 +109,7 @@ function acceptFollowers(token, id){
     });
 }
 
+//To search for users that the logged-in user is not already following
 function searchForUsersFollowableByCurrentUser(token, queryText, page = 0, max_count = 20){
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/users/?unfollowing=1&page='+ page +'&max_count=' + max_count + '&q=' + queryText, {
@@ -124,6 +130,7 @@ function searchForUsersFollowableByCurrentUser(token, queryText, page = 0, max_c
         });
     });
 }
+
 
 function putFollowings(token, id){
     return new Promise((resolve, reject) => {
