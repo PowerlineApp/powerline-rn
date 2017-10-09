@@ -936,6 +936,8 @@ class ItemDetail extends Component {
                         minHeight={MIN_HEIGHT}
                         fadeOutForeground
                         renderHeader={() => (
+                            //Eventually this should show the Group Banner GH19
+                            //https://github.com/PowerlineApp/powerline-mobile/issues/596
                             <Image
                                 style={styles.headerImage}
                                 source={require('img/item_detail_header.png')}
