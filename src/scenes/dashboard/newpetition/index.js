@@ -99,13 +99,13 @@ class NewPetition extends Component{
 
     createPetition(){
         if(this.state.selectedGroupIndex == -1){
-            alert('Please select Group.');
+            alert('Where do you want to post this? Select a group');
             return;
         }else if(this.state.title == '' || this.state.title.trim() == ''){
-            alert("Please type petition title.");
+            alert("Please create a title for your petition");
             return;
         }else if(this.state.content == '' || this.state.content.trim() == ''){
-            alert("Please type petition message.")
+            alert("Whoops! Looks like you forgot to write your petition down!")
         }
 
         var  { token } = this.props;
@@ -120,7 +120,7 @@ class NewPetition extends Component{
     }
 
     changeContent(text){
-        if(text.length <= 2500){
+        if(text.length <= 5000){
             this.setState({
                 content: text
             });
@@ -219,7 +219,7 @@ class NewPetition extends Component{
                     }
                     <Label style={{color: 'white'}}>
                         {
-                            (2500 - this.state.content.length)
+                            (5000 - this.state.content.length)
                         }
                     </Label>
                 </Footer>
