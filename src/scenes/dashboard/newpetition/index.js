@@ -1,3 +1,8 @@
+//User has ability to create a new user petition from New Item Menu. GH15
+//If user is on "All" feed and tries to create new item, user must choose which group the item will be posted to.
+//If user is already looking at a specific group (e.g. USA group) in newsfeed tab (e.g. not "all"), app will assume new post is for that group.
+//https://api-dev.powerli.ne/api-doc#post--api-v2.2-groups-{group}-user-petitions
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
