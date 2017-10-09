@@ -78,7 +78,7 @@ class ForgotPasswordScene extends Component {
             let code = response.code;
             switch (code) {
                 case 404:
-                    alert('Email is not found');
+                    alert('Email is not found. Did you register with a different e-mail address or with Facebook? ');
                     break;
                 case 200:
                     alert('A link to reset your password has been sent to your e-mail address.');

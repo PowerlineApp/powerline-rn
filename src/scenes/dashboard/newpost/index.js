@@ -102,10 +102,10 @@ class NewPost extends Component{
 
         var groupId = null;
         if(this.state.selectedGroupIndex == -1){
-            alert('Please select Group.');
+            alert('Where do you want to post this? Please select Group.');
             return;
         }else if(this.state.content == "" || this.state.content.trim() == ''){
-            alert("Please type post content");
+            alert("Whoops! Looks like you forgot to write the post!");
             return;
         }
 

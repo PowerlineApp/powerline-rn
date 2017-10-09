@@ -140,7 +140,7 @@ class GroupProfile extends Component{
                                 alert("Invites sent!");
                             })
                             .catch(err => {
-                                alert("Invites not sent because of some errors.");
+                                alert("Cannot send invites at this time. Try again later.");
                             });
                         })
                         .catch(err => {

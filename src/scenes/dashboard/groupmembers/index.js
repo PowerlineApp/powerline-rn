@@ -58,9 +58,10 @@ class GroupMembers extends Component{
 
     followAllBtn(){
         var { token, id} = this.props;
+        // Need to add the number of users to the alert message
         Alert.alert(
             'Follow All',
-            'Do you want to want to follow all users in this group',
+            'Do you want to want to follow all users in this group?',
             [
                 {
                     text: 'Cancel',

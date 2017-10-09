@@ -370,7 +370,7 @@ class CommentDetail extends Component {
 
     _onSendComment() {
         if (this.state.commentText === '') {
-            alert("Please input comment text");
+            alert("There is no comment to send. Try again.");
         } else {
             this.doComment(this.state.commentText);
         }
