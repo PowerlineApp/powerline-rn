@@ -313,6 +313,7 @@ class Home extends Component {
           </Header>
           {this.state.tab2 != true && this.state.tab4 != true ?
           //This is the Group Selector and provides All, Town, State, Country, and More options. Each button loads appropriate selected feed into Newsfeed tab.
+          //GH153
           <View style={styles.groupSelector}>
             <Grid>
               <Row>
