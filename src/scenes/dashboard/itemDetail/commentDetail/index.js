@@ -1,3 +1,6 @@
+//This looks like the View Replies module. Item Detail Screen shows all root comments. If a root comment has multiple children replies, user has option to View More. Tapping View More should open this screen.
+//GH18, GH17
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, Spinner, List, ListItem, Item, Input } from 'native-base';
@@ -146,6 +149,7 @@ class CommentDetail extends Component {
         }
     }
 
+    //User can rate comment up or down
     async rate(comment, option) {
         this.setState({ isLoading: true });
 
