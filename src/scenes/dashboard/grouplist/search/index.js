@@ -1,3 +1,10 @@
+//This is the Add Group / Group Search screen. It allows a user to search for a group that s/he is not already joined to
+//If user is not in PTA group, user searches for PTA group here and can join. 
+//Joining a group initiates the Group Join process (GH48, GH59, GH60)
+//User tries to join group, group may ask for passcode or other information, user provides, system validates, and group permissions alert displays
+//Group permissions alert makes it clear what user is about to share with group owner. Acceptance is required to join the group
+
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
@@ -44,6 +51,7 @@ class GroupSearch extends Component{
     componentWillMount(){
         var { token } = this.props;
 
+        //A list of popular groups is displayed to the user on the Add Group page
         getGroupsBySort(token, 'popular').then(data => {
             this.setState({
                 popularGroups: data
@@ -134,6 +142,7 @@ class GroupSearch extends Component{
                         {this.state.text == ''?
                         <View>
                         {
+                             //This shows popular  groups that users have been joining recently on the platform
                             this.state.popularGroups.map((group, index) => {
                                 return (
                                     <ListItem style={styles.listItem} key={index} onPress={() => this.goToProfile(group)}>
@@ -161,7 +170,8 @@ class GroupSearch extends Component{
                         {this.state.text == ''?
                         <View>
                         {
-                            this.state.newGroups.map((group, index) => {
+                           //This shows new groups that have been created on the platform recently
+                           this.state.newGroups.map((group, index) => {
                                 return (
                                     <ListItem style={styles.listItem} key={index} onPress={() => this.goToProfile(group)}>
                                         {

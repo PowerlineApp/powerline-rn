@@ -1,6 +1,7 @@
 //This looks like it's actually the Newsfeed tab (GH13) and the User Profile screen (GH44) combined. Each item in the newsfeed is referred to as the Standard Item Container. 
 //The backend call for this scene will be driven primarily by https://api-dev.powerli.ne/api-doc#get--api-v2-activities
 //The default view is "All" feed, but a specific group may be called for group Feed (GH45), Friends Feed (GH51), a specific user's feed (GH44)
+//Group Feed will look very different depending if in Feed View or Conversation View. 
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';

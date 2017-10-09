@@ -1,5 +1,5 @@
 //This is the tour that the user is brought to immediately after registration. It can also be accessed via burger menu
-//GH
+//GH65
 
 var React = require('react');
 var {

@@ -1,3 +1,7 @@
+//This is the Group Membership List Screen accessible via the Group Profile Screen
+//https://api-dev.powerli.ne/api-doc#get--api-v2-groups-{id}-users
+
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
