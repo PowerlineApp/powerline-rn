@@ -58,7 +58,7 @@ function activities(state: State = initialState, action: Action): State {
         return initialState;
     }
 
-    if(action.type == 'SET_GROUP'){
+    if(action.type === 'SET_GROUP'){
         payloadStack = [];
         return {
             ...state,
@@ -75,7 +75,7 @@ function activities(state: State = initialState, action: Action): State {
         }
     }
 
-    if(action.type == 'DELETE_ACTIVITIES'){
+    if(action.type === 'DELETE_ACTIVITIES'){
         payloadStack = [];
         return {
             ...state,
@@ -83,7 +83,7 @@ function activities(state: State = initialState, action: Action): State {
         }
     }
 
-    if (action.type == 'DELETE_ACTIVITY') {
+    if (action.type === 'DELETE_ACTIVITY') {
         payloadStack = state.payload.filter(activity => activity.id !== action.id);
         return {
             ...state,
@@ -91,6 +91,24 @@ function activities(state: State = initialState, action: Action): State {
             count: state.payload.count - 1,
         }
     }
+
+    if (action.type === 'CHANGE_ACTIVITY_DESCRIPTION') {
+        payloadStack = state.payload.map(activity => {
+            if (activity.id === action.data.id) {
+                return {
+                    ...activity,
+                    description: action.data.description
+                }
+            } else {
+                return activity;
+            }
+        });
+        return {
+            ...state,
+            payload: payloadStack,
+        }
+    }
+
     return state;
 }
 

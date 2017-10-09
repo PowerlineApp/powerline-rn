@@ -97,6 +97,11 @@ class Newsfeed extends Component {
     }
 
     edit(item) {
+        Actions.itemDetail({
+            entityId: item.entity.id,
+            entityType: item.entity.type,
+            isEditEnabled: true,
+        });
         this.menu && this.menu.close();
     }
     

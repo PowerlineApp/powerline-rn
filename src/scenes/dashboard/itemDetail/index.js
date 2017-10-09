@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, Spinner, List, ListItem, Item, Input } from 'native-base';
+import { Container, Header, Title, Textarea, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, Spinner, List, ListItem, Item, Input } from 'native-base';
 import { Image, View, StyleSheet, TouchableOpacity, Platform, KeyboardAvoidingView, Keyboard, TextInput, ListView } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
@@ -18,7 +18,7 @@ import Menu, {
     renderers
 } from 'react-native-popup-menu';
 import OrientationLoadingOverlay from 'react-native-orientation-loading-overlay';
-import { getComments, votePost, addComment, rateComment, loadActivityByEntityId, deletePost, deletePetition } from 'PLActions';
+import { getComments, votePost, addComment, rateComment, loadActivityByEntityId, deletePost, deletePetition, changePost, changePetition } from 'PLActions';
 
 const { youTubeAPIKey } = require('PLEnv');
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
@@ -41,10 +41,12 @@ class ItemDetail extends Component {
         this.state = {
             isLoading: false,
             isCommentsLoading: false,
+            isEditMode: props.isEditEnabled || false,
             visibleHeight: 50,
             commentText: '',
             dataArray: [],
             dataSource: ds,
+            inputDescription: '',
         };
         this.commentToReply = null;
         this.isLoadedAll = false;
@@ -130,7 +132,7 @@ class ItemDetail extends Component {
         loadActivityByEntityId(token, entityType, entityId).then(data => {
             if (data.payload && data.payload[0]) {
                 this.item = data.payload[0];
-                this.setState({ isLoading: false });
+                this.setState({ isLoading: false, inputDescription: this.item.description });
                 this.loadComments();
             }
         }).catch(e => {
@@ -304,8 +306,33 @@ class ItemDetail extends Component {
             setTimeout(() => alert(message), 1000);
         }
     }
+
+    save = () => {
+        const { inputDescription } = this.state;
+
+        if (inputDescription !== '') {
+            if (this.item.entity.type === 'post') {
+                this.props.dispatch(changePost(this.item.entity.id, this.item.id, inputDescription));
+            }
+            if (this.item.entity.type === 'user-petition') {
+                this.props.dispatch(changePetition(this.item.entity.id, this.item.id, inputDescription));
+            }
+            this.item.description = inputDescription;
+            this.setState({ isEditMode: false });
+        } else {
+            alert('Description is empty.')
+        }
+    }
+
+    dismiss = () => {
+        this.setState({
+            inputDescription: this.item.description,
+            isEditMode: false,
+        });
+    }
     
     edit(item) {
+        this.setState({ isEditMode: true });
         this.menu && this.menu.close();
     }
 
@@ -546,7 +573,7 @@ class ItemDetail extends Component {
                                 </MenuOption>
                                 {
                                     isOwner && !isBoosted &&
-                                    <MenuOption>
+                                    <MenuOption onSelect={() => this.edit(item)}>
                                         <Button iconLeft transparent dark onPress={() => this.edit(item)}>
                                             <Icon name="md-create" style={styles.menuIcon} />
                                             <Text style={styles.menuText}>Edit Post</Text>
@@ -679,7 +706,29 @@ class ItemDetail extends Component {
         }
     }
 
-    _renderDescription(item) {
+    _renderTextarea(item, state) {
+        return (
+            <View>
+                <View style={styles.editIconsContainer}>
+                    <TouchableOpacity onPress={this.save}>
+                        <Icon name="md-checkmark" style={styles.editIcon} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={this.dismiss}>
+                        <Icon name="md-close" /* name="md-trash" */ style={styles.editIcon} />
+                    </TouchableOpacity>
+                </View>
+                <Textarea
+                    maxLength={300}
+                    placeholderTextColor="rgba(0,0,0,0.1)"
+                    style={styles.textarea}
+                    value={state.inputDescription}
+                    onChangeText={inputDescription => this.setState({ inputDescription })}
+                />
+            </View>
+        )
+    }
+
+    _renderDescription(item, state) {
         return (
             <CardItem>
                 <Left>
@@ -688,10 +737,16 @@ class ItemDetail extends Component {
                         <Label style={styles.commentCount}>{item.responses_count}</Label>
                     </View>
                     <Body style={styles.descBodyContainer}>
-                        <TouchableOpacity>
+                        <View>
                             {this._renderTitle(item)}
-                            <Text style={styles.description} numberOfLines={5}>{item.description}</Text>
-                        </TouchableOpacity>
+                            {
+                                state.isEditMode
+                                ?
+                                    this._renderTextarea(item, state)
+                                :
+                                    <Text style={styles.description} numberOfLines={5}>{item.description}</Text>
+                            }
+                        </View>
                     </Body>
                 </Left>
             </CardItem>
@@ -905,10 +960,10 @@ class ItemDetail extends Component {
         }
     }
 
-    _renderPostOrUserPetitionCard(item) {
+    _renderPostOrUserPetitionCard(item, state) {
         return (
             <View>
-                {this._renderDescription(item)}
+                {this._renderDescription(item, state)}
                 {this._renderMetadata(item)}
                 <View style={styles.borderContainer} />
                 {this._renderFooter(item)}
@@ -927,11 +982,11 @@ class ItemDetail extends Component {
         );
     }
 
-    _renderActivity(item) {
+    _renderActivity(item, state) {
         switch (item.entity.type) {
             case 'post':
             case 'user-petition':
-                return this._renderPostOrUserPetitionCard(item);
+                return this._renderPostOrUserPetitionCard(item, state);
                 break;
             default:
                 return this._renderGroupCard(item);
@@ -1002,7 +1057,7 @@ class ItemDetail extends Component {
                             onDisplay={() => this.navTitleView.fadeOut(100)}>
                             {this._renderHeader(item)}
                         </TriggeringView>
-                        {this._renderActivity(item)}
+                        {this._renderActivity(item, this.state)}
                         <View style={styles.borderContainer} />
                         {this._renderAddComment()}
                         <View style={styles.borderContainer} />

@@ -199,7 +199,7 @@ function deletePetition(petitionId: number, activityId: number): ThunkAction {
     return async (dispatch, getState) => {
         try {
             const token = getState().user.token; 
-            const response = await api.delete(token, `/v2/micro-petitions/${petitionId}`);
+            const response = await api.delete(token, `/v2/user-petitions/${petitionId}`);
             console.log("delete Petition API  Success", response);
 
             if (response.status === 204 && response.ok) {
@@ -209,6 +209,16 @@ function deletePetition(petitionId: number, activityId: number): ThunkAction {
             console.log("delete Petition API Error", error);
         }
     };
+}
+
+function updateActivityDescription(dispatch, id, description) {
+    dispatch({
+        type: 'CHANGE_ACTIVITY_DESCRIPTION',
+        data: {
+            id,
+            description,
+        },
+    });
 }
 
 function changePost(postId: number, activityId: number, value: string): ThunkAction {
@@ -222,11 +232,31 @@ function changePost(postId: number, activityId: number, value: string): ThunkAct
             );
             console.log("put Post API  Success", response);
 
-            // if (response.status === 204 && response.ok) {
-            //     dispatch({ type: 'DELETE_ACTIVITY', id: activityId });
-            // }
+            if (response.status === 200 && response.ok) {
+                updateActivityDescription(dispatch, activityId, value);
+            }
         } catch (error) {
             console.log("put Post API Error", error);
+        }
+    };
+}
+
+function changePetition(petitionId: number, activityId: number, value: string): ThunkAction {
+    return async (dispatch, getState) => {
+        try {
+            const token = getState().user.token;
+            const response = await api.put(
+                token,
+                `/v2/user-petitions/${petitionId}`,
+                { body: value }
+            );
+            console.log("put Petition API  Success", response);
+
+            if (response.status === 200 && response.ok) {
+                updateActivityDescription(dispatch, activityId, value);
+            }
+        } catch (error) {
+            console.log("put Petition API Error", error);
         }
     };
 }
@@ -243,4 +273,5 @@ module.exports = {
     deletePost,
     deletePetition,
     changePost,
+    changePetition,
 };

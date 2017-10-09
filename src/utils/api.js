@@ -8,13 +8,18 @@ type Method = 'GET' | 'POST' | 'DELETE' | 'PUT';
 
 const api = {
     _request: (method: Method, token: string, endpoint: string, data: ?object): Promise => {
+        let body = null;
+        if (data) {
+            body = JSON.stringify(data);
+        }
         return new Promise((resolve, reject) => {
             fetch(API_URL + endpoint, {
                 method,
                 headers: {
                     'Content-Type': 'application/json',
                     'token': token
-                }
+                },
+                body
             })
             // .then(res => res.json())
             .then(data => resolve(data))

@@ -218,4 +218,19 @@ export default {
         marginLeft: 5,
         color: PLColors.main,
     },
+    textarea: {
+        color: '#21354a',
+        fontSize: 14,
+        borderWidth: 1,
+        borderColor: '#8694ab'
+    },
+    editIconsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end'
+    },
+    editIcon: {
+        fontSize: 26,
+        marginRight: 10,
+        color: PLColors.main
+    }
 }
