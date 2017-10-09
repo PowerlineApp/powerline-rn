@@ -121,7 +121,7 @@ class NewPost extends Component{
     }
 
     changeContent(text){
-        if(text.length <= 300){
+        if(text.length <= 3000){
             this.setState({
                 content: text
             });
@@ -171,7 +171,7 @@ class NewPost extends Component{
                     </List>
                     <View style={styles.main_content}>
                         {/*Related: GH 151*/}
-                        <Textarea maxLength={300}  onSelectionChange={this.onSelectionChange} placeholderTextColor="rgba(0,0,0,0.1)" style={styles.textarea} placeholder="Words can move the masses. And yours can, too - if you get enough people to support your post. Be nice!" value={this.state.content} onChangeText={(text) => this.changeContent(text)}/> 
+                        <Textarea maxLength={3000}  onSelectionChange={this.onSelectionChange} placeholderTextColor="rgba(0,0,0,0.1)" style={styles.textarea} placeholder="Words can move the masses. And yours can, too - if you get enough people to support your post. Be nice!" value={this.state.content} onChangeText={(text) => this.changeContent(text)}/> 
                         {this.state.showCommunity?
                         <View style={styles.community_list_container}>
                             <View style={styles.community_list_back}></View>  
@@ -207,10 +207,10 @@ class NewPost extends Component{
                     </Label>: 
                     <Label> </Label>
                     }
-                    {/*Related: GH 151*/}
+                    {/*Related: GH 151 */}
                     <Label style={{color: 'white'}}>
                         {
-                          (300 - this.state.content.length)
+                          (3000 - this.state.content.length)
                         }
                     </Label>
                 </Footer>
