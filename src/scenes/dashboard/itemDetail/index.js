@@ -18,6 +18,7 @@ import Menu, {
     renderers
 } from 'react-native-popup-menu';
 import OrientationLoadingOverlay from 'react-native-orientation-loading-overlay';
+import _ from 'lodash';
 import { getComments, votePost, addComment, rateComment, loadActivityByEntityId } from 'PLActions';
 
 const { youTubeAPIKey } = require('PLEnv');
@@ -215,53 +216,90 @@ class ItemDetail extends Component {
         });
     }
 
+    // changes the upvote/downvote color to indicate selection, sets the upvote/downvote number before the response comes. if the requisition fails, undo all
     async vote(item, option) {
-        const { props: { profile, token } } = this;
 
+        // uses lodash.cloneDeep to avoid keeping references
+        let originalItem = _.cloneDeep(this.item);
+        const { props: { profile, token } } = this;
+        // user shouldn't vote his own post
         if (profile.id === item.user.id) {
-            return;
+            // return;
         }
         if (item.post.votes && item.post.votes[0]) {
             return;
         }
-
-        var response;
-
-        this.setState({ isLoading: true });
-
-        switch (item.entity.type) {
-            case 'post':
-                response = await votePost(this.props.token, item.entity.id, option);
-                break;
-            default:
-                return;
-                break;
+        if (this.state.postingVote) {
+            return;
+        }
+        // uses this state to avoid double clicking, the user is allowed to vote again only when the last request is done
+        this.setState({postingVote: true});
+    
+        if (option === 'upvote') {
+            // user is unsetting his vote
+            if (this.item.option === 1){
+                this.item.option = null;
+                this.item.upvotes_count -=1;
+            } else {
+                // user is setting his vote to up, had the down up checked
+                if (this.item.option === 2){
+                    this.item.option = 1;
+                    this.item.upvotes_count +=1;
+                    this.item.downvotes_count -=1;
+                } else {
+                    // didnt have any option checked
+                    this.item.option = 1;
+                    this.item.upvotes_count +=1;
+                }
+            }
+        } else if (option === 'downvote'){
+            // user is unsetting his vote
+            if (this.item.option === 2){
+                this.item.option = null;
+                this.item.downvotes_count -=1;
+            } else {
+                // user is setting his vote to down, had the option up checked
+                if (this.item.option === 1){
+                    this.item.option = 2;
+                    this.item.upvotes_count -=1;
+                    this.item.downvotes_count +=1;
+                } else {
+                    // didnt have any option checked
+                    this.item.option = 2;
+                    this.item.downvotes_count +=1;
+                }
+            }
         }
 
+        // console.log('=x=x=x=x= updated this.item =x=x=x=x=x=', this.item);
+        
+        let response;
+        if (item.entity.type === 'post') {
+            response = await votePost(this.props.token, item.entity.id, option);
+        }
+        
         if (response.user) {
             loadActivityByEntityId(token, item.entity.type, item.entity.id).then(data => {
                 if (data.payload && data.payload[0]) {
                     this.item = data.payload[0];
-                    this.setState({
-                        isLoading: false,
-                    });
                 }
             }).catch(err => {
-                this.setState({
-                    isLoading: false,
-                });
+                // resets this.item
+                this.item = originalItem;
+                let message = 'Something went wrong to vote';
+                setTimeout(() => alert(message), 1000);
             });
         }
         else {
-            this.setState({
-                isLoading: false,
-            });
+            // resets this.item
+            this.item = originalItem;
             let message = 'Something went wrong to vote';
             if (response.errors.errors.length) {
                 message = response.errors.errors[0];
             }
             setTimeout(() => alert(message), 1000);
         }
+        this.setState({postingVote: false});
     }
 
     async doComment(commentText) {
@@ -448,17 +486,16 @@ class ItemDetail extends Component {
                 </CardItem>
             );
         } else {
-            if (item.post.votes && item.post.votes[0]) {
-                let vote = item.post.votes[0];
-                var isVotedUp = false;
-                var isVotedDown = false;
-                if (vote.option === 1) {
-                    isVotedUp = true;
-                }
-                else if (vote.option === 2) {
-                    isVotedDown = true;
-                }
+            // console.log(item.post.votes, item.post.votes[0], item);
+            let isVotedUp = false;
+            let isVotedDown = false;
+            if (item.option === 1) {
+                isVotedUp = true;
             }
+            else if (item.option === 2) {
+                isVotedDown = true;
+            }
+            console.log('_renderPostFooter =x=x=x=x=x=x isVotedUp', isVotedUp, 'isVotedDown', isVotedDown)
             return (
                 <CardItem footer style={{ height: 35 }}>
                     <Left style={{ justifyContent: 'space-between' }}>
@@ -487,7 +524,7 @@ class ItemDetail extends Component {
         switch (item.entity.type) {
             case 'post' || 'user-petition':
                 thumbnail = item.owner.avatar_file_path ? item.owner.avatar_file_path : '';
-                title = item.owner.first_name + ' ' + item.owner.last_name;
+                title = item.owner ? item.owner.first_name : '' + ' ' + item.owner ? item.owner.last_name : '';
                 break;
             default:
                 thumbnail = item.group.avatar_file_path ? item.group.avatar_file_path : '';
@@ -777,7 +814,7 @@ class ItemDetail extends Component {
 
     _renderRootComment(comment) {
         var thumbnail: string = comment.author_picture ? comment.author_picture : '';
-        var title: string = (comment.user.first_name || '') + ' ' + (comment.user.last_name || '');
+        var title: string = (comment.user ? comment.user.first_name : '' || '') + ' ' + (comment.user ? comment.user.last_name : '' || '');
         var rateUp: number = (comment.rate_count || 0) / 2 + comment.rate_sum / 2;
         var rateDown: number = (comment.rate_count || 0) / 2 - comment.rate_sum / 2;
 
