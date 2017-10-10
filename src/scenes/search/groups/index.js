@@ -51,7 +51,7 @@ class SearchGroups extends Component{
                                     <ListItem style={styles.listItem} key={index} onPress={() => this.goToProfile(group)}>
                                         {
                                             group.avatar_file_path?
-                                            <Thumbnail square source={{uri: group.avatar_file_path}}/>:
+                                            <Thumbnail square source={{uri: group.avatar_file_path+'&w=50&h=50&auto=compress,format,q=95'}}/>:
                                             <View style={{width: 56, height: 56}}/>
                                         }
                                         <Body>

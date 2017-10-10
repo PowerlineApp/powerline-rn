@@ -119,7 +119,7 @@ class Followings extends Component{
                             return (
                                 <ListItem avatar key={index} onPress={() => this.goToProfile(follow.id)}>
                                     <Left>
-                                        <Thumbnail source={{uri: follow.avatar_file_name}} />
+                                        <Thumbnail source={{uri: follow.avatar_file_name+'&w=200&h=200&auto=compress,format,q=95'}} />
                                     </Left>
                                     <Body>
                                         <Text>{follow.username}</Text>
