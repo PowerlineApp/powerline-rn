@@ -151,7 +151,7 @@ class NewPetition extends Component{
                         <ListItem style={styles.community_container} onPress={() => this.toggleCommunity()}>
                             <View style={styles.avatar_container}>
                                 <View style={styles.avatar_wrapper}>
-                                    <Thumbnail square style={styles.avatar_img} source={{uri: this.state.profile.avatar_file_name}}/>
+                                    <Thumbnail square style={styles.avatar_img} source={{uri: this.state.profile.avatar_file_name+'&w=50&h=50&auto=compress,format,q=95'}}/>
                                 </View>
                                 <View style={styles.avatar_subfix}></View>
                             </View>  
@@ -187,7 +187,7 @@ class NewPetition extends Component{
                                             return (
                                                 <ListItem key={index} onPress={() => this.selectGroupList(index)}>
                                                     {item.avatar_file_path?
-                                                    <Thumbnail square style={{width: 15, height: 15}} source={{uri: item.avatar_file_path}}/>:
+                                                    <Thumbnail square style={{width: 15, height: 15}} source={{uri: item.avatar_file_path+'&w=50&h=50&auto=compress,format,q=95'}}/>:
                                                     <View style={{width: 15, height: 15}}/>}
                                                     <Body>
                                                         <Text style={{color: 'white', fontSize: 12}}>{item.official_name}</Text>

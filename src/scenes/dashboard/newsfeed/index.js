@@ -258,7 +258,7 @@ class Newsfeed extends Component {
         if (entry.type === "image") {
             return (
                 <ImageLoad
-                    source={{ uri: entry.imageSrc }}
+                    source={{ uri: entry.imageSrc+'&w=200&h=200&auto=compress,format,q=95' }}
                     style={styles.image}
                 />
             );
@@ -406,7 +406,7 @@ class Newsfeed extends Component {
         return (
             <CardItem style={{ paddingBottom: 0, paddingLeft: 15, paddingRight: 15 }}>
                 <Left>
-                    <Thumbnail small source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                    <Thumbnail small source={thumbnail ? { uri: thumbnail+'&w=200&h=200&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                     <Body>
                         <Text style={styles.title}>{title}</Text>
                         <Text note style={styles.subtitle}>{item.group.official_name} • <TimeAgo time={item.sent_at} hideAgo={true} /></Text>
@@ -591,7 +591,7 @@ class Newsfeed extends Component {
                                 <View style={styles.imageContainer}>
                                     <ImageLoad
                                         placeholderSource={require('img/empty_image.png')}
-                                        source={{ uri: item.metadata.image }}
+                                        source={{ uri: item.metadata.image+'&w=200&h=200&auto=compress,format,q=95' }}
                                         style={styles.image}
                                     />
                                 </View>
@@ -663,7 +663,7 @@ class Newsfeed extends Component {
                 <Container>
                 <View style={styles.groupHeaderContainer}>
                     {this.state.showAvatar && this.props.groupAvatar != '' && this.props.groupAvatar != null?
-                    <Thumbnail square source={{uri: this.props.groupAvatar}} style={styles.groupAvatar}/>: null}
+                    <Thumbnail square source={{uri: this.props.groupAvatar+'&w=200&h=200&auto=compress,format,q=95'}} style={styles.groupAvatar}/>: null}
                     <Text style={styles.groupName}>{this.props.groupName}</Text>
                 </View>
                 <Content
@@ -686,7 +686,7 @@ class Newsfeed extends Component {
                             return (
                                 <ListItem avatar key={index} style={{backgroundColor: 'white', marginLeft: 0, paddingLeft: 15}}>
                                     <Left>
-                                        <Thumbnail small source={{uri: activity.user.avatar_file_name}}/>
+                                        <Thumbnail small source={{uri: activity.user.avatar_file_name+'&w=200&h=200&auto=compress,format,q=95'}}/>
                                     </Left>
                                     <Body style={{borderBottomWidth: 0}}>
                                         <Text style={styles.title}>{activity.user.full_name}</Text>
@@ -707,7 +707,7 @@ class Newsfeed extends Component {
                 </Content>
                 <Footer style={styles.CFooter}>
                     <Item style={styles.CFooterItem}>
-                        <Thumbnail small source={{uri: this.props.profile.avatar_file_name}}/>
+                        <Thumbnail small source={{uri: this.props.profile.avatar_file_name+'&w=200&h=200&auto=compress,format,q=95'}}/>
                         <Input style={styles.CFooterItemInput} value={this.state.text} onChangeText={(text) => this.onChangeText(text)}/>
                         <Button transparent style={styles.sendBtn} onPress={() => this.onCreatePost()}>
                             <Text>SEND</Text>
@@ -723,7 +723,7 @@ class Newsfeed extends Component {
                 {this.props.group != 'all'?
                 <View style={styles.groupHeaderContainer}>
                     {this.state.showAvatar && this.props.groupAvatar != '' && this.props.groupAvatar != null?
-                    <Thumbnail square source={{uri: this.props.groupAvatar}} style={styles.groupAvatar}/>: null}
+                    <Thumbnail square source={{uri: this.props.groupAvatar+'&w=200&h=200&auto=compress,format,q=95'}} style={styles.groupAvatar}/>: null}
                     <Text style={styles.groupName}>{this.props.groupName}</Text>
                 </View>:null}
                 <Content

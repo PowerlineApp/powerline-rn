@@ -349,7 +349,7 @@ class ItemDetail extends Component {
             return (
                 <ImageLoad
                     placeholderSource={require('img/empty_image.png')}
-                    source={{ uri: entry.imageSrc }}
+                    source={{ uri: entry.imageSrc+'&w=50&h=50&auto=compress,format,q=95' }}
                     style={styles.image}
                 />
             );
@@ -497,7 +497,7 @@ class ItemDetail extends Component {
         return (
             <CardItem style={{ paddingBottom: 0 }}>
                 <Left>
-                    <Thumbnail small source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                    <Thumbnail small source={thumbnail ? { uri: thumbnail+'&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                     <Body>
                         <Text style={styles.title}>{title}</Text>
                         <Text note style={styles.subtitle}>{item.group.official_name} • <TimeAgo time={item.sent_at} hideAgo={true} /></Text>
@@ -676,7 +676,7 @@ class ItemDetail extends Component {
                                 <View style={styles.imageContainer}>
                                     <ImageLoad
                                         placeholderSource={require('img/empty_image.png')}
-                                        source={{ uri: item.metadata.image }}
+                                        source={{ uri: item.metadata.image+'&w=50&h=50&auto=compress,format,q=95' }}
                                         style={styles.image}
                                     />
                                 </View>
@@ -703,7 +703,7 @@ class ItemDetail extends Component {
             <TouchableOpacity onPress={() => this._onAddComment()}>
                 <CardItem>
                     <Left>
-                        <Thumbnail small source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                        <Thumbnail small source={thumbnail ? { uri: thumbnail+'&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                         <Body>
                             <Text style={styles.addCommentTitle}>Add Comment...</Text>
                             <Menu renderer={SlideInMenu} ref={this.onRef} onOpen={() => { this.openedAddCommentView() }}>
@@ -716,7 +716,7 @@ class ItemDetail extends Component {
                                 }}>
                                     <CardItem>
                                         <Left>
-                                            <Thumbnail small source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                                            <Thumbnail small source={thumbnail ? { uri: thumbnail+'&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                                             <Body>
                                                 <TextInput style={styles.commentInput} ref={this.onCommentInputRef} placeholder="Comment..." onChangeText={commentText => this.setState({ commentText })} />
                                             </Body>
@@ -784,7 +784,7 @@ class ItemDetail extends Component {
         return (
             <CardItem style={{ paddingBottom: 0 }}>
                 <Left>
-                    <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                    <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail+'&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                     <Body style={{ alignSelf: 'flex-start' }}>
                         <TouchableOpacity onPress={() => this._onCommentBody(comment)}>
                             <Text style={styles.title}>{title}</Text>
@@ -824,7 +824,7 @@ class ItemDetail extends Component {
         return (
             <CardItem style={{ paddingBottom: 0, marginLeft: 40, marginTop: 5 }}>
                 <Left>
-                    <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                    <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail+'&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                     <Body style={{ alignSelf: 'flex-start' }}>
                         <TouchableOpacity onPress={() => this._onCommentBody(comment)}>
                             <Text style={styles.title}>{title}</Text>
@@ -946,7 +946,7 @@ class ItemDetail extends Component {
                                     <Icon active name="md-arrow-back" style={{ color: 'white' }} />
                                 </Button>
                                 <Body style={{ marginTop: -12 }}>
-                                    <Thumbnail size={50} source={item.group.avatar_file_path ? { uri: item.group.avatar_file_path } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                                    <Thumbnail size={50} source={item.group.avatar_file_path ? { uri: item.group.avatar_file_path+'&w=200&h=200&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                                     <Text style={styles.imageTitle}>{item.group.official_name}</Text>
                                 </Body>
                             </Left>
