@@ -39,12 +39,12 @@ public class MainApplication extends Application implements ReactApplication {
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
-              new MainReactPackage(),
-            new SharePackage(),
-            new ReactNativeYouTube(),
-              new FBSDKPackage(mCallbackManager),
-              new SplashScreenReactPackage(),
-              new LinearGradientPackage()
+        new MainReactPackage(),
+        new SharePackage(),
+        new ReactNativeYouTube(),
+        new FBSDKPackage(mCallbackManager),
+        new SplashScreenReactPackage(),
+        new LinearGradientPackage()
       );
     }
   };

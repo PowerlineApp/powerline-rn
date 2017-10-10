@@ -40,6 +40,14 @@ Development of Powerline React Native App
   $ react-native run-ios
   ```
   
+5. **Build an APK:**
+
+  ```
+  $ npm start
+  $ npm run bundle:android
+  $ npm run build:android
+  ```
+  
 ## Troubleshooting
 
 > Could not connect to development server

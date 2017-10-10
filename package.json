@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
-    "test": "jest"
+    "test": "jest",
+    "bundle:android": "curl 'http://localhost:8081/index.android.bundle?platform=android&dev=false&minify=true' -o 'android/app/src/main/assets/index.android.bundle'",
+    "build:android": "(cd android/ && ./gradlew assembleRelease)"
   },
   "dependencies": {
     "native-base": "2.1.5",
@@ -13,7 +15,7 @@
     "react-native-activity-indicator-ios": "1.0.4",
     "react-native-animatable": "1.2.2",
     "react-native-easy-grid": "0.1.15",
-    "react-native-fbsdk": "^0.6.0",
+    "react-native-fbsdk": "0.6.0",
     "react-native-google-places-autocomplete": "1.2.12",
     "react-native-image-header-scroll-view": "0.6.1",
     "react-native-image-placeholder": "1.0.7",
