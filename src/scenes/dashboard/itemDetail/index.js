@@ -107,6 +107,7 @@ class ItemDetail extends Component {
     }
 
     _onRate(comment, option) {
+        // console.log('_onRate =x=x=x=x=x', comment, option);
         const { props: { profile } } = this;
         this.rate(comment, option);
     }
@@ -156,6 +157,7 @@ class ItemDetail extends Component {
                 this.nextCursor = null;
                 this.isLoadedAll = true;
             }
+            console.log('response', response);
             this.setState({
                 dataArray: response.comments,
             });
@@ -224,7 +226,7 @@ class ItemDetail extends Component {
         const { props: { profile, token } } = this;
         // user shouldn't vote his own post
         if (profile.id === item.user.id) {
-            // return;
+            return;
         }
         if (item.post.votes && item.post.votes[0]) {
             return;
@@ -327,14 +329,23 @@ class ItemDetail extends Component {
     }
 
     async rate(comment, option) {
-        this.setState({ isLoading: true });
+        let originalComment = _.cloneDeep(comment);
+
+
+
+        // console.log('=x=x=x=x=x=x', comment, option);
+
+        // to control if a rating is being requested.
+        if (this.state.isRating){
+            return;
+        }
+
+        this.setState({ isRating: true });
 
         const { props: { entityType, token } } = this;
-        var response;
-        response = await rateComment(token, entityType, comment.id, option);
-        // console.error(response);
-        this.setState({ isLoading: false });
+        let response = await rateComment(token, entityType, comment.id, option);
 
+        this.setState({ isRating: false });
         if (response && response.comment_body) {
             this.loadComments();
         } else {
@@ -495,15 +506,15 @@ class ItemDetail extends Component {
             else if (item.option === 2) {
                 isVotedDown = true;
             }
-            console.log('_renderPostFooter =x=x=x=x=x=x isVotedUp', isVotedUp, 'isVotedDown', isVotedDown)
+            // console.log('_renderPostFooter =x=x=x=x=x=x isVotedUp', isVotedUp, 'isVotedDown', isVotedDown)
             return (
                 <CardItem footer style={{ height: 35 }}>
                     <Left style={{ justifyContent: 'space-between' }}>
-                        <Button iconLeft transparent style={styles.footerButton} onPress={() => this.vote(item, 'upvote')}>
+                        <Button iconLeft transparent style={styles.footerButton} onPress={() => this._onVote(item, 'upvote')}>
                             <Icon name="md-arrow-dropup" style={isVotedUp ? styles.footerIconBlue : styles.footerIcon} />
                             <Label style={isVotedUp ? styles.footerTextBlue : styles.footerText}>Upvote {item.upvotes_count ? item.upvotes_count : 0}</Label>
                         </Button>
-                        <Button iconLeft transparent style={styles.footerButton} onPress={() => this.vote(item, 'downvote')}>
+                        <Button iconLeft transparent style={styles.footerButton} onPress={() => this._onVote(item, 'downvote')}>
                             <Icon active name="md-arrow-dropdown" style={isVotedDown ? styles.footerIconBlue : styles.footerIcon} />
                             <Label style={isVotedDown ? styles.footerTextBlue : styles.footerText}>Downvote {item.downvotes_count ? item.downvotes_count : 0}</Label>
                         </Button>
@@ -787,6 +798,7 @@ class ItemDetail extends Component {
     }
 
     _renderComment(comment) {
+        console.log('_renderComment', comment)
         if (comment.children) {
             if (comment.children.length === 0) {
                 return this._renderRootComment(comment);
@@ -813,11 +825,13 @@ class ItemDetail extends Component {
     }
 
     _renderRootComment(comment) {
-        var thumbnail: string = comment.author_picture ? comment.author_picture : '';
-        var title: string = (comment.user ? comment.user.first_name : '' || '') + ' ' + (comment.user ? comment.user.last_name : '' || '');
-        var rateUp: number = (comment.rate_count || 0) / 2 + comment.rate_sum / 2;
-        var rateDown: number = (comment.rate_count || 0) / 2 - comment.rate_sum / 2;
+        let thumbnail: string = comment.author_picture ? comment.author_picture : '';
+        let title: string = (comment.user ? comment.user.first_name : '' || '') + ' ' + (comment.user ? comment.user.last_name : '' || '');
+        let rateUp: number = (comment.rate_count || 0) / 2 + comment.rate_sum / 2;
+        let rateDown: number = (comment.rate_count || 0) / 2 - comment.rate_sum / 2;
+        let rateValue = comment.rate_value;
 
+        console.log('_renderRootComment', comment);
         return (
             <CardItem style={{ paddingBottom: 0 }}>
                 <Left>
@@ -831,11 +845,11 @@ class ItemDetail extends Component {
                         <View style={styles.commentFooterContainer}>
                             <Button iconLeft small transparent onPress={() => this._onRate(comment, 'up')}>
                                 <Icon name="md-arrow-dropup" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>{rateUp ? rateUp : 0}</Label>
+                                <Label style={rateValue === 'up' ? styles.footerTextBlue : styles.footerText}>{rateUp ? rateUp : 0}</Label>
                             </Button>
                             <Button iconLeft small transparent onPress={() => this._onRate(comment, 'down')}>
                                 <Icon active name="md-arrow-dropdown" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>{rateDown ? rateDown : 0}</Label>
+                                <Label style={rateValue === 'down' ? styles.footerTextBlue : styles.footerText}>{rateDown ? rateDown : 0}</Label>
                             </Button>
                             <Button iconLeft small transparent onPress={() => this._onAddComment(comment)}>
                                 <Icon active name="ios-undo" style={styles.footerIcon} />
@@ -857,7 +871,7 @@ class ItemDetail extends Component {
         var title: string = comment.user.first_name + ' ' + comment.user.last_name;
         var rateUp: number = (comment.rate_count || 0) / 2 + comment.rate_sum / 2;
         var rateDown: number = (comment.rate_count || 0) / 2 - comment.rate_sum / 2;
-
+        console.log('_renderChildComment', comment);
         return (
             <CardItem style={{ paddingBottom: 0, marginLeft: 40, marginTop: 5 }}>
                 <Left>

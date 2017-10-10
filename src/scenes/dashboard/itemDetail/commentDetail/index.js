@@ -147,6 +147,7 @@ class CommentDetail extends Component {
     }
 
     async rate(comment, option) {
+        // console.log('=x=x=x=x=x=', rate, option);
         this.setState({ isLoading: true });
 
         const { props: { entityType, token } } = this;
@@ -384,6 +385,7 @@ class CommentDetail extends Component {
     }
 
     _onRate(comment, option) {
+        // console.log('=x=x=x=x=x=x=', comment, option);
         const { props: { profile } } = this;
         this.rate(comment, option);
     }
