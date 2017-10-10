@@ -188,9 +188,12 @@ function deletePost(postId: number, activityId: number): ThunkAction {
 
             if (response.status === 204 && response.ok) {
                 dispatch({ type: 'DELETE_ACTIVITY', id: activityId });
+            } else {
+                handleError(response);
             }
         } catch (error) {
             console.log("delete Post API Error", error);
+            handleError(error);
         }
     };
 }
@@ -204,9 +207,12 @@ function deletePetition(petitionId: number, activityId: number): ThunkAction {
 
             if (response.status === 204 && response.ok) {
                 dispatch({ type: 'DELETE_ACTIVITY', id: activityId });
+            } else {
+                handleError(response);
             }
         } catch (error) {
             console.log("delete Petition API Error", error);
+            handleError(error);
         }
     };
 }
@@ -234,9 +240,12 @@ function changePost(postId: number, activityId: number, value: string): ThunkAct
 
             if (response.status === 200 && response.ok) {
                 updateActivityDescription(dispatch, activityId, value);
+            } else {
+                handleError(response);
             }
         } catch (error) {
             console.log("put Post API Error", error);
+            handleError(error);
         }
     };
 }
@@ -254,9 +263,12 @@ function changePetition(petitionId: number, activityId: number, value: string): 
 
             if (response.status === 200 && response.ok) {
                 updateActivityDescription(dispatch, activityId, value);
+            } else {
+                handleError(response);
             }
         } catch (error) {
             console.log("put Petition API Error", error);
+            handleError(error);
         }
     };
 }

@@ -17,7 +17,8 @@ const api = {
                 method,
                 headers: {
                     'Content-Type': 'application/json',
-                    'token': token
+                    // 'token': token
+                    'Authorization': `Bearer ${token}`,
                 },
                 body
             })
