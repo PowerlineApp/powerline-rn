@@ -17,12 +17,10 @@ const api = {
                 method,
                 headers: {
                     'Content-Type': 'application/json',
-                    // 'token': token
                     'Authorization': `Bearer ${token}`,
                 },
                 body
             })
-            // .then(res => res.json())
             .then(data => resolve(data))
             .catch(err => reject(err));
         });
