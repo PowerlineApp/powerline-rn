@@ -921,6 +921,16 @@ class ItemDetail extends Component {
         }
     }
 
+    onBackPress = () => {
+        const { backTo } = this.props;
+
+        if (backTo) {
+            Actions.popTo(backTo);
+        } else {
+            Action.pop();
+        }
+    }
+
     render() {
         if (this.item === null) {
             return (
@@ -949,7 +959,7 @@ class ItemDetail extends Component {
                                 ref={(navTitleView) => { this.navTitleView = navTitleView; }}>
                                 <Header style={{ backgroundColor: 'transparent' }}>
                                     <Left>
-                                        <Button transparent onPress={() => Actions.pop()}>
+                                        <Button transparent onPress={this.onBackPress}>
                                             <Icon active name="arrow-back" style={{ color: 'white' }} />
                                         </Button>
                                     </Left>
@@ -962,7 +972,7 @@ class ItemDetail extends Component {
                         )}
                         renderForeground={() => (
                             <Left style={styles.titleContainer}>
-                                <Button transparent onPress={() => Actions.pop()}>
+                                <Button transparent onPress={this.onBackPress}>
                                     <Icon active name="md-arrow-back" style={{ color: 'white' }} />
                                 </Button>
                                 <Body style={{ marginTop: -12 }}>

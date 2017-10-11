@@ -113,7 +113,7 @@ class NewPost extends Component{
 
         createPostToGroup(token, groupId, this.state.content)
         .then(data => {
-            Actions.itemDetail({ entityId: data.id, entityType: 'post' });
+            Actions.itemDetail({ entityId: data.id, entityType: 'post', backTo: 'home' });
         })
         .catch(err => {
 
