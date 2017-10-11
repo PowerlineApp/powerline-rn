@@ -1,3 +1,6 @@
+//This is the Group Profile Screen. Accessible by viewing tapping any group avatar or title anywhere it appears in the app, including My Groups, Standard Item Container, and Group Search
+//GH 46
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
@@ -32,7 +35,8 @@ class GroupProfile extends Component{
     static propTypes = {
         token: React.PropTypes.string
     };
-
+// The user will be asked to share the information with group owner upon joining the group
+//GH59
     permissionsLabels = {
       "permissions_name":"Name",
       "permissions_address":"Street Address",
@@ -83,6 +87,7 @@ class GroupProfile extends Component{
 
         });
 
+        //GH59
         getGroupPermissions(token, id).then(data => {
             if(data.required_permissions){
                 data.required_permissions.map((value, index) => {
@@ -108,6 +113,8 @@ class GroupProfile extends Component{
         Actions.groupmembers(this.state.data);
     }
 
+    //This provides a user to invite all of their followers to a particular group. 
+    //This will eventually be changed to allow a user to choose 1 or more users to invite to a group instead of all
     invite(){
         Alert.alert(
             'Confirm',
@@ -133,7 +140,7 @@ class GroupProfile extends Component{
                                 alert("Invites sent!");
                             })
                             .catch(err => {
-                                alert("Invites not sent because of some errors.");
+                                alert("Cannot send invites at this time. Try again later.");
                             });
                         })
                         .catch(err => {

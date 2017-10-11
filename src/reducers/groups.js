@@ -13,8 +13,12 @@ export type Group = {
     acronym: ?string;
     picture: ?string;
     created_at: ?string;
+    
+    //If this is passcode, user must provide passcode to join group; If manual approval, group owner will manually approve user to join group
     membership_control: ?string;
+    //If this is true, then the user is required to answer questions when joining the group
     fill_fields_required: ?boolean;
+    //This is the number of posts/petitions per month the user is allwoed to create in the group
     petition_per_month: ?number;
 };
 
@@ -34,6 +38,8 @@ const initialState = {
 
 const payloadStack: Array<Object> = [];
 
+//Ideally this should be loaded in the background so that user experiences no delay when tapping on the More button in the Group Selector
+//GH135
 function groups(state: State = initialState, action: Action): State {
     if (action.type === 'LOADED_GROUPS') {
         payloadStack = payloadStack.concat(action.data.payload);

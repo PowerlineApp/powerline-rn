@@ -18,6 +18,8 @@ const initialState = {
 
 const itemsStack: Array<Object> = [];
 
+//I believe this is Favorites, but it is not clear
+//GH56
 function bookmarks(state: State = initialState, action: Action): State {
     if (action.type === 'LOADED_BOOKMARKS') {
         itemsStack = itemsStack.concat(action.data.items);

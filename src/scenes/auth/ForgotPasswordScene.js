@@ -1,3 +1,4 @@
+//GH5 - User has ability to reset password. Sent via e-mail.
 var React = require('react');
 var { Component, PropTypes } = require('react');
 var { StyleSheet, View, TextInput } = require('react-native');
@@ -77,7 +78,7 @@ class ForgotPasswordScene extends Component {
             let code = response.code;
             switch (code) {
                 case 404:
-                    alert('Email is not found');
+                    alert('Email is not found. Did you register with a different e-mail address or with Facebook? ');
                     break;
                 case 200:
                     alert('A link to reset your password has been sent to your e-mail address.');

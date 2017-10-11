@@ -1,3 +1,4 @@
+// This is the Home Screen (GH7). It consists of the burger menu, search bar, Group Selector (GH9), and 4 tabs: Newsfeed (GH13), Friends Feed (GH51), Messages (NA), and Notifications Feed (GH37). The option to create new content (GH8) is also on this screen.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -20,8 +21,11 @@ import styles from './styles';
 import { loadUserProfile, loadActivities, registerDevice, acceptFollowers,unFollowers, search, getActivities, getFollowers } from 'PLActions';
 
 // Tab Scenes
+//GH13 - Newsfeed / Standard Item Container / Same for Group Feed
 import Newsfeed from './newsfeed/'
+//GH51 - Friends Feed ("posts by friends")
 import Friendsfeed from './friendsfeed/';
+//GH37 - Notifications Feed
 import Notifications from './notifications';
 
 const { SlideInMenu } = renderers;
@@ -67,6 +71,7 @@ class Home extends Component {
 
     OneSignal.configure();
 
+    //When user logs in, the device subscription is set to True to allow for notifications. If false, device cannot receive notifications
     OneSignal.setSubscription(true);
     
     OneSignal.addEventListener('ids', this.onIds);
@@ -99,6 +104,7 @@ class Home extends Component {
       type: Platform.OS
     };
 
+    //Device needs to be registered with Powerline backend after token received from OneSignal
     registerDevice(token, params)
     .then(data => {
     })
@@ -106,9 +112,11 @@ class Home extends Component {
     });
   }
 
+  //Notification Action Buttons
   onOpened(data){
     var { token,dispatch } = this.props;
     console.log("push notification opened", data);    
+    //Notification Action button - Social Follow Request, Approve
     if(data.action.actionID == 'approve-follow-request-button'){
       console.log("accept button", data.notification.payload.additionalData.entity.target.id);
       console.log("token", token);
@@ -126,6 +134,7 @@ class Home extends Component {
       .catch(err => {
           console.log(err);
       });
+    //Notification Action button - Social Follow Request, Ignore
     }else if(data.action.actionID == 'ignore-follow-request-button'){
       console.log("ignore button", data.notification.payload.additionalData.entity.target.id);
       unFollowers(token, data.notification.payload.additionalData.entity.target.id)
@@ -142,6 +151,7 @@ class Home extends Component {
       .catch(err => {
 
       });
+    //Notification Action Button - Social Follow Request, Open (notification)
     }else if(data.notification.payload.additionalData.type == 'follow-request'){
       console.log("notification click");
       Actions.home({notification: true});
@@ -178,7 +188,7 @@ class Home extends Component {
     });
   }
 
-  // Friends Tab
+  // Friends Feed Tab
   toggleTab2() {
     this.setState({
       tab1: false,
@@ -198,7 +208,7 @@ class Home extends Component {
     });
   }
 
-  // Notifications Tab
+  // Notifications Feed Tab
   toggleTab4() {
     this.setState({
       tab1: false,
@@ -208,6 +218,7 @@ class Home extends Component {
     });
   }
 
+  //JC: I believe this loads to the group feed when a group is selected from Group Selector More menu
   selectGroup(group) {
     var { token, dispatch } =  this.props;
     if(group == 'all'){
@@ -217,12 +228,14 @@ class Home extends Component {
     this.setState({ group: group });
   }
 
+  //This is the menu to create new content (GH8)
   selectNewItem(value) {
     this.bottomMenu.close();
     if(value == 'post'){
       Actions.newpost();
     }else if(value == 'petition'){
       Actions.newpetition();
+    //The ability to create new "leader" content has not yet been added, but it will go here (GH118)
     }
   }
 
@@ -230,6 +243,7 @@ class Home extends Component {
     this.bottomMenu = r;
   }
 
+  //Tapping the "More" button should open the Group Selector which lists all groups the user is joined to
   goToGroupSelector() {
     this.setState({
       group: 'more'
@@ -251,6 +265,11 @@ class Home extends Component {
     }
   }
 
+  //Badge for activities should appear on the Newsfeed icon tab in the lower-left
+  //The count represents the number of Priority zone items. Priority zone items include:
+  //Leader content (new polls, fundraisers, events, discussions, petitions) and 'boosted' user posts and user petitions
+  //All priority zone items arrive to all group members with a push notification alert
+  
   showBadgeForActivities(){
       var count = 0;
       for(var i = 0; i < this.props.activities.length; i++){
@@ -262,6 +281,7 @@ class Home extends Component {
       return count;
   }
 
+  //This is the search bar for GH43. When user enters text, it should automatically display search results (defaulting to group results) for that query
   onChangeText(text){
     this.setState({
       search: text
@@ -284,6 +304,7 @@ class Home extends Component {
               </Button>
             </Left>
             {this.state.tab2!=true && this.state.tab4!=true?
+            //We need to make this placeholder text a little brighter/whiter
             <Item style={styles.searchBar}>
               <Input style={styles.searchInput} placeholder="Search groups, people, topics" onEndEditing={() => this.onSearch() } value={this.state.search} onChangeText={(text) => this.onChangeText(text)}/>
               <Icon active name="search" />
@@ -291,6 +312,8 @@ class Home extends Component {
             null}
           </Header>
           {this.state.tab2 != true && this.state.tab4 != true ?
+          //This is the Group Selector and provides All, Town, State, Country, and More options. Each button loads appropriate selected feed into Newsfeed tab.
+          //GH153
           <View style={styles.groupSelector}>
             <Grid>
               <Row>
@@ -330,7 +353,6 @@ class Home extends Component {
               </Row>
             </Grid>
           </View>:null}
-
           {this.renderSelectedTab()}
 
           <Footer style={styles.footer}>
@@ -350,6 +372,7 @@ class Home extends Component {
                 <Icon active={this.state.tab2} name="md-people" />
                 <Text>Friends</Text>
               </Button>
+            {/* This is the New Item Menu GH8. Only New Post and New Petition are expected to work at this time */}
               <Button>
                 <Menu name="create_item" renderer={SlideInMenu} onSelect={value => this.selectNewItem(value)} ref={this.onRef}>
                   <MenuTrigger>
@@ -407,10 +430,12 @@ class Home extends Component {
                   </MenuOptions>
                 </Menu>
               </Button>
+              {/* This is the Messages/Announcements tab. It is not working yet */}
               <Button active={this.state.tab3} onPress={() => this.toggleTab3()} >
                 <Icon active={this.state.tab3} name="md-mail" />
                 <Text>Messages</Text>
               </Button>
+              {/* This is the Notifications Feed tab. It should be working. */}
               <Button active={this.state.tab4} onPress={() => this.toggleTab4()} >
                 <Icon active={this.state.tab4} name="md-notifications" />
                 <Text>Notifications</Text>

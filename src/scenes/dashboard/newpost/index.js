@@ -1,3 +1,8 @@
+//User has ability to create a new post from New Item Menu. GH14
+//If user is on "All" feed and tries to create new item, user must choose which group the item will be posted to.
+//If user is already looking at a specific group (e.g. USA group) in newsfeed tab (e.g. not "all"), app will assume new post is for that group.
+//https://api-dev.powerli.ne/api-doc#post--api-v2.2-groups-{group}-posts
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
@@ -72,6 +77,7 @@ class NewPost extends Component{
         });
     }
 
+    //If user is looking at "all" newsfeed, then user will be prompted to select group to post to.
     selectGroupList(index){
         this.setState({
             selectedGroupIndex: index,
@@ -96,10 +102,10 @@ class NewPost extends Component{
 
         var groupId = null;
         if(this.state.selectedGroupIndex == -1){
-            alert('Please select Group.');
+            alert('Where do you want to post this? Please select Group.');
             return;
         }else if(this.state.content == "" || this.state.content.trim() == ''){
-            alert("Please type post content");
+            alert("Whoops! Looks like you forgot to write the post!");
             return;
         }
 
@@ -115,7 +121,7 @@ class NewPost extends Component{
     }
 
     changeContent(text){
-        if(text.length <= 300){
+        if(text.length <= 3000){
             this.setState({
                 content: text
             });
@@ -164,7 +170,8 @@ class NewPost extends Component{
                         </ListItem>
                     </List>
                     <View style={styles.main_content}>
-                        <Textarea maxLength={300}  onSelectionChange={this.onSelectionChange} placeholderTextColor="rgba(0,0,0,0.1)" style={styles.textarea} placeholder="Words can move the masses. And yours can, too - if you get enough people to support your post. Be nice!" value={this.state.content} onChangeText={(text) => this.changeContent(text)}/> 
+                        {/*Related: GH 151*/}
+                        <Textarea maxLength={3000}  onSelectionChange={this.onSelectionChange} placeholderTextColor="rgba(0,0,0,0.1)" style={styles.textarea} placeholder="Words can move the masses. And yours can, too - if you get enough people to support your post. Be nice!" value={this.state.content} onChangeText={(text) => this.changeContent(text)}/> 
                         {this.state.showCommunity?
                         <View style={styles.community_list_container}>
                             <View style={styles.community_list_back}></View>  
@@ -200,9 +207,10 @@ class NewPost extends Component{
                     </Label>: 
                     <Label> </Label>
                     }
+                    {/*Related: GH 151 */}
                     <Label style={{color: 'white'}}>
                         {
-                          (300 - this.state.content.length)
+                          (3000 - this.state.content.length)
                         }
                     </Label>
                 </Footer>
