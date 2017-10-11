@@ -19,10 +19,12 @@ Development of Powerline React Native App
   ```
 
 2. **Install dependencies** (npm v3+):
-
+  - Install [Xopen](https://github.com/paulomendes/xopen)
   ```
   $ npm install
-  $ (cd ios; pod install)        # only for iOS version
+  $ react-native link
+  $ cd ios && pod install
+  $ xopen
   ```
   
 3. **Running on Android**:
