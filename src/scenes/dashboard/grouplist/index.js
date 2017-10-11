@@ -1,3 +1,7 @@
+//This is the My Groups screen accessible via the burger menu
+//Shows the user's current groups he is joined to except public town/state/country groups (which only appear on Group Selector, not in My Groups list below)
+//https://api-dev.powerli.ne/api-doc#get--api-v2-user-groups
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
@@ -48,6 +52,7 @@ class GroupList extends Component{
         this._onRefresh();
     }
 
+    //Simple listing of user's CURRENT groups. Only shows groups the user is joined to
     loadGroups(){
         this.state.groupList = [];
         var { token }  = this.props;
@@ -98,10 +103,12 @@ class GroupList extends Component{
         return -1;
     }
 
+    //Shortcut to go to Search for a group that user is presumably not already linked to
     goToSearch(){
         Actions.groupsearch();
     }
 
+    //Gives user ability view the Group Profile for the selected group
     goToProfile(group){
         Actions.groupprofile(group);
     }
@@ -127,6 +134,7 @@ class GroupList extends Component{
                             <Title>My Groups</Title>
                         </Body>
                         <Right>
+                            {/*We need to make it easier for user to tap this button. Larger tappable area needed*/}
                             <Button transparent onPress={() => this.goToSearch()}>
                                 <Icon active name="add-circle" style={{color: 'white'}}/>
                             </Button>

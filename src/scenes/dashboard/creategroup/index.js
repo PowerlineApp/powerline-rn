@@ -1,3 +1,7 @@
+//User should be able to create a new group from the My Groups Screen and the Burger Menu
+//GH149
+//https://api-dev.powerli.ne/api-doc#post--api-v2-user-groups
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
@@ -46,6 +50,7 @@ class CreateGroup extends Component{
     constructor(props){
         super(props);
 
+        //These are intentionally blank
         this.state = {
                 manager_first_name: "",
                 manager_last_name: "",
@@ -58,6 +63,7 @@ class CreateGroup extends Component{
         };
 
         var { token } = this.props;
+       //This data is required on backend to create a group.
         loadUserData(token)
         .then(data => {
             this.state.manager_first_name = data.first_name;
@@ -81,18 +87,21 @@ class CreateGroup extends Component{
         })
     }
 
+    //Parent Teacher Association
     onChangeName(text){
         this.setState({
             official_name: text
         });
     }
 
+    // A group to bring parents and teachers together in our school district.
     onChangeDesc(text){
         this.setState({
             official_description: text
         });
     }
 
+    //Parent Teacher Association => PTA
     onChangeAcron(text){
         this.setState({
             acronym: text

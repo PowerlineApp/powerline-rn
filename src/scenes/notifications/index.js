@@ -1,3 +1,7 @@
+//This is the Notifications Feed Tab
+//It is loaded primarily from the API https://api-dev.powerli.ne/api-doc#get--api-v2-user-social-activities
+//Social Activity Feed "You" tab on backend is the same thing as Notifications Feed on frontend
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
@@ -54,6 +58,7 @@ class Notifications extends Component{
         }
     }
 
+    // There are three general types of activities that show up in the Notifications Feed. A social activity update (e.g someone mentioned you in a comment), a Social Follow Request (User A wants to follow you), and a Group Join invite (You were invited to Save the Whales)
     render (){
         return (
             <Content>

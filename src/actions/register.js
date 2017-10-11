@@ -1,6 +1,7 @@
 var { API_URL } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
 
+//For checking if username taken
 function findByUsername(username: string){
     return new Promise((resolve, reject) => {
         fetch(API_URL +`-public/users/?username=` + username, {

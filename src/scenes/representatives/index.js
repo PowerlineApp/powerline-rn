@@ -1,3 +1,7 @@
+//My Representatives is accessible via the burger menu. It loads the logged-in user's linked elected leaders
+//Backend will link user to specific elected leaders during registration (and update if user changes information)
+//This is GH34
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
@@ -69,6 +73,7 @@ class Representatives extends Component {
             });
     }
 
+    //GH35 is the Representative's Specific Page
     goToProfile(storageId) {
         Actions.representatyprofile({
             storageId: storageId

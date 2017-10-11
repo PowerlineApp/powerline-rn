@@ -1,6 +1,7 @@
 var { API_URL, PER_PAGE } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
 
+//Allows user to add a comment to an item
 async function addComment(token: string, type: string, id: string, comment: string, parentId: ?string = '0', privacy: ?string = 'public') {
     let url = `${API_URL}/v2/${type}s/${id}/comments`;
     try {
@@ -23,6 +24,7 @@ async function addComment(token: string, type: string, id: string, comment: stri
     }
 }
 
+//Gets the comments for any item using a cursor for keeping place
 async function getComments(token: string, type: string, id: number, cursor = 0, perPage: number = PER_PAGE): Promise<Action> {
     var url = '';
     if (cursor === 0) {
@@ -50,6 +52,7 @@ async function getComments(token: string, type: string, id: number, cursor = 0, 
     }
 }
 
+//Shows the replies to a parent comment
 async function getChildComments(token: string, type: string, id: number, cursor = 0, perPage: number = PER_PAGE): Promise<Action> {
     var url = '';
     if (cursor === 0) {
@@ -77,6 +80,7 @@ async function getChildComments(token: string, type: string, id: number, cursor 
     }
 }
 
+//Upvote/downvote a COMMENT
 async function rateComment(token: string, type: string, commentId: string, rateValue: string) {
     try {
         let response = await fetch(`${API_URL}/v2/${type}-comments/${commentId}/rate`, {

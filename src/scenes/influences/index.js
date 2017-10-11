@@ -1,3 +1,7 @@
+//This is My Influences Screen, accessible via burger menu and via Friends Feed "Manage Followers" 
+//User A follows User B. User A is a "follower" to User B... User B is a "followed user" to User A
+//GH36
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
@@ -23,6 +27,7 @@ class Influences extends Component {
         super(props);
     }
 
+    //User can search for user(s) to follow
     searchFollowings() {
         Actions.searchFollowing();
     }
@@ -46,6 +51,7 @@ class Influences extends Component {
                             </Button>
                         </Right>
                     </Header>
+                    {/* User has choice to view Followers or Followed Users */}
                     <Tabs initialPage={0} locked={true}>
                         <Tab heading="Followers" tabStyle={styles.tabsStyle} activeTabStyle={styles.tabsStyle}>
                             <Followers />
