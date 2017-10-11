@@ -257,7 +257,7 @@ class Newsfeed extends Component {
     _renderContext(entry) {
         if (entry.type === "image") {
             return (
-                <ImageLoad
+                <Image
                     source={{ uri: entry.imageSrc }}
                     style={styles.image}
                 />
