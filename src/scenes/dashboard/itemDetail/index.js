@@ -288,6 +288,16 @@ class ItemDetail extends Component {
         }
     }
 
+    editComment = (comment) => {
+        console.warn('EDIT');
+        this.menuComment && this.menuComment.close();
+    }
+
+    deleteComment = (comment) => {
+        console.warn('DELETE');
+        this.menuComment && this.menuComment.close();
+    }
+
     async rate(comment, option) {
         this.setState({ isLoading: true });
 
@@ -757,15 +767,15 @@ class ItemDetail extends Component {
                 return (
                     <View>
                         {this._renderRootComment(comment)}
-                        {this._renderChildComment(comment.children[0])}
+                        {this._renderRootComment(comment.children[0], true)}
                     </View>
                 );
             } else if (comment.children.length === 2) {
                 return (
                     <View>
                         {this._renderRootComment(comment)}
-                        {this._renderChildComment(comment.children[0])}
-                        {this._renderChildComment(comment.children[1])}
+                        {this._renderRootComment(comment.children[0], true)}
+                        {this._renderRootComment(comment.children[1], true)}
                     </View>
                 );
             }
@@ -775,14 +785,21 @@ class ItemDetail extends Component {
         }
     }
 
-    _renderRootComment(comment) {
+    _renderRootComment = (comment, isChild = false) => {
         var thumbnail: string = comment.author_picture ? comment.author_picture : '';
         var title: string = (comment.user.first_name || '') + ' ' + (comment.user.last_name || '');
         var rateUp: number = (comment.rate_count || 0) / 2 + comment.rate_sum / 2;
         var rateDown: number = (comment.rate_count || 0) / 2 - comment.rate_sum / 2;
 
+        console.warn(comment, this.props.userId);
+        const style: object = { paddingBottom: 0 };
+        if (isChild) {
+            style.marginLeft = 40;
+            style.marginTop = 5;
+        }
+    
         return (
-            <CardItem style={{ paddingBottom: 0 }}>
+            <CardItem style={style}>
                 <Left>
                     <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                     <Body style={{ alignSelf: 'flex-start' }}>
@@ -806,53 +823,74 @@ class ItemDetail extends Component {
                             </Button>
                         </View>
                     </Body>
-                    <Right style={{ flex: 0.1, alignSelf: 'flex-start' }}>
-                        <Icon name="md-more" style={styles.commentMoreIcon} />
-                    </Right>
+                    {
+                        comment.is_owner && comment.user.id === this.props.userId &&
+                        <Right style={{ flex: 0.1, alignSelf: 'flex-start' }}>
+                            <Menu ref={ref => { this.menuComment = ref; }}>
+                                <MenuTrigger>
+                                    <Icon name="md-more" style={styles.commentMoreIcon} />
+                                </MenuTrigger>
+                                <MenuOptions customStyles={optionsStyles}>
+                                    <MenuOption onSelect={() => this.editComment(comment)}>
+                                        <Button iconLeft transparent dark onPress={() => this.editComment(comment)}>
+                                            <Icon name="md-create" style={styles.menuIcon} />
+                                            <Text style={styles.menuText}>Edit comment</Text>
+                                        </Button>
+                                    </MenuOption>
+                                    <MenuOption onSelect={() => this.deleteComment(comment)}>
+                                        <Button iconLeft transparent dark onPress={() => this.deleteComment(comment)}>
+                                            <Icon name="md-trash" style={styles.menuIcon} />
+                                            <Text style={styles.menuText}>Delete comment</Text>
+                                        </Button>
+                                    </MenuOption>
+                                </MenuOptions>
+                            </Menu>
+                        </Right>
+                    }
                 </Left>
             </CardItem>
         );
     }
 
-    _renderChildComment(comment) {
+    // _renderChildComment(comment) {
 
-        var thumbnail: string = comment.author_picture ? comment.author_picture : '';
-        var title: string = comment.user.first_name + ' ' + comment.user.last_name;
-        var rateUp: number = (comment.rate_count || 0) / 2 + comment.rate_sum / 2;
-        var rateDown: number = (comment.rate_count || 0) / 2 - comment.rate_sum / 2;
+    //     var thumbnail: string = comment.author_picture ? comment.author_picture : '';
+    //     var title: string = comment.user.first_name + ' ' + comment.user.last_name;
+    //     var rateUp: number = (comment.rate_count || 0) / 2 + comment.rate_sum / 2;
+    //     var rateDown: number = (comment.rate_count || 0) / 2 - comment.rate_sum / 2;
 
-        return (
-            <CardItem style={{ paddingBottom: 0, marginLeft: 40, marginTop: 5 }}>
-                <Left>
-                    <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
-                    <Body style={{ alignSelf: 'flex-start' }}>
-                        <TouchableOpacity onPress={() => this._onCommentBody(comment)}>
-                            <Text style={styles.title}>{title}</Text>
-                            <Text style={styles.description} numberOfLines={5}>{comment.comment_body}</Text>
-                            <Text note style={styles.subtitle}><TimeAgo time={comment.created_at} /></Text>
-                        </TouchableOpacity>
-                        <View style={styles.commentFooterContainer}>
-                            <Button iconLeft small transparent onPress={() => this._onRate(comment, 'up')}>
-                                <Icon name="md-arrow-dropup" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>{rateUp ? rateUp : 0}</Label>
-                            </Button>
-                            <Button iconLeft small transparent onPress={() => this._onRate(comment, 'down')}>
-                                <Icon active name="md-arrow-dropdown" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>{rateDown ? rateDown : 0}</Label>
-                            </Button>
-                            <Button iconLeft small transparent onPress={() => this._onAddComment(comment)} >
-                                <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>{comment.child_count ? comment.child_count : 0}</Label>
-                            </Button>
-                        </View>
-                    </Body>
-                    <Right style={{ flex: 0.1, alignSelf: 'flex-start' }}>
-                        <Icon name="md-more" style={styles.commentMoreIcon} />
-                    </Right>
-                </Left>
-            </CardItem>
-        );
-    }
+    //     return (
+    //         <CardItem style={{ paddingBottom: 0, marginLeft: 40, marginTop: 5 }}>
+    //             <Left>
+    //                 <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+    //                 <Body style={{ alignSelf: 'flex-start' }}>
+    //                     <TouchableOpacity onPress={() => this._onCommentBody(comment)}>
+    //                         <Text style={styles.title}>{title}</Text>
+    //                         <Text style={styles.description} numberOfLines={5}>{comment.comment_body}</Text>
+    //                         <Text note style={styles.subtitle}><TimeAgo time={comment.created_at} /></Text>
+    //                     </TouchableOpacity>
+    //                     <View style={styles.commentFooterContainer}>
+    //                         <Button iconLeft small transparent onPress={() => this._onRate(comment, 'up')}>
+    //                             <Icon name="md-arrow-dropup" style={styles.footerIcon} />
+    //                             <Label style={styles.footerText}>{rateUp ? rateUp : 0}</Label>
+    //                         </Button>
+    //                         <Button iconLeft small transparent onPress={() => this._onRate(comment, 'down')}>
+    //                             <Icon active name="md-arrow-dropdown" style={styles.footerIcon} />
+    //                             <Label style={styles.footerText}>{rateDown ? rateDown : 0}</Label>
+    //                         </Button>
+    //                         <Button iconLeft small transparent onPress={() => this._onAddComment(comment)} >
+    //                             <Icon active name="ios-undo" style={styles.footerIcon} />
+    //                             <Label style={styles.footerText}>{comment.child_count ? comment.child_count : 0}</Label>
+    //                         </Button>
+    //                     </View>
+    //                 </Body>
+    //                 <Right style={{ flex: 0.1, alignSelf: 'flex-start' }}>
+    //                     <Icon name="md-more" style={styles.commentMoreIcon} />
+    //                 </Right>
+    //             </Left>
+    //         </CardItem>
+    //     );
+    // }
 
     _renderLoadMore() {
         if (this.state.isCommentsLoading === false && this.isLoadedAll === false && this.state.dataArray.length > 0) {
@@ -999,6 +1037,7 @@ const menuContextStyles = {
 const mapStateToProps = state => ({
     token: state.user.token,
     profile: state.user.profile,
+    userId: state.user.id,
 });
 
 export default connect(mapStateToProps)(ItemDetail);
