@@ -22,16 +22,17 @@ import {
     Toast
 } from 'native-base';
 const PLColors = require('PLColors');
+import SuggestionBox from '../suggestionBox';
 import styles from './styles';
 import {
     Dimensions,
     ScrollView
 } from 'react-native';
 const { width, height } = Dimensions.get('window');
-import { loadUserData, getGroups, createPostToGroup, getPetitionConfig } from 'PLActions';
+import { loadUserData, getGroups, getUsersByGroup, createPostToGroup, getPetitionConfig } from 'PLActions';
 
-class NewPost extends Component{
-    constructor(props){
+class NewPost extends Component {
+    constructor (props) {
         super(props);
 
         this.state = {
@@ -39,15 +40,18 @@ class NewPost extends Component{
             profile: {},
             grouplist: [],
             selectedGroupIndex: -1,
-            content: this.props.data?this.props.data.value: "",
-            posts_remaining: null
-        }
+            content: this.props.data ? this.props.data.value : "",
+            posts_remaining: null,
+            displaySuggestionBox: false,
+            suggestionSearch: '',
+            groupUsers: []
+        };
 
-        this.toggleCommunity = this.toggleCommunity.bind(this);   
-        this.onSelectionChange = this.onSelectionChange.bind(this);     
+        this.toggleCommunity = this.toggleCommunity.bind(this);
+        this.onSelectionChange = this.onSelectionChange.bind(this);
     }
 
-    componentDidMount(){
+    componentDidMount () {
         var { token } = this.props;
         loadUserData(token).then(data => {
             this.setState({
@@ -60,25 +64,31 @@ class NewPost extends Component{
         getGroups(token).then(ret => {
             this.setState({
                 grouplist: ret.payload
-            })
+            });
         }).catch(err => {
 
-        })
-    }
-
-    toggleCommunity(){
-        this.setState({
-            showCommunity: ! this.state.showCommunity
         });
     }
 
-    selectGroupList(index){
+    toggleCommunity () {
+        this.setState({
+            showCommunity: !this.state.showCommunity
+        });
+    }
+
+    selectGroupList (index) {
         this.setState({
             selectedGroupIndex: index,
             showCommunity: false
         });
 
         var { token } = this.props;
+
+        getUsersByGroup(token, this.state.grouplist[index].id).then(data => {
+            this.setState({groupUsers: data.payload})
+        }).catch(err => {
+
+        })
 
         getPetitionConfig(token, this.state.grouplist[index].id)
         .then(data => {
@@ -91,14 +101,14 @@ class NewPost extends Component{
         });
     }
 
-    createPost(){
+    createPost () {
         var { token } = this.props;
 
         var groupId = null;
-        if(this.state.selectedGroupIndex == -1){
+        if (this.state.selectedGroupIndex == -1) {
             alert('Please select Group.');
             return;
-        }else if(this.state.content == "" || this.state.content.trim() == ''){
+        } else if (this.state.content == "" || this.state.content.trim() == '') {
             alert("Please type post content");
             return;
         }
@@ -111,28 +121,77 @@ class NewPost extends Component{
         })
         .catch(err => {
 
-        })             
+        });
     }
 
-    changeContent(text){
-        if(text.length <= 300){
-            this.setState({
-                content: text
-            });
-        } 
+    substitute (mention) {
+        let {init, end} = this.state;
+        let newContent = this.state.content;
+        let initialLength = newContent.length;
+
+        let firstPart = newContent.substr(0, init);
+        let finalPart = newContent.substr(end, initialLength);
+
+        let finalString = firstPart + mention + finalPart;
+
+        this.setState({content: finalString});
     }
 
-    onSelectionChange(event){
-        console.log(event.nativeEvent);
+    changeContent (text) {
+        this.setState({
+            content: text
+        });
     }
 
-    render(){
+    onSelectionChange (event) {
+        let {start, end} = event.nativeEvent.selection;
+        // console.log(this.state);
+        let userRole = this.state.grouplist[this.state.selectedGroupIndex].user_role;
+        // console.log(event.nativeEvent.selection.start);
+        // console.log(event.nativeEvent.selection.end);
+        // console.log(event);
+        setTimeout(() => {
+            console.log(start);
+            if (start !== end) return;
+            let text = this.state.content;
+            // for loop to find the first @ sign as a valid mention (without a space before, with at least two digits)
+            let displayMention = false;
+            let i;
+
+            for (i = start; i >= 0; i--) {
+                // console.log('char at ', i, text.charAt(i));
+                if (text.charAt(i) === ' ') break;
+                if (text.charAt(i) === '@' && (i === 0 || text.charAt(i - 1) === ' ')) {
+                    if (text.slice(i, i + 9) === "@everyone" && userRole === 'owner' && userRole === 'manager') {
+                        alert("Are you sure you want to alert everyone in the group?");
+                        break;
+                    }
+                    console.log(text.charAt(i), text.charAt(i+1), text.charAt(i+2));
+                    if (text.charAt(i + 2)) {
+                        console.log('will show mention');
+                        displayMention = true;
+                    } else {
+                        displayMention = false;
+                    }
+                    break;
+                }
+            }
+            this.setState({displaySuggestionBox: displayMention, suggestionSearch: text.slice(i, end), init: i, end: end});
+        }, 100);
+        // checks if should open suggestion e.g. has 2 or more characters
+
+        // verify if should remove any other mention from the state
+
+        // console.log(event.nativeEvent);
+    }
+
+    render () {
         return (
             <Container style={styles.container}>
                 <Header style={styles.header}>
                     <Left>
                         <Button transparent onPress={() => Actions.pop()}>
-                            <Icon active name="arrow-back" style={{color: 'white'}}/>
+                            <Icon active name='arrow-back' style={{color: 'white'}} />
                         </Button>
                     </Left>
                     <Body>
@@ -144,14 +203,14 @@ class NewPost extends Component{
                         </Button>
                     </Right>
                 </Header>
-                <Content>                    
+                <Content>
                     <List>
                         <ListItem style={styles.community_container} onPress={() => this.toggleCommunity()}>
                             <View style={styles.avatar_container}>
                                 <View style={styles.avatar_wrapper}>
-                                    <Thumbnail square style={styles.avatar_img} source={{uri: this.state.profile.avatar_file_name}}/>
+                                    <Thumbnail square style={styles.avatar_img} source={{uri: this.state.profile.avatar_file_name}} />
                                 </View>
-                                <View style={styles.avatar_subfix}></View>
+                                <View style={styles.avatar_subfix} />
                             </View>
                             <Body style={styles.community_text_container}>
                                 <Text style={{color: 'white'}}>
@@ -159,46 +218,47 @@ class NewPost extends Component{
                                 </Text>
                             </Body>
                             <Right style={styles.communicty_icon_container}>
-                                <Icon name="md-create" style={{color: 'white'}}/>
+                                <Icon name='md-create' style={{color: 'white'}} />
                             </Right>
                         </ListItem>
                     </List>
-                    <View style={styles.main_content}>
-                        <Textarea maxLength={300}  onSelectionChange={this.onSelectionChange} placeholderTextColor="rgba(0,0,0,0.1)" style={styles.textarea} placeholder="Words can move the masses. And yours can, too - if you get enough people to support your post. Be nice!" value={this.state.content} onChangeText={(text) => this.changeContent(text)}/> 
-                        {this.state.showCommunity?
-                        <View style={styles.community_list_container}>
-                            <View style={styles.community_list_back}></View>  
-                            <ScrollView style={{flex: 1}}>                          
-                                <List style={{width: 250}}>
-                                    {
+                    <ScrollView style={styles.main_content}>
+                        <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} suggestionSearch={this.state.suggestionSearch} userList={this.state.groupUsers} />                
+                        <Textarea maxLength={300} style={{height: 200}} onSelectionChange={this.onSelectionChange} placeholderTextColor='rgba(0,0,0,0.1)' style={styles.textarea} placeholder='Words can move the masses. And yours can, too - if you get enough people to support your post. Be nice!' value={this.state.content} onChangeText={(text) => this.changeContent(text)} />
+                        {this.state.showCommunity
+                            ? <View style={styles.community_list_container}>
+                                <View style={styles.community_list_back} />
+                                <ScrollView style={{flex: 1}}>
+                                    <List style={{width: 250}}>
+                                        {
                                         this.state.grouplist.map((item, index) => {
                                             return (
                                                 <ListItem key={index} onPress={() => this.selectGroupList(index)}>
-                                                    {item.avatar_file_path?
-                                                    <Thumbnail square style={{width: 15, height: 15}} source={{uri: item.avatar_file_path}}/>:
-                                                    <View style={{width: 15, height: 15}}/>
-                                                    }
+                                                    {item.avatar_file_path
+                                                        ? <Thumbnail square style={{width: 15, height: 15}} source={{uri: item.avatar_file_path}} />
+                                                    : <View style={{width: 15, height: 15}} />
+                                                }
                                                     <Body>
                                                         <Text style={{color: 'white', fontSize: 12}}>{item.official_name}</Text>
                                                     </Body>
                                                     <Right>
-                                                        <Icon name="ios-arrow-dropright" style={{color: 'white'}}/>
+                                                        <Icon name='ios-arrow-dropright' style={{color: 'white'}} />
                                                     </Right>
                                                 </ListItem>
                                             );
                                         })
-                                    }                                
-                                </List>
-                            </ScrollView>
-                        </View>:null}
-                    </View>                              
+                                    }
+                                    </List>
+                                </ScrollView>
+                            </View> : null}
+                    </ScrollView>
                 </Content>
-                <Footer style={{alignItems: 'center', justifyContent: 'space-between',  backgroundColor: PLColors.main, paddingLeft: 10, paddingRight: 10}}>
-                    {this.state.posts_remaining?
-                    <Label style={{color: 'white', fontSize: 10}}>
+                <Footer style={{alignItems: 'center', justifyContent: 'space-between', backgroundColor: PLColors.main, paddingLeft: 10, paddingRight: 10}}>
+                    {this.state.posts_remaining
+                        ? <Label style={{color: 'white', fontSize: 10}}>
                         You have <Label style={{fontWeight: 'bold'}}>{this.state.posts_remaining}</Label> posts left in this group
-                    </Label>: 
-                    <Label> </Label>
+                    </Label>
+                    : <Label />
                     }
                     <Label style={{color: 'white'}}>
                         {
