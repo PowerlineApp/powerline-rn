@@ -1,3 +1,4 @@
+import api from '../utils/api';
 var { API_URL, PER_PAGE } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
 
@@ -21,6 +22,11 @@ async function addComment(token: string, type: string, id: string, comment: stri
     } catch (error) {
         handleError(error);
     }
+}
+
+async function deleteComment(token: string, commentId: number): Promise<Action> {
+    console.log("delete Comment API", commentId);
+    return await api.delete(token, `/v2/post-comments/${commentId}`);
 }
 
 async function getComments(token: string, type: string, id: number, cursor = 0, perPage: number = PER_PAGE): Promise<Action> {
@@ -106,4 +112,5 @@ module.exports = {
     getComments,
     getChildComments,
     rateComment,
+    deleteComment,
 };

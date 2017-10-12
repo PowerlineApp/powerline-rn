@@ -18,7 +18,7 @@ import Menu, {
     renderers
 } from 'react-native-popup-menu';
 import OrientationLoadingOverlay from 'react-native-orientation-loading-overlay';
-import { getComments, votePost, addComment, rateComment, loadActivityByEntityId, deletePost, deletePetition, changePost, changePetition } from 'PLActions';
+import { getComments, votePost, addComment, deleteComment, rateComment, loadActivityByEntityId, deletePost, deletePetition, changePost, changePetition } from 'PLActions';
 
 const { youTubeAPIKey } = require('PLEnv');
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
@@ -295,8 +295,13 @@ class ItemDetail extends Component {
         this.menuComment && this.menuComment.close();
     }
 
-    deleteComment = (comment) => {
-        console.warn('DELETE');
+    async deleteComment(comment) {
+        let response = await deleteComment(this.props.token, comment.id);
+        if (response.status === 204 && response.ok) {
+            this.loadComments();
+        } else {
+            alert(response.message ? response.message : 'Something went wrong to delete');
+        }
         this.menuComment && this.menuComment.close();
     }
 
