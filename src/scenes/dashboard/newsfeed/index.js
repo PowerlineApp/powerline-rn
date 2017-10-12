@@ -11,6 +11,7 @@ import TimeAgo from 'react-native-timeago';
 import ImageLoad from 'react-native-image-placeholder';
 import YouTube from 'react-native-youtube';
 import OrientationLoadingOverlay from 'react-native-orientation-loading-overlay';
+import ContentPlaceholder from '../../../components/ContentPlaceholder';
 
 import Menu, {
     MenuContext,
@@ -702,21 +703,30 @@ class Newsfeed extends Component {
                         <Thumbnail square source={{ uri: this.props.savedGroup.groupAvatar }} style={styles.groupAvatar} /> : null}
                     <Text style={styles.groupName}>{this.props.savedGroup.groupName}</Text>
                 </View>
-                <Content
+                <ContentPlaceholder
+                    empty={!this.state.isRefreshing && !this.state.isLoading && this.state.dataArray.length === 0}
+                    title="The world belongs to those who speak up! Be the first to create a post!"
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={this.state.isRefreshing}
+                            onRefresh={this._onRefresh.bind(this)}
+                        />
+                    }
                     onScroll={(e) => {                           
-                            var height = e.nativeEvent.contentSize.height;
-                            var offset = e.nativeEvent.contentOffset.y;
-                            if ((WINDOW_HEIGHT + offset) >= height && offset > 0) {
-                                this.setState({
-                                    showAvatar: false
-                                });
-                            }else{
-                                this.setState({
-                                    showAvatar: true
-                                });
-                            }
-                        }}>
-                     <View style={{flex: 1, height:(this.state.showAvatar && this.props.groupAvatar != '' && this.props.groupAvatar != null? (height - 364):( height -  308)), justifyContent: 'flex-end'}}>
+                        var height = e.nativeEvent.contentSize.height;
+                        var offset = e.nativeEvent.contentOffset.y;
+                        if ((WINDOW_HEIGHT + offset) >= height && offset > 0) {
+                            this.setState({
+                                showAvatar: false
+                            });
+                        }else{
+                            this.setState({
+                                showAvatar: true
+                            });
+                        }
+                    }}
+                >
+                    <View style={{flex: 1, height:(this.state.showAvatar && this.props.groupAvatar != '' && this.props.groupAvatar != null? (height - 364):( height -  308)), justifyContent: 'flex-end'}}>
                     <List>
                         {this.state.dataArray.map((activity, index) => {
                             return (
@@ -740,7 +750,7 @@ class Newsfeed extends Component {
                         })}                                                
                     </List>
                     </View>
-                </Content>
+                </ContentPlaceholder>
                 <Footer style={styles.CFooter}>
                     <Item style={styles.CFooterItem}>
                         <Thumbnail small source={{uri: this.props.profile.avatar_file_name}}/>
@@ -764,7 +774,9 @@ class Newsfeed extends Component {
                         <Text style={styles.groupName}>{this.props.savedGroup.groupName}</Text>
                     </View>
                 }
-                <Content
+                <ContentPlaceholder
+                    empty={!this.state.isRefreshing && !this.state.isLoading && this.state.dataArray.length === 0}
+                    title="The world belongs to those who speak up! Be the first to create a post!"
                     refreshControl={
                         <RefreshControl
                             refreshing={this.state.isRefreshing}
@@ -779,12 +791,13 @@ class Newsfeed extends Component {
                             this.setState({
                                 showAvatar: false
                             })
-                        }else{
+                        } else {
                             this.setState({
                                 showAvatar: true
                             });
                         }
-                    }}>
+                    }}
+                >
                     <ListView dataSource={this.state.dataSource} renderRow={item => {
                         switch (item.entity.type) {
                             case 'post':
@@ -799,7 +812,7 @@ class Newsfeed extends Component {
                     />
                     <OrientationLoadingOverlay visible={this.state.isLoading} />
                     {this._renderTailLoading()}
-                </Content >
+                </ContentPlaceholder>
                 </Container>
             );
         }        

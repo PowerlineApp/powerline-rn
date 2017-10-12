@@ -54,7 +54,7 @@ class Notifications extends Component{
         }
     }
 
-    render (){
+    render() {
         return (
             <Content>
                 <List style={{backgroundColor: 'white'}}>

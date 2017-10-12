@@ -55,7 +55,7 @@ const commentsPlaceholders = [
 ];
 
 function randomMaxInt(max: number): number {
-    return Math.floor(Math.random() * (max));
+    return Math.floor(Math.random() * max);
 }
 
 function generatePlaceholder(type: Type): string {

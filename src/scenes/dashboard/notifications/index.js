@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { Content, Text, List, ListItem, Left, Body, Right,Thumbnail, Button, Icon} from 'native-base';
-
+import {
+    TouchableOpacity,
+    View
+} from 'react-native';
 import Menu, {
     MenuContext,
     MenuTrigger,
@@ -10,15 +13,13 @@ import Menu, {
     MenuOption,
     renderers
 } from 'react-native-popup-menu';
+var TimeAgo = require('react-native-timeago');
 
 const PLColors = require('PLColors');
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
 var { getActivities } = require('PLActions');
-var TimeAgo = require('react-native-timeago');
-import {
-    TouchableOpacity,
-    View
-} from 'react-native';
+import ContentPlaceholder from '../../../components/ContentPlaceholder';
+
 import styles from './styles';
 
 class Notifications extends Component{
@@ -70,9 +71,12 @@ class Notifications extends Component{
         }
     }
 
-    render (){
+    render() {
         return (
-            <Content>
+            <ContentPlaceholder
+                empty={this.state.notifications.length === 0}
+                title="Seems quiet a bit quiet in here. Are you following anyone?"
+            >
                 <List style={{backgroundColor: 'white'}}>
                     {
                         this.state.notifications.map((value, index)=> {
@@ -116,7 +120,7 @@ class Notifications extends Component{
                         })
                     }
                 </List>
-            </Content>
+            </ContentPlaceholder>
         );
     }
 
