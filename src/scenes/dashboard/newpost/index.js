@@ -29,6 +29,7 @@ import {
 } from 'react-native';
 const { width, height } = Dimensions.get('window');
 import { loadUserData, getGroups, createPostToGroup, getPetitionConfig } from 'PLActions';
+import randomPlaceholder from '../../../utils/placeholder';
 
 class NewPost extends Component{
     constructor(props){
@@ -42,6 +43,8 @@ class NewPost extends Component{
             content: this.props.data?this.props.data.value: "",
             posts_remaining: null
         }
+
+        this.placeholderTitle = randomPlaceholder('post');
 
         this.toggleCommunity = this.toggleCommunity.bind(this);   
         this.onSelectionChange = this.onSelectionChange.bind(this);     
@@ -164,7 +167,7 @@ class NewPost extends Component{
                         </ListItem>
                     </List>
                     <View style={styles.main_content}>
-                        <Textarea maxLength={300}  onSelectionChange={this.onSelectionChange} placeholderTextColor="rgba(0,0,0,0.1)" style={styles.textarea} placeholder="Words can move the masses. And yours can, too - if you get enough people to support your post. Be nice!" value={this.state.content} onChangeText={(text) => this.changeContent(text)}/> 
+                        <Textarea maxLength={300} onSelectionChange={this.onSelectionChange} placeholderTextColor="rgba(0,0,0,0.1)" style={styles.textarea} placeholder={this.placeholderTitle} value={this.state.content} onChangeText={(text) => this.changeContent(text)}/> 
                         {this.state.showCommunity?
                         <View style={styles.community_list_container}>
                             <View style={styles.community_list_back}></View>  

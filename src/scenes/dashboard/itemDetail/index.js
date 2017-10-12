@@ -19,6 +19,7 @@ import Menu, {
 } from 'react-native-popup-menu';
 import OrientationLoadingOverlay from 'react-native-orientation-loading-overlay';
 import { getComments, votePost, addComment, rateComment, loadActivityByEntityId, deletePost, deletePetition, changePost, changePetition } from 'PLActions';
+import randomPlaceholder from '../../../utils/placeholder';
 
 const { youTubeAPIKey } = require('PLEnv');
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
@@ -47,6 +48,7 @@ class ItemDetail extends Component {
             dataArray: [],
             dataSource: ds,
             inputDescription: '',
+            placeholderTitle: '',
         };
         this.commentToReply = null;
         this.isLoadedAll = false;
@@ -86,6 +88,7 @@ class ItemDetail extends Component {
     }
 
     _onAddComment(comment) {
+        this.setState({ placeholderTitle: randomPlaceholder('comment') });
         this.commentToReply = comment ? comment : null;
         this.addCommentView.open();
     }
@@ -797,7 +800,10 @@ class ItemDetail extends Component {
                         <Thumbnail small source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                         <Body>
                             <Text style={styles.addCommentTitle}>Add Comment...</Text>
-                            <Menu renderer={SlideInMenu} ref={this.onRef} onOpen={() => { this.openedAddCommentView() }}>
+                            <Menu
+                                renderer={SlideInMenu}
+                                ref={this.onRef}
+                            >
                                 <MenuTrigger />
                                 <MenuOptions optionsContainerStyle={{
                                     backgroundColor: 'white',
@@ -809,7 +815,7 @@ class ItemDetail extends Component {
                                         <Left>
                                             <Thumbnail small source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                                             <Body>
-                                                <TextInput style={styles.commentInput} ref={this.onCommentInputRef} placeholder="Comment..." onChangeText={commentText => this.setState({ commentText })} />
+                                                <TextInput style={styles.commentInput} ref={this.onCommentInputRef} placeholder={this.state.placeholderTitle} onChangeText={commentText => this.setState({ commentText })} />
                                             </Body>
                                             <Right style={{ flex: 0.3 }}>
                                                 <TouchableOpacity style={{ flexDirection: 'row' }} onPress={() => this._onSendComment()}>

@@ -30,6 +30,7 @@ import {
 } from 'react-native';
 const { width, height } = Dimensions.get('window');
 import { loadUserData, getGroups, createPetition, getPetitionConfig } from 'PLActions';
+import randomPlaceholder from '../../../utils/placeholder';
 
 class NewPetition extends Component{
     constructor(props){
@@ -44,6 +45,8 @@ class NewPetition extends Component{
             content: "",
             petition_remaining: null
         };
+
+        this.placeholderTitle = randomPlaceholder('petition');
     }
 
     componentDidMount(){
@@ -175,7 +178,7 @@ class NewPetition extends Component{
                                 onChangeText={(text) => this.changeTitle(text)}
                                 underlineColorAndroid={'transparent'}
                             />                        
-                            <Textarea placeholderTextColor="rgba(0,0,0,0.1)" style={styles.textarea} placeholder="Start by telling a story. Then, close with a call for action or change." value={this.state.content} onChangeText={(text) => this.changeContent(text)}/>
+                            <Textarea placeholderTextColor="rgba(0,0,0,0.1)" style={styles.textarea} placeholder={this.placeholderTitle} value={this.state.content} onChangeText={(text) => this.changeContent(text)}/>
                         </View>
                         {this.state.showCommunity?
                         <View style={styles.community_list_container}>
