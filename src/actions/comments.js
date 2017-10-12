@@ -24,6 +24,15 @@ async function addComment(token: string, type: string, id: string, comment: stri
     }
 }
 
+async function editComment(token: string, commentId: number, value: string): Promise<Action> {
+    console.log("edit Comment API", commentId, value);
+    return await api.put(
+        token,
+        `/v2/post-comments/${commentId}`,
+        { comment_body: value }
+    );
+}
+
 async function deleteComment(token: string, commentId: number): Promise<Action> {
     console.log("delete Comment API", commentId);
     return await api.delete(token, `/v2/post-comments/${commentId}`);
@@ -113,4 +122,5 @@ module.exports = {
     getChildComments,
     rateComment,
     deleteComment,
+    editComment,
 };

@@ -18,7 +18,7 @@ import Menu, {
     renderers
 } from 'react-native-popup-menu';
 import OrientationLoadingOverlay from 'react-native-orientation-loading-overlay';
-import { getComments, votePost, addComment, deleteComment, rateComment, loadActivityByEntityId, deletePost, deletePetition, changePost, changePetition } from 'PLActions';
+import { getComments, votePost, addComment, editComment, deleteComment, rateComment, loadActivityByEntityId, deletePost, deletePetition, changePost, changePetition } from 'PLActions';
 
 const { youTubeAPIKey } = require('PLEnv');
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
@@ -44,6 +44,8 @@ class ItemDetail extends Component {
             isEditMode: props.isEditEnabled || false,
             visibleHeight: 50,
             commentText: '',
+            defaultInputValue: '',
+            editedCommentId: null,
             dataArray: [],
             dataSource: ds,
             inputDescription: '',
@@ -91,10 +93,16 @@ class ItemDetail extends Component {
     }
 
     _onSendComment() {
-        if (this.state.commentText === '') {
+        const { commentText, currentCommentId } = this.state;
+
+        if (commentText === '') {
             alert("Please input comment text");
         } else {
-            this.doComment(this.state.commentText);
+            if (currentCommentId !== null) {
+                this.doEditComment(commentText);
+            } else {
+                this.doComment(commentText);
+            }
         }
     }
 
@@ -291,7 +299,31 @@ class ItemDetail extends Component {
     }
 
     editComment = (comment) => {
-        console.warn('EDIT');
+        this.setState({ editedCommentId: comment.id, defaultInputValue: comment.comment_body });
+        this.addCommentView && this.addCommentView.open();
+    }
+
+    resetEditComment = () => this.setState({
+        defaultInputValue: '',
+        editedCommentId: null,
+    })
+
+    async doEditComment(commentText) {
+        this.setState({ isLoading: true });
+        let response = await editComment(this.props.token, this.state.editedCommentId, commentText);
+
+        this.addCommentView.close();
+        this.setState({
+            isLoading: false,
+        });
+
+        if (response.status === 200 && response.ok) {
+            this.loadComments();
+            this.resetEditComment();
+        } else {
+            alert(response.message ? response.message : 'Something went wrong to edit');
+            this.resetEditComment();
+        }
         this.menuComment && this.menuComment.close();
     }
 
@@ -812,7 +844,11 @@ class ItemDetail extends Component {
                         <Thumbnail small source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                         <Body>
                             <Text style={styles.addCommentTitle}>Add Comment...</Text>
-                            <Menu renderer={SlideInMenu} ref={this.onRef} onOpen={() => { this.openedAddCommentView() }}>
+                            <Menu
+                                renderer={SlideInMenu}
+                                ref={this.onRef}
+                                onBackdropPress={this.resetEditComment}
+                            >
                                 <MenuTrigger />
                                 <MenuOptions optionsContainerStyle={{
                                     backgroundColor: 'white',
@@ -824,7 +860,14 @@ class ItemDetail extends Component {
                                         <Left>
                                             <Thumbnail small source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                                             <Body>
-                                                <TextInput style={styles.commentInput} ref={this.onCommentInputRef} placeholder="Comment..." onChangeText={commentText => this.setState({ commentText })} />
+                                                <TextInput
+                                                    autoFocus
+                                                    style={styles.commentInput}
+                                                    ref={this.onCommentInputRef}
+                                                    placeholder="Comment..."
+                                                    defaultValue={this.state.defaultInputValue}
+                                                    onChangeText={commentText => this.setState({ commentText })}
+                                                />
                                             </Body>
                                             <Right style={{ flex: 0.3 }}>
                                                 <TouchableOpacity style={{ flexDirection: 'row' }} onPress={() => this._onSendComment()}>
@@ -922,7 +965,7 @@ class ItemDetail extends Component {
                     {
                         comment.is_owner && comment.user.id === this.props.userId &&
                         <Right style={{ flex: 0.1, alignSelf: 'flex-start' }}>
-                            <Menu ref={ref => { this.menuComment = ref; }}>
+                            <Menu  ref={ref => { this.menuComment = ref; }}>
                                 <MenuTrigger>
                                     <Icon name="md-more" style={styles.commentMoreIcon} />
                                 </MenuTrigger>
