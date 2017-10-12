@@ -147,42 +147,37 @@ class NewPost extends Component {
         let {start, end} = event.nativeEvent.selection;
         // console.log(this.state);
         let userRole = this.state.grouplist[this.state.selectedGroupIndex].user_role;
-        // console.log(event.nativeEvent.selection.start);
-        // console.log(event.nativeEvent.selection.end);
         // console.log(event);
         setTimeout(() => {
-            console.log(start);
+            // console.log(start);
             if (start !== end) return;
             let text = this.state.content;
             // for loop to find the first @ sign as a valid mention (without a space before, with at least two digits)
             let displayMention = false;
             let i;
 
-            for (i = start; i >= 0; i--) {
-                // console.log('char at ', i, text.charAt(i));
+            for (i = start - 1; i >= 0; i--) {
                 if (text.charAt(i) === ' ') break;
                 if (text.charAt(i) === '@' && (i === 0 || text.charAt(i - 1) === ' ')) {
                     if (text.slice(i, i + 9) === "@everyone" && userRole === 'owner' && userRole === 'manager') {
                         alert("Are you sure you want to alert everyone in the group?");
                         break;
                     }
-                    console.log(text.charAt(i), text.charAt(i+1), text.charAt(i+2));
-                    if (text.charAt(i + 2)) {
-                        console.log('will show mention');
+                    // console.log(text.charAt(i), text.charAt(i+1), text.charAt(i+2));
+                    if (text.charAt(i+1) && text.charAt(i+1) !== ' ' && text.charAt(i + 2) && text.charAt(i + 2) !== ' ' ) {
                         displayMention = true;
+                        for (let j = start -1; text.charAt(j) && text.charAt(j) !== ' '; j++) end = j+1;
                     } else {
                         displayMention = false;
                     }
                     break;
                 }
             }
+            if (displayMention){
+
+            }
             this.setState({displaySuggestionBox: displayMention, suggestionSearch: text.slice(i, end), init: i, end: end});
         }, 100);
-        // checks if should open suggestion e.g. has 2 or more characters
-
-        // verify if should remove any other mention from the state
-
-        // console.log(event.nativeEvent);
     }
 
     render () {
@@ -224,7 +219,7 @@ class NewPost extends Component {
                     </List>
                     <ScrollView style={styles.main_content}>
                         <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} suggestionSearch={this.state.suggestionSearch} userList={this.state.groupUsers} />                
-                        <Textarea maxLength={300} style={{height: 200}} onSelectionChange={this.onSelectionChange} placeholderTextColor='rgba(0,0,0,0.1)' style={styles.textarea} placeholder='Words can move the masses. And yours can, too - if you get enough people to support your post. Be nice!' value={this.state.content} onChangeText={(text) => this.changeContent(text)} />
+                        <Textarea maxLength={300} onSelectionChange={this.onSelectionChange} placeholderTextColor='rgba(0,0,0,0.1)' style={styles.textarea} placeholder='Words can move the masses. And yours can, too - if you get enough people to support your post. Be nice!' value={this.state.content} onChangeText={(text) => this.changeContent(text)} />
                         {this.state.showCommunity
                             ? <View style={styles.community_list_container}>
                                 <View style={styles.community_list_back} />

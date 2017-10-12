@@ -23,13 +23,14 @@ import {
 } from 'native-base';
 const PLColors = require('PLColors');
 import styles from './styles';
+import SuggestionBox from '../suggestionBox';
 import {
     Dimensions,
     ScrollView,
     TextInput
 } from 'react-native';
 const { width, height } = Dimensions.get('window');
-import { loadUserData, getGroups, createPetition, getPetitionConfig } from 'PLActions';
+import { loadUserData, getGroups, getUsersByGroup, createPetition, getPetitionConfig } from 'PLActions';
 
 class NewPetition extends Component{
     constructor(props){
@@ -42,8 +43,14 @@ class NewPetition extends Component{
             selectedGroupIndex: -1,
             title: "",
             content: "",
-            petition_remaining: null
+            petition_remaining: null,
+            mentionEntry: null,
+            suggestionSearch: '',
+            groupUsers: []
         };
+
+        this.onSelectionChange = this.onSelectionChange.bind(this);
+        
     }
 
     componentDidMount(){
@@ -81,6 +88,12 @@ class NewPetition extends Component{
 
         var { token } = this.props;
 
+        getUsersByGroup(token, this.state.grouplist[index].id).then(data => {
+            this.setState({groupUsers: data.payload})
+        }).catch(err => {
+
+        })
+
         getPetitionConfig(token, this.state.grouplist[index].id)
         .then(data => {
             this.setState({
@@ -114,13 +127,58 @@ class NewPetition extends Component{
         });
     }
 
-    changeContent(text){
-        if(text.length <= 2500){
-            this.setState({
-                content: text
-            });
-        }
+    substitute (mention) {
+        let {init, end} = this.state;
+        let newContent = this.state.content;
+        let initialLength = newContent.length;
+
+        let firstPart = newContent.substr(0, init);
+        let finalPart = newContent.substr(end, initialLength);
+
+        let finalString = firstPart + mention + finalPart;
+
+        this.setState({content: finalString});
     }
+
+    changeContent (text) {
+        this.setState({
+            content: text
+        });
+    }
+
+    onSelectionChange (event) {
+        let {start, end} = event.nativeEvent.selection;
+        let userRole = this.state.grouplist[this.state.selectedGroupIndex].user_role;
+        setTimeout(() => {
+            if (start !== end) return;
+            let text = this.state.content;
+            // for loop to find the first @ sign as a valid mention (without a space before, with at least two digits)
+            let displayMention = false;
+            let i;
+
+            for (i = start - 1; i >= 0; i--) {
+                if (text.charAt(i) === ' ') break;
+                if (text.charAt(i) === '@' && (i === 0 || text.charAt(i - 1) === ' ')) {
+                    if (text.slice(i, i + 9) === "@everyone" && userRole === 'owner' && userRole === 'manager') {
+                        alert("Are you sure you want to alert everyone in the group?");
+                        break;
+                    }
+                    if (text.charAt(i+1) && text.charAt(i+1) !== ' ' && text.charAt(i + 2) && text.charAt(i + 2) !== ' ' ) {
+                        displayMention = true;
+                        for (let j = start -1; text.charAt(j) && text.charAt(j) !== ' '; j++) end = j+1;
+                    } else {
+                        displayMention = false;
+                    }
+                    break;
+                }
+            }
+            if (displayMention){
+
+            }
+            this.setState({displaySuggestionBox: displayMention, suggestionSearch: text.slice(i, end), init: i, end: end});
+        }, 100);
+    }
+
 
     changeTitle(text){
         this.setState({
@@ -174,8 +232,9 @@ class NewPetition extends Component{
                                 value={this.state.title}
                                 onChangeText={(text) => this.changeTitle(text)}
                                 underlineColorAndroid={'transparent'}
-                            />                        
-                            <Textarea placeholderTextColor="rgba(0,0,0,0.1)" style={styles.textarea} placeholder="Start by telling a story. Then, close with a call for action or change." value={this.state.content} onChangeText={(text) => this.changeContent(text)}/>
+                            />
+                            <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} suggestionSearch={this.state.suggestionSearch} userList={this.state.groupUsers} />                      
+                            <Textarea placeholderTextColor="rgba(0,0,0,0.1)" style={styles.textarea} onSelectionChange={this.onSelectionChange} placeholder="Start by telling a story. Then, close with a call for action or change." value={this.state.content} onChangeText={(text) => this.changeContent(text)}/>
                         </View>
                         {this.state.showCommunity?
                         <View style={styles.community_list_container}>
