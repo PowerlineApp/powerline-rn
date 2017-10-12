@@ -79,7 +79,7 @@ const datas = [
   {
     name: 'Take Tour',
     route: 'takeTour',
-    icon: 'help',
+    icon: 'school',
     bg: '#3591FA',
   },
   {

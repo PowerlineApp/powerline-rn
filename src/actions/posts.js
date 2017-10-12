@@ -1,3 +1,4 @@
+import api from '../utils/api';
 var { API_URL, PER_PAGE } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
 
@@ -178,6 +179,100 @@ function getPetitionConfig(token, groupId){
     });
 }
 
+function deletePost(postId: number, activityId: number): ThunkAction {
+    return async (dispatch, getState) => {
+        try {
+            const token = getState().user.token;
+            const response = await api.delete(token, `/v2/posts/${postId}`);
+            console.log("delete Post API  Success", response);
+
+            if (response.status === 204 && response.ok) {
+                dispatch({ type: 'DELETE_ACTIVITY', id: activityId });
+            } else {
+                handleError(response);
+            }
+        } catch (error) {
+            console.log("delete Post API Error", error);
+            handleError(error);
+        }
+    };
+}
+
+function deletePetition(petitionId: number, activityId: number): ThunkAction {
+    return async (dispatch, getState) => {
+        try {
+            const token = getState().user.token; 
+            const response = await api.delete(token, `/v2/user-petitions/${petitionId}`);
+            console.log("delete Petition API  Success", response);
+
+            if (response.status === 204 && response.ok) {
+                dispatch({ type: 'DELETE_ACTIVITY', id: activityId });
+            } else {
+                handleError(response);
+            }
+        } catch (error) {
+            console.log("delete Petition API Error", error);
+            handleError(error);
+        }
+    };
+}
+
+function updateActivityDescription(dispatch, id, description) {
+    dispatch({
+        type: 'CHANGE_ACTIVITY_DESCRIPTION',
+        data: {
+            id,
+            description,
+        },
+    });
+}
+
+function changePost(postId: number, activityId: number, value: string): ThunkAction {
+    return async (dispatch, getState) => {
+        try {
+            const token = getState().user.token;
+            const response = await api.put(
+                token,
+                `/v2/posts/${postId}`,
+                { body: value }
+            );
+            console.log("put Post API  Success", response);
+
+            if (response.status === 200 && response.ok) {
+                updateActivityDescription(dispatch, activityId, value);
+            } else {
+                handleError(response);
+            }
+        } catch (error) {
+            console.log("put Post API Error", error);
+            handleError(error);
+        }
+    };
+}
+
+function changePetition(petitionId: number, activityId: number, value: string): ThunkAction {
+    return async (dispatch, getState) => {
+        try {
+            const token = getState().user.token;
+            const response = await api.put(
+                token,
+                `/v2/user-petitions/${petitionId}`,
+                { body: value }
+            );
+            console.log("put Petition API  Success", response);
+
+            if (response.status === 200 && response.ok) {
+                updateActivityDescription(dispatch, activityId, value);
+            } else {
+                handleError(response);
+            }
+        } catch (error) {
+            console.log("put Petition API Error", error);
+            handleError(error);
+        }
+    };
+}
+
 module.exports = {
     votePost,
     loadPostComments,
@@ -187,4 +282,8 @@ module.exports = {
     createPetition,
     getPetitionConfig,
     loadPost,
+    deletePost,
+    deletePetition,
+    changePost,
+    changePetition,
 };

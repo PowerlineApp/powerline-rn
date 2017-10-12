@@ -5,7 +5,7 @@ import { Actions } from 'react-native-router-flux';
 import { ActionSheet, Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, Spinner, ListItem, Thumbnail, List, Card, CardItem, Label, Footer } from 'native-base';
 import { ListView, View, RefreshControl, TouchableOpacity, Image, WebView, Platform, Share } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
-import { loadActivities, resetActivities, votePost, editFollowers, loadActivityByEntityId,createPostToGroup } from 'PLActions';
+import { loadActivities, resetActivities, votePost, editFollowers, loadActivityByEntityId, createPostToGroup, deletePost, deletePetition } from 'PLActions';
 import styles, { sliderWidth, itemWidth } from './styles';
 import TimeAgo from 'react-native-timeago';
 import ImageLoad from 'react-native-image-placeholder';
@@ -57,6 +57,7 @@ class Newsfeed extends Component {
     componentWillReceiveProps(nextProps) {
         this.setState({
             dataArray: nextProps.payload,
+            dataSource: this.state.dataSource.cloneWithRows(nextProps.payload),
         });
     }
 
@@ -68,7 +69,6 @@ class Newsfeed extends Component {
     }
 
     mute(item) {
-        //console.log(item);
         var { token, dispatch } = this.props;
         ActionSheet.show(
             {
@@ -94,6 +94,26 @@ class Newsfeed extends Component {
                     });
             }
         );
+    }
+
+    edit(item) {
+        Actions.itemDetail({
+            entityId: item.entity.id,
+            entityType: item.entity.type,
+            isEditEnabled: true,
+        });
+        this.menu && this.menu.close();
+    }
+    
+    delete(item) {
+        if (item.entity.type === 'post') {
+            this.props.dispatch(deletePost(item.entity.id, item.id));
+        }
+        if (item.entity.type === 'user-petition') {
+            this.props.dispatch(deletePetition(item.entity.id, item.id));
+        }
+
+        this.menu && this.menu.close();
     }
 
     async loadInitialActivities() {
@@ -393,11 +413,14 @@ class Newsfeed extends Component {
     _renderHeader(item) {
         var thumbnail: string = '';
         var title: string = '';
-
+        let isBoosted: boolean = false;
+        const isOwner: boolean = item.owner.id === this.props.userId;
+        
         switch (item.entity.type) {
             case 'post' || 'user-petition':
                 thumbnail = item.owner.avatar_file_path ? item.owner.avatar_file_path : '';
                 title = item.owner.first_name + ' ' + item.owner.last_name;
+                isBoosted = item.zone === 'prioritized';
                 break;
             default:
                 thumbnail = item.group.avatar_file_path ? item.group.avatar_file_path : '';
@@ -413,7 +436,7 @@ class Newsfeed extends Component {
                         <Text note style={styles.subtitle}>{item.group.official_name} • <TimeAgo time={item.sent_at} hideAgo={true} /></Text>
                     </Body>
                     <Right style={{ flex: 0.2 }}>
-                        <Menu>
+                        <Menu ref={(ref) => { this.menu = ref; }}>
                             <MenuTrigger>
                                 <Icon name="ios-arrow-down" style={styles.dropDownIcon} />
                             </MenuTrigger>
@@ -436,12 +459,24 @@ class Newsfeed extends Component {
                                         <Text style={styles.menuText}>Add to Contact</Text>
                                     </Button>
                                 </MenuOption>
-                                <MenuOption>
-                                    <Button iconLeft transparent dark onPress={() => this.mute(item)}>
-                                        <Icon name="md-notifications-off" style={styles.menuIcon} />
-                                        <Text style={styles.menuText}>Mute Notifications for this User</Text>
-                                    </Button>
-                                </MenuOption>
+                                {
+                                    isOwner && !isBoosted &&
+                                    <MenuOption onSelect={() => this.edit(item)}>
+                                        <Button iconLeft transparent dark onPress={() => this.edit(item)}>
+                                            <Icon name="md-create" style={styles.menuIcon} />
+                                            <Text style={styles.menuText}>Edit Post</Text>
+                                        </Button>
+                                    </MenuOption>
+                                }
+                                {
+                                    isOwner &&
+                                    <MenuOption onSelect={() => this.delete(item)}>
+                                        <Button iconLeft transparent dark onPress={() => this.delete(item)}>
+                                            <Icon name="md-trash" style={styles.menuIcon} />
+                                            <Text style={styles.menuText}>Delete Post</Text>
+                                        </Button>
+                                    </MenuOption>
+                                }
                             </MenuOptions>
                         </Menu>
                     </Right>
@@ -683,7 +718,7 @@ class Newsfeed extends Component {
                         }}>
                      <View style={{flex: 1, height:(this.state.showAvatar && this.props.groupAvatar != '' && this.props.groupAvatar != null? (height - 364):( height -  308)), justifyContent: 'flex-end'}}>
                     <List>
-                        {this.props.payload.map((activity, index) => {
+                        {this.state.dataArray.map((activity, index) => {
                             return (
                                 <ListItem avatar key={index} style={{backgroundColor: 'white', marginLeft: 0, paddingLeft: 15}}>
                                     <Left>
@@ -792,6 +827,7 @@ const mapStateToProps = state => ({
     payload: state.activities.payload,
     count: state.activities.count,
     profile: state.user.profile,
+    userId: state.user.id,
     group: state.activities.group,
     groupName: state.activities.groupName,
     groupAvatar: state.activities.groupAvatar,
