@@ -37,6 +37,14 @@ async function votePost(token: string, postId: string, option: string) {
             })
         });
         let responseJson = await response.json();
+        if (responseJson.status === 200) {
+            if (option === 'upvote') {
+                showToast('Upvoted');
+            }
+            if (option === 'downvote') {
+                showToast('Downvoted');
+            }
+        }
         return responseJson;
     } catch (error) {
         handleError(error);
@@ -58,6 +66,11 @@ async function addCommentToPost(token: string, postId: string, comment: string, 
             })
         });
         let responseJson = await response.json();
+
+        if (responseJson.status === 200) {
+            showToast('Comment Successful!');
+        }
+        
         return responseJson;
     } catch (error) {
         handleError(error);
