@@ -15,7 +15,8 @@ var PLColors = require('PLColors');
 var PLConstants = require('PLConstants');
 var PLButton = require('PLButton');
 var { connect } = require('react-redux');
-import Spinner from  "react-native-loading-spinner-overlay";
+import PLOverlayLoader from 'PLOverlayLoader';
+
 const {width} = Dimensions.get('window');
 import {
     NavigationActions
@@ -575,7 +576,7 @@ class Register extends React.Component{
             <View style={styles.container}>
                 {position?this.renderContact():this.renderBasic()}
                 {this.renderBottom()}
-                <Spinner visible={isLoading} />
+                <PLOverlayLoader visible={this.state.isLoading} logo />
             </View>
         );
     }

@@ -17,8 +17,8 @@ import Menu, {
     MenuOption,
     renderers
 } from 'react-native-popup-menu';
-import OrientationLoadingOverlay from 'react-native-orientation-loading-overlay';
 import { getComments, votePost, addComment, rateComment, loadActivityByEntityId, deletePost, deletePetition, changePost, changePetition } from 'PLActions';
+import PLOverlayLoader from 'PLOverlayLoader';
 
 const { youTubeAPIKey } = require('PLEnv');
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
@@ -1007,7 +1007,7 @@ class ItemDetail extends Component {
     render() {
         if (this.item === null) {
             return (
-                <OrientationLoadingOverlay visible={this.state.isLoading} />
+                <PLOverlayLoader visible={this.state.isLoading} logo />
             );
         }
         let item = this.item;
@@ -1068,7 +1068,7 @@ class ItemDetail extends Component {
                         {this._renderLoadMore()}
                         {this._renderCommentsLoading()}
                         <View style={{ height: 50 }} />
-                        <OrientationLoadingOverlay visible={this.state.isLoading} />
+                        <PLOverlayLoader visible={this.state.isLoading} logo />
                     </HeaderImageScrollView>
                 </Container>
             </MenuContext>

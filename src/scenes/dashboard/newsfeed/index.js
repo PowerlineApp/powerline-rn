@@ -10,7 +10,6 @@ import styles, { sliderWidth, itemWidth } from './styles';
 import TimeAgo from 'react-native-timeago';
 import ImageLoad from 'react-native-image-placeholder';
 import YouTube from 'react-native-youtube';
-import OrientationLoadingOverlay from 'react-native-orientation-loading-overlay';
 
 import Menu, {
     MenuContext,
@@ -20,6 +19,7 @@ import Menu, {
     renderers
 } from 'react-native-popup-menu';
 
+import PLOverlayLoader from 'PLOverlayLoader';
 const PLColors = require('PLColors');
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
 const { youTubeAPIKey } = require('PLEnv');
@@ -257,9 +257,7 @@ class Newsfeed extends Component {
 
     _renderTailLoading() {
         if (this.state.isLoadingTail === true) {
-            return (
-                <Spinner color='gray' />
-            );
+            return <Spinner color='gray' />;
         } else {
             return null;
         }
@@ -796,9 +794,9 @@ class Newsfeed extends Component {
                         }
                     }}
                     />
-                    <OrientationLoadingOverlay visible={this.state.isLoading} />
+                    <PLOverlayLoader visible={this.state.isLoading} logo />
                     {this._renderTailLoading()}
-                </Content >
+                </Content>
                 </Container>
             );
         }        
