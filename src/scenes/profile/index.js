@@ -1,3 +1,8 @@
+//This looks like it's actually the Newsfeed tab (GH13) and the User Profile screen (GH44) combined. Each item in the newsfeed is referred to as the Standard Item Container. 
+//The backend call for this scene will be driven primarily by https://api-dev.powerli.ne/api-doc#get--api-v2-activities
+//The default view is "All" feed, but a specific group may be called for group Feed (GH45), Friends Feed (GH51), a specific user's feed (GH44)
+//Group Feed will look very different depending if in Feed View or Conversation View. 
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
@@ -145,6 +150,7 @@ class Profile extends Component{
         
     }
 
+    //This is for upvoting/downvoting a post. Needs attention GH128
     async vote(item, option) {
         let response = await votePost(this.props.token, item.entity.id, option);
         if (response.code) {
@@ -165,6 +171,7 @@ class Profile extends Component{
         }
     }
 
+    //When an item includes a YouTube attachment or when a YouTube link is included in the body of the item
     youtubeGetID(url) {
         var ID = '';
         url = url.replace(/(>|<)/gi, '').split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
@@ -200,6 +207,7 @@ class Profile extends Component{
         }
     }
 
+    //This is the count of priority zone content GH33
     _renderZoneIcon(item) {
         if (item.zone === 'prioritized') {
             return (<Icon active name="ios-flash" style={styles.zoneIcon} />);
@@ -248,6 +256,7 @@ class Profile extends Component{
         }
     }
 
+    //If an item has multiple attachments (leader content) it could be multiple videos or pictures, displayed as carousel, three items max
     _renderCarousel(item) {
         if (item.poll) {
             const slides = item.poll.educational_context.map((entry, index) => {
@@ -319,9 +328,10 @@ class Profile extends Component{
                     <Thumbnail small source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                     <Body>
                         <Text style={styles.title}>{title}</Text>
-                        <Text note style={styles.subtitle}>{item.group.official_name} • <TimeAgo time={item.sent_at} hideAgo={true} /></Text>
+                        <Text note style={styles.subtitle}>{item.group.official_name} ï¿½ <TimeAgo time={item.sent_at} hideAgo={true} /></Text>
                     </Body>
                     <Right style={{ flex: 0.2 }}>
+                        {/* Dropdown menu for Standard Item Container... Should be same as Item Detail Screen */}
                         <Menu>
                             <MenuTrigger>
                                 <Icon name="ios-arrow-down" style={styles.dropDownIcon} />
@@ -353,6 +363,14 @@ class Profile extends Component{
         );
     }
 
+    //The footer will be different for the Standard Item Container depending on the type of item it is:
+    //Post = Upvote, Downvote, Reply
+    //Petition = Sign, Reply... for user petitions and group petitions
+    //Group Poll (aka question) = Answer, Reply
+    //Group Fundraiser (aka payment_request)= Donate, Reply
+    //Group Discussion (leader_news) = Reply
+    //Group Event (leader_event) = RSVP, Reply
+    //If we are viewing the item in Item Detail Screen, an added button Analytics appears for Posts.
     _renderFooter(item) {
         switch (item.entity.type) {
             case 'post':
@@ -479,6 +497,8 @@ class Profile extends Component{
         }
     }
 
+    //If the item is a 'priority zone' item, it should display the zone icon. If not, it does not.
+    //The responses count appears below the avatar. It counts total engagement with the post (votes + comments)
     _renderDescription(item) {
         return (
             <CardItem>
@@ -496,6 +516,8 @@ class Profile extends Component{
         );
     }
 
+    //This isn't working currently. It is designed to give user preview of any embedded URL in the item. 
+    //GH13
     _renderMetadata(item) {
         if (item.metadata && item.metadata.image) {
             return (
@@ -552,6 +574,7 @@ class Profile extends Component{
         );
     }
 
+    // It would appear that the below is the User Profile Screen GH44
     render(){
         return (
             <MenuContext customStyles={menuContextStyles}>
@@ -588,12 +611,15 @@ class Profile extends Component{
                             <Text style={{color: 'white', fontSize: 11, marginBottom: 5}}>{this.state.user.karma}</Text>
                         </View>
                         <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                        {/*This should not have the state hard-coded in here*/}
                             <Text style={{color: 'white', fontSize: 11,  marginBottom: 5}}>California, {this.state.user.country}</Text>
                         </View>
                         <View style={{justifyContent: 'center', alignItems: 'center'}}>
                             <Text style={{color: 'white', fontSize: 11,  marginBottom: 5}}>{this.state.user.bio}</Text>
                         </View>
                     </View>: null}
+                    {/*The user's posts should be displayed below the user profile information*/}
+                    {/*This is driven by Activity API for specific user*/}
                     <Content>                   
                         <List dataArray={this.state.activities} renderRow={item => {
                             switch (item.entity.type) {

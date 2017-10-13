@@ -1,3 +1,9 @@
+//The Group Selector consists of two parts: 1) The Home Screen Selector Bar (All/Town/State/Country/More) and 2) The More Group Selector Screen which shows all the users groups including town/state/country groups
+//The Group Selector provides a shortcut to join a group, which brings user to Group Search / Add Group Screen
+//The Group Selector shows each group's name and avatar and a priority zone badge-counter per each item
+//https://api-dev.powerli.ne/api-doc#get--api-v2-user-groups
+//GH33, GH9
+
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -69,6 +75,7 @@ class GroupSelector extends Component {
         console.log(others);
     }
 
+    //Shows user's joined groups, including town/state/country groups
     async loadInitialGroups() {
         this.setState({ isLoading: true });
         const { props: { token, dispatch } } = this;
@@ -135,6 +142,7 @@ class GroupSelector extends Component {
         }
     }
 
+    //Selecting this should load the Town Group Feed into the Newsfeed tab
     _renderTownGroup() {
         if (this.townGroup) {
             return (
@@ -154,6 +162,7 @@ class GroupSelector extends Component {
         }
     }
 
+    //Selecting this should load the State Group Feed into the Newsfeed tab
     _renderStateGroup() {
         if (this.stateGroup) {
             return (
@@ -172,7 +181,7 @@ class GroupSelector extends Component {
             return null;
         }
     }
-
+    //Selecting this should load the Country Group Feed into the Newsfeed tab
     _renderCountryGroup() {
         if (this.countryGroup) {
             return (
@@ -191,7 +200,9 @@ class GroupSelector extends Component {
             return null;
         }
     }
-
+    //Selecting this should load the appropriate/selected Group Feed into the Newsfeed tab
+    //Depending on group, "Newsfeed View" will display or "Conversation View" will display
+    //GH45, GH142
     goToGroupFeed(groupId, groupName, avatar,limit){     
         var { dispatch, token } = this.props;
         dispatch({type: 'SET_GROUP', data: {id: groupId, name: groupName, avatar: avatar, limit: limit}});
@@ -201,6 +212,7 @@ class GroupSelector extends Component {
         
     }
 
+    //GH142
     goToGroupConversation(){
         Actions.groupConversation();
     }

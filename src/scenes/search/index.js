@@ -1,3 +1,6 @@
+//This is the Search Screen. It is accessible via burger menu and via the search shortcut on the Home Screen
+//GH 43
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
@@ -54,6 +57,8 @@ class Search extends Component{
         });
     }
 
+    //There are three different types of searches. Search by Groups (default view), search for people, and search for posts/hashtags.
+    //At the time of this comment, search for posts is not yet developed.
     onQuery(text){
         if(text != ''){
             //search query

@@ -1,3 +1,7 @@
+//Newsfeed tab GH13
+//The backend call for this scene will be driven primarily by https://api-dev.powerli.ne/api-doc#get--api-v2-activities
+//The default view is "All" feed, but a specific group may be called for group Feed (GH45), Friends Feed (GH51), a specific user's feed (GH44)
+//Group feed will look very different depending on if in Feed view or Conversation view.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -60,6 +64,7 @@ class Newsfeed extends Component {
         });
     }
 
+    //JC I'm unclear on what this actually is 
     subscribe(item) {
         Share.share({
             message: item.description,
@@ -67,6 +72,9 @@ class Newsfeed extends Component {
         });
     }
 
+    //Dropdown menu item "Mute this user" GH121... 
+    //User A's followers receive push notification each time user creates post. Mute allows user to turn off push notifications for a preset period of time
+    //This helps avoid push notification overload when a followed user is very active.
     mute(item) {
         //console.log(item);
         var { token, dispatch } = this.props;
@@ -95,7 +103,7 @@ class Newsfeed extends Component {
             }
         );
     }
-
+//Should always load the All feed by default unless a Group Feed was selected from Group Selector, Friends Feed, or User Profile Feed
     async loadInitialActivities() {
         this.setState({ isRefreshing: true });
         const { props: { token, dispatch, page, group } } = this;
@@ -156,6 +164,8 @@ class Newsfeed extends Component {
         return -1;
     }
 
+    //User should be able to vote on an item and the count should reflect total votes on item.
+    //Related: GH128
     async vote(item, option) {
         const { props: { profile } } = this;
         if (profile.id === item.user.id) {
@@ -207,6 +217,7 @@ class Newsfeed extends Component {
         });
     }
 
+    //If a YouTube video is attached to content or if YouTube link is included in body of item
     youtubeGetID(url) {
         var ID = '';
         url = url.replace(/(>|<)/gi, '').split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
@@ -232,10 +243,12 @@ class Newsfeed extends Component {
         }
     }
 
+    //opening an item in the newsfeed will open the Item Detail Screen
     goItemDetail(entityId, entityType) {
         Actions.itemDetail({ entityId: entityId, entityType: entityType });
     }
 
+    //Related: GH160
     _renderTailLoading() {
         if (this.state.isLoadingTail === true) {
             return (
@@ -246,6 +259,7 @@ class Newsfeed extends Component {
         }
     }
 
+    //The priority zone counter lists the count of total priority zone items in the newsfeed
     _renderZoneIcon(item) {
         if (item.zone === 'prioritized') {
             return (<Icon active name="ios-flash" style={styles.zoneIcon} />);
@@ -254,10 +268,11 @@ class Newsfeed extends Component {
         }
     }
 
+    //For attachments to an item, GH13, GH26, GH41
     _renderContext(entry) {
         if (entry.type === "image") {
             return (
-                <ImageLoad
+                <Image
                     source={{ uri: entry.imageSrc }}
                     style={styles.image}
                 />
@@ -293,6 +308,7 @@ class Newsfeed extends Component {
         }
     }
 
+//Up to three attachments may appear below an item in newsfeed or item detail screen (images or youtube videos)
     _renderCarousel(item) {
         if (item.poll) {
             const slides = item.poll.educational_context.map((entry, index) => {
@@ -336,6 +352,7 @@ class Newsfeed extends Component {
         }
     }
 
+    //Some items have titles and some items don't... Petitions, Events, and Fundraisers have titles
     _renderTitle(item) {
         if (item.title) {
             return (<Text style={styles.title}>{item.title}</Text>);
@@ -344,6 +361,8 @@ class Newsfeed extends Component {
         }
     }
 
+    //If an item is expired, it cannot be upvoted/downvoted or signed.
+    //Purpose of 'expiration' is to make sure that old items can't get boosted when they become irrelevant/out-of-date
     _renderPostFooter(item) {
         if (item.zone === 'expired') {
             return (
@@ -357,6 +376,7 @@ class Newsfeed extends Component {
                 </CardItem>
             );
         } else {
+            // Related: GH128
             if (item.post.votes && item.post.votes[0]) {
                 let vote = item.post.votes[0];
                 var isVotedUp = false;
@@ -368,6 +388,8 @@ class Newsfeed extends Component {
                     isVotedDown = true;
                 }
             }
+            //Posts should be able to be voted up or down
+            //Discussions can also be 'rated' up or down
             return (
                 <CardItem footer style={{ height: 35 }}>
                     <Left style={{ justifyContent: 'space-between' }}>
@@ -389,6 +411,7 @@ class Newsfeed extends Component {
         }
     }
 
+    //Only petitions, events, and fundraisers have titles, but it looks like someone wrote 'title' when they should have written 'name'
     _renderHeader(item) {
         var thumbnail: string = '';
         var title: string = '';
@@ -416,6 +439,8 @@ class Newsfeed extends Component {
                             <MenuTrigger>
                                 <Icon name="ios-arrow-down" style={styles.dropDownIcon} />
                             </MenuTrigger>
+                            {/*Dropdown menu items for the Newsfeed Standard Item Container and for Item Detail Screen*/}
+                            {/*Related: GH66, GH52, GH57, GH68, Gh121, GH149, GH137*/}
                             <MenuOptions customStyles={optionsStyles}>
                                 <MenuOption>
                                     <Button iconLeft transparent dark onPress={() => this.subscribe(item)}>
@@ -449,6 +474,14 @@ class Newsfeed extends Component {
         );
     }
 
+    //Button options are different depending on the item
+    ////Post = Upvote, Downvote, Reply
+    //Petition = Sign, Reply... for user petitions and group petitions
+    //Group Poll (aka question) = Answer, Reply
+    //Group Fundraiser (aka payment_request)= Donate, Reply
+    //Group Discussion (leader_news) = Reply
+    //Group Event (leader_event) = RSVP, Reply
+    //If we are viewing the item in Item Detail Screen, an added button Analytics appears for Posts.
     _renderFooter(item) {
         switch (item.entity.type) {
             case 'post':
@@ -577,6 +610,7 @@ class Newsfeed extends Component {
         );
     }
 
+    //This is a known broken issue. GH13
     _renderMetadata(item) {
         if (item.metadata && item.metadata.image) {
             return (
@@ -662,9 +696,9 @@ class Newsfeed extends Component {
             return (
                 <Container>
                 <View style={styles.groupHeaderContainer}>
-                    {this.state.showAvatar && this.props.groupAvatar != '' && this.props.groupAvatar != null?
-                    <Thumbnail square source={{uri: this.props.groupAvatar}} style={styles.groupAvatar}/>: null}
-                    <Text style={styles.groupName}>{this.props.groupName}</Text>
+                    {this.state.showAvatar && this.props.savedGroup && this.props.savedGroup.groupAvatar != '' && this.props.savedGroup.groupAvatar != null ?
+                        <Thumbnail square source={{ uri: this.props.savedGroup.groupAvatar }} style={styles.groupAvatar} /> : null}
+                    <Text style={styles.groupName}>{this.props.savedGroup.groupName}</Text>
                 </View>
                 <Content
                     onScroll={(e) => {                           
@@ -719,13 +753,16 @@ class Newsfeed extends Component {
             );
         }else{
             return (
+                // The default view of the newsfeed is the All feed.
                 <Container>
-                {this.props.group != 'all'?
-                <View style={styles.groupHeaderContainer}>
-                    {this.state.showAvatar && this.props.groupAvatar != '' && this.props.groupAvatar != null?
-                    <Thumbnail square source={{uri: this.props.groupAvatar}} style={styles.groupAvatar}/>: null}
-                    <Text style={styles.groupName}>{this.props.groupName}</Text>
-                </View>:null}
+                {
+                    this.props.savedGroup && this.props.savedGroup.group != 'all' &&
+                    <View style={styles.groupHeaderContainer}>
+                        {this.state.showAvatar && this.props.savedGroup.groupAvatar != '' && this.props.savedGroup.groupAvatar != null ?
+                            <Thumbnail square source={{ uri: this.props.savedGroup.groupAvatar }} style={styles.groupAvatar} /> : null}
+                        <Text style={styles.groupName}>{this.props.savedGroup.groupName}</Text>
+                    </View>
+                }
                 <Content
                     refreshControl={
                         <RefreshControl
@@ -792,7 +829,8 @@ const mapStateToProps = state => ({
     group: state.activities.group,
     groupName: state.activities.groupName,
     groupAvatar: state.activities.groupAvatar,
-    groupLimit: state.activities.groupLimit
+    groupLimit: state.activities.groupLimit,
+    savedGroup: state.activities.savedGroup,
 });
 
 export default connect(mapStateToProps)(Newsfeed);

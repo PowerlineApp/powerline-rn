@@ -1,6 +1,9 @@
+//For notification feed tab
 var { API_URL } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
 
+
+//Called Social Activities on backend. Called Notification Feed tab on frontend
 function getActivities(token, page = 1, per_page = 50){
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2/user/social-activities?_format=json&tab=you&&page='+page +'&per_page=' + per_page, {

@@ -1,6 +1,6 @@
 'use strict';
 
-import type {Action } from '../actions/types';
+import type { Action } from '../actions/types';
 
 export type State = {
     page: number;
@@ -11,6 +11,7 @@ export type State = {
     groupName: string;
     groupAvatar: string;
     groupLimit: number;
+    savedGroup: object;
 };
 
 const initialState = {
@@ -21,7 +22,12 @@ const initialState = {
     group: 'all',
     groupName: '',
     groupAvatar: '',
-    groupLimit: 10
+    groupLimit: 10,
+    savedGroup: {
+        group: 'all',
+        groupName: '',
+        groupAvatar: '',
+    }
 };
 
 const payloadStack: Array<Object> = [];
@@ -38,7 +44,16 @@ function activities(state: State = initialState, action: Action): State {
             count: action.data.payload.length,
         };
     }
-    if (action.type === 'RESET_ACTIVITIES' || action.type === 'LOGGED_OUT') {
+    
+    if (action.type === 'RESET_ACTIVITIES') {
+        payloadStack = [];
+        return {
+            ...initialState,
+            savedGroup: state.savedGroup,
+        };
+    }
+
+    if (action.type === 'LOGGED_OUT') {
         payloadStack = [];
         return initialState;
     }
@@ -51,7 +66,12 @@ function activities(state: State = initialState, action: Action): State {
             groupName: action.data.name,
             groupAvatar: action.data.avatar,
             groupLimit: action.data.limit,
-            payload: []
+            payload: [],
+            savedGroup: {
+                group: action.data.id,
+                groupName: action.data.name,
+                groupAvatar: action.data.avatar,
+            },
         }
     }
 

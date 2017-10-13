@@ -2,6 +2,7 @@
 var { API_URL, PER_PAGE } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
 
+//Newsfeed activities can be loaded by All, by Group (town/state/country/group), by Friends, by Specific user, or by Favorites
 async function loadActivities(token: string, page: ?number = 0, perPage: ?number = PER_PAGE, group: ?string = 'all', user: ?string = 'all'): Promise<Action> {
     try {
         var response = await fetch(`${API_URL}/v2/activities?_format=json&user=${user}&group=${group}&page=${page + 1}&per_page=${perPage}`, {
@@ -63,6 +64,7 @@ function loadActivitiesByUserId(token, page = 0, per_page = 20, group = 'all', u
     });
 }
 
+//Should be for loading public groups (Town/state/country) or by public groups (e.g. Save the Whales)
 function loadActivityByEntityId(token, entityType, entityId) {
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2/activities?_format=json&' + entityType + '_id=' + entityId, {
@@ -84,6 +86,7 @@ function loadActivityByEntityId(token, entityType, entityId) {
     });
 }
 
+//This relates to the Notifications tab
 function putSocialActivity(token, id, ignore){
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2/social-activities/' + id, {

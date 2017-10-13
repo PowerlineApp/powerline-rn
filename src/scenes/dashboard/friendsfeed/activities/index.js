@@ -1,3 +1,6 @@
+//I am not sure why this is here. This should not be re-written. The Friends Feed should reference the main newsfeed and provide different parameters to API request
+// See: https://api-dev.powerli.ne/api-doc#get--api-v2-activities followed and non-followed
+// GH51
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';

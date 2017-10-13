@@ -1,3 +1,9 @@
+//This is the Item Detail Screen. It appears when a user opens an item from the newsfeed.
+//Currently it only supports posts and petitions, but it will need to be expnded to support polls, fundraisers, events, and discussions
+//GH19, GH20, GH21, GH22, GH23, GH24, GH25, GH26, GH27
+//Should probably use https://api-dev.powerli.ne/api-doc#get--api-v2-activities and post/poll/petition ID
+
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, Spinner, List, ListItem, Item, Input } from 'native-base';
@@ -90,21 +96,23 @@ class ItemDetail extends Component {
 
     _onSendComment() {
         if (this.state.commentText === '') {
-            alert("Please input comment text");
+            alert("There is no comment to send. Try again.");
         } else {
             this.doComment(this.state.commentText);
         }
     }
 
+    //I am not sure what this is, we should come back to this.
     _onVote(item, option) {
         const { props: { profile } } = this;
         if (profile.id === item.user.id) {
-            alert("Unable to vote because you're the owner of the comment.")
+            alert("Unable to vote because you're the owner of the item.")
         } else {
             this.vote(item, option);
         }
     }
 
+    //Comments can be voted up or down. It's called "rating" a comment
     _onRate(comment, option) {
         const { props: { profile } } = this;
         this.rate(comment, option);
@@ -263,7 +271,8 @@ class ItemDetail extends Component {
             setTimeout(() => alert(message), 1000);
         }
     }
-
+    //GH17
+    //Users should be able to create comments and reply to a comment
     async doComment(commentText) {
         const { props: { entityId, entityType, token, dispatch } } = this;
         this.setState({ isLoading: true });
@@ -288,6 +297,7 @@ class ItemDetail extends Component {
         }
     }
 
+    //User should be able to up/down rate a comment
     async rate(comment, option) {
         this.setState({ isLoading: true });
 
@@ -335,7 +345,8 @@ class ItemDetail extends Component {
         return -1;
     }
 
-    // Redering Functions
+    // A lot of below looks like duplication of Newsfeed / User Profile screen. Should not be like this.
+    // Rendering Functions
     _renderZoneIcon(item) {
         if (item.zone === 'prioritized') {
             return (<Icon active name="ios-flash" style={styles.zoneIcon} />);
@@ -694,6 +705,9 @@ class ItemDetail extends Component {
         }
     }
 
+    //Above looks like duplicative of newsfeed / user profile
+
+    //Adding a comment to an item
     _renderAddComment() {
         const { props: { profile } } = this;
         var thumbnail: string = '';
@@ -739,6 +753,7 @@ class ItemDetail extends Component {
         );
     }
 
+    //GH160
     _renderCommentsLoading() {
         if (this.state.isCommentsLoading === true) {
             return (
@@ -775,6 +790,7 @@ class ItemDetail extends Component {
         }
     }
 
+    //If a root comment has a reply, it is a root and a parent.
     _renderRootComment(comment) {
         var thumbnail: string = comment.author_picture ? comment.author_picture : '';
         var title: string = (comment.user.first_name || '') + ' ' + (comment.user.last_name || '');
@@ -814,6 +830,7 @@ class ItemDetail extends Component {
         );
     }
 
+    //These are replies to a parent / root comment
     _renderChildComment(comment) {
 
         var thumbnail: string = comment.author_picture ? comment.author_picture : '';
@@ -869,6 +886,7 @@ class ItemDetail extends Component {
         }
     }
 
+    //Below looks duplicative of newsfeed / user profile 
     _renderPostOrUserPetitionCard(item) {
         return (
             <View>
@@ -903,6 +921,16 @@ class ItemDetail extends Component {
         }
     }
 
+    onBackPress = () => {
+        const { backTo } = this.props;
+
+        if (backTo) {
+            Actions.popTo(backTo);
+        } else {
+            Actions.pop();
+        }
+    }
+
     render() {
         if (this.item === null) {
             return (
@@ -918,6 +946,8 @@ class ItemDetail extends Component {
                         minHeight={MIN_HEIGHT}
                         fadeOutForeground
                         renderHeader={() => (
+                            //Eventually this should show the Group Banner GH19
+                            //https://github.com/PowerlineApp/powerline-mobile/issues/596
                             <Image
                                 style={styles.headerImage}
                                 source={require('img/item_detail_header.png')}
@@ -929,7 +959,7 @@ class ItemDetail extends Component {
                                 ref={(navTitleView) => { this.navTitleView = navTitleView; }}>
                                 <Header style={{ backgroundColor: 'transparent' }}>
                                     <Left>
-                                        <Button transparent onPress={() => Actions.pop()}>
+                                        <Button transparent onPress={this.onBackPress}>
                                             <Icon active name="arrow-back" style={{ color: 'white' }} />
                                         </Button>
                                     </Left>
@@ -942,7 +972,7 @@ class ItemDetail extends Component {
                         )}
                         renderForeground={() => (
                             <Left style={styles.titleContainer}>
-                                <Button transparent onPress={() => Actions.pop()}>
+                                <Button transparent onPress={this.onBackPress}>
                                     <Icon active name="md-arrow-back" style={{ color: 'white' }} />
                                 </Button>
                                 <Body style={{ marginTop: -12 }}>

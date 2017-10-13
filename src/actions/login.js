@@ -102,7 +102,8 @@ function logInWithFacebook() {
                 };
                 resolve(data);
             }else{        
-                FacebookSDK.api("/me", "get", {fields: 'email,first_name,last_name,picture,gender,location,hometown,birthday,link'}, function(data, err){
+              //if user is not already registered with Facebook, but tries to login with Facebook, this gets information from user's FB account  
+              FacebookSDK.api("/me", "get", {fields: 'email,first_name,last_name,picture,gender,location,hometown,birthday,link'}, function(data, err){
                     if(err){
                       console.log(err);
                       reject(err);
