@@ -93,6 +93,14 @@ function getInvites(token){
 
 function registerDevice(token, params){
     return new Promise((resolve, reject) => {
+        console.log({
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'token': token
+            },
+            body: JSON.stringify(params)
+        });
         fetch(API_URL + '/v2/devices', {
             method: "POST",
             headers: {

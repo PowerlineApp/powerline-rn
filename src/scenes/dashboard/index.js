@@ -17,7 +17,7 @@ import Menu, {
 import { openDrawer } from '../../actions/drawer';
 import styles from './styles';
 
-import { loadUserProfile, loadActivities, registerDevice, acceptFollowers,unFollowers, search, getActivities, getFollowers } from 'PLActions';
+import { loadUserProfile, loadActivities, registerDevice, acceptFollowers,unFollowers, search, getActivities, getFollowers, votePost, joinGroup } from 'PLActions';
 
 // Tab Scenes
 import Newsfeed from './newsfeed/'
@@ -60,6 +60,8 @@ class Home extends Component {
 
     this.onIds = this.onIds.bind(this);
     this.onOpened = this.onOpened.bind(this);
+    this.onReceived = this.onReceived.bind(this);
+    this.onRegistered = this.onRegistered.bind(this);
   }
 
   componentWillMount() {
@@ -73,6 +75,9 @@ class Home extends Component {
 
     OneSignal.addEventListener('opened', this.onOpened);
 
+    OneSignal.addEventListener('received', this.onReceived);
+    OneSignal.addEventListener('registered', this.onRegistered);
+
     if (!profile) {
       this.loadCurrentUserProfile();
     }
@@ -84,9 +89,17 @@ class Home extends Component {
     });
   }
 
+  onReceived(data){
+    console.log('received: ', data);
+  }
+
+  onRegistered(data){
+    console.log('registered :', data);
+  }
+
   onIds(data){
     var { token } = this.props;
-    console.log("push ids", data);
+    // console.log("=x=x=x=x=x=x=x=x=x=x=x=x=xx=x=x=x=x=x=x=x=x=xx=x=x=x push ids", data);
     AsyncStorage.setItem('pushId', data.userId);
 
     var params = {
@@ -105,47 +118,123 @@ class Home extends Component {
     .catch(err => {
     });
   }
+  
+  openComment() {
+    console.log('open comment - will actually navigate to notifications for now');
+    Actions.home({notification: true});
+  }
+
+  approveFollowRequest(token, data, dispatch) {
+    console.log('approve follow request');
+    // console.log("accept button", data.notification.payload.additionalData.entity.target.id);
+    // console.log("token", token);
+    acceptFollowers(token, data.notification.payload.additionalData.entity.target.id)
+    .then((ret) => {  
+      dispatch({type: 'RESET_FOLLOWERS'});
+      getFollowers(token, 1, 20).then(ret1 => {
+        dispatch({type: 'LOAD_FOLLOWERS', data: ret1});
+      })
+      .catch(err => {
+        
+      });      
+      Actions.myInfluences();
+    })
+    .catch(err => {
+        console.log(err);
+    });
+  }
+
+  ignoreFollowRequest(token, data, dispatch){
+    // console.log('ignore follow request')
+    unFollowers(token, data.notification.payload.additionalData.entity.target.id)
+    .then((ret) => {   
+      dispatch({type: 'RESET_FOLLOWERS'});
+      getFollowers(token, 1, 20).then(ret1 => {
+        dispatch({type: 'LOAD_FOLLOWERS', data: ret1});
+      })
+      .catch(err => {
+        
+      });               
+      Actions.myInfluences();                    
+    })
+    .catch(err => {
+
+    });
+  }
+  
+  upvote(token, data, dispatch){
+    console.log('upvote post');
+    votePost(this.props.token, item.entity.id, 'upvote');    
+  }
+  
+  downvote(token, data, dispatch){
+    console.log('downvote post');
+    votePost(this.props.token, item.entity.id, 'downvote');    
+  }
+  
+  sign(token, data, dispatch){
+    console.log('sign petition');
+
+  }
+  
+  mute(token, data, dispatch){
+    console.log('mute - unsubscribes from the item');
+  }
+  
+  sharePost(token, data, dispatch){
+    console.log('share post');
+  }
+  
+  joinGroup(token, data, dispatch){
+    // joinGroup(token, id, passcode, answeredFields)   
+    console.log('joins a group');
+  }
 
   onOpened(data){
-    var { token,dispatch } = this.props;
-    console.log("push notification opened", data);    
-    if(data.action.actionID == 'approve-follow-request-button'){
-      console.log("accept button", data.notification.payload.additionalData.entity.target.id);
-      console.log("token", token);
-      acceptFollowers(token, data.notification.payload.additionalData.entity.target.id)
-      .then((ret) => {  
-        dispatch({type: 'RESET_FOLLOWERS'});
-        getFollowers(token, 1, 20).then(ret1 => {
-          dispatch({type: 'LOAD_FOLLOWERS', data: ret1});
-        })
-        .catch(err => {
-          
-        });      
-        Actions.myInfluences();
-      })
-      .catch(err => {
-          console.log(err);
-      });
-    }else if(data.action.actionID == 'ignore-follow-request-button'){
-      console.log("ignore button", data.notification.payload.additionalData.entity.target.id);
-      unFollowers(token, data.notification.payload.additionalData.entity.target.id)
-      .then((ret) => {   
-        dispatch({type: 'RESET_FOLLOWERS'});
-        getFollowers(token, 1, 20).then(ret1 => {
-          dispatch({type: 'LOAD_FOLLOWERS', data: ret1});
-        })
-        .catch(err => {
-          
-        });               
-        Actions.myInfluences();                    
-      })
-      .catch(err => {
+    let { token,dispatch } = this.props;
+    console.log("=x=x=x=x=x=x=x=x=x=x=x=x=xx=x=x= push notification opened", data.notification); 
+    // let {actionID} = data.notification;
 
-      });
-    }else if(data.notification.payload.additionalData.type == 'follow-request'){
-      console.log("notification click");
-      Actions.home({notification: true});
-    }
+    /* 
+        Upvote - actually upvotes the post
+        Downvote - actually downvotes the post
+        Sign - actually signs the petition
+        Mute - actually unsubscribes from the item
+        Share-Post-Button - actually Upvotes the post *and* notifies user's followers (#137)
+        Approve - Actually approves the follow request (partially implemented, maybe? from Thiago)
+        Join - Actually joins the group invite (partially implemented, maybe? from Thiago)
+    */
+
+    // switch(actionID){
+    //   case 'open-comment-button':
+    //     this.openComment();
+    //   case 'approve-follow-request-button': {
+    //     this.approveFollowRequest(token, data, dispatch);
+    //   }
+    //   case 'ignore-follow-request-button': {
+    //     this.ignoreFollowRequest(token, data, dispatch);
+    //   }
+    //   case 'upvote-button': {
+    //     this.upvote(token, data, dispatch);
+    //   }
+    //   case 'downvote-button': {
+    //     this.downvote(token, data, dispatch);
+    //   }
+    //   case 'sign-button': {
+    //     this.sign(token, data, dispatch);
+    //   }
+    //   case 'mute-button': {
+    //     this.mute(token, data, dispatch);
+    //   }
+    //   case 'share-post-button': {
+    //     this.sharePost(token, data, dispatch);
+    //   }
+    //   case 'join-group-button': {
+    //     this.joinGroup(token, data, dispatch);
+    //   }
+      
+      // default: ;
+    // }
   }
 
   async loadCurrentUserProfile() {
