@@ -51,7 +51,7 @@ export default class PLLoader extends React.Component {
   }
 
   render() {
-    const { size, avatar, avatarBackgroundColor, interval } = this.props;
+    const { size, avatar, center, avatarBackgroundColor, interval } = this.props;
 
     return (
       <View style={{
@@ -63,6 +63,7 @@ export default class PLLoader extends React.Component {
         {this.state.circles.map((circle) => (
           <Pulse
             key={circle}
+            center={center}
             {...this.props}
           />
         ))}
