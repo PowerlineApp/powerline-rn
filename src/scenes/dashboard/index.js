@@ -234,21 +234,21 @@ class Home extends Component {
               <Button badge={true} active={this.state.tab1} onPress={() => this.toggleTab1()} > 
                 <Badge><Text>{this.showBadgeForActivities()}</Text></Badge>
                 <Icon active={this.state.tab1} name="ios-flash" />
-                <Text>Newsfeed</Text>
+                <Text>NEWSFEED</Text>
               </Button>:
               <Button active={this.state.tab1} onPress={() => this.toggleTab1()} >
                 <Icon active={this.state.tab1} name="ios-flash" />
-                <Text>Newsfeed</Text>
+                <Text>NEWSFEED</Text>
               </Button>
               }
               <Button active={this.state.tab2} onPress={() => this.toggleTab2()} >
                 <Icon active={this.state.tab2} name="md-people" />
-                <Text>Friends</Text>
+                <Text>FRIENDS</Text>
               </Button>
               <Button>
                 <Menu name="create_item" renderer={SlideInMenu} onSelect={value => this.selectNewItem(value)} ref={this.onRef}>
                   <MenuTrigger>
-                    <Icon name="ios-add-circle" style={{ fontSize: 42, color: '#030366' }} />
+                    <Icon name="ios-add-circle" style={styles.iconPlus} />
                   </MenuTrigger>
                   <MenuOptions customStyles={optionsStyles}>
                     <MenuOption value={'group_announcement'}>
@@ -304,11 +304,11 @@ class Home extends Component {
               </Button>
               <Button active={this.state.tab3} onPress={() => this.toggleTab3()} >
                 <Icon active={this.state.tab3} name="md-mail" />
-                <Text>Messages</Text>
+                <Text>MESSAGES</Text>
               </Button>
               <Button active={this.state.tab4} onPress={() => this.toggleTab4()} >
                 <Icon active={this.state.tab4} name="md-notifications" />
-                <Text>Notifications</Text>
+                <Text>NOTIFICATIONS</Text>
               </Button>
             </FooterTab>
           </Footer>
