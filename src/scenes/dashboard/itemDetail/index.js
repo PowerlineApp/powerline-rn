@@ -66,12 +66,6 @@ class ItemDetail extends Component {
         this.loadEntity();
     }
 
-    componentDidMount(){
-        if (this.props.fillComment){
-            this.setState({commentText: this.props.initialText});
-        }
-    }
-
     componentWillUnmount() {
         this.keyboardDidShowListener.remove();
         this.keyboardDidHideListener.remove();
