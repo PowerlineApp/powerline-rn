@@ -115,7 +115,8 @@ class SideBar extends Component {
       var { token, pushId } = this.props;
 
       OneSignal.setSubscription(false);
-      AsyncStorage.getItem('pushId', (err, pushId) => {        
+      AsyncStorage.getItem('pushId', (err, pushId) => { 
+        console.log('unregistering...');       
         unregisterDevice(token, pushId)
         .then(data => {
           this.props.logOut();

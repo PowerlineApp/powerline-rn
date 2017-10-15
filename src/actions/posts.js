@@ -40,6 +40,23 @@ async function votePost(token: string, postId: string, option: string) {
         handleError(error);
     }
 }
+async function unsubscribeFromPost(token: string, postId: string) {
+    try {
+        let response = await fetch(`${API_URL}/v2/user/posts/${postId}`, {
+            method: 'DELETE',
+            headers: {
+                'token': token,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+            })
+        });
+        response = response.ok;
+        return response;
+    } catch (error) {
+        handleError(error);
+    }
+}
 
 async function addCommentToPost(token: string, postId: string, comment: string, parentId: ?string = '0', privacy: ?string = 'public') {
     try {
@@ -177,6 +194,12 @@ function getPetitionConfig(token, groupId){
     });
 }
 
+
+function handleError(error) {
+    const message = error.message || error;
+    alert(message);
+}
+
 module.exports = {
     votePost,
     loadPostComments,
@@ -185,5 +208,6 @@ module.exports = {
     createPostToGroup,
     createPetition,
     getPetitionConfig,
+    unsubscribeFromPost,
     loadPost,
 };

@@ -167,6 +167,7 @@ async function forgotPassword(email: string) {
 
 function logOut(): ThunkAction {
   return (dispatch) => {
+    console.log('logging out...')
     FacebookSDK.logout();
 
     return dispatch({

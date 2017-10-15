@@ -6,7 +6,7 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, Spinner, List, ListItem, Item, Input } from 'native-base';
+import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, Card, CardItem, Label, Spinner, List, ListItem, Item, Input } from 'native-base';
 import { Image, View, StyleSheet, TouchableOpacity, Platform, KeyboardAvoidingView, Keyboard, TextInput, ListView } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
@@ -64,6 +64,12 @@ class ItemDetail extends Component {
         this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide.bind(this));
 
         this.loadEntity();
+    }
+
+    componentDidMount(){
+        if (this.props.fillComment){
+            this.setState({commentText: this.props.initialText});
+        }
     }
 
     componentWillUnmount() {
@@ -732,7 +738,7 @@ class ItemDetail extends Component {
                                         <Left>
                                             <Thumbnail small source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                                             <Body>
-                                                <TextInput style={styles.commentInput} ref={this.onCommentInputRef} placeholder="Comment..." onChangeText={commentText => this.setState({ commentText })} />
+                                                <TextInput style={styles.commentInput} ref={this.onCommentInputRef} placeholder="Comment..." value={this.state.commentText} onChangeText={commentText => this.setState({ commentText })} />
                                             </Body>
                                             <Right style={{ flex: 0.3 }}>
                                                 <TouchableOpacity style={{ flexDirection: 'row' }} onPress={() => this._onSendComment()}>

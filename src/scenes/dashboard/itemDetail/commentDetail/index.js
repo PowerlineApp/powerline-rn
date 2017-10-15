@@ -221,6 +221,7 @@ class CommentDetail extends Component {
     }
 
     _renderRootComment(comment) {
+        console.log(comment);
         var thumbnail: string = comment.author_picture ? comment.author_picture : '';
         var title: string = (comment.user.first_name || '') + ' ' + (comment.user.last_name || '');
         var rateUp: number = (comment.rate_count || 0) / 2 + comment.rate_sum / 2;
