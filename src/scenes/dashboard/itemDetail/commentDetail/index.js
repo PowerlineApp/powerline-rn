@@ -20,7 +20,8 @@ import Menu, {
     MenuOption,
     renderers
 } from 'react-native-popup-menu';
-import OrientationLoadingOverlay from 'react-native-orientation-loading-overlay';
+import PLOverlayLoader from 'PLOverlayLoader';
+
 import { getChildComments, addComment, rateComment } from 'PLActions';
 
 const { SlideInMenu } = renderers;
@@ -213,7 +214,7 @@ class CommentDetail extends Component {
                         {this._renderLoadMore()}
                         {this._renderCommentsLoading()}
                         {this._renderAddComment()}
-                        <OrientationLoadingOverlay visible={this.state.isLoading} />
+                        <PLOverlayLoader visible={this.state.isLoading} logo />
                     </Content>
                 </Container>
             </MenuContext >

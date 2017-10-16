@@ -13,7 +13,7 @@ import styles, { sliderWidth, itemWidth } from './styles';
 import TimeAgo from 'react-native-timeago';
 import ImageLoad from 'react-native-image-placeholder';
 import YouTube from 'react-native-youtube';
-import OrientationLoadingOverlay from 'react-native-orientation-loading-overlay';
+import PLOverlayLoader from 'PLOverlayLoader';
 
 import Menu, {
     MenuContext,
@@ -661,7 +661,7 @@ class FriendActivity extends Component {
                     }
                 }}
                 />
-                <OrientationLoadingOverlay visible={this.state.isLoading} />
+                <PLOverlayLoader visible={this.state.isLoading} logo />
                 {this._renderTailLoading()}
             </Content >
         );
