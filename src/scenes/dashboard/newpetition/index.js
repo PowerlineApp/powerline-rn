@@ -23,7 +23,7 @@ import {
 } from 'native-base';
 const PLColors = require('PLColors');
 import styles from './styles';
-import SuggestionBox from '../suggestionBox';
+import SuggestionBox from '../../../common/suggestionBox';
 import {
     Dimensions,
     ScrollView,
@@ -87,12 +87,6 @@ class NewPetition extends Component{
         });
 
         var { token } = this.props;
-
-        getUsersByGroup(token, this.state.grouplist[index].id).then(data => {
-            this.setState({groupUsers: data.payload})
-        }).catch(err => {
-
-        })
 
         getPetitionConfig(token, this.state.grouplist[index].id)
         .then(data => {
@@ -174,9 +168,22 @@ class NewPetition extends Component{
             }
             if (displayMention){
 
+                let suggestionSearch = text.slice(i+1, end);
+                this.updateSuggestionList(this.props.token, suggestionSearch);
+                this.setState({displaySuggestionBox: displayMention, init: i, end: end});
+            } else {
+                this.setState({suggestionList: [], displaySuggestionBox: false})
             }
-            this.setState({displaySuggestionBox: displayMention, suggestionSearch: text.slice(i, end), init: i, end: end});
         }, 100);
+    }
+    
+    updateSuggestionList(token, suggestionSearch) {
+        this.setState({suggestionList: []});
+        getUsersByGroup(token, this.state.grouplist[this.state.selectedGroupIndex].id, suggestionSearch).then(data => {
+            this.setState({suggestionList: data.payload})
+        }).catch(err => {
+
+        })
     }
 
 
@@ -233,7 +240,7 @@ class NewPetition extends Component{
                                 onChangeText={(text) => this.changeTitle(text)}
                                 underlineColorAndroid={'transparent'}
                             />
-                            <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} suggestionSearch={this.state.suggestionSearch} userList={this.state.groupUsers} />                      
+                            <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />                      
                             <Textarea placeholderTextColor="rgba(0,0,0,0.1)" style={styles.textarea} onSelectionChange={this.onSelectionChange} placeholder="Start by telling a story. Then, close with a call for action or change." value={this.state.content} onChangeText={(text) => this.changeContent(text)}/>
                         </View>
                         {this.state.showCommunity?

@@ -22,7 +22,7 @@ import {
     Toast
 } from 'native-base';
 const PLColors = require('PLColors');
-import SuggestionBox from '../suggestionBox';
+import SuggestionBox from '../../../common/suggestionBox';
 import styles from './styles';
 import {
     Dimensions,
@@ -84,12 +84,6 @@ class NewPost extends Component {
 
         var { token } = this.props;
 
-        getUsersByGroup(token, this.state.grouplist[index].id).then(data => {
-            this.setState({groupUsers: data.payload})
-        }).catch(err => {
-
-        })
-
         getPetitionConfig(token, this.state.grouplist[index].id)
         .then(data => {
             this.setState({
@@ -145,11 +139,8 @@ class NewPost extends Component {
 
     onSelectionChange (event) {
         let {start, end} = event.nativeEvent.selection;
-        // console.log(this.state);
         let userRole = this.state.grouplist[this.state.selectedGroupIndex].user_role;
-        // console.log(event);
         setTimeout(() => {
-            // console.log(start);
             if (start !== end) return;
             let text = this.state.content;
             // for loop to find the first @ sign as a valid mention (without a space before, with at least two digits)
@@ -163,7 +154,6 @@ class NewPost extends Component {
                         alert("Are you sure you want to alert everyone in the group?");
                         break;
                     }
-                    // console.log(text.charAt(i), text.charAt(i+1), text.charAt(i+2));
                     if (text.charAt(i+1) && text.charAt(i+1) !== ' ' && text.charAt(i + 2) && text.charAt(i + 2) !== ' ' ) {
                         displayMention = true;
                         for (let j = start -1; text.charAt(j) && text.charAt(j) !== ' '; j++) end = j+1;
@@ -175,9 +165,22 @@ class NewPost extends Component {
             }
             if (displayMention){
 
+                let suggestionSearch = text.slice(i+1, end);
+                this.updateSuggestionList(this.props.token, suggestionSearch);
+                this.setState({displaySuggestionBox: displayMention, init: i, end: end});
+            } else {
+                this.setState({suggestionList: [], displaySuggestionBox: false})
             }
-            this.setState({displaySuggestionBox: displayMention, suggestionSearch: text.slice(i, end), init: i, end: end});
         }, 100);
+    }
+    
+    updateSuggestionList(token, suggestionSearch) {
+        this.setState({suggestionList: []});
+        getUsersByGroup(token, this.state.grouplist[this.state.selectedGroupIndex].id, suggestionSearch).then(data => {
+            this.setState({suggestionList: data.payload})
+        }).catch(err => {
+
+        })
     }
 
     render () {
@@ -218,7 +221,7 @@ class NewPost extends Component {
                         </ListItem>
                     </List>
                     <ScrollView style={styles.main_content}>
-                        <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} suggestionSearch={this.state.suggestionSearch} userList={this.state.groupUsers} />                
+                        <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />                      
                         <Textarea maxLength={300} onSelectionChange={this.onSelectionChange} placeholderTextColor='rgba(0,0,0,0.1)' style={styles.textarea} placeholder='Words can move the masses. And yours can, too - if you get enough people to support your post. Be nice!' value={this.state.content} onChangeText={(text) => this.changeContent(text)} />
                         {this.state.showCommunity
                             ? <View style={styles.community_list_container}>

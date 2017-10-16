@@ -318,9 +318,10 @@ function getGroupPermissions(token, groupId){
     })
 }
 
-function getUsersByGroup(token, groupId){
+function getUsersByGroup(token, groupId, query){
     return new Promise((resolve, reject) => {
-        fetch(API_URL + '/v2/groups/' + groupId + '/users', {
+        
+        fetch(API_URL + '/v2/groups/' + groupId + '/users?query=' + query, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
