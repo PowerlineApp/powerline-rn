@@ -59,7 +59,8 @@ class Notifications extends Component{
     }
 
     // There are three general types of activities that show up in the Notifications Feed. A social activity update (e.g someone mentioned you in a comment), a Social Follow Request (User A wants to follow you), and a Group Join invite (You were invited to Save the Whales)
-    render (){
+    render() {
+        WARN(JSON.stringify(this.state.notifications))
         return (
             <Content>
                 <List style={{backgroundColor: 'white'}}>

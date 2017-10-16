@@ -6,7 +6,12 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { Content, Text, List, ListItem, Left, Body, Right,Thumbnail, Button, Icon} from 'native-base';
-
+import {
+    TouchableOpacity,
+    View,
+    Alert,
+    RefreshControl
+} from 'react-native';
 import Menu, {
     MenuContext,
     MenuTrigger,
@@ -14,17 +19,13 @@ import Menu, {
     MenuOption,
     renderers
 } from 'react-native-popup-menu';
+var TimeAgo = require('react-native-timeago');
 
 const PLColors = require('PLColors');
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
 var { getActivities, unFollowers, acceptFollowers, putSocialActivity, getInvites, joinGroup,getGroupDetails } = require('PLActions');
-var TimeAgo = require('react-native-timeago');
-import {
-    TouchableOpacity,
-    View,
-    Alert,
-    RefreshControl
-} from 'react-native';
+
+import ContentPlaceholder from '../../../components/ContentPlaceholder';
 import styles from './styles';
 
 class Notifications extends Component{
@@ -187,16 +188,23 @@ class Notifications extends Component{
         });
         this.loadActivities();
     }
- // There are three general types of activities that show up in the Notifications Feed. A social activity update (e.g someone mentioned you in a comment), a Social Follow Request (User A wants to follow you), and a Group Join invite (You were invited to Save the Whales)
-
-    render (){
+ 
+   // There are three general types of activities that show up in the Notifications Feed. A social activity update (e.g someone mentioned you in a comment), a Social Follow Request (User A wants to follow you), and a Group Join invite (You were invited to Save the Whales)
+    render() {
         return (
-            <Content
+            <ContentPlaceholder
+                empty={
+                    !this.state.refreshing && 
+                    this.props.notifications.length === 0
+                }
+                title="Seems quiet a bit quiet in here. Are you following anyone?"
                 refreshControl={
                     <RefreshControl
                         refreshing={this.state.refreshing}
                         onRefresh={this.onRefresh.bind(this)}
-                        />}>
+                    />
+                }
+            >
                 <List style={{backgroundColor: 'white'}}>
                     {
                         this.state.invites.map((value, index) => {
@@ -274,7 +282,7 @@ class Notifications extends Component{
                         })
                     }
                 </List>
-            </Content>
+            </ContentPlaceholder>
         );
     }
 

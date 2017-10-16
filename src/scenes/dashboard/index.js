@@ -25,8 +25,8 @@ import { loadUserProfile, loadActivities, registerDevice, acceptFollowers,unFoll
 import Newsfeed from './newsfeed/'
 //GH51 - Friends Feed ("posts by friends")
 import Friendsfeed from './friendsfeed/';
-//GH37 - Notifications Feed
-import Notifications from './notifications';
+import Messages from './messages/';
+import Notifications from './notifications/';
 
 const { SlideInMenu } = renderers;
 import ShareExtension from 'react-native-share-extension';
@@ -252,13 +252,15 @@ class Home extends Component {
   }
 
   renderSelectedTab() {
-    if (this.state.tab1 === true) {
-      return (<Newsfeed />);
-    } else if(this.state.tab2 === true){
-      return (<Friendsfeed/>);
-    } else if(this.state.tab4 === true){
-      return (<Notifications/>);
-    }else{
+    if (this.state.tab1) {
+      return <Newsfeed />;
+    } else if (this.state.tab2){
+      return <Friendsfeed/>;
+    } else if (this.state.tab3) {
+      return <Messages />;
+    } else if (this.state.tab4) {
+      return <Notifications />;
+    } else {
       return (
         <View style={{ flex: 1 }} />
       );

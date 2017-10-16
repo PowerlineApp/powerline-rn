@@ -25,6 +25,7 @@ import Menu, {
 } from 'react-native-popup-menu';
 import { getComments, votePost, addComment, rateComment, loadActivityByEntityId, deletePost, deletePetition, changePost, changePetition } from 'PLActions';
 import PLOverlayLoader from 'PLOverlayLoader';
+import randomPlaceholder from '../../../utils/placeholder';
 
 const { youTubeAPIKey } = require('PLEnv');
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
@@ -55,6 +56,7 @@ class ItemDetail extends Component {
             dataArray: [],
             dataSource: ds,
             inputDescription: '',
+            placeholderTitle: '',
         };
         this.commentToReply = null;
         this.isLoadedAll = false;
@@ -94,6 +96,7 @@ class ItemDetail extends Component {
     }
 
     _onAddComment(comment) {
+        this.setState({ placeholderTitle: randomPlaceholder('comment') });
         this.commentToReply = comment ? comment : null;
         this.addCommentView.open();
     }
