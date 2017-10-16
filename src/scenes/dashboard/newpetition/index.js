@@ -116,18 +116,17 @@ class NewPetition extends Component{
             alert("Please create a title for your petition");
             return;
         }else if(this.state.content == '' || this.state.content.trim() == ''){
-            alert("Whoops! Looks like you forgot to write your petition down!")
+            alert("Whoops! Looks like you forgot to write your petition down!");
+            return;
         }
 
         var  { token } = this.props;
         createPetition(token, this.state.grouplist[this.state.selectedGroupIndex].id, this.state.title, this.state.content)
         .then(data => {
             showToast('Petition Successful!');
-            //alert('Petition successfully created!');
             Actions.itemDetail({ entityId: data.id, entityType: 'user-petition' });
         })
         .catch(err => {
-
         });
     }
 
