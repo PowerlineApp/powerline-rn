@@ -1,3 +1,4 @@
+import api from '../utils/api';
 var { API_URL, PER_PAGE } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
 
@@ -24,7 +25,20 @@ async function addComment(token: string, type: string, id: string, comment: stri
     }
 }
 
-//Gets the comments for any item using a cursor for keeping place
+async function editComment(token: string, commentId: number, value: string): Promise<Action> {
+    console.log("edit Comment API", commentId, value);
+    return await api.put(
+        token,
+        `/v2/post-comments/${commentId}`,
+        { comment_body: value }
+    );
+}
+
+async function deleteComment(token: string, commentId: number): Promise<Action> {
+    console.log("delete Comment API", commentId);
+    return await api.delete(token, `/v2/post-comments/${commentId}`);
+}
+
 async function getComments(token: string, type: string, id: number, cursor = 0, perPage: number = PER_PAGE): Promise<Action> {
     var url = '';
     if (cursor === 0) {
@@ -110,4 +124,6 @@ module.exports = {
     getComments,
     getChildComments,
     rateComment,
+    deleteComment,
+    editComment,
 };

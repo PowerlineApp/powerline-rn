@@ -79,9 +79,10 @@ var styles = StyleSheet.create({
         alignItems: 'center',
     },
     goTxt: {
-        lineHeight: 32,
+        // lineHeight: 32,
+        // textAlign: 'center',
         color: '#006',
-        textAlign: 'center',
+        textAlignVertical: 'top'
     }
 });
 
