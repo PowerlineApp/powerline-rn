@@ -35,6 +35,7 @@ import {
 } from 'react-native';
 const { width, height } = Dimensions.get('window');
 import { loadUserData, getGroups, createPetition, getPetitionConfig } from 'PLActions';
+import { showToast } from 'PLToast';
 
 const PETITION_MAX_LENGTH = 7000;
 
@@ -113,6 +114,7 @@ class NewPetition extends Component{
         var  { token } = this.props;
         createPetition(token, this.state.grouplist[this.state.selectedGroupIndex].id, this.state.title, this.state.content)
         .then(data => {
+            showToast('Petition Successful!');
             //alert('Petition successfully created!');
             Actions.itemDetail({ entityId: data.id, entityType: 'user-petition' });
         })

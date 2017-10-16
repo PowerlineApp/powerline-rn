@@ -24,7 +24,6 @@ import Menu, {
     renderers
 } from 'react-native-popup-menu';
 
-
 const PLColors = require('PLColors');
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
 const { youTubeAPIKey } = require('PLEnv');

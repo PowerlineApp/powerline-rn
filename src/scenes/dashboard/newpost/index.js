@@ -32,6 +32,8 @@ import {
     Dimensions,
     ScrollView
 } from 'react-native';
+import { showToast } from 'PLToast';
+
 const { width, height } = Dimensions.get('window');
 import { loadUserData, getGroups, createPostToGroup, getPetitionConfig } from 'PLActions';
 
@@ -115,6 +117,7 @@ class NewPost extends Component{
 
         createPostToGroup(token, groupId, this.state.content)
         .then(data => {
+            showToast('Post Successful!');
             Actions.itemDetail({ entityId: data.id, entityType: 'post', backTo: 'home' });
         })
         .catch(err => {

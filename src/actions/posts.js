@@ -1,6 +1,7 @@
 import api from '../utils/api';
 var { API_URL, PER_PAGE } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
+import { showToast } from 'PLToast';
 
 async function loadPost(token: string, entityId: number): Promise<Action> {
     try {
@@ -36,6 +37,14 @@ async function votePost(token: string, postId: string, option: string) {
             })
         });
         let responseJson = await response.json();
+        if (responseJson.status === 200) {
+            if (option === 'upvote') {
+                showToast('Upvoted');
+            }
+            if (option === 'downvote') {
+                showToast('Downvoted');
+            }
+        }
         return responseJson;
     } catch (error) {
         handleError(error);
@@ -57,6 +66,11 @@ async function addCommentToPost(token: string, postId: string, comment: string, 
             })
         });
         let responseJson = await response.json();
+
+        if (responseJson.status === 200) {
+            showToast('Comment Successful!');
+        }
+        
         return responseJson;
     } catch (error) {
         handleError(error);
@@ -186,6 +200,7 @@ function deletePost(postId: number, activityId: number): ThunkAction {
             console.log("delete Post API  Success", response);
 
             if (response.status === 204 && response.ok) {
+                showToast('Item Deleted');
                 dispatch({ type: 'DELETE_ACTIVITY', id: activityId });
             } else {
                 handleError(response);
@@ -205,6 +220,7 @@ function deletePetition(petitionId: number, activityId: number): ThunkAction {
             console.log("delete Petition API  Success", response);
 
             if (response.status === 204 && response.ok) {
+                showToast('Item Deleted');
                 dispatch({ type: 'DELETE_ACTIVITY', id: activityId });
             } else {
                 handleError(response);
@@ -238,6 +254,7 @@ function changePost(postId: number, activityId: number, value: string): ThunkAct
             console.log("put Post API  Success", response);
 
             if (response.status === 200 && response.ok) {
+                showToast('Edits saved');
                 updateActivityDescription(dispatch, activityId, value);
             } else {
                 handleError(response);
@@ -261,6 +278,7 @@ function changePetition(petitionId: number, activityId: number, value: string): 
             console.log("put Petition API  Success", response);
 
             if (response.status === 200 && response.ok) {
+                showToast('Edits saved');
                 updateActivityDescription(dispatch, activityId, value);
             } else {
                 handleError(response);
