@@ -18,6 +18,7 @@ const notificationActions = require('./notification');
 const representativesActions = require('./representatives');
 const drawerActions = require('./drawer');
 const commentActions = require('./comments');
+const petitionActions = require('./petition');
 
 module.exports = {
   ...loginActions,
@@ -32,5 +33,6 @@ module.exports = {
   ...notificationActions,
   ...representativesActions,
   ...drawerActions,
-  ...commentActions
+  ...commentActions,
+  ...petitionActions
 };
