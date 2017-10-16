@@ -36,6 +36,8 @@ import {
 const { width, height } = Dimensions.get('window');
 import { loadUserData, getGroups, createPetition, getPetitionConfig } from 'PLActions';
 
+const PETITION_MAX_LENGTH = 7000;
+
 class NewPetition extends Component{
     constructor(props){
         super(props);
@@ -120,7 +122,7 @@ class NewPetition extends Component{
     }
 
     changeContent(text){
-        if(text.length <= 5000){
+        if(text.length <= 7000){
             this.setState({
                 content: text
             });
@@ -219,7 +221,7 @@ class NewPetition extends Component{
                     }
                     <Label style={{color: 'white'}}>
                         {
-                            (5000 - this.state.content.length)
+                            (PETITION_MAX_LENGTH - this.state.content.length)
                         }
                     </Label>
                 </Footer>

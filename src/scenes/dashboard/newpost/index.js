@@ -35,6 +35,8 @@ import {
 const { width, height } = Dimensions.get('window');
 import { loadUserData, getGroups, createPostToGroup, getPetitionConfig } from 'PLActions';
 
+const POST_MAX_LENGTH = 5000;
+
 class NewPost extends Component{
     constructor(props){
         super(props);
@@ -121,7 +123,7 @@ class NewPost extends Component{
     }
 
     changeContent(text){
-        if(text.length <= 3000){
+        if(text.length <= POST_MAX_LENGTH){
             this.setState({
                 content: text
             });
@@ -170,8 +172,7 @@ class NewPost extends Component{
                         </ListItem>
                     </List>
                     <View style={styles.main_content}>
-                        {/*Related: GH 151*/}
-                        <Textarea maxLength={3000}  onSelectionChange={this.onSelectionChange} placeholderTextColor="rgba(0,0,0,0.1)" style={styles.textarea} placeholder="Words can move the masses. And yours can, too - if you get enough people to support your post. Be nice!" value={this.state.content} onChangeText={(text) => this.changeContent(text)}/> 
+                        <Textarea maxLength={POST_MAX_LENGTH}  onSelectionChange={this.onSelectionChange} placeholderTextColor="rgba(0,0,0,0.1)" style={styles.textarea} placeholder="Words can move the masses. And yours can, too - if you get enough people to support your post. Be nice!" value={this.state.content} onChangeText={(text) => this.changeContent(text)}/> 
                         {this.state.showCommunity?
                         <View style={styles.community_list_container}>
                             <View style={styles.community_list_back}></View>  
@@ -210,7 +211,7 @@ class NewPost extends Component{
                     {/*Related: GH 151 */}
                     <Label style={{color: 'white'}}>
                         {
-                          (3000 - this.state.content.length)
+                          (POST_MAX_LENGTH - this.state.content.length)
                         }
                     </Label>
                 </Footer>
