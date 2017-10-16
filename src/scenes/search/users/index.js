@@ -54,7 +54,7 @@ class SearchUsers extends Component{
                                 <ListItem avatar key={index} onPress={() => this.goToProfile(user.id)}>
                                     <Left>
                                         {user.avatar_file_name?
-                                        <Thumbnail source={{uri: user.avatar_file_name}}/>:
+                                        <Thumbnail source={{uri: user.avatar_file_name+'&w=50&h=50&auto=compress,format,q=95'}}/>:
                                         <Thumbnail source={require("img/blank_person.png")}/>
                                         }
                                     </Left>

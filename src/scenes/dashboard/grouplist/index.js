@@ -161,7 +161,7 @@ class GroupList extends Component{
                                                     return (
                                                         <ListItem style={styles.listItem}  key={index2} onPress={() => this.goToProfile(item)}>
                                                             {item.avatar_file_path?
-                                                            <Thumbnail square source={{uri: item.avatar_file_path}}/>:
+                                                            <Thumbnail square source={{uri: item.avatar_file_path+'&w=50&h=50&auto=compress,format,q=95'}}/>:
                                                             <View style={{width: 56, height: 56}}/>
                                                             }
                                                             <Body>

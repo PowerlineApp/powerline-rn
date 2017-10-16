@@ -258,7 +258,7 @@ class FriendActivity extends Component {
             return (
                 <ImageLoad
                     placeholderSource={require('img/empty_image.png')}
-                    source={{ uri: entry.imageSrc }}
+                    source={{ uri: entry.imageSrc+'&w=50&h=50&auto=compress,format,q=95' }}
                     style={styles.image}
                 />
             );
@@ -406,7 +406,7 @@ class FriendActivity extends Component {
         return (
             <CardItem style={{ paddingBottom: 0 }}>
                 <Left>
-                    <Thumbnail small source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                    <Thumbnail small source={thumbnail ? { uri: thumbnail+'&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                     <Body>
                         <Text style={styles.title}>{title}</Text>
                         <Text note style={styles.subtitle}>{item.group.official_name} • <TimeAgo time={item.sent_at} hideAgo={true} /></Text>
@@ -591,7 +591,7 @@ class FriendActivity extends Component {
                                 <View style={styles.imageContainer}>
                                     <ImageLoad
                                         placeholderSource={require('img/empty_image.png')}
-                                        source={{ uri: item.metadata.image }}
+                                        source={{ uri: item.metadata.image+'&w=50&h=50&auto=compress,format,q=95' }}
                                         style={styles.image}
                                     />
                                 </View>

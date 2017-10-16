@@ -128,7 +128,7 @@ class RepresentatyProfile extends Component{
                     <View>
                     <List style={{backgroundColor: 'white'}}>
                         <ListItem>
-                            <Thumbnail square size={80}  source={{uri: this.state.data.avatar_file_path}}/>
+                            <Thumbnail square size={80}  source={{uri: this.state.data.avatar_file_path+'&w=50&h=50&auto=compress,format,q=95'}}/>
                             <Body>
                                 <Text style={{color: PLColors.main}}>{this.state.data.first_name} {this.state.data.last_name}</Text>
                                 <Text note style={styles.text1}>{this.state.data.official_title}</Text>

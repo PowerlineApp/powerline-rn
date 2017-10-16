@@ -212,7 +212,7 @@ class Notifications extends Component{
                                 <ListItem avatar key={index} style={styles.listItem}>
                                     <Left>
                                         {value.avatar_file_path?
-                                        <Thumbnail small source={{uri: value.avatar_file_path}}/>:
+                                        <Thumbnail small source={{uri: value.avatar_file_path+'&w=50&h=50&auto=compress,format,q=95'}}/>:
                                         <Thumbnail small source={require('img/blank_person.png')}/>
                                         }
                                     </Left>
@@ -241,7 +241,7 @@ class Notifications extends Component{
                                 <ListItem avatar key={index} style={styles.listItem}>
                                     {value.target.image?
                                     <Left>
-                                        <Thumbnail small source={{ uri: value.target.image }} />
+                                        <Thumbnail small source={{ uri: value.target.image+'&w=50&h=50&auto=compress,format,q=95' }} />
                                     </Left>:
                                     <Left>
                                         <Thumbnail small source={require('img/blank_person.png')} />

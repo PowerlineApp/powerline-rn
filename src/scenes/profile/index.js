@@ -221,7 +221,7 @@ class Profile extends Component{
             return (
                 <ImageLoad
                     placeholderSource={require('img/empty_image.png')}
-                    source={{ uri: entry.imageSrc }}
+                    source={{ uri: entry.imageSrc+'&w=50&h=50&auto=compress,format,q=95' }}
                     style={styles.image}
                 />
             );
@@ -325,7 +325,7 @@ class Profile extends Component{
         return (
             <CardItem>
                 <Left>
-                    <Thumbnail small source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                    <Thumbnail small source={thumbnail ? { uri: thumbnail+'&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                     <Body>
                         <Text style={styles.title}>{title}</Text>
                         <Text note style={styles.subtitle}>{item.group.official_name} � <TimeAgo time={item.sent_at} hideAgo={true} /></Text>
@@ -532,7 +532,7 @@ class Profile extends Component{
                                 <View style={styles.imageContainer}>
                                     <ImageLoad
                                         placeholderSource={require('img/empty_image.png')}
-                                        source={{ uri: item.metadata.image }}
+                                        source={{ uri: item.metadata.image+'&w=50&h=50&auto=compress,format,q=95' }}
                                         style={styles.image}
                                     />
                                 </View>
@@ -587,7 +587,7 @@ class Profile extends Component{
                             </Button>                           
                         </View>                        
                         <View style={{justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}>
-                            <Thumbnail source={{uri: this.state.user.avatar_file_name}} style={{marginBottom: 8}}/>  
+                            <Thumbnail source={{uri: this.state.user.avatar_file_name+'&w=50&h=50&auto=compress,format,q=95'}} style={{marginBottom: 8}}/>  
                             <TouchableWithoutFeedback onPress={() => this.follow()}>                              
                                 <View  style={{flexDirection: 'row', backgroundColor: 'white', padding: 1, marginTop: 30, marginLeft: -15, width: 28, height: 28, borderRadius: 24, borderWidth: 1, borderColor: '#11c1f3'}}>
                                     {this.state.following_status == 'pending'?

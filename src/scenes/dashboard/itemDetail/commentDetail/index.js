@@ -152,6 +152,7 @@ class CommentDetail extends Component {
 
     //User can rate comment up or down
     async rate(comment, option) {
+        // console.log('=x=x=x=x=x=', rate, option);
         this.setState({ isLoading: true });
 
         const { props: { entityType, token } } = this;
@@ -230,7 +231,7 @@ class CommentDetail extends Component {
         return (
             <CardItem style={styles.rootContainer}>
                 <Left>
-                    <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                    <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail+'&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                     <Body style={{ alignSelf: 'flex-start' }}>
                         <Text style={styles.title}>{title}</Text>
                         <Text style={styles.description} numberOfLines={5}>{comment.comment_body}</Text>
@@ -268,7 +269,7 @@ class CommentDetail extends Component {
         return (
             <CardItem style={{ paddingBottom: 0, marginLeft: 40, marginTop: 5 }}>
                 <Left>
-                    <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                    <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail+'&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                     <Body style={{ alignSelf: 'flex-start' }}>
                         <TouchableOpacity onPress={() => this._onCommentBody(comment)}>
                             <Text style={styles.title}>{title}</Text>
@@ -338,7 +339,7 @@ class CommentDetail extends Component {
                 }}>
                     <CardItem>
                         <Left>
-                            <Thumbnail small source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                            <Thumbnail small source={thumbnail ? { uri: thumbnail+'&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                             <Body>
                                 <TextInput style={styles.commentInput} ref={this.onCommentInputRef} placeholder="Comment..." onChangeText={commentText => this.setState({ commentText })} />
                             </Body>
@@ -389,6 +390,7 @@ class CommentDetail extends Component {
     }
 
     _onRate(comment, option) {
+        // console.log('=x=x=x=x=x=x=', comment, option);
         const { props: { profile } } = this;
         this.rate(comment, option);
     }

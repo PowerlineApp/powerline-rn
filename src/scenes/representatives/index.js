@@ -120,7 +120,7 @@ class Representatives extends Component {
                                                 group.representatives.map((user, index1) => {
                                                     return (
                                                         <ListItem onPress={() => this.goToProfile(user.storage_id)} key={index1}>
-                                                            <Thumbnail square size={80} source={{ uri: user.avatar_file_path }} />
+                                                            <Thumbnail square size={80} source={{ uri: user.avatar_file_path+'&w=50&h=50&auto=compress,format,q=95' }} />
                                                             <Body>
                                                                 <Text style={{ color: PLColors.main }}>{user.first_name} {user.last_name}</Text>
                                                                 <Text note style={styles.text1}>{user.official_title}</Text>
