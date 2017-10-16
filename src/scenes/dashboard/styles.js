@@ -79,4 +79,13 @@ export default {
     borderTopColor: '#d8dddf',
     backgroundColor: 'white',
   },
+  tabText: {
+    fontSize: 8,
+    fontWeight: '500'
+  },
+  iconPlus: {
+    fontSize: platform === 'ios' ? 80 : 60,
+    paddingBottom: platform === 'ios' ? 8 : 0,
+    color: '#030366',
+  }
 };
