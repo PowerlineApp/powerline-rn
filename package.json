@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
-    "test": "jest"
+    "test": "jest",
+    "bundle:android": "curl 'http://localhost:8081/index.android.bundle?platform=android&dev=false&minify=true' -o 'android/app/src/main/assets/index.android.bundle'",
+    "build:android": "(cd android/ && ./gradlew assembleRelease)"
   },
   "dependencies": {
     "native-base": "2.1.4",
