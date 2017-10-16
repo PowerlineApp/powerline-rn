@@ -327,6 +327,28 @@ function getGroupPermissions(token, groupId){
     })
 }
 
+function getUsersByGroup(token, groupId, query){
+    return new Promise((resolve, reject) => {
+        
+        fetch(API_URL + '/v2/groups/' + groupId + '/users?query=' + query, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'token': token
+            }
+        })
+        .then((res) => res.json())
+        .then(data => {
+            console.log("get Group Users API Success", data);
+            resolve(data);
+        })
+        .catch(err => {
+            console.log("get Group Users API Error", err);
+            reject(err);
+        });
+    })
+}
+
 
 
 module.exports = {
@@ -344,5 +366,6 @@ module.exports = {
     joinGroup,
     loadFieldsToFillOnJoin,
     getGroupPermissions,
+    getUsersByGroup,
     
 }
