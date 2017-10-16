@@ -14,7 +14,6 @@ import styles, { sliderWidth, itemWidth } from './styles';
 import TimeAgo from 'react-native-timeago';
 import ImageLoad from 'react-native-image-placeholder';
 import YouTube from 'react-native-youtube';
-import OrientationLoadingOverlay from 'react-native-orientation-loading-overlay';
 import ContentPlaceholder from '../../../components/ContentPlaceholder';
 
 import Menu, {
