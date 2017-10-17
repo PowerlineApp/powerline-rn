@@ -972,7 +972,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "powerline" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Powerline" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -1638,8 +1638,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.Powerline;
 				PRODUCT_NAME = Powerline;
-				PROVISIONING_PROFILE = "eb51ce5b-7790-4986-9793-0eb040476928";
-				PROVISIONING_PROFILE_SPECIFIER = "react-native-development";
+				PROVISIONING_PROFILE = "d8b0b8aa-7ad5-4b0a-a6fc-042b212bcbe9";
+				PROVISIONING_PROFILE_SPECIFIER = powerlinedevprov;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -1952,7 +1952,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "powerline" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Powerline" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,

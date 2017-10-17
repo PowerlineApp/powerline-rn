@@ -119,8 +119,6 @@ const optionsStyles = {
     }
 };
 
-const mapStateToProps = state => ({
-
-});
-
-export default connect(mapStateToProps)(FeedHeader);
+export default connect(state => ({
+    userId: state.user.id
+}))(FeedHeader);

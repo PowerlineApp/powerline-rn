@@ -113,7 +113,10 @@ class FeedFooter extends Component {
         } else {
             let isVotedDown = false;
             let isVotedUp = false;
-            if (item.post.votes && item.post.votes[0]) {
+            if (
+                item && item.post &&
+                item.post.votes && item.post.votes[0]
+            ) {
                 let vote = item.post.votes[0];
                 isVotedUp = false;
                 isVotedDown = false;
