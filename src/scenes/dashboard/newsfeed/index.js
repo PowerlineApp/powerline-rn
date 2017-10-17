@@ -14,7 +14,6 @@ import styles, { sliderWidth, itemWidth } from './styles';
 import TimeAgo from 'react-native-timeago';
 import ImageLoad from 'react-native-image-placeholder';
 import YouTube from 'react-native-youtube';
-import ContentPlaceholder from '../../../components/ContentPlaceholder';
 
 import Menu, {
     MenuContext,
@@ -23,6 +22,10 @@ import Menu, {
     MenuOption,
     renderers
 } from 'react-native-popup-menu';
+
+// custom components import
+import FeedActivity from '../../../components/Feed/FeedActivity';
+import ContentPlaceholder from '../../../components/ContentPlaceholder';
 
 import PLOverlayLoader from 'PLOverlayLoader';
 const PLColors = require('PLColors');
@@ -104,26 +107,6 @@ class Newsfeed extends Component {
         );
     }
 
-    edit(item) {
-        Actions.itemDetail({
-            entityId: item.entity.id,
-            entityType: item.entity.type,
-            isEditEnabled: true,
-        });
-        this.menu && this.menu.close();
-    }
-    
-    delete(item) {
-        if (item.entity.type === 'post') {
-            this.props.dispatch(deletePost(item.entity.id, item.id));
-        }
-        if (item.entity.type === 'user-petition') {
-            this.props.dispatch(deletePetition(item.entity.id, item.id));
-        }
-
-        this.menu && this.menu.close();
-    }
-
     async loadInitialActivities() {
         this.setState({ isRefreshing: true });
         const { props: { token, dispatch, page, group } } = this;
@@ -174,83 +157,6 @@ class Newsfeed extends Component {
         });
     }
 
-    getIndex(item) {
-        for (var index = 0; index < this.state.dataArray.length; index++) {
-            var element = this.state.dataArray[index];
-            if (element.id === item.id) {
-                return index;
-            }
-        }
-        return -1;
-    }
-
-    //User should be able to vote on an item and the count should reflect total votes on item.
-    //Related: GH128
-    async vote(item, option) {
-        const { props: { profile } } = this;
-        if (profile.id === item.user.id) {
-            return;
-        }
-        if (item.post.votes && item.post.votes[0]) {
-            return;
-        }
-
-        var response;
-
-        this.setState({ isLoading: true });
-
-        switch (item.entity.type) {
-            case 'post':
-                response = await votePost(this.props.token, item.entity.id, option);
-                break;
-            default:
-                return;
-                break;
-        }
-
-        if (response.user) {
-            const index = this.getIndex(item);
-            var dataArrayClone = this.state.dataArray;
-            var activityToReplace = dataArrayClone[index];
-
-            loadActivityByEntityId(this.props.token, activityToReplace.entity.type, activityToReplace.entity.id).then(data => {
-                if (data.payload && data.payload[0]) {
-                    activityToReplace = data.payload[0];
-                    dataArrayClone[index] = activityToReplace;
-                    this.setState({
-                        dataArray: dataArrayClone,
-                    });
-                }
-            }).catch(err => {
-            });
-        }
-        else {
-            let message = 'Something went wrong to vote';
-            if (response.errors.errors.length) {
-                message = response.errors.errors[0];
-            }
-            setTimeout(() => alert(message), 1000);
-        }
-
-        this.setState({
-            isLoading: false,
-        });
-    }
-
-    //If a YouTube video is attached to content or if YouTube link is included in body of item
-    youtubeGetID(url) {
-        var ID = '';
-        url = url.replace(/(>|<)/gi, '').split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
-        if (url[2] !== undefined) {
-            ID = url[2].split(/[^0-9a-z_\-]/i);
-            ID = ID[0];
-        }
-        else {
-            ID = url;
-        }
-        return ID;
-    }
-
     _onRefresh() {
         this.props.dispatch(resetActivities());
         this.loadInitialActivities();
@@ -263,11 +169,6 @@ class Newsfeed extends Component {
         }
     }
 
-    //opening an item in the newsfeed will open the Item Detail Screen
-    goItemDetail(entityId, entityType) {
-        Actions.itemDetail({ entityId: entityId, entityType: entityType });
-    }
-
     //Related: GH160
     _renderTailLoading() {
         if (this.state.isLoadingTail === true) {
@@ -277,427 +178,10 @@ class Newsfeed extends Component {
         }
     }
 
-    //The priority zone counter lists the count of total priority zone items in the newsfeed
-    _renderZoneIcon(item) {
-        if (item.zone === 'prioritized') {
-            return (<Icon active name="ios-flash" style={styles.zoneIcon} />);
-        } else {
-            return null;
-        }
-    }
+    // Feed common components
 
-    //For attachments to an item, GH13, GH26, GH41
-    _renderContext(entry) {
-        if (entry.type === "image") {
-            return (
-                <ImageLoad
-                    source={{ uri: entry.imageSrc+'&w=200&h=200&auto=compress,format,q=95' }}
-                    style={styles.image}
-                />
-            );
-        }
-        else if (entry.type === "video") {
-            var url = entry.text.toString();
-            var videoid = this.youtubeGetID(url);
-            if (Platform.OS === 'ios') {
-                return (
-                    <YouTube
-                        ref={(component) => {
-                            this._youTubeRef = component;
-                        }}
-                        apiKey={youTubeAPIKey}
-                        videoId={videoid}
-                        controls={1}
-                        style={styles.player}
-                    />
-                );
-            } else {
-                return (
-                    <WebView
-                        style={styles.player}
-                        javaScriptEnabled={true}
-                        source={{ uri: `https://www.youtube.com/embed/${videoid}?rel=0&autoplay=0&showinfo=0&controls=0` }}
-                    />
-                );
-            }
-        }
-        else {
-            return null;
-        }
-    }
-
-//Up to three attachments may appear below an item in newsfeed or item detail screen (images or youtube videos)
-    _renderCarousel(item) {
-        if (item.poll) {
-            const slides = item.poll.educational_context.map((entry, index) => {
-                return (
-                    <TouchableOpacity
-                        key={`entry-${index}`}
-                        activeOpacity={0.7}
-                        style={styles.slideInnerContainer}
-                    >
-                        <View style={[styles.imageContainer, (index + 1) % 2 === 0 ? styles.imageContainerEven : {}]}>
-                            {this._renderContext(entry)}
-                            <View style={[styles.radiusMask, (index + 1) % 2 === 0 ? styles.radiusMaskEven : {}]} />
-                        </View>
-                    </TouchableOpacity>
-                );
-            });
-
-            return (
-                <CardItem cardBody>
-                    <Carousel
-                        sliderWidth={sliderWidth}
-                        itemWidth={itemWidth}
-                        inactiveSlideScale={1}
-                        inactiveSlideOpacity={1}
-                        enableMomentum={true}
-                        autoplay={false}
-                        autoplayDelay={500}
-                        autoplayInterval={2500}
-                        containerCustomStyle={styles.slider}
-                        contentContainerCustomStyle={styles.sliderContainer}
-                        showsHorizontalScrollIndicator={false}
-                        snapOnAndroid={true}
-                        removeClippedSubviews={false}
-                    >
-                        {slides}
-                    </Carousel>
-                </CardItem>
-            );
-        } else {
-            return null;
-        }
-    }
-
-    //Some items have titles and some items don't... Petitions, Events, and Fundraisers have titles
-    _renderTitle(item) {
-        if (item.title) {
-            return (<Text style={styles.title}>{item.title}</Text>);
-        } else {
-            return null;
-        }
-    }
-
-    //If an item is expired, it cannot be upvoted/downvoted or signed.
-    //Purpose of 'expiration' is to make sure that old items can't get boosted when they become irrelevant/out-of-date
-    _renderPostFooter(item) {
-        if (item.zone === 'expired') {
-            return (
-                <CardItem footer style={{ height: 35 }}>
-                    <Left style={{ justifyContent: 'flex-start' }}>
-                        <Button iconLeft transparent style={styles.footerButton}>
-                            <Icon active name="ios-undo" style={styles.footerIcon} />
-                            <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
-                        </Button>
-                    </Left>
-                </CardItem>
-            );
-        } else {
-            // Related: GH128
-            if (item.post.votes && item.post.votes[0]) {
-                let vote = item.post.votes[0];
-                var isVotedUp = false;
-                var isVotedDown = false;
-                if (vote.option === 1) {
-                    isVotedUp = true;
-                }
-                else if (vote.option === 2) {
-                    isVotedDown = true;
-                }
-            }
-            //Posts should be able to be voted up or down
-            //Discussions can also be 'rated' up or down
-            return (
-                <CardItem footer style={{ height: 35 }}>
-                    <Left style={{ justifyContent: 'space-between' }}>
-                        <Button iconLeft transparent style={styles.footerButton} onPress={() => this.vote(item, 'upvote')}>
-                            <Icon name="md-arrow-dropup" style={isVotedUp ? styles.footerIconBlue : styles.footerIcon} />
-                            <Label style={isVotedUp ? styles.footerTextBlue : styles.footerText}>Upvote {item.upvotes_count ? item.upvotes_count : 0}</Label>
-                        </Button>
-                        <Button iconLeft transparent style={styles.footerButton} onPress={() => this.vote(item, 'downvote')}>
-                            <Icon active name="md-arrow-dropdown" style={isVotedDown ? styles.footerIconBlue : styles.footerIcon} />
-                            <Label style={isVotedDown ? styles.footerTextBlue : styles.footerText}>Downvote {item.downvotes_count ? item.downvotes_count : 0}</Label>
-                        </Button>
-                        <Button iconLeft transparent style={styles.footerButton}>
-                            <Icon active name="ios-undo" style={styles.footerIcon} />
-                            <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
-                        </Button>
-                    </Left>
-                </CardItem>
-            );
-        }
-    }
-
-    //Only petitions, events, and fundraisers have titles, but it looks like someone wrote 'title' when they should have written 'name'
     _renderHeader(item) {
-        var thumbnail: string = '';
-        var title: string = '';
-        let isBoosted: boolean = false;
-        const isOwner: boolean = item.owner.id === this.props.userId;
-        
-        switch (item.entity.type) {
-            case 'post' || 'user-petition':
-                thumbnail = item.owner.avatar_file_path ? item.owner.avatar_file_path : '';
-                title = item.owner.first_name + ' ' + item.owner.last_name;
-                isBoosted = item.zone === 'prioritized';
-                break;
-            default:
-                thumbnail = item.group.avatar_file_path ? item.group.avatar_file_path : '';
-                title = item.user.full_name;
-                break;
-        }
-        return (
-            <CardItem style={{ paddingBottom: 0, paddingLeft: 15, paddingRight: 15 }}>
-                <Left>
-                    <Thumbnail small source={thumbnail ? { uri: thumbnail+'&w=200&h=200&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
-                    <Body>
-                        <Text style={styles.title}>{title}</Text>
-                        <Text note style={styles.subtitle}>{item.group.official_name} • <TimeAgo time={item.sent_at} hideAgo={true} /></Text>
-                    </Body>
-                    <Right style={{ flex: 0.2 }}>
-                        <Menu ref={(ref) => { this.menu = ref; }}>
-                            <MenuTrigger>
-                                <Icon name="ios-arrow-down" style={styles.dropDownIcon} />
-                            </MenuTrigger>
-                            {/*Dropdown menu items for the Newsfeed Standard Item Container and for Item Detail Screen*/}
-                            {/*Related: GH66, GH52, GH57, GH68, Gh121, GH149, GH137*/}
-                            <MenuOptions customStyles={optionsStyles}>
-                                <MenuOption>
-                                    <Button iconLeft transparent dark onPress={() => this.subscribe(item)}>
-                                        <Icon name="logo-rss" style={styles.menuIcon} />
-                                        <Text style={styles.menuText}>Subscribe to this Post</Text>
-                                    </Button>
-                                </MenuOption>
-                                <MenuOption>
-                                    <Button iconLeft transparent dark>
-                                        <Icon name="ios-heart" style={styles.menuIcon} />
-                                        <Text style={styles.menuText}>Add to Favorites</Text>
-                                    </Button>
-                                </MenuOption>
-                                <MenuOption>
-                                    <Button iconLeft transparent dark>
-                                        <Icon name="md-person-add" style={styles.menuIcon} />
-                                        <Text style={styles.menuText}>Add to Contact</Text>
-                                    </Button>
-                                </MenuOption>
-                                {
-                                    isOwner && !isBoosted &&
-                                    <MenuOption onSelect={() => this.edit(item)}>
-                                        <Button iconLeft transparent dark onPress={() => this.edit(item)}>
-                                            <Icon name="md-create" style={styles.menuIcon} />
-                                            <Text style={styles.menuText}>Edit Post</Text>
-                                        </Button>
-                                    </MenuOption>
-                                }
-                                {
-                                    isOwner &&
-                                    <MenuOption onSelect={() => this.delete(item)}>
-                                        <Button iconLeft transparent dark onPress={() => this.delete(item)}>
-                                            <Icon name="md-trash" style={styles.menuIcon} />
-                                            <Text style={styles.menuText}>Delete Post</Text>
-                                        </Button>
-                                    </MenuOption>
-                                }
-                            </MenuOptions>
-                        </Menu>
-                    </Right>
-                </Left>
-            </CardItem>
-        );
-    }
-
-    //Button options are different depending on the item
-    ////Post = Upvote, Downvote, Reply
-    //Petition = Sign, Reply... for user petitions and group petitions
-    //Group Poll (aka question) = Answer, Reply
-    //Group Fundraiser (aka payment_request)= Donate, Reply
-    //Group Discussion (leader_news) = Reply
-    //Group Event (leader_event) = RSVP, Reply
-    //If we are viewing the item in Item Detail Screen, an added button Analytics appears for Posts.
-    _renderFooter(item) {
-        switch (item.entity.type) {
-            case 'post':
-                return this._renderPostFooter(item);
-                break;
-            case 'petition':
-            case 'user-petition':
-                return (
-                    <CardItem footer style={{ height: 35 }}>
-                        <Left style={{ justifyContent: 'flex-start' }}>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon name="md-arrow-dropdown" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Sign</Label>
-                            </Button>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
-                            </Button>
-                        </Left>
-                    </CardItem>
-                );
-                break;
-            case 'question':
-                return (
-                    <CardItem footer style={{ height: 35 }}>
-                        <Left style={{ justifyContent: 'flex-start' }}>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon name="md-arrow-dropdown" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Answer</Label>
-                            </Button>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
-                            </Button>
-                        </Left>
-                    </CardItem>
-                );
-                break;
-            case 'payment-request':
-                return (
-                    <CardItem footer style={{ height: 35 }}>
-                        <Left style={{ justifyContent: 'flex-start' }}>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon name="md-arrow-dropdown" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Pay</Label>
-                            </Button>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
-                            </Button>
-                        </Left>
-                    </CardItem>
-                );
-                break;
-            case 'leader-event':
-                return (
-                    <CardItem footer style={{ height: 35 }}>
-                        <Left style={{ justifyContent: 'flex-start' }}>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon name="md-arrow-dropdown" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>RSVP</Label>
-                            </Button>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
-                            </Button>
-                        </Left>
-                    </CardItem>
-                );
-                break;
-            case 'leader-news':
-                return (
-                    <CardItem footer style={{ height: 35 }}>
-                        <Left style={{ justifyContent: 'flex-start' }}>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon name="md-arrow-dropdown" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Discuss</Label>
-                            </Button>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
-                            </Button>
-                        </Left>
-                    </CardItem>
-                );
-                break;
-            default:
-                return (
-                    <CardItem footer style={{ height: 35 }}>
-                        <Left style={{ justifyContent: 'space-between' }}>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon name="md-arrow-dropup" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Upvote {item.rate_up ? item.rate_up : 0}</Label>
-                            </Button>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon active name="md-arrow-dropdown" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Downvote {item.rate_up ? item.rate_down : 0}</Label>
-                            </Button>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
-                            </Button>
-                        </Left>
-                    </CardItem>
-                );
-                break;
-        }
-    }
-
-    _renderDescription(item) {
-        return (
-            <CardItem style={{paddingLeft: 15, paddingRight: 15}}>
-                <Left>
-                    <View style={styles.descLeftContainer}>
-                        {this._renderZoneIcon(item)}
-                        <Label style={styles.commentCount}>{item.responses_count}</Label>
-                    </View>
-                    <Body style={styles.descBodyContainer}>
-                        <TouchableOpacity onPress={() => this.goItemDetail(item.entity.id, item.entity.type)}>
-                            {this._renderTitle(item)}
-                            <Text style={styles.description} numberOfLines={5}>{item.description}</Text>
-                        </TouchableOpacity>
-                    </Body>
-                </Left>
-            </CardItem>
-        );
-    }
-
-    //This is a known broken issue. GH13
-    _renderMetadata(item) {
-        if (item.metadata && item.metadata.image) {
-            return (
-                <CardItem style={{ paddingTop: 0 }}>
-                    <Left>
-                        <View style={styles.descLeftContainer} />
-                        <Body>
-                            <TouchableOpacity
-                                activeOpacity={0.7}
-                                style={styles.metaContainer}
-                                onPress={() => { alert(`You've clicked metadata`); }}>
-                                <View style={styles.imageContainer}>
-                                    <ImageLoad
-                                        placeholderSource={require('img/empty_image.png')}
-                                        source={{ uri: item.metadata.image+'&w=200&h=200&auto=compress,format,q=95' }}
-                                        style={styles.image}
-                                    />
-                                </View>
-                                <View style={styles.textContainer}>
-                                    <Text style={styles.title} numberOfLines={2}>{item.metadata.title}</Text>
-                                    <Text style={styles.description} numberOfLines={2}>{item.metadata.description}</Text>
-                                </View>
-                            </TouchableOpacity>
-                        </Body>
-                    </Left>
-                </CardItem>
-            );
-        } else {
-            return null;
-        }
-    }
-
-    postOrUserPetitionCard(item) {
-        return (
-            <Card>
-                {this._renderHeader(item)}
-                {this._renderDescription(item)}
-                {this._renderMetadata(item)}
-                <View style={styles.borderContainer} />
-                {this._renderFooter(item)}
-            </Card>
-        );
-    }
-
-    groupCard(item) {
-        return (
-            <Card>
-                {this._renderHeader(item)}
-                {this._renderDescription(item)}
-                {this._renderCarousel(item)}
-                <View style={styles.borderContainer} />
-                {this._renderFooter(item)}
-            </Card>
-        );
+        return <FeedHeader item={item} />
     }
 
     onChangeText(text){
@@ -793,7 +277,7 @@ class Newsfeed extends Component {
                 </Footer>
                 </Container>
             );
-        }else{
+        } else{
             return (
                 // The default view of the newsfeed is the All feed.
                 <Container>
@@ -830,15 +314,7 @@ class Newsfeed extends Component {
                     }}
                 >
                     <ListView dataSource={this.state.dataSource} renderRow={item => {
-                        switch (item.entity.type) {
-                            case 'post':
-                            case 'user-petition':
-                                return this.postOrUserPetitionCard(item);
-                                break;
-                            default:
-                                return this.groupCard(item);
-                                break;
-                        }
+                        return <FeedActivity item={item} token={this.props.token} profile={this.props.profile} />
                     }}
                     />
                     <PLOverlayLoader visible={this.state.isLoading} logo />

@@ -25,6 +25,7 @@ async function loadPost(token: string, entityId: number): Promise<Action> {
 }
 
 async function votePost(token: string, postId: string, option: string) {
+    console.log(token, postId, option);
     try {
         let response = await fetch(`${API_URL}/v2/posts/${postId}/vote`, {
             method: 'POST',
@@ -36,6 +37,7 @@ async function votePost(token: string, postId: string, option: string) {
                 option: option,
             })
         });
+        console.log(response);
         let responseJson = await response.json();
         if (responseJson.status === 200) {
             if (option === 'upvote') {
