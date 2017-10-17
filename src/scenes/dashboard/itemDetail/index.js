@@ -23,7 +23,7 @@ import Menu, {
     MenuOption,
     renderers
 } from 'react-native-popup-menu';
-import { getComments, votePost, addComment, editComment, deleteComment, rateComment, loadActivityByEntityId, deletePost, deletePetition, changePost, changePetition } from 'PLActions';
+import { getComments, votePost, getUsersByGroup, addComment, editComment, deleteComment, rateComment, loadActivityByEntityId, deletePost, deletePetition, changePost, changePetition } from 'PLActions';
 import PLOverlayLoader from 'PLOverlayLoader';
 import randomPlaceholder from '../../../utils/placeholder';
 import _ from 'lodash';
@@ -37,6 +37,8 @@ import FeedDescription from '../../../components/Feed/FeedDescription';
 import FeedContext from '../../../components/Feed/FeedContext';
 import FeedMetaData from '../../../components/Feed/FeedMetaData';
 import FeedActivity from '../../../components/Feed/FeedActivity';
+
+import SuggestionBox from '../../../common/suggestionBox';
 
 
 const { youTubeAPIKey } = require('PLEnv');
@@ -179,7 +181,7 @@ class ItemDetail extends Component {
                 this.nextCursor = null;
                 this.isLoadedAll = true;
             }
-            console.log('response', response);
+            // console.log('response', response);
             this.setState({
                 dataArray: response.comments,
             });
@@ -380,6 +382,70 @@ class ItemDetail extends Component {
         return <FeedHeader item={item} />
     }
 
+    substitute (mention) {
+        let {init, end} = this.state;
+        let newContent = this.state.commentText;
+        let initialLength = newContent.length;
+
+        let firstPart = newContent.substr(0, init);
+        let finalPart = newContent.substr(end, initialLength);
+
+        let finalString = firstPart + mention + finalPart;
+
+        this.setState({commentText: finalString, displaySuggestionBox: false, lockSuggestionPosition: end});
+    }
+
+    onSelectionChange (event) {
+        let {start, end} = event.nativeEvent.selection;
+        // let userRole = this.state.grouplist[this.state.selectedGroupIndex].user_role;
+        setTimeout(() => {
+            if (start !== end) return;
+            if (start === this.state.lockSuggestionPosition) return;
+            let text = this.state.commentText;
+            let displayMention = false;
+            let i;
+
+            for (i = start - 1; i >= 0; i--) {
+                if (text.charAt(i) === ' ') break;
+                if (text.charAt(i) === '@' && (i === 0 || text.charAt(i - 1) === ' ')) {
+                    // if (text.slice(i, i + 9) === "@everyone" && userRole === 'owner' && userRole === 'manager') {
+                    //     alert("Are you sure you want to alert everyone in the group?");
+                    //     break;
+                    // }
+                    if (text.charAt(i + 1) && text.charAt(i + 1) !== ' ' && text.charAt(i + 2) && text.charAt(i + 2) !== ' ') {
+                        displayMention = true;
+                        for (let j = start - 1; text.charAt(j) && text.charAt(j) !== ' '; j++) end = j + 1;
+                    } else {
+                        displayMention = false;
+                    }
+                    break;
+                }
+            }
+            if (displayMention) {
+                let suggestionSearch = text.slice(i + 1, end);
+                this.updateSuggestionList(this.props.token, suggestionSearch);
+                this.setState({displaySuggestionBox: displayMention, init: i, end: end});
+            } else {
+                console.log('false');
+                this.setState({suggestionList: [], displaySuggestionBox: false});
+            }
+        }, 100);
+    }
+
+    updateSuggestionList (token, suggestionSearch) {
+        // this.setState({suggestionList: []});
+        // console.log(this.item);
+        getUsersByGroup(token, this.item.group.id, suggestionSearch).then(data => {
+            this.setState({suggestionList: data.payload});
+        }).catch(err => {
+
+        });
+    }
+    changeContent (text) {
+        this.setState({
+            inputDescription: text
+        });
+    }
     _renderTextarea(item, state) {
         return (
             <View>
@@ -396,7 +462,7 @@ class ItemDetail extends Component {
                     placeholderTextColor="rgba(0,0,0,0.1)"
                     style={styles.textarea}
                     value={state.inputDescription}
-                    onChangeText={inputDescription => this.setState({ inputDescription })}
+                    onChangeText={(text) => this.changeContent(text)}
                 />
             </View>
         )
@@ -409,7 +475,7 @@ class ItemDetail extends Component {
         const { props: { profile } } = this;
         var thumbnail: string = '';
         thumbnail = profile.avatar_file_name ? profile.avatar_file_name : '';
-
+        
         return (
             <TouchableOpacity onPress={() => this._onAddComment()}>
                 <CardItem>
@@ -427,10 +493,11 @@ class ItemDetail extends Component {
                                     backgroundColor: 'white',
                                     width: WINDOW_WIDTH,
                                     // height: this.state.visibleHeight,
-                                    height: WINDOW_HEIGHT / 2 + 50,
+                                    height: WINDOW_HEIGHT /2 + 50
                                 }}>
-                                    <CardItem>
-                                        <Left>
+                                        <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
+                                        <CardItem>
+                                            <Left>
                                             <Thumbnail small source={thumbnail ? { uri: thumbnail+'&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                                             <Body>
                                                 <TextInput
@@ -440,6 +507,8 @@ class ItemDetail extends Component {
                                                     placeholder={this.state.placeholderTitle}
                                                     defaultValue={this.state.defaultInputValue}
                                                     onChangeText={commentText => this.setState({ commentText })}
+                                                    onSelectionChange={(e) => this.onSelectionChange(e)}
+
                                                 />
                                             </Body>
                                             <Right style={{ flex: 0.3 }}>
@@ -473,7 +542,7 @@ class ItemDetail extends Component {
     }
 
     _renderComment(comment) {
-        console.log('_renderComment', comment)
+        // console.log('_renderComment', comment)
         if (comment.children) {
             if (comment.children.length === 0) {
                 return this._renderRootComment(comment);
@@ -704,6 +773,7 @@ class ItemDetail extends Component {
     }
 
     render() {
+        // console.log(this.item);
         if (this.item === null) {
             return (
                 <PLOverlayLoader visible={this.state.isLoading} logo />

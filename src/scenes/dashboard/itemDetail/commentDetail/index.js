@@ -330,7 +330,7 @@ class CommentDetail extends Component {
         thumbnail = profile.avatar_file_name ? profile.avatar_file_name : '';
 
         return (
-            <Menu renderer={SlideInMenu} ref={this.onRef} onOpen={() => { this.openedAddCommentView() }}>
+            <Menu renderer={SlideInMenu} ref={this.onRef}>
                 <MenuTrigger />
                 <MenuOptions optionsContainerStyle={{
                     backgroundColor: 'white',
@@ -341,7 +341,7 @@ class CommentDetail extends Component {
                         <Left>
                             <Thumbnail small source={thumbnail ? { uri: thumbnail+'&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                             <Body>
-                                <TextInput style={styles.commentInput} ref={this.onCommentInputRef} placeholder="Comment..." onChangeText={commentText => this.setState({ commentText })} />
+                                {<TextInput autoFocus style={styles.commentInput} ref={this.onCommentInputRef} placeholder="Comment..." onChangeText={commentText => this.setState({ commentText })} />}
                             </Body>
                             <Right style={{ flex: 0.3 }}>
                                 <TouchableOpacity style={{ flexDirection: 'row' }} onPress={() => this._onSendComment()}>
@@ -409,9 +409,9 @@ class CommentDetail extends Component {
     }
 
     openedAddCommentView() {
-        setTimeout(() => {
-            this.addCommentInput.focus();
-        }, 100);
+        // setTimeout(() => {
+        //     this.addCommentInput.focus();
+        // }, 100);
     }
 
     getIndex(comment) {
