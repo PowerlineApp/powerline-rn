@@ -278,13 +278,14 @@ class ItemDetail extends Component {
 
     async doEditComment(commentText) {
         this.setState({ isLoading: true });
-        let response = await editComment(this.props.token, this.state.editedCommentId, commentText);
+        let response = await editComment(this.item.entity.type, this.props.token, this.state.editedCommentId, commentText);
 
         this.addCommentView.close();
         this.setState({
             isLoading: false,
         });
 
+        console.warn(response);
         if (response.status === 200 && response.ok) {
             this.loadComments();
             this.resetEditComment();
@@ -296,7 +297,7 @@ class ItemDetail extends Component {
     }
 
     async deleteComment(comment) {
-        let response = await deleteComment(this.props.token, comment.id);
+        let response = await deleteComment(this.item.entity.type, this.props.token, comment.id);
         if (response.status === 204 && response.ok) {
             this.loadComments();
         } else {
@@ -436,7 +437,7 @@ class ItemDetail extends Component {
                                                     autoFocus
                                                     style={styles.commentInput}
                                                     ref={this.onCommentInputRef}
-                                                    placeholder="Comment..."
+                                                    placeholder={this.state.placeholderTitle}
                                                     defaultValue={this.state.defaultInputValue}
                                                     onChangeText={commentText => this.setState({ commentText })}
                                                 />
