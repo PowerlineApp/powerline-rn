@@ -972,7 +972,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Powerline" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "powerline" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -1611,6 +1611,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = Powerline/Powerline.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = 4875SW8HHW;
@@ -1637,8 +1638,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.Powerline;
 				PRODUCT_NAME = Powerline;
-				PROVISIONING_PROFILE = "38664658-c22d-4a0f-82a7-b2cc4e4f3e01";
-				PROVISIONING_PROFILE_SPECIFIER = powerline_dev;
+				PROVISIONING_PROFILE = "eb51ce5b-7790-4986-9793-0eb040476928";
+				PROVISIONING_PROFILE_SPECIFIER = "react-native-development";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -1650,6 +1651,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = Powerline/Powerline.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 4875SW8HHW;
 				ENABLE_BITCODE = NO;
@@ -1675,8 +1677,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.Powerline;
 				PRODUCT_NAME = Powerline;
-				PROVISIONING_PROFILE = "6a3b46f0-b083-4121-9353-308400e589c2";
-				PROVISIONING_PROFILE_SPECIFIER = powerline_dev;
+				PROVISIONING_PROFILE = "eb51ce5b-7790-4986-9793-0eb040476928";
+				PROVISIONING_PROFILE_SPECIFIER = "react-native-development";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
@@ -1950,7 +1952,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Powerline" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "powerline" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
