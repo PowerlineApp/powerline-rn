@@ -1,7 +1,14 @@
-var PLColors = require('PLColors');
 var { Platform } = require('react-native');
 
+var PLColors = require('PLColors');
+const { WINDOW_WIDTH: viewportWidth, WINDOW_HEIGHT: viewportHeight } = require('PLConstants');
+
 const platform = Platform.OS;
+
+function wp(percentage) {
+  const value = (percentage * viewportWidth) / 100;
+  return Math.round(value);
+}
 
 export default {
   container: {
@@ -80,12 +87,19 @@ export default {
     backgroundColor: 'white',
   },
   tabText: {
-    fontSize: 8,
+    fontSize: wp(2.3),
     fontWeight: '500'
   },
   iconPlus: {
-    fontSize: platform === 'ios' ? 80 : 60,
-    paddingBottom: platform === 'ios' ? 8 : 0,
+    ...Platform.select({
+      ios: {
+        fontSize: wp(20),
+        paddingBottom: 8,
+      },
+      android: {
+        fontSize: wp(18),
+      }
+    }),
     color: '#030366',
   }
 };

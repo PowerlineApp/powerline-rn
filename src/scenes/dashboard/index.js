@@ -587,16 +587,16 @@ class Home extends Component {
               <Button badge={true} active={this.state.tab1} onPress={() => this.toggleTab1()} > 
                 <Badge><Text>{this.showBadgeForActivities()}</Text></Badge>
                 <Icon active={this.state.tab1} name="ios-flash" />
-                <Text>NEWSFEED</Text>
+                <Text numberOfLines={1} style={styles.tabText}>NEWSFEED</Text>
               </Button>:
               <Button active={this.state.tab1} onPress={() => this.toggleTab1()} >
                 <Icon active={this.state.tab1} name="ios-flash" />
-                <Text>NEWSFEED</Text>
+                <Text numberOfLines={1} style={styles.tabText}>NEWSFEED</Text>
               </Button>
               }
               <Button active={this.state.tab2} onPress={() => this.toggleTab2()} >
                 <Icon active={this.state.tab2} name="md-people" />
-                <Text>FRIENDS</Text>
+                <Text numberOfLines={1} style={styles.tabText}>FRIENDS</Text>
               </Button>
             {/* This is the New Item Menu GH8. Only New Post and New Petition are expected to work at this time */}
               <Button>
@@ -659,12 +659,12 @@ class Home extends Component {
               {/* This is the Messages/Announcements tab. It is not working yet */}
               <Button active={this.state.tab3} onPress={() => this.toggleTab3()} >
                 <Icon active={this.state.tab3} name="md-mail" />
-                <Text>MESSAGES</Text>
+                <Text numberOfLines={1} style={styles.tabText}>MESSAGES</Text>
               </Button>
               {/* This is the Notifications Feed tab. It should be working. */}
               <Button active={this.state.tab4} onPress={() => this.toggleTab4()} >
                 <Icon active={this.state.tab4} name="md-notifications" />
-                <Text>NOTIFICATIONS</Text>
+                <Text numberOfLines={1} style={styles.tabText}>NOTIFICATIONS</Text>
               </Button>
             </FooterTab>
           </Footer>
