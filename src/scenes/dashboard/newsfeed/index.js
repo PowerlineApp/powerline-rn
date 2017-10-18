@@ -211,7 +211,7 @@ class Newsfeed extends Component {
     render() {
         if(this.props.group != 'all' && this.props.payload.length <= this.props.groupLimit){
             return (
-                <Container>
+                <Container style={styles.container}>
                 <View style={styles.groupHeaderContainer}>
                     {this.state.showAvatar && this.props.savedGroup && this.props.savedGroup.groupAvatar != '' && this.props.savedGroup.groupAvatar != null ?
                         <Thumbnail square source={{ uri: this.props.savedGroup.groupAvatar + '&w=200&h=200&auto=compress,format,q=95' }} style={styles.groupAvatar} /> : null}
@@ -280,7 +280,7 @@ class Newsfeed extends Component {
         } else{
             return (
                 // The default view of the newsfeed is the All feed.
-                <Container>
+                <Container style={styles.container}>
                 {
                     this.props.savedGroup && this.props.savedGroup.group != 'all' &&
                     <View style={styles.groupHeaderContainer}>

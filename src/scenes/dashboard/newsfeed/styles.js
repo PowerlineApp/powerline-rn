@@ -1,5 +1,5 @@
 var PLColors = require('PLColors');
-var { StyleSheet, Dimensions } = require('react-native');
+var { StyleSheet, Dimensions, Platform } = require('react-native');
 
 const { WINDOW_WIDTH: viewportWidth, WINDOW_HEIGHT: viewportHeight } = require('PLConstants');
 const { width, height } = Dimensions.get('window');
@@ -18,6 +18,11 @@ export const sliderWidth = viewportWidth;
 export const itemWidth = slideWidth + itemHorizontalMargin * 2;
 
 export default {
+    container: {
+        ...Platform.select({
+            android: { marginBottom: -20 }
+        })
+    },
     title: {
         color: '#21354a',
         fontSize: 12,

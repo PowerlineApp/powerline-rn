@@ -204,6 +204,7 @@ class Notifications extends Component{
                         onRefresh={this.onRefresh.bind(this)}
                     />
                 }
+                style={styles.container}
             >
                 <List style={{backgroundColor: 'white'}}>
                     {
