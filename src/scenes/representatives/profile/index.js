@@ -24,11 +24,13 @@ import {
     View,
     TouchableOpacity,
     RefreshControl,
-    Linking
+    Linking,
+    Platform
 } from 'react-native';
 import styles from './styles';
 const PLColors  = require('PLColors');
 import { loadRepresentatyInfo, loadCommittees, loadSponsoredBills } from 'PLActions';
+import PLLoader from 'PLLoader';
 
 class RepresentatyProfile extends Component{
     static propTypes = {
@@ -118,14 +120,23 @@ class RepresentatyProfile extends Component{
                     </Body>
                 </Header>
                 <Content
-                    refreshControl={
+                    refreshControl={Platform.OS === 'android' &&
                         <RefreshControl
-                            refreshing={this.state.refreshing}
+                            refreshing={false}
                             onRefresh={this._onRefresh.bind(this)}
                         />
-                    }>
+                    }
+                    onScroll={(e) => {
+                        var offset = e.nativeEvent.contentOffset.y;
+
+                        if (Platform.OS === 'ios' && offset < -3) {
+                            this._onRefresh();
+                        }
+                    }}
+                >
                     {this.state.data?
                     <View>
+                    {this.state.refreshing && <PLLoader position="bottom" />}
                     <List style={{backgroundColor: 'white'}}>
                         <ListItem>
                             <Thumbnail square size={80}  source={{uri: this.state.data.avatar_file_path+'&w=50&h=50&auto=compress,format,q=95'}}/>

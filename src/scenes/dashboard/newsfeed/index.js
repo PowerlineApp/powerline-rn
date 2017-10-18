@@ -22,8 +22,6 @@ import Menu, {
     MenuOption,
     renderers
 } from 'react-native-popup-menu';
-
-// custom components import
 import FeedActivity from '../../../components/Feed/FeedActivity';
 import ContentPlaceholder from '../../../components/ContentPlaceholder';
 
@@ -170,6 +168,11 @@ class Newsfeed extends Component {
         }
     }
 
+    _onBeginReached() {
+        this.props.dispatch(resetActivities());
+        this.loadInitialActivities();
+    }
+
     //Related: GH160
     _renderTailLoading() {
         if (this.state.isLoadingTail === true) {
@@ -218,12 +221,13 @@ class Newsfeed extends Component {
                         <Thumbnail square source={{ uri: this.props.savedGroup.groupAvatar + '&w=200&h=200&auto=compress,format,q=95' }} style={styles.groupAvatar} /> : null}
                     <Text style={styles.groupName}>{this.props.savedGroup.groupName}</Text>
                 </View>
+                {this.state.isRefreshing && <PLLoader position="bottom" />}
                 <ContentPlaceholder
                     empty={!this.state.isRefreshing && !this.state.isLoading && this.state.dataArray.length === 0}
                     title="The world belongs to those who speak up! Be the first to create a post!"
-                    refreshControl={
+                    refreshControl={Platform.OS === 'android' &&
                         <RefreshControl
-                            refreshing={this.state.isRefreshing}
+                            refreshing={false}
                             onRefresh={this._onRefresh.bind(this)}
                         />
                     }
@@ -234,10 +238,14 @@ class Newsfeed extends Component {
                             this.setState({
                                 showAvatar: false
                             });
-                        }else{
+                        } else {
                             this.setState({
                                 showAvatar: true
                             });
+                        }
+
+                        if (Platform.OS === 'ios' && offset < -3) {
+                            this._onRefresh();
                         }
                     }}
                 >
@@ -290,12 +298,13 @@ class Newsfeed extends Component {
                         <Text style={styles.groupName}>{this.props.savedGroup.groupName}</Text>
                     </View>
                 }
+                {this.state.isRefreshing && <PLLoader position="bottom" />}
                 <ContentPlaceholder
                     empty={!this.state.isRefreshing && !this.state.isLoading && this.state.dataArray.length === 0}
                     title="The world belongs to those who speak up! Be the first to create a post!"    
-                    refreshControl={
+                    refreshControl={Platform.OS === 'android' &&
                         <RefreshControl
-                            refreshing={this.state.isRefreshing}
+                            refreshing={false}
                             onRefresh={this._onRefresh.bind(this)}
                         />
                     }
@@ -311,6 +320,10 @@ class Newsfeed extends Component {
                             this.setState({
                                 showAvatar: true
                             });
+                        }
+
+                        if (Platform.OS === 'ios' && offset < -3) {
+                            this._onRefresh();
                         }
                     }}
                 >

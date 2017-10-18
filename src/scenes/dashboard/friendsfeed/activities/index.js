@@ -179,9 +179,9 @@ class FriendActivity extends Component {
     render() {
         return (
             <Content
-                refreshControl={
+                refreshControl={Platform.OS === 'android' &&
                     <RefreshControl
-                        refreshing={this.state.isRefreshing}
+                        refreshing={false}
                         onRefresh={this._onRefresh.bind(this)}
                     />
                 }
@@ -191,7 +191,12 @@ class FriendActivity extends Component {
                     if ((WINDOW_HEIGHT + offset) >= height && offset > 0) {
                         this._onEndReached();
                     }
+
+                    if (Platform.OS === 'ios' && offset < -3) {
+                        this._onRefresh();
+                    }
                 }}>
+                {this.state.isRefreshing && <PLLoader position="bottom" />}
                 <ListView dataSource={this.state.dataSource} renderRow={item => {
                     return <FeedActivity item={item} token={this.props.token} profile={this.props.profile}/>
                 }}
