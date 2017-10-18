@@ -1,7 +1,24 @@
 var { API_URL, PER_PAGE } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
 
-async function signPetition(token: string, petitionId: string) {
+async function signUserPetition(token: string, petitionId: string) {
+    try {
+        let response = await fetch(`${API_URL}/v2/user-petitions/${petitionId}/sign`, {
+            method: 'POST',
+            headers: {
+                'token': token,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+            })
+        });
+        let responseJson = await response.json();
+        return responseJson;
+    } catch (error) {
+        handleError(error);
+    }
+}
+async function signLeaderPetition(token: string, petitionId: string) {
     try {
         let response = await fetch(`${API_URL}/v2/micro-petitions/${petitionId}/sign`, {
             method: 'POST',
@@ -19,9 +36,26 @@ async function signPetition(token: string, petitionId: string) {
     }
 }
 
-async function unsubscribeFromPetition(token: string, petitionId: string) {
+async function unsubscribeFromUserPetition(token: string, petitionId: string) {
     try {
-        let response = await fetch(`${API_URL}/v2/user/user-petitions/${petitionId}`, {
+        let response = await fetch(`${API_URL}/v2/user/user-petitions/${petitionId}/sign`, {
+            method: 'DELETE',
+            headers: {
+                'token': token,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+            })
+        });
+        response = response.ok;
+        return response;
+    } catch (error) {
+        handleError(error);
+    }
+}
+async function unsubscribeFromLeaderPetition(token: string, petitionId: string) {
+    try {
+        let response = await fetch(`${API_URL}/v2/user/micro-petitions/${petitionId}/sign`, {
             method: 'DELETE',
             headers: {
                 'token': token,
@@ -45,6 +79,8 @@ function handleError(error) {
 
 
 module.exports = {
-    signPetition,
-    unsubscribeFromPetition
+    signUserPetition,
+    unsubscribeFromUserPetition,
+    signLeaderPetition,
+    unsubscribeFromLeaderPetition
 };

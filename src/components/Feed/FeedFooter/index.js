@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
+import {Actions} from 'react-native-router-flux';
 import { Button, Icon, Left, CardItem, Label } from 'native-base';
 import styles from '../styles';
-import { votePost, loadActivityByEntityId } from 'PLActions';
+import { votePost, loadActivityByEntityId, signUserPetition } from 'PLActions';
 import _ from 'lodash';
 
 class FeedFooter extends Component {
@@ -16,6 +17,7 @@ class FeedFooter extends Component {
     // changes the upvote/downvote color to indicate selection, sets the upvote/downvote number before the response comes. if the requisition fails, undo all
     async vote (item, option) {
         // uses lodash.cloneDeep to avoid keeping references
+        console.log(item);
         let originalItem = _.cloneDeep(this.state.item);
         let newItem = _.cloneDeep(this.state.item);
 
@@ -34,35 +36,35 @@ class FeedFooter extends Component {
 
         if (option === 'upvote') {
             // user is unsetting his vote
-            if (newItem.option === 1) {
-                newItem.option = null;
+            if (newItem.post.votes[0].option === 1) {
+                newItem.post.votes[0].option = null;
                 newItem.upvotes_count -= 1;
             } else {
                 // user is setting his vote to up, had the down up checked
-                if (item.option === 2) {
-                    newItem.option = 1;
+                if (item.post.votes[0].option === 2) {
+                    newItem.post.votes[0].option = 1;
                     newItem.upvotes_count += 1;
                     newItem.downvotes_count -= 1;
                 } else {
                     // didnt have any option checked
-                    newItem.option = 1;
+                    newItem.post.votes[0].option = 1;
                     newItem.upvotes_count += 1;
                 }
             }
         } else if (option === 'downvote') {
             // user is unsetting his vote
-            if (newItem.option === 2) {
-                newItem.option = null;
+            if (newItem.post.votes[0].option === 2) {
+                newItem.post.votes[0].option = null;
                 newItem.downvotes_count -= 1;
             } else {
                 // user is setting his vote to down, had the option up checked
-                if (newItem.option === 1) {
-                    newItem.option = 2;
+                if (newItem.post.votes[0].option === 1) {
+                    newItem.post.votes[0].option = 2;
                     newItem.upvotes_count -= 1;
                     newItem.downvotes_count += 1;
                 } else {
                     // didnt have any option checked
-                    newItem.option = 2;
+                    newItem.post.votes[0].option = 2;
                     newItem.downvotes_count += 1;
                 }
             }
@@ -98,14 +100,31 @@ class FeedFooter extends Component {
         }
     }
 
-    _renderPostFooter (item) {
+    async sign (item) {
+        let {token} = this.props;
+        console.log(item.id);
+        signUserPetition(token, item.id).then(res => console.log(res));
+    }
+
+    _renderReplyIcon (item) {
+        return (
+            <Label style={styles.footerText} onPress={() => Actions.itemDetail({entityId: item.id, entityType: item.type, commenting: true})}>
+                {'Reply '}
+                {item.comments_count ? item.comments_count : 0}
+            </Label>
+        );
+    }
+
+    // on this one we need this to control upvote / downvote before a response comes from the API
+    _renderPostFooter () {
+        let {item} = this.state;
         if (item.zone === 'expired') {
             return (
                 <CardItem footer style={{ height: 35 }}>
                     <Left style={{ justifyContent: 'flex-start' }}>
                         <Button iconLeft transparent style={styles.footerButton}>
                             <Icon active name='ios-undo' style={styles.footerIcon} />
-                            <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
+                            {this._renderReplyIcon(item)}
                         </Button>
                     </Left>
                 </CardItem>
@@ -139,7 +158,7 @@ class FeedFooter extends Component {
                         </Button>
                         <Button iconLeft transparent style={styles.footerButton}>
                             <Icon active name='ios-undo' style={styles.footerIcon} />
-                            <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
+                            {this._renderReplyIcon(item)}
                         </Button>
                     </Left>
                 </CardItem>
@@ -148,16 +167,17 @@ class FeedFooter extends Component {
     }
 
     _renderUserPetitionFooter (item) {
+        console.log(item);
         return (
             <CardItem footer style={{ height: 35 }}>
                 <Left style={{ justifyContent: 'flex-end' }}>
                     <Button iconLeft transparent style={styles.footerButton}>
                         <Icon name='md-arrow-dropdown' style={styles.footerIcon} />
-                        <Label style={styles.footerText}>Sign</Label>
+                        <Label style={styles.footerText} onPress={() => this.sign(item)} >Sign</Label>
                     </Button>
                     <Button iconLeft transparent style={styles.footerButton}>
                         <Icon active name='ios-undo' style={styles.footerIcon} />
-                        <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
+                        {this._renderReplyIcon(item)}
                     </Button>
                 </Left>
             </CardItem>
@@ -174,7 +194,6 @@ class FeedFooter extends Component {
                     </Button>
                     <Button iconLeft transparent style={styles.footerButton}>
                         <Icon active name='ios-undo' style={styles.footerIcon} />
-                        <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
                     </Button>
                 </Left>
             </CardItem>
@@ -191,7 +210,7 @@ class FeedFooter extends Component {
                     </Button>
                     <Button iconLeft transparent style={styles.footerButton}>
                         <Icon active name='ios-undo' style={styles.footerIcon} />
-                        <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
+                        {this._renderReplyIcon(item)}
                     </Button>
                 </Left>
             </CardItem>
@@ -208,7 +227,7 @@ class FeedFooter extends Component {
                     </Button>
                     <Button iconLeft transparent style={styles.footerButton}>
                         <Icon active name='ios-undo' style={styles.footerIcon} />
-                        <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
+                        {this._renderReplyIcon(item)}
                     </Button>
                 </Left>
             </CardItem>
@@ -225,7 +244,7 @@ class FeedFooter extends Component {
                     </Button>
                     <Button iconLeft transparent style={styles.footerButton}>
                         <Icon active name='ios-undo' style={styles.footerIcon} />
-                        <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
+                        {this._renderReplyIcon(item)}
                     </Button>
                 </Left>
             </CardItem>
@@ -246,7 +265,7 @@ class FeedFooter extends Component {
                     </Button>
                     <Button iconLeft transparent style={styles.footerButton}>
                         <Icon active name='ios-undo' style={styles.footerIcon} />
-                        <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
+                        {this._renderReplyIcon(item)}
                     </Button>
                 </Left>
             </CardItem>

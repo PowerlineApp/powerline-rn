@@ -86,6 +86,20 @@ class ItemDetail extends Component {
         this.loadEntity();
     }
 
+    componentDidMount(){
+        // this.addCommentInput.focus(); 
+        if (this.props.commenting){
+            console.log('commenting...')
+            setTimeout(
+                () => this._onAddComment()
+                , 1000);
+        }   
+    }
+    
+    onCommentInputRef = r => {
+        this.addCommentInput = r;
+    }
+
     componentWillUnmount() {
         this.keyboardDidShowListener.remove();
         this.keyboardDidHideListener.remove();
@@ -105,9 +119,6 @@ class ItemDetail extends Component {
         this.addCommentView = r;
     }
 
-    onCommentInputRef = r => {
-        this.addCommentInput = r;
-    }
 
     _onAddComment(comment) {
         this.setState({ placeholderTitle: randomPlaceholder('comment') });
@@ -503,8 +514,7 @@ class ItemDetail extends Component {
                                                 <TextInput
                                                     autoFocus
                                                     style={styles.commentInput}
-                                                    ref={this.onCommentInputRef}
-                                                    placeholder={this.state.placeholderTitle}
+                                                    ref={this.onCommentInputRef}                                                    placeholder={this.state.placeholderTitle}
                                                     defaultValue={this.state.defaultInputValue}
                                                     onChangeText={commentText => this.setState({ commentText })}
                                                     onSelectionChange={(e) => this.onSelectionChange(e)}
@@ -774,6 +784,7 @@ class ItemDetail extends Component {
 
     render() {
         // console.log(this.item);
+        console.log(this.refs);
         if (this.item === null) {
             return (
                 <PLOverlayLoader visible={this.state.isLoading} logo />

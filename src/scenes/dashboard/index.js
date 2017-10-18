@@ -29,7 +29,7 @@ import {
   getFollowers,
   votePost,
   joinGroup,
-  signPetition,
+  signUserPetition,
   unsubscribeFromPoll,
   unsubscribeFromPost,
   unsubscribeFromPetition,
@@ -147,7 +147,7 @@ class Home extends Component {
     _signPetition(token, data){
       let {target} = data.notification.payload.additionalData.entity;
       
-      signPetition(token, target.id).then(res => console.log(res));
+      signUserPetition(token, target.id).then(res => console.log(res));
     }
     _viewPetition(token, data){
       let {target} = data.notification.payload.additionalData.entity;
