@@ -1,7 +1,7 @@
-//User has ability to create a new post from New Item Menu. GH14
-//If user is on "All" feed and tries to create new item, user must choose which group the item will be posted to.
-//If user is already looking at a specific group (e.g. USA group) in newsfeed tab (e.g. not "all"), app will assume new post is for that group.
-//https://api-dev.powerli.ne/api-doc#post--api-v2.2-groups-{group}-posts
+// User has ability to create a new post from New Item Menu. GH14
+// If user is on "All" feed and tries to create new item, user must choose which group the item will be posted to.
+// If user is already looking at a specific group (e.g. USA group) in newsfeed tab (e.g. not "all"), app will assume new post is for that group.
+// https://api-dev.powerli.ne/api-doc#post--api-v2.2-groups-{group}-posts
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -59,8 +59,8 @@ class NewPost extends Component {
 
         this.placeholderTitle = randomPlaceholder('post');
 
-        this.toggleCommunity = this.toggleCommunity.bind(this);   
-        this.onSelectionChange = this.onSelectionChange.bind(this);     
+        this.toggleCommunity = this.toggleCommunity.bind(this);
+        this.onSelectionChange = this.onSelectionChange.bind(this);
     }
 
     componentDidMount () {
@@ -88,8 +88,8 @@ class NewPost extends Component {
         });
     }
 
-    //If user is looking at "all" newsfeed, then user will be prompted to select group to post to.
-    selectGroupList(index) {
+    // If user is looking at "all" newsfeed, then user will be prompted to select group to post to.
+    selectGroupList (index) {
         this.setState({
             selectedGroupIndex: index,
             showCommunity: false
@@ -131,12 +131,12 @@ class NewPost extends Component {
         });
     }
 
-    changeContent(text){
-        if(text.length <= POST_MAX_LENGTH){
+    changeContent (text) {
+        if (text.length <= POST_MAX_LENGTH) {
             this.setState({
                 content: text
             });
-        } 
+        }
     }
 
     substitute (mention) {
@@ -149,16 +149,15 @@ class NewPost extends Component {
 
         let finalString = firstPart + mention + finalPart;
 
-        this.setState({content: finalString});
+        this.setState({content: finalString, displaySuggestionBox: false, lockSuggestionPosition: end});
     }
 
-
-    onSelectionChange(event) {
+    onSelectionChange (event) {
         let {start, end} = event.nativeEvent.selection;
         let userRole = this.state.grouplist[this.state.selectedGroupIndex].user_role;
-        console.log('here!!!')
         setTimeout(() => {
             if (start !== end) return;
+            if (start === this.state.lockSuggestionPosition) return;
             let text = this.state.content;
             // for loop to find the first @ sign as a valid mention (without a space before, with at least two digits)
             let displayMention = false;
@@ -171,33 +170,32 @@ class NewPost extends Component {
                         alert("Are you sure you want to alert everyone in the group?");
                         break;
                     }
-                    if (text.charAt(i+1) && text.charAt(i+1) !== ' ' && text.charAt(i + 2) && text.charAt(i + 2) !== ' ' ) {
+                    if (text.charAt(i + 1) && text.charAt(i + 1) !== ' ' && text.charAt(i + 2) && text.charAt(i + 2) !== ' ') {
                         displayMention = true;
-                        for (let j = start -1; text.charAt(j) && text.charAt(j) !== ' '; j++) end = j+1;
+                        for (let j = start - 1; text.charAt(j) && text.charAt(j) !== ' '; j++) end = j + 1;
                     } else {
                         displayMention = false;
                     }
                     break;
                 }
             }
-            if (displayMention){
-
-                let suggestionSearch = text.slice(i+1, end);
+            if (displayMention) {
+                let suggestionSearch = text.slice(i + 1, end);
                 this.updateSuggestionList(this.props.token, suggestionSearch);
                 this.setState({displaySuggestionBox: displayMention, init: i, end: end});
             } else {
-                this.setState({suggestionList: [], displaySuggestionBox: false})
+                this.setState({suggestionList: [], displaySuggestionBox: false});
             }
         }, 100);
     }
-    
-    updateSuggestionList(token, suggestionSearch) {
+
+    updateSuggestionList (token, suggestionSearch) {
         this.setState({suggestionList: []});
         getUsersByGroup(token, this.state.grouplist[this.state.selectedGroupIndex].id, suggestionSearch).then(data => {
-            this.setState({suggestionList: data.payload})
+            this.setState({suggestionList: data.payload});
         }).catch(err => {
 
-        })
+        });
     }
 
     render () {
@@ -223,7 +221,7 @@ class NewPost extends Component {
                         <ListItem style={styles.community_container} onPress={() => this.toggleCommunity()}>
                             <View style={styles.avatar_container}>
                                 <View style={styles.avatar_wrapper}>
-                                    <Thumbnail square style={styles.avatar_img} source={{uri: this.state.profile.avatar_file_name+'&w=50&h=50&auto=compress,format,q=95'}}/>
+                                    <Thumbnail square style={styles.avatar_img} source={{uri: this.state.profile.avatar_file_name + '&w=50&h=50&auto=compress,format,q=95'}} />
                                 </View>
                                 <View style={styles.avatar_subfix} />
                             </View>
@@ -238,7 +236,7 @@ class NewPost extends Component {
                         </ListItem>
                     </List>
                     <ScrollView style={styles.main_content}>
-                        <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />                      
+                        <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
                         <Textarea
                             maxLength={POST_MAX_LENGTH}
                             onSelectionChange={this.onSelectionChange}
@@ -256,8 +254,8 @@ class NewPost extends Component {
                                         { this.state.grouplist.map((item, index) => {
                                             return (
                                                 <ListItem key={index} onPress={() => this.selectGroupList(index)}>
-                                                    { item.avatar_file_path ?
-                                                        <Thumbnail square style={{ width: 15, height: 15 }} source={{ uri: item.avatar_file_path + '&w=50&h=50&auto=compress,format,q=95'}} />
+                                                    { item.avatar_file_path
+                                                        ? <Thumbnail square style={{ width: 15, height: 15 }} source={{ uri: item.avatar_file_path + '&w=50&h=50&auto=compress,format,q=95'}} />
                                                         : <View style={{width: 15, height: 15}} />
                                                     }
                                                     <Body>
@@ -282,7 +280,7 @@ class NewPost extends Component {
                     </Label>
                     : <Label />
                     }
-                    {/*Related: GH 151 */}
+                    {/* Related: GH 151 */}
                     <Label style={{color: 'white'}}>
                         {
                           (POST_MAX_LENGTH - this.state.content.length)
