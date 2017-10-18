@@ -4,7 +4,8 @@ import {
   View,
   RefreshControl,
   TouchableOpacity,
-  Alert
+  Alert,
+  Platform
 } from 'react-native';
 
 import {
@@ -23,6 +24,7 @@ const PLColors = require('PLColors');
 import { getFollowers, unFollowers, acceptFollowers } from 'PLActions';
 import styles from './styles';
 import ContentPlaceholder from '../../../components/ContentPlaceholder';
+import PLLoader from 'PLLoader';
 
 class Followers extends Component {
   static propTypes = {
@@ -131,13 +133,21 @@ class Followers extends Component {
       <ContentPlaceholder
         empty={followers.length === 0}
         title="Hmm. Looks like you don't have any followers yet. Create a post!"
-        refreshControl={
+        refreshControl={Platform.OS === 'android' &&
           <RefreshControl
-            refreshing={refreshing}
+            refreshing={false}
             onRefresh={this._onRefresh.bind(this)}
           />
         }
+        onScroll={(e) => {
+          var offset = e.nativeEvent.contentOffset.y;
+
+          if (Platform.OS === 'ios' && offset < -3) {
+            this._onRefresh();
+          }
+        }}
       >
+        {this.state.refreshing && <PLLoader position="bottom" />}
         { followers.length > 0 &&
           <List>
             {

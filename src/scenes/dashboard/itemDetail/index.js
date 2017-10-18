@@ -6,7 +6,7 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Container, Header, Title, Textarea, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, Spinner, List, ListItem, Item, Input } from 'native-base';
+import { Container, Header, Title, Textarea, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, List, ListItem, Item, Input } from 'native-base';
 import { Image, View, StyleSheet, TouchableOpacity, Platform, KeyboardAvoidingView, Keyboard, TextInput, ListView } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
@@ -27,6 +27,7 @@ import { getComments, votePost, getUsersByGroup, addComment, editComment, delete
 import PLOverlayLoader from 'PLOverlayLoader';
 import randomPlaceholder from '../../../utils/placeholder';
 import _ from 'lodash';
+import PLLoader from 'PLLoader';
 
 
 // custom components import
@@ -504,6 +505,7 @@ class ItemDetail extends Component {
                                     backgroundColor: 'white',
                                     width: WINDOW_WIDTH,
                                     // height: this.state.visibleHeight,
+                                    // this needs adjustment for android / ios - doesnt work well for android with the suggestionbox
                                     height: WINDOW_HEIGHT /2 + 50
                                 }}>
                                         <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
@@ -544,7 +546,7 @@ class ItemDetail extends Component {
     _renderCommentsLoading() {
         if (this.state.isCommentsLoading === true) {
             return (
-                <Spinner color='gray' />
+                <PLLoader position="bottom" />
             );
         } else {
             return null;

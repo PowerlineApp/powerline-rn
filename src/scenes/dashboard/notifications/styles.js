@@ -4,6 +4,11 @@ var { Platform } = require('react-native');
 const platform = Platform.OS;
 
 export default {
+  container: {
+    ...Platform.select({
+      android: { marginBottom: -20 }
+    })
+  },
   defaultButton: {
       color: PLColors.main,
       borderWidth: 1,
@@ -56,42 +61,42 @@ export default {
     paddingLeft: 5,
     paddingRight: 5,
     marginRight: 10
-},
-rejectIcon: {
-    color: '#ef473a',
-    fontSize: 25,
-    width: 25,
-    paddingLeft: 5,
-    paddingRight: 5
-},
-inviteRightItem: {
-  paddingTop: 0,
-  paddingBottom: 0,
-  borderBottomWidth: 0
-},
-inviteRightBtn1: {
-  borderRadius: 0,
-  marginBottom: 5,
-  backgroundColor: PLColors.main,
-  borderWidth: 1,
-  borderColor: PLColors.main,
-  height: 25
-},
+  },
+  rejectIcon: {
+      color: '#ef473a',
+      fontSize: 25,
+      width: 25,
+      paddingLeft: 5,
+      paddingRight: 5
+  },
+  inviteRightItem: {
+    paddingTop: 0,
+    paddingBottom: 0,
+    borderBottomWidth: 0
+  },
+  inviteRightBtn1: {
+    borderRadius: 0,
+    marginBottom: 5,
+    backgroundColor: PLColors.main,
+    borderWidth: 1,
+    borderColor: PLColors.main,
+    height: 25
+  },
 
-inviteRightBtn2: {
-  borderRadius: 0,
-  backgroundColor: 'white',
-  borderWidth: 1,
-  borderColor: PLColors.main,
-  height: 25,
-  opacity: 0.5
-},
-inviteRightBtnText1: {
-  color: 'white',
-  fontSize: 12
-},
-inviteRightBtnText2: {
-  color: PLColors.main,
-  fontSize: 12
-}
+  inviteRightBtn2: {
+    borderRadius: 0,
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: PLColors.main,
+    height: 25,
+    opacity: 0.5
+  },
+  inviteRightBtnText1: {
+    color: 'white',
+    fontSize: 12
+  },
+  inviteRightBtnText2: {
+    color: PLColors.main,
+    fontSize: 12
+  }
 };

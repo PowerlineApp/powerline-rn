@@ -34,7 +34,7 @@ class Friendsfeed extends Component{
 
     render(){
         return (
-            <Container>
+            <Container style={styles.container}>
                 <View style={{height: 45}}>
                 <Grid>
                     <Col>

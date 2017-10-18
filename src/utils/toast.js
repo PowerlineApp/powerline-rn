@@ -8,7 +8,7 @@ import Toast from 'react-native-root-toast';
 export const showToast = (text: string) => {
   Toast.show(text, {
     duration: 2500,
-    position: Toast.positions.CENTER,
+    position: Toast.positions.BOTTOM,
     shadow: true,
     animation: true,
     hideOnPress: true,

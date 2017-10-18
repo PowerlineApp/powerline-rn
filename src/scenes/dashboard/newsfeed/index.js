@@ -6,7 +6,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
-import { ActionSheet, Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, Spinner, ListItem, Thumbnail, List, Card, CardItem, Label, Footer } from 'native-base';
+import { ActionSheet, Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, ListItem, Thumbnail, List, Card, CardItem, Label, Footer } from 'native-base';
 import { ListView, View, RefreshControl, TouchableOpacity, Image, WebView, Platform, Share } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 import { loadActivities, resetActivities, votePost, editFollowers, loadActivityByEntityId, createPostToGroup, deletePost, deletePetition } from 'PLActions';
@@ -22,12 +22,11 @@ import Menu, {
     MenuOption,
     renderers
 } from 'react-native-popup-menu';
-
-// custom components import
 import FeedActivity from '../../../components/Feed/FeedActivity';
 import ContentPlaceholder from '../../../components/ContentPlaceholder';
 
 import PLOverlayLoader from 'PLOverlayLoader';
+import PLLoader from 'PLLoader';
 const PLColors = require('PLColors');
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
 const { youTubeAPIKey } = require('PLEnv');
@@ -169,10 +168,15 @@ class Newsfeed extends Component {
         }
     }
 
+    _onBeginReached() {
+        this.props.dispatch(resetActivities());
+        this.loadInitialActivities();
+    }
+
     //Related: GH160
     _renderTailLoading() {
         if (this.state.isLoadingTail === true) {
-            return <Spinner color='gray' />;
+            return <PLLoader position="bottom" />
         } else {
             return null;
         }
@@ -211,18 +215,19 @@ class Newsfeed extends Component {
     render() {
         if(this.props.group != 'all' && this.props.payload.length <= this.props.groupLimit){
             return (
-                <Container>
+                <Container style={styles.container}>
                 <View style={styles.groupHeaderContainer}>
                     {this.state.showAvatar && this.props.savedGroup && this.props.savedGroup.groupAvatar != '' && this.props.savedGroup.groupAvatar != null ?
                         <Thumbnail square source={{ uri: this.props.savedGroup.groupAvatar + '&w=200&h=200&auto=compress,format,q=95' }} style={styles.groupAvatar} /> : null}
                     <Text style={styles.groupName}>{this.props.savedGroup.groupName}</Text>
                 </View>
+                {this.state.isRefreshing && <PLLoader position="bottom" />}
                 <ContentPlaceholder
                     empty={!this.state.isRefreshing && !this.state.isLoading && this.state.dataArray.length === 0}
                     title="The world belongs to those who speak up! Be the first to create a post!"
-                    refreshControl={
+                    refreshControl={Platform.OS === 'android' &&
                         <RefreshControl
-                            refreshing={this.state.isRefreshing}
+                            refreshing={false}
                             onRefresh={this._onRefresh.bind(this)}
                         />
                     }
@@ -233,10 +238,14 @@ class Newsfeed extends Component {
                             this.setState({
                                 showAvatar: false
                             });
-                        }else{
+                        } else {
                             this.setState({
                                 showAvatar: true
                             });
+                        }
+
+                        if (Platform.OS === 'ios' && offset < -3) {
+                            this._onRefresh();
                         }
                     }}
                 >
@@ -280,7 +289,7 @@ class Newsfeed extends Component {
         } else{
             return (
                 // The default view of the newsfeed is the All feed.
-                <Container>
+                <Container style={styles.container}>
                 {
                     this.props.savedGroup && this.props.savedGroup.group != 'all' &&
                     <View style={styles.groupHeaderContainer}>
@@ -289,12 +298,13 @@ class Newsfeed extends Component {
                         <Text style={styles.groupName}>{this.props.savedGroup.groupName}</Text>
                     </View>
                 }
+                {this.state.isRefreshing && <PLLoader position="bottom" />}
                 <ContentPlaceholder
                     empty={!this.state.isRefreshing && !this.state.isLoading && this.state.dataArray.length === 0}
                     title="The world belongs to those who speak up! Be the first to create a post!"    
-                    refreshControl={
+                    refreshControl={Platform.OS === 'android' &&
                         <RefreshControl
-                            refreshing={this.state.isRefreshing}
+                            refreshing={false}
                             onRefresh={this._onRefresh.bind(this)}
                         />
                     }
@@ -311,12 +321,15 @@ class Newsfeed extends Component {
                                 showAvatar: true
                             });
                         }
+
+                        if (Platform.OS === 'ios' && offset < -3) {
+                            this._onRefresh();
+                        }
                     }}
                 >
                     <ListView dataSource={this.state.dataSource} renderRow={item => {
                         return <FeedActivity item={item} token={this.props.token} profile={this.props.profile} />
-                    }}
-                    />
+                    }} />
                     <PLOverlayLoader visible={this.state.isLoading} logo />
                     {this._renderTailLoading()}
                 </ContentPlaceholder>

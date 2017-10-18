@@ -4,6 +4,11 @@ var { Platform } = require('react-native');
 const platform = Platform.OS;
 
 export default {
+    container: {
+        ...Platform.select({
+            android: { marginBottom: -20 }
+        })
+    },
     btn: {
         borderRadius: 0,
         backgroundColor: PLColors.main,

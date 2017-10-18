@@ -20,7 +20,6 @@ import {
     Grid,
     Col,
     Row,
-    Spinner, 
     ListItem, 
     Thumbnail, 
     List, 
@@ -34,6 +33,8 @@ import { RefreshControl, TouchableOpacity, Image, WebView, Platform } from 'reac
 import Carousel from 'react-native-snap-carousel';
 import styles , { sliderWidth, itemWidth } from './styles';
 const PLColors = require('PLColors');
+import PLLoader from 'PLLoader';
+
 import { loadUserProfileById, resetActivities, votePost, loadActivitiesByUserId, getFollowingUser, unFollowings, putFollowings } from 'PLActions';
 import TimeAgo from 'react-native-timeago';
 import ImageLoad from 'react-native-image-placeholder';
@@ -165,7 +166,7 @@ class Profile extends Component{
     _renderTailLoading() {
         if (this.state.isLoadingTail === true) {
             return (
-                <Spinner color='gray' />
+                <PLLoader position="bottom" />
             );
         } else {
             return null;

@@ -10,6 +10,7 @@ import {
     TouchableOpacity,
     View,
     Alert,
+    Platform,
     RefreshControl
 } from 'react-native';
 import Menu, {
@@ -20,6 +21,7 @@ import Menu, {
     renderers
 } from 'react-native-popup-menu';
 var TimeAgo = require('react-native-timeago');
+import PLLoader from 'PLLoader';
 
 const PLColors = require('PLColors');
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
@@ -39,7 +41,7 @@ class Notifications extends Component{
     }
 
     componentWillMount(){
-        this.onRefresh();
+        this._onRefresh();
     }
 
     loadActivities(){
@@ -182,7 +184,7 @@ class Notifications extends Component{
         
     }
 
-    onRefresh(){
+    _onRefresh(){
         this.setState({
             refreshing: true
         });
@@ -198,13 +200,23 @@ class Notifications extends Component{
                     this.props.notifications.length === 0
                 }
                 title="Seems quiet a bit quiet in here. Are you following anyone?"
-                refreshControl={
+                refreshControl={Platform.OS === 'android' &&
                     <RefreshControl
-                        refreshing={this.state.refreshing}
-                        onRefresh={this.onRefresh.bind(this)}
+                        refreshing={false}
+                        onRefresh={this._onRefresh.bind(this)}
                     />
                 }
+                onScroll={(e) => {
+                    var height = e.nativeEvent.contentSize.height;
+                    var offset = e.nativeEvent.contentOffset.y;
+
+                    if (Platform.OS === 'ios' && offset < -3) {
+                        this._onRefresh();
+                    }
+                }}
+                style={styles.container}
             >
+                {this.state.refreshing && <PLLoader position="bottom" />}
                 <List style={{backgroundColor: 'white'}}>
                     {
                         this.state.invites.map((value, index) => {

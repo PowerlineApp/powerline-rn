@@ -1,7 +1,14 @@
-var PLColors = require('PLColors');
 var { Platform } = require('react-native');
 
+var PLColors = require('PLColors');
+const { WINDOW_WIDTH: viewportWidth, WINDOW_HEIGHT: viewportHeight } = require('PLConstants');
+
 const platform = Platform.OS;
+
+function wp(percentage) {
+  const value = (percentage * viewportWidth) / 100;
+  return Math.round(value);
+}
 
 export default {
   container: {
@@ -75,17 +82,52 @@ export default {
     color: '#293f53',
   },
   footer: {
-    borderTopWidth: 2,
-    borderTopColor: '#d8dddf',
-    backgroundColor: 'white',
+    ...Platform.select({
+      ios: {
+        borderTopWidth: 2,
+        borderTopColor: '#d8dddf',
+        backgroundColor: 'white',
+        overflow: 'visible'
+      },
+      android: {
+        backgroundColor: 'transparent',
+        height: 75,
+        justifyContent: 'flex-end'
+      },
+    })
   },
   tabText: {
-    fontSize: 8,
+    fontSize: wp(2.3),
     fontWeight: '500'
   },
   iconPlus: {
-    fontSize: platform === 'ios' ? 80 : 60,
-    paddingBottom: platform === 'ios' ? 8 : 0,
     color: '#030366',
+    ...Platform.select({
+      android: { paddingBottom: 4, fontSize: wp(21) },
+      ios: { paddingBottom: 8, fontSize: wp(20) },
+    })
+  },
+  containerTabButton: {
+    ...Platform.select({
+      android: { flex: 1, height: 55, alignSelf: 'flex-end', width: wp(20), backgroundColor: 'white' }
+    })
+  },
+  borderTop: {
+    ...Platform.select({
+      android: { borderTopWidth: 2, borderTopColor: '#d8dddf' }
+    })
+  },
+  fillButton: {
+    position: 'absolute',
+    bottom: 0, left: 0, right: 0, top: 20,
+    backgroundColor: 'white',
+  },
+  fillCircle: {
+    position: 'absolute',
+    bottom: 0,
+    left: wp(9), // TODO: fix if need landscape mode
+    top: 5,
+    width: wp(2),
+    backgroundColor: 'white',
   }
 };

@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import { Container, Header, Title, Content, Button, Footer, FooterTab, Text, Body, Left, Right, Icon, Item, Input, Grid, Row, Col, Badge, Label } from 'native-base';
 
-import { View, Image, AsyncStorage, Alert } from 'react-native';
+import { View, Image, AsyncStorage, Alert, Platform } from 'react-native';
 
 import Menu, {
   MenuContext,
@@ -36,6 +36,46 @@ import {
   getComments
 } from 'PLActions';
 
+const isIOS = Platform.OS === 'ios';
+
+const FooterTabButton = ({ badge = 0, active, onPress, name, title }) => {
+  const buttonProps = {
+    style: styles.containerTabButton,
+    active,
+    onPress,
+  };
+
+  const BudgeButton = ({ children }) => <Button badge {...buttonProps}>{children}</Button>;
+  const NormalButton = ({ children }) => <Button {...buttonProps}>{children}</Button>;
+
+  let content = null;
+  if (badge > 0) {
+    content = (
+      <BudgeButton>
+        <Badge><Text>{badge}</Text></Badge>
+        <Icon active={active} name={name} />
+        <Text numberOfLines={1} style={styles.tabText}>{title}</Text>
+      </BudgeButton>
+    )
+  } else {
+    content = (
+      <NormalButton>
+        <Icon active={active} name={name} />
+        <Text numberOfLines={1} style={styles.tabText}>{title}</Text>
+      </NormalButton>
+    );
+  }
+
+  if (isIOS) {
+    return content;
+  }
+
+  return (
+    <View style={[styles.containerTabButton, styles.borderTop]}>
+      { content }
+    </View>
+  );
+};
 
 // Tab Scenes
 //GH13 - Newsfeed / Standard Item Container / Same for Group Feed
@@ -49,7 +89,6 @@ const { SlideInMenu } = renderers;
 import ShareExtension from 'react-native-share-extension';
 import OneSignal from 'react-native-onesignal';
 var DeviceInfo = require('react-native-device-info');
-var Platform = require('Platform');
 
 class Home extends Component {
 
@@ -582,24 +621,24 @@ class Home extends Component {
           {this.renderSelectedTab()}
 
           <Footer style={styles.footer}>
-            <FooterTab>
-              {this.showBadgeForActivities()!=0?
-              <Button badge={true} active={this.state.tab1} onPress={() => this.toggleTab1()} > 
-                <Badge><Text>{this.showBadgeForActivities()}</Text></Badge>
-                <Icon active={this.state.tab1} name="ios-flash" />
-                <Text>NEWSFEED</Text>
-              </Button>:
-              <Button active={this.state.tab1} onPress={() => this.toggleTab1()} >
-                <Icon active={this.state.tab1} name="ios-flash" />
-                <Text>NEWSFEED</Text>
-              </Button>
-              }
-              <Button active={this.state.tab2} onPress={() => this.toggleTab2()} >
-                <Icon active={this.state.tab2} name="md-people" />
-                <Text>FRIENDS</Text>
-              </Button>
+            <FooterTab style={{ backgroundColor: 'transparent' }}>
+              <FooterTabButton
+                badge={this.showBadgeForActivities()}
+                active={this.state.tab1}
+                onPress={() => this.toggleTab1()}
+                name="ios-flash"
+                title="NEWSFEED"
+              />
+              <FooterTabButton
+                active={this.state.tab2}
+                onPress={() => this.toggleTab2()}
+                name="md-people"
+                title="FRIENDS"
+              />
             {/* This is the New Item Menu GH8. Only New Post and New Petition are expected to work at this time */}
-              <Button>
+              <Button style={isIOS ? {} : { height: 75 }}>
+                { !isIOS && <View style={[styles.fillButton, styles.borderTop]}/> }
+                { !isIOS && <View style={styles.fillCircle} /> }
                 <Menu name="create_item" renderer={SlideInMenu} onSelect={value => this.selectNewItem(value)} ref={this.onRef}>
                   <MenuTrigger>
                     <Icon name="ios-add-circle" style={styles.iconPlus} />
@@ -657,15 +696,19 @@ class Home extends Component {
                 </Menu>
               </Button>
               {/* This is the Messages/Announcements tab. It is not working yet */}
-              <Button active={this.state.tab3} onPress={() => this.toggleTab3()} >
-                <Icon active={this.state.tab3} name="md-mail" />
-                <Text>MESSAGES</Text>
-              </Button>
+              <FooterTabButton
+                active={this.state.tab3}
+                onPress={() => this.toggleTab3()}
+                name="md-mail"
+                title="MESSAGES"
+              />
               {/* This is the Notifications Feed tab. It should be working. */}
-              <Button active={this.state.tab4} onPress={() => this.toggleTab4()} >
-                <Icon active={this.state.tab4} name="md-notifications" />
-                <Text>NOTIFICATIONS</Text>
-              </Button>
+              <FooterTabButton
+                active={this.state.tab4}
+                onPress={() => this.toggleTab4()}
+                name="md-notifications"
+                title="NOTIFICATIONS"
+              />
             </FooterTab>
           </Footer>
         </Container>
