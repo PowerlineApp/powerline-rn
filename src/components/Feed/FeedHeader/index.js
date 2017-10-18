@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import {Actions} from 'react-native-router-flux';
+import {TouchableHighlight, View} from 'react-native';
 
 import { Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem } from 'native-base';
 import TimeAgo from 'react-native-timeago';
@@ -36,6 +37,21 @@ class FeedHeader extends Component {
         this.menu && this.menu.close();
     }
 
+    onPressThumbnail (item) {
+        console.log('just pressed thumbnail');
+        Actions.profile({id: item.owner.id});
+    }
+
+    onPressAuthor (item) {
+        console.log('just pressed author');
+        Actions.profile({id: item.owner.id});
+    }
+
+    onPressGroup (item) {
+        console.log('just pressed group', item);
+        Actions.groupprofile({id: item.group.id});
+    }
+
     render () {
         let thumbnail = '';
         let title = '';
@@ -55,10 +71,17 @@ class FeedHeader extends Component {
         return (
             <CardItem style={{ paddingBottom: 0 }}>
                 <Left>
-                    <Thumbnail small source={thumbnail ? { uri: thumbnail + '&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                    <TouchableHighlight onPress={() => this.onPressThumbnail(this.props.item)} underlayColor={'#fff'}>
+                        <View>
+                            <Thumbnail small
+                                source={thumbnail ? { uri: thumbnail + '&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")}
+                                defaultSource={require("img/blank_person.png")}
+                            />
+                        </View>
+                    </TouchableHighlight>
                     <Body>
-                        <Text style={styles.title}>{title}</Text>
-                        <Text note style={styles.subtitle}>{this.props.item.group.official_name} • <TimeAgo time={this.props.item.sent_at} hideAgo /></Text>
+                        <Text style={styles.title} onPress={() => this.onPressAuthor(this.props.item)} >{title}</Text>
+                        <Text note style={styles.subtitle} onPress={() => this.onPressGroup(this.props.item)} >{this.props.item.group.official_name} • <TimeAgo time={this.props.item.sent_at} hideAgo /></Text>
                     </Body>
                     <Right style={{ flex: 0.2 }}>
                         <Menu ref={(ref) => { this.menu = ref; }}>
