@@ -493,6 +493,7 @@ class ItemDetail extends Component {
                                     backgroundColor: 'white',
                                     width: WINDOW_WIDTH,
                                     // height: this.state.visibleHeight,
+                                    // this needs adjustment for android / ios - doesnt work well for android with the suggestionbox
                                     height: WINDOW_HEIGHT /2 + 50
                                 }}>
                                         <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
