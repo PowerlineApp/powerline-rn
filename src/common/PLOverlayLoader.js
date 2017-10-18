@@ -79,7 +79,7 @@ export default class PLOverlayLoader extends Component {
             backgroundColor: 'rgba(0, 0, 0, 0.5)',
             flex: 1,
           }}>
-            <PLLoader center />
+            <PLLoader position="center" />
           </View>
         </Modal>
       );

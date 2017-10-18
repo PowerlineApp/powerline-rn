@@ -8,9 +8,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
-import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, Spinner, ListItem, Thumbnail, List, Badge } from 'native-base';
+import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, ListItem, Thumbnail, List, Badge } from 'native-base';
 import { View, RefreshControl } from 'react-native';
 import { loadUserGroups, clearGroupsInCache, loadActivities,resetActivities } from 'PLActions';
+import PLLoader from 'PLLoader';
+
 import styles from './styles';
 
 const PLColors = require('PLColors');
@@ -135,7 +137,7 @@ class GroupSelector extends Component {
     _renderTailLoading() {
         if (this.state.isLoadingTail === true) {
             return (
-                <Spinner color='gray' />
+                <PLLoader position="bottom" />
             );
         } else {
             return null;

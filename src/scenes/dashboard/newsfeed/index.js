@@ -6,7 +6,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
-import { ActionSheet, Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, Spinner, ListItem, Thumbnail, List, Card, CardItem, Label, Footer } from 'native-base';
+import { ActionSheet, Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, ListItem, Thumbnail, List, Card, CardItem, Label, Footer } from 'native-base';
 import { ListView, View, RefreshControl, TouchableOpacity, Image, WebView, Platform, Share } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 import { loadActivities, resetActivities, votePost, editFollowers, loadActivityByEntityId, createPostToGroup, deletePost, deletePetition } from 'PLActions';
@@ -28,6 +28,7 @@ import FeedActivity from '../../../components/Feed/FeedActivity';
 import ContentPlaceholder from '../../../components/ContentPlaceholder';
 
 import PLOverlayLoader from 'PLOverlayLoader';
+import PLLoader from 'PLLoader';
 const PLColors = require('PLColors');
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
 const { youTubeAPIKey } = require('PLEnv');
@@ -172,7 +173,7 @@ class Newsfeed extends Component {
     //Related: GH160
     _renderTailLoading() {
         if (this.state.isLoadingTail === true) {
-            return <Spinner color='gray' />;
+            return <PLLoader position="bottom" />
         } else {
             return null;
         }
@@ -315,8 +316,7 @@ class Newsfeed extends Component {
                 >
                     <ListView dataSource={this.state.dataSource} renderRow={item => {
                         return <FeedActivity item={item} token={this.props.token} profile={this.props.profile} />
-                    }}
-                    />
+                    }} />
                     <PLOverlayLoader visible={this.state.isLoading} logo />
                     {this._renderTailLoading()}
                 </ContentPlaceholder>

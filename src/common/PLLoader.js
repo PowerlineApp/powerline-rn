@@ -51,19 +51,33 @@ export default class PLLoader extends React.Component {
   }
 
   render() {
-    const { size, avatar, center, avatarBackgroundColor, interval } = this.props;
+    const { position, size, avatar, avatarBackgroundColor, interval } = this.props;
+    const isCenter = position === 'center';
 
-    return (
-      <View style={{
+    let containerStyle = {};
+    if (isCenter) {
+      containerStyle = {
         flex: 1,
         backgroundColor: 'transparent',
         justifyContent: 'center',
         alignItems: 'center',
-      }}>
+      };
+    }
+    if (position === 'bottom') {
+      containerStyle = {
+        height: 100,
+        alignItems: 'center',
+        justifyContent: 'center'
+      };
+    }
+
+    return (
+      <View style={containerStyle}>
         {this.state.circles.map((circle) => (
           <Pulse
             key={circle}
-            center={center}
+            position={position}
+            small={!isCenter}
             {...this.props}
           />
         ))}
@@ -78,19 +92,19 @@ export default class PLLoader extends React.Component {
           }}
         >
           <View style={{
-            width: 80,
-            height: 80,
+            width: isCenter ? 80 : 40,
+            height: isCenter ? 80 : 40,
             backgroundColor: PLColors.main,
             alignItems: 'center',
             justifyContent: 'center',
-            borderRadius: 40,
+            borderRadius: isCenter ? 40 : 20,
           }}>
             <Image
               source={require("img/p_logo.png")}
               style={{
                 tintColor: 'white',
-                width: 26,
-                height: 40,
+                width: isCenter ? 26 : 13,
+                height: isCenter ? 40 : 20,
                 resizeMode: 'cover',
               }}
             />
@@ -110,6 +124,7 @@ PLLoader.propTypes = {
   pressDuration: React.PropTypes.number,
   borderColor: React.PropTypes.string,
   backgroundColor: React.PropTypes.string,
+  position: React.PropTypes.oneOf(['center', 'bottom']),
   getStyle: React.PropTypes.func,
 };
 
