@@ -35,7 +35,11 @@ import SearchGroups from './groups';
 import SearchUsers from './users';
 import SearchHashtags from './hashtags';
 
-class Search extends Component{
+class Search extends Component {
+    static defaultProps = {
+        initialPage: 0
+    };
+
     constructor(props){
         super(props);
 
@@ -120,7 +124,7 @@ class Search extends Component{
                             <Icon active name="search"/>
                         </Item>
                     </Header>
-                    <Tabs initialPage={0} locked={true}>
+                    <Tabs initialPage={this.props.initialPage} locked={true}>
                         <Tab heading="Groups" tabStyle={styles.tabStyle} activeTabStyle={styles.tabStyle}>
                             <SearchGroups groups={this.state.groups}/>
                         </Tab>
