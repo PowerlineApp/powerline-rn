@@ -12,6 +12,7 @@ export type State = {
     groupAvatar: string;
     groupLimit: number;
     savedGroup: object;
+    newsfeedUnreadCount: number;
 };
 
 const initialState = {
@@ -27,7 +28,8 @@ const initialState = {
         group: 'all',
         groupName: '',
         groupAvatar: '',
-    }
+    },
+    newsfeedUnreadCount: 0,
 };
 
 const payloadStack: Array<Object> = [];
@@ -42,6 +44,7 @@ function activities(state: State = initialState, action: Action): State {
             totalItems: action.data.totalItems,
             payload: payloadStack,
             count: action.data.payload.length,
+            newsfeedUnreadCount: action.data.newsfeedUnreadCount,
         };
     }
     
@@ -50,6 +53,7 @@ function activities(state: State = initialState, action: Action): State {
         return {
             ...initialState,
             savedGroup: state.savedGroup,
+            newsfeedUnreadCount: state.newsfeedUnreadCount,
         };
     }
 

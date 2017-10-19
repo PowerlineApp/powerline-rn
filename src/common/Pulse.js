@@ -19,7 +19,7 @@ export default class Pulse extends React.Component {
   }
 
   render() {
-    const { size, small, pulseMaxSize, borderColor, position, backgroundColor, getStyle } = this.props;
+    const { size, small, padder, pulseMaxSize, borderColor, position, backgroundColor, getStyle } = this.props;
     let max = pulseMaxSize;
     if (small) {
       max = pulseMaxSize / 3;
@@ -33,7 +33,7 @@ export default class Pulse extends React.Component {
         justifyContent: 'center',
         alignItems: 'center',
         position: 'absolute',
-        left: width / 2,
+        left: (width / 2) - padder,
         width: max,
         height: max,
         marginLeft: -max / 2,

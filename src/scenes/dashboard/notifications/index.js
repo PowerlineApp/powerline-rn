@@ -49,7 +49,6 @@ class Notifications extends Component{
 
         dispatch({type: 'RESET_NOTIFICATION'});
         getActivities(token).then(res => {
-            console.log(res);
             dispatch({type: 'LOAD_NOTIFICATION', data: res});
             this.setState({
                 refreshing: false
