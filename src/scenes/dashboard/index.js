@@ -33,7 +33,8 @@ import {
   unsubscribeFromPoll,
   unsubscribeFromPost,
   unsubscribeFromPetition,
-  getComments
+  getComments,
+  loadUserGroups
 } from 'PLActions';
 
 const isIOS = Platform.OS === 'ios';
@@ -150,6 +151,8 @@ class Home extends Component {
           Actions.newpost({data: data});
         }        
     });
+
+    this.props.loadUserGroups(token);
   }
 
   onReceived(data){
@@ -595,19 +598,19 @@ class Home extends Component {
                   <Button style={this.state.group == 'town' ? styles.iconActiveButton : styles.iconButton} onPress={() => this.selectGroup('town')}>
                     <Icon active name="pin" style={styles.icon} />
                   </Button>
-                  <Text style={styles.iconText} onPress={() => this.selectGroup('town')}>Town</Text>
+                  <Text style={styles.iconText} numberOfLines={1} onPress={() => this.selectGroup('town')}>{this.props.town}</Text>
                 </Col>
                 <Col style={styles.col}>
                   <Button style={this.state.group == 'state' ? styles.iconActiveButton : styles.iconButton} onPress={() => this.selectGroup('state')}>
                     <Icon active name="pin" style={styles.icon} />
                   </Button>
-                  <Text style={styles.iconText} onPress={() => this.selectGroup('state')}>State</Text>
+                  <Text style={styles.iconText} numberOfLines={1} onPress={() => this.selectGroup('state')}>{this.props.state}</Text>
                 </Col>
                 <Col style={styles.col}>
                   <Button style={this.state.group == 'country' ? styles.iconActiveButton : styles.iconButton} onPress={() => this.selectGroup('country')}>
                     <Icon active name="pin" style={styles.icon} />
                   </Button>
-                  <Text style={styles.iconText} onPress={() => this.selectGroup('country')}>Country</Text>
+                  <Text style={styles.iconText} numberOfLines={1} onPress={() => this.selectGroup('country')}>{this.props.country}</Text>
                 </Col>
                 <Col style={styles.col}>
                   <Button style={this.state.group == 'more' ? styles.iconActiveButton : styles.iconButton} onPress={() => this.goToGroupSelector()}>
@@ -732,6 +735,7 @@ const menuContextStyles = {
 function bindAction(dispatch) {
   return {
     openDrawer: () => dispatch(openDrawer()),
+    loadUserGroups: (token) => dispatch(loadUserGroups(token)),
   };
 }
 
@@ -745,7 +749,10 @@ const mapStateToProps = state => ({
   token: state.user.token,
   profile: state.user.profile,
   activities: state.activities.payload,
-  pushId: state.user.pushId
+  pushId: state.user.pushId,
+  town: state.groups.town,
+  state: state.groups.state,
+  country: state.groups.country,
 });
 
 export default connect(mapStateToProps, bindAction)(Home);

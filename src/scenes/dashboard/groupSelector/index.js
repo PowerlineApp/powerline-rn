@@ -220,7 +220,6 @@ class GroupSelector extends Component {
     }
 
     render() {
-
         return (
             <Container style={styles.container}>
                 <Header searchBar rounded style={styles.header}>
