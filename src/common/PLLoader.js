@@ -5,7 +5,7 @@ import React from 'react';
 import { View, Image, TouchableOpacity, Animated, Easing, Platform } from 'react-native';
 import Pulse from './Pulse';
 import PLColors from './PLColors';
-
+import themeStyle from '../../native-base-theme/variables/platform';
 
 export default class PLLoader extends React.Component {
   constructor(props) {
@@ -51,7 +51,7 @@ export default class PLLoader extends React.Component {
   }
 
   render() {
-    const { position, size, avatar, avatarBackgroundColor, interval } = this.props;
+    const { position, size, avatar, avatarBackgroundColor, padder, interval } = this.props;
     const isCenter = position === 'center';
 
     let containerStyle = {};
@@ -79,6 +79,7 @@ export default class PLLoader extends React.Component {
             position={position}
             small={!isCenter}
             {...this.props}
+            padder={padder ? themeStyle.contentPadding : 0}            
           />
         ))}
 

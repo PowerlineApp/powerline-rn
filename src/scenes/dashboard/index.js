@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import { Container, Header, Title, Content, Button, Footer, FooterTab, Text, Body, Left, Right, Icon, Item, Input, Grid, Row, Col, Badge, Label } from 'native-base';
 
-import { View, Image, AsyncStorage, Alert, Platform } from 'react-native';
+import { View, Image, AsyncStorage, FlatList, Alert, Platform } from 'react-native';
 
 import Menu, {
   MenuContext,
@@ -36,6 +36,19 @@ import {
   getComments,
   loadUserGroups
 } from 'PLActions';
+
+// Tab Scenes
+//GH13 - Newsfeed / Standard Item Container / Same for Group Feed
+import Newsfeed from './newsfeed/'
+//GH51 - Friends Feed ("posts by friends")
+import Friendsfeed from './friendsfeed/';
+import Messages from './messages/';
+import Notifications from './notifications/';
+
+const { SlideInMenu } = renderers;
+import ShareExtension from 'react-native-share-extension';
+import OneSignal from 'react-native-onesignal';
+var DeviceInfo = require('react-native-device-info');
 
 const isIOS = Platform.OS === 'ios';
 
@@ -78,18 +91,14 @@ const FooterTabButton = ({ badge = 0, active, onPress, name, title }) => {
   );
 };
 
-// Tab Scenes
-//GH13 - Newsfeed / Standard Item Container / Same for Group Feed
-import Newsfeed from './newsfeed/'
-//GH51 - Friends Feed ("posts by friends")
-import Friendsfeed from './friendsfeed/';
-import Messages from './messages/';
-import Notifications from './notifications/';
-
-const { SlideInMenu } = renderers;
-import ShareExtension from 'react-native-share-extension';
-import OneSignal from 'react-native-onesignal';
-var DeviceInfo = require('react-native-device-info');
+const optionsRenderer = options => (
+  <FlatList
+    data={options.props.children}
+    renderItem={({ item }) => React.cloneElement(item, {
+      onSelect: options.props.onSelect
+    })}
+  />
+)
 
 class Home extends Component {
 
@@ -539,14 +548,15 @@ class Home extends Component {
   //All priority zone items arrive to all group members with a push notification alert
   
   showBadgeForActivities(){
-      var count = 0;
-      for(var i = 0; i < this.props.activities.length; i++){
-        if(this.props.activities[i].zone == 'non_prioritized'){
-          count++;
-        }
-      }
+      // var count = 0;
+      // for(var i = 0; i < this.props.activities.length; i++){
+      //   if(this.props.activities[i].zone == 'non_prioritized'){
+      //     count++;
+      //   }
+      // }
 
-      return count;
+      // return count;
+      return this.props.newsfeedUnreadCount;
   }
 
   //This is the search bar for GH43. When user enters text, it should automatically display search results (defaulting to group results) for that query
@@ -646,7 +656,7 @@ class Home extends Component {
                   <MenuTrigger>
                     <Icon name="ios-add-circle" style={styles.iconPlus} />
                   </MenuTrigger>
-                  <MenuOptions customStyles={optionsStyles}>
+                  <MenuOptions customStyles={optionsStyles} renderOptionsContainer={optionsRenderer}>
                     <MenuOption value={'group_announcement'}>
                       <Button iconLeft transparent dark onPress={() => this.selectNewItem('group_announcement')}>
                         <Icon name="volume-up" style={styles.menuIcon} />
@@ -753,6 +763,7 @@ const mapStateToProps = state => ({
   town: state.groups.town,
   state: state.groups.state,
   country: state.groups.country,
+  newsfeedUnreadCount: state.activities.newsfeedUnreadCount,
 });
 
 export default connect(mapStateToProps, bindAction)(Home);
