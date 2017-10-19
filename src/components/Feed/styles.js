@@ -123,5 +123,17 @@ export default {
     },
     menuText: {
         color: '#293f53'
-    }
+    },
+    url: {
+        color: PLColors.main,
+        fontWeight: '500'
+    },
+    username: {
+        color: PLColors.main,
+        fontWeight: '500'
+    },
+    hashtag: {
+        color: PLColors.main,
+        fontWeight: '500'
+    },
 };

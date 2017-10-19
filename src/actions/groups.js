@@ -1,4 +1,5 @@
 
+import api from '../utils/api';
 var { API_URL, PER_PAGE } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
 
@@ -137,6 +138,14 @@ function searchGroup(token, query){
             reject(err);
         });
     });
+}
+
+async function searchPostsByHashtab(token: string, tag: string): Promise<Action> {
+    console.log("search Hashtag API", tag);
+    return await api.get(
+        token,
+        `/v2/activities?hash_tag=${tag}`
+    );
 }
 
 function getGroupDetails(token, id){
@@ -362,6 +371,7 @@ module.exports = {
     getGroupMembers,
     inviteAllFollowers,
     followAllMembers,
+    searchPostsByHashtab,
     unJoinGroup,
     joinGroup,
     loadFieldsToFillOnJoin,
