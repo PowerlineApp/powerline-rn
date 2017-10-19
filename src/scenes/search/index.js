@@ -29,19 +29,25 @@ import {
     MenuContext
 } from 'react-native-popup-menu';
 import styles from './styles';
-import { openDrawer, searchGroup, searchForUsersFollowableByCurrentUser } from 'PLActions';
+import { openDrawer, searchGroup, searchForUsersFollowableByCurrentUser, searchPostsByHashtab } from 'PLActions';
 
 import SearchGroups from './groups';
 import SearchUsers from './users';
+import SearchHashtags from './hashtags';
 
-class Search extends Component{
+class Search extends Component {
+    static defaultProps = {
+        initialPage: 0
+    };
+
     constructor(props){
         super(props);
 
         this.state = {
             search: props.search?props.search: '',
             groups: [],
-            users: []
+            users: [],
+            posts: [],
         }
 
         this.onQuery(props.search?props.search: '');
@@ -59,7 +65,7 @@ class Search extends Component{
 
     //There are three different types of searches. Search by Groups (default view), search for people, and search for posts/hashtags.
     //At the time of this comment, search for posts is not yet developed.
-    onQuery(text){
+    async onQuery(text){
         if(text != ''){
             //search query
             this.setState({
@@ -87,6 +93,12 @@ class Search extends Component{
             .catch(err => {
 
             });
+
+            const postsResult = await searchPostsByHashtab(token, text);
+            if (postsResult.status === 200 & postsResult.ok) {
+                const { payload: posts } = await postsResult.json();
+                this.setState({ posts });
+            }
         }
     }
 
@@ -97,7 +109,7 @@ class Search extends Component{
         });
     }
 
-    render(){
+    render() {
         return (
             <MenuContext customStyles={menuContextStyles}>
                 <Container style={styles.container}>
@@ -108,11 +120,11 @@ class Search extends Component{
                             </Button>
                         </Left>
                         <Item style={styles.searchBar}>
-                            <Input style={styles.searchInput} placeholder="Search groups, people, topics" value={this.state.search} onChangeText={(text) => this.onChangeText(text)}/>
+                            <Input style={styles.searchInput} autoFocus placeholder="Search groups, people, topics" value={this.state.search} onChangeText={(text) => this.onChangeText(text)}/>
                             <Icon active name="search"/>
                         </Item>
                     </Header>
-                    <Tabs initialPage={0} locked={true}>
+                    <Tabs initialPage={this.props.initialPage} locked={true}>
                         <Tab heading="Groups" tabStyle={styles.tabStyle} activeTabStyle={styles.tabStyle}>
                             <SearchGroups groups={this.state.groups}/>
                         </Tab>
@@ -120,7 +132,7 @@ class Search extends Component{
                             <SearchUsers users={this.state.users} onRemove={(index) => this.onRemoveUser(index)}/>
                         </Tab>
                         <Tab heading="Hashtags" tabStyle={styles.tabStyle} activeTabStyle={styles.tabStyle}>
-                            
+                            <SearchHashtags posts={this.state.posts} />
                         </Tab>
                     </Tabs>
                 </Container>

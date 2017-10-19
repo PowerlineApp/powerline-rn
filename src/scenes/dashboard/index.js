@@ -5,7 +5,8 @@ import { connect } from 'react-redux';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import { Container, Header, Title, Content, Button, Footer, FooterTab, Text, Body, Left, Right, Icon, Item, Input, Grid, Row, Col, Badge, Label } from 'native-base';
 
-import { View, Image, AsyncStorage, FlatList, Alert, Platform } from 'react-native';
+import { View, Image, Keyboard, FlatList, AsyncStorage, Alert, Platform } from 'react-native';
+
 
 import Menu, {
   MenuContext,
@@ -560,15 +561,18 @@ class Home extends Component {
   }
 
   //This is the search bar for GH43. When user enters text, it should automatically display search results (defaulting to group results) for that query
-  onChangeText(text){
+  onChangeText = (text) => {
     this.setState({
       search: text
     });
+  
+    if (text.length >= 2) {
+      Keyboard.dismiss();
+    }
   }
 
-  onSearch(){
-    var { token } = this.props;
-    Actions.search({search: this.state.search});
+  onSearch() {
+    Actions.search({ search: this.state.search });
   }
 
   render() {
@@ -584,7 +588,7 @@ class Home extends Component {
             {this.state.tab2!=true && this.state.tab4!=true?
             //We need to make this placeholder text a little brighter/whiter
             <Item style={styles.searchBar}>
-              <Input style={styles.searchInput} placeholder="Search groups, people, topics" onEndEditing={() => this.onSearch() } value={this.state.search} onChangeText={(text) => this.onChangeText(text)}/>
+              <Input style={styles.searchInput} placeholder="Search groups, people, topics" onEndEditing={() => this.onSearch()} onChangeText={(text) => this.onChangeText(text)}/>
               <Icon active name="search" />
             </Item>:
             null}
