@@ -3,12 +3,14 @@ import { Actions } from 'react-native-router-flux';
 import { View, TouchableOpacity, Linking } from 'react-native';
 import ParsedText from 'react-native-parsed-text';
 import { Text, Left, Body, CardItem, Label, Icon } from 'native-base';
+import { parseString } from 'react-native-xml2js';
 import styles from '../styles';
 
 class FeedDescription extends Component {
   goItemDetail(entityId, entityType) {
     Actions.itemDetail({ entityId: entityId, entityType: entityType });
   }
+
   _renderTitle(item) {
     if (item.title) {
       return (<Text style={styles.title}>{item.title}</Text>);
@@ -26,15 +28,23 @@ class FeedDescription extends Component {
   }
 
   handleUrlPress = url => {
-    // alert(url)
     Linking.openURL(url);
   }
 
   handleUserPress = user => {
-    // TODO: remove @everyone from click
-    // Actions.profile({ id: id });
-    // console.log('IAMasdfasfd', this.props.item)
-    alert(user)
+    try {
+      const html = this.props.item.description_html;
+      parseString(`<body>${html}</body>`, function (err, result) {
+          result.body.a.forEach(value => {
+            if (value._ === user) {
+              Actions.profile({ id: value.$['data-user-id'] });
+              return;
+            }
+          })
+      });
+    } catch(err) {
+
+    }
   }
 
   handleHashtagPress = hashtag => {
