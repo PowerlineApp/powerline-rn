@@ -12,7 +12,14 @@ import Menu, {
 } from 'react-native-popup-menu';
 
 import { WINDOW_WIDTH } from 'PLConstants';
-import { deletePost, deletePetition, boostPost, sharePost } from 'PLActions';
+import {
+    deletePost,
+    deletePetition,
+    boostPost,
+    sharePost,
+    unFollowings,
+    putFollowings
+} from 'PLActions';
 
 import styles from '../styles';
 
@@ -39,6 +46,16 @@ class FeedHeader extends Component {
             this.props.dispatch(deletePetition(item.entity.id, item.id));
         }
 
+        this.menu && this.menu.close();
+    }
+
+    followAuthor(item) {
+        this.props.dispatch(putFollowings(this.props.token, item.owner.id));
+        this.menu && this.menu.close();
+    }
+
+    unfollowAuthor(item) {
+        this.props.dispatch(unFollowings(this.props.token, item.owner.id));
         this.menu && this.menu.close();
     }
 
@@ -127,10 +144,28 @@ class FeedHeader extends Component {
                                     </Button>
                                 </MenuOption>
                                 {
+                                    !isOwner &&
+                                    <MenuOption onSelect={() => this.followAuthor(this.props.item)}>
+                                        <Button iconLeft transparent dark onPress={() => this.followAuthor(this.props.item)}>
+                                            <Icon name='md-walk' style={styles.menuIcon} />
+                                            <Text style={styles.menuText}>Follow this item's author</Text>
+                                        </Button>
+                                    </MenuOption>
+                                }
+                                {
+                                    !isOwner &&
+                                    <MenuOption onSelect={() => this.unfollowAuthor(this.props.item)}>
+                                        <Button iconLeft transparent dark onPress={() => this.unfollowAuthor(this.props.item)}>
+                                            <Icon name='md-walk' style={styles.menuIcon} />
+                                            <Text style={styles.menuText}>Unfollow this person</Text>
+                                        </Button>
+                                    </MenuOption>
+                                }
+                                {
                                     isOwner && // TODO (#149): check if group manager
                                     <MenuOption onSelect={() => this.boost(this.props.item)}>
                                         <Button iconLeft transparent dark onPress={() => this.boost(this.props.item)}>
-                                            <Icon name='md-flame' style={styles.menuIcon} />
+                                            <Icon name='md-flash' style={styles.menuIcon} />
                                             <Text style={styles.menuText}>Boost Post</Text>
                                         </Button>
                                     </MenuOption>
