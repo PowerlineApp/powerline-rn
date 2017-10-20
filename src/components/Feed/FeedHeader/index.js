@@ -206,7 +206,7 @@ class FeedHeader extends Component {
                                         <Text style={styles.menuText}>Share this post to followers</Text>
                                     </Button>
                                 </MenuOption>
-                                {
+                                {/* {
                                     !isOwner &&
                                     <MenuOption onSelect={() => this.followAuthor(this.props.item)}>
                                         <Button iconLeft transparent dark onPress={() => this.followAuthor(this.props.item)}>
@@ -223,7 +223,7 @@ class FeedHeader extends Component {
                                             <Text style={styles.menuText}>Unfollow this person</Text>
                                         </Button>
                                     </MenuOption>
-                                }
+                                } */}
                                 {
                                     isOwner && !isBoosted && // TODO (#149): check if group manager
                                     <MenuOption onSelect={() => this.boost(this.props.item)}>
