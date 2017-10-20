@@ -2,6 +2,7 @@ import api from '../utils/api';
 var { API_URL, PER_PAGE } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
 import { showToast } from 'PLToast';
+import { showAlertYesNo } from 'PLAlert';
 
 async function loadPost(token: string, entityId: number): Promise<Action> {
     try {
@@ -309,6 +310,33 @@ function changePetition(petitionId: number, activityId: number, value: string): 
     };
 }
 
+function boostPost(type: string, postId: number, groupId: number, activityId: number): ThunkAction {
+    return async (dispatch, getState) => {
+        try {
+            const token = getState().user.token;
+            const members = await api.get(token, `/v2/groups/${groupId}`);
+            const { total_members } = await members.json();
+
+            if (typeof total_members !== 'number') {
+                return;
+            }
+
+            showAlertYesNo(`All ${total_members} group members will get a notification about this item immediately. Are you sure? Use sparingly!`, async () => {
+                const boost = await api.patch(token, `/v2/${type}s/${postId}`);
+                if (boost.ok && boost.status === 200) {
+                    console.log("boost Post/Petition API Success");
+                    dispatch({ type: 'BOOST_ACTIVITY', id: activityId });
+                } else {
+                    handleError(response);
+                }
+            });
+        } catch (error) {
+            console.log("boost Post/Petition API Error", error);
+            handleError(error);
+        }
+    };
+}
+
 function handleError(error) {
     const message = error.message || error;
     alert(message);
@@ -328,4 +356,5 @@ module.exports = {
     deletePetition,
     changePost,
     changePetition,
+    boostPost,
 };

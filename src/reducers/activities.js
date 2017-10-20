@@ -113,6 +113,23 @@ function activities(state: State = initialState, action: Action): State {
         }
     }
 
+    if (action.type === 'BOOST_ACTIVITY') {
+        payloadStack = state.payload.map(activity => {
+            if (activity.id === action.id) {
+                return {
+                    ...activity,
+                    zone: 'prioritized'
+                }
+            } else {
+                return activity;
+            }
+        });
+        return {
+            ...state,
+            payload: payloadStack,
+        }
+    }
+
     return state;
 }
 

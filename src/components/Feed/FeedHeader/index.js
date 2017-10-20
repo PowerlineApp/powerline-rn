@@ -1,7 +1,7 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import {Actions} from 'react-native-router-flux';
-import {TouchableHighlight, View} from 'react-native';
+import { Actions } from 'react-native-router-flux';
+import { Alert, TouchableHighlight, View } from 'react-native';
 
 import { Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem } from 'native-base';
 import TimeAgo from 'react-native-timeago';
@@ -12,12 +12,12 @@ import Menu, {
 } from 'react-native-popup-menu';
 
 import { WINDOW_WIDTH } from 'PLConstants';
-import { deletePost, deletePetition } from 'PLActions';
+import { deletePost, deletePetition, boostPost } from 'PLActions';
 
 import styles from '../styles';
 
 class FeedHeader extends Component {
-    edit (item) {
+    edit(item) {
         Actions.itemDetail({
             entityId: item.entity.id,
             entityType: item.entity.type,
@@ -26,7 +26,12 @@ class FeedHeader extends Component {
         this.menu && this.menu.close();
     }
 
-    delete (item) {
+    boost(item) {
+        this.props.dispatch(boostPost(item.entity.type, item.entity.id, item.group.id, item.id));
+        this.menu && this.menu.close();
+    }
+
+    delete(item) {
         if (item.entity.type === 'post') {
             this.props.dispatch(deletePost(item.entity.id, item.id));
         }
@@ -37,37 +42,39 @@ class FeedHeader extends Component {
         this.menu && this.menu.close();
     }
 
-    onPressThumbnail (item) {
+    onPressThumbnail(item) {
         console.log('just pressed thumbnail');
-        Actions.profile({id: item.owner.id});
+        Actions.profile({ id: item.owner.id });
     }
 
-    onPressAuthor (item) {
+    onPressAuthor(item) {
         console.log('just pressed author');
-        Actions.profile({id: item.owner.id});
+        Actions.profile({ id: item.owner.id });
     }
 
-    onPressGroup (item) {
+    onPressGroup(item) {
         console.log('just pressed group', item);
-        Actions.groupprofile({id: item.group.id});
+        Actions.groupprofile({ id: item.group.id });
     }
 
-    render () {
+    render() {
         let thumbnail = '';
         let title = '';
         let isBoosted = false;
         const isOwner = this.props.item.owner.id === this.props.userId;
 
         switch (this.props.item.entity.type) {
-        case 'post' || 'user-petition':
-            thumbnail = this.props.item.owner.avatar_file_path ? this.props.item.owner.avatar_file_path : '';
-            title = this.props.item.owner ? this.props.item.owner.first_name : '' + ' ' + this.props.item.owner ? this.props.item.owner.last_name : '';
-            break;
-        default:
-            thumbnail = this.props.item.group.avatar_file_path ? this.props.item.group.avatar_file_path : '';
-            title = this.props.item.user.full_name;
-            break;
+            case 'post' || 'user-petition':
+                thumbnail = this.props.item.owner.avatar_file_path ? this.props.item.owner.avatar_file_path : '';
+                title = this.props.item.owner ? this.props.item.owner.first_name : '' + ' ' + this.props.item.owner ? this.props.item.owner.last_name : '';
+                break;
+            default:
+                thumbnail = this.props.item.group.avatar_file_path ? this.props.item.group.avatar_file_path : '';
+                title = this.props.item.user.full_name;
+                break;
         }
+
+        console.warn('itemxzcsadf:', this.props.item);
         return (
             <CardItem style={{ paddingBottom: 0 }}>
                 <Left>
@@ -107,6 +114,15 @@ class FeedHeader extends Component {
                                         <Text style={styles.menuText}>Add to Contact</Text>
                                     </Button>
                                 </MenuOption>
+                                {
+                                    isOwner && // TODO (#149): check if group manager
+                                    <MenuOption onSelect={() => this.boost(this.props.item)}>
+                                        <Button iconLeft transparent dark onPress={() => this.boost(this.props.item)}>
+                                            <Icon name='md-flame' style={styles.menuIcon} />
+                                            <Text style={styles.menuText}>Boost Post</Text>
+                                        </Button>
+                                    </MenuOption>
+                                }
                                 {
                                     isOwner && !isBoosted &&
                                     <MenuOption onSelect={() => this.edit(this.props.item)}>
