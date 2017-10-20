@@ -140,7 +140,7 @@ class Home extends Component {
 
     OneSignal.configure();
 
-    //When user logs in, the device subscription is set to True to allow for notifications. If false, device cannot receive notifications
+    // When user logs in, the device subscription is set to True to allow for notifications. If false, device cannot receive notifications
     OneSignal.setSubscription(true);
     OneSignal.enableSound(true);
     OneSignal.enableVibrate(true);

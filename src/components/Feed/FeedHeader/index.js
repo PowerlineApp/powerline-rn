@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
-import { Alert, TouchableHighlight, View } from 'react-native';
+import { TouchableHighlight, View } from 'react-native';
 
 import { Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem } from 'native-base';
 import TimeAgo from 'react-native-timeago';
@@ -12,7 +12,7 @@ import Menu, {
 } from 'react-native-popup-menu';
 
 import { WINDOW_WIDTH } from 'PLConstants';
-import { deletePost, deletePetition, boostPost } from 'PLActions';
+import { deletePost, deletePetition, boostPost, sharePost } from 'PLActions';
 
 import styles from '../styles';
 
@@ -39,6 +39,12 @@ class FeedHeader extends Component {
             this.props.dispatch(deletePetition(item.entity.id, item.id));
         }
 
+        this.menu && this.menu.close();
+    }
+
+    notify(item) {
+        sharePost(this.props.token, item.entity.id);
+        
         this.menu && this.menu.close();
     }
 
@@ -114,6 +120,12 @@ class FeedHeader extends Component {
                                         <Text style={styles.menuText}>Add to Contact</Text>
                                     </Button>
                                 </MenuOption>
+                                <MenuOption onSelect={() => this.notify(this.props.item)}>
+                                    <Button iconLeft transparent dark onPress={() => this.notify(this.props.item)}>
+                                        <Icon name='md-megaphone' style={styles.menuIcon} />
+                                        <Text style={styles.menuText}>Share this post to followers</Text>
+                                    </Button>
+                                </MenuOption>
                                 {
                                     isOwner && // TODO (#149): check if group manager
                                     <MenuOption onSelect={() => this.boost(this.props.item)}>
@@ -159,5 +171,6 @@ const optionsStyles = {
 };
 
 export default connect(state => ({
-    userId: state.user.id
+    userId: state.user.id,
+    token: state.user.token,
 }))(FeedHeader);
