@@ -1,4 +1,5 @@
 //For notification feed tab
+import api from '../utils/api';
 var { API_URL } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
 
@@ -25,6 +26,18 @@ function getActivities(token, page = 1, per_page = 50){
     });
 }
 
+async function sharePost(token: string, postId: number): Promise<Action> {
+    try {
+        const response = await api.put(token, `/v2/user/shared-posts/${postId}`);
+        const responseJson = await response.json();
+
+        alert(responseJson.message);
+    } catch(err) {
+
+    }
+}
+
 module.exports = {
-    getActivities
+    getActivities,
+    sharePost
 };
