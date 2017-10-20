@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
-import { TouchableHighlight, View } from 'react-native';
+import { TouchableHighlight, View, Image } from 'react-native';
 
-import { Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem } from 'native-base';
+import { Text, Button, ActionSheet, Icon, Left, Right, Body, Thumbnail, CardItem } from 'native-base';
 import TimeAgo from 'react-native-timeago';
 import Menu, {
     MenuTrigger,
@@ -12,11 +12,31 @@ import Menu, {
 } from 'react-native-popup-menu';
 
 import { WINDOW_WIDTH } from 'PLConstants';
-import { deletePost, deletePetition, boostPost, sharePost } from 'PLActions';
+import {
+    deletePost,
+    deletePetition,
+    boostPost,
+    sharePost,
+    unFollowings,
+    putFollowings,
+    editFollowers,
+    getFollowingUser
+} from 'PLActions';
 
 import styles from '../styles';
 
 class FeedHeader extends Component {
+    state = {
+        isFollowed: false,
+    }
+
+    componentDidMount() {
+        getFollowingUser(this.props.token, this.props.item.owner.id).then(data => {
+            if (!data.code && data.status === 'active') {
+                this.setState({ isFollowed: true });
+            }
+        }).catch(err => {});
+    }
     edit(item) {
         Actions.itemDetail({
             entityId: item.entity.id,
@@ -31,6 +51,47 @@ class FeedHeader extends Component {
         this.menu && this.menu.close();
     }
 
+    unmute(item) {
+        var { token, dispatch } = this.props;
+        
+        editFollowers(token, item.owner.id, false, newDate)
+        .then(data => {
+
+        })
+        .catch(err => {
+
+        });
+    }
+
+    mute(item) {
+        var { token, dispatch } = this.props;
+        ActionSheet.show(
+            {
+                options: ['1 hour', '8 hours', '24 hours'],
+                title: 'MUTE NOTIFICATIONS FOR THIS USER'
+            },
+
+            buttonIndex => {
+                var hours = 1;
+                if (buttonIndex == 1) {
+                    hours = 8;
+                } else if (buttonIndex == 2) {
+                    hours = 24;
+                }
+
+                var newDate = new Date((new Date()).getTime() + 1000 * 60 * 60 * hours);
+                editFollowers(token, item.owner.id, false, newDate)
+                .then(data => {
+                    console.warn(JSON)
+                })
+                .catch(err => {
+
+                });
+            }
+        );
+        this.menu && this.menu.close();        
+    }
+
     delete(item) {
         if (item.entity.type === 'post') {
             this.props.dispatch(deletePost(item.entity.id, item.id));
@@ -39,6 +100,16 @@ class FeedHeader extends Component {
             this.props.dispatch(deletePetition(item.entity.id, item.id));
         }
 
+        this.menu && this.menu.close();
+    }
+
+    followAuthor(item) {
+        this.props.dispatch(putFollowings(this.props.token, item.owner.id));
+        this.menu && this.menu.close();
+    }
+
+    unfollowAuthor(item) {
+        this.props.dispatch(unFollowings(this.props.token, item.owner.id));
         this.menu && this.menu.close();
     }
 
@@ -108,6 +179,15 @@ class FeedHeader extends Component {
                                         <Text style={styles.menuText}>Subscribe to this Post</Text>
                                     </Button>
                                 </MenuOption>
+                                {
+                                    !isOwner && this.state.isFollowed &&
+                                    <MenuOption onSelect={() => this.mute(this.props.item)}>
+                                        <Button iconLeft transparent dark onPress={() => this.mute(this.props.item)}>
+                                            <Icon name='md-volume-off' style={styles.menuIcon} />
+                                            <Text style={styles.menuText}>Mute Notifications from this User</Text>
+                                        </Button>
+                                    </MenuOption>
+                                }
                                 <MenuOption>
                                     <Button iconLeft transparent dark>
                                         <Icon name='ios-heart' style={styles.menuIcon} />
@@ -127,10 +207,28 @@ class FeedHeader extends Component {
                                     </Button>
                                 </MenuOption>
                                 {
-                                    isOwner && // TODO (#149): check if group manager
+                                    !isOwner &&
+                                    <MenuOption onSelect={() => this.followAuthor(this.props.item)}>
+                                        <Button iconLeft transparent dark onPress={() => this.followAuthor(this.props.item)}>
+                                            <Icon name='md-walk' style={styles.menuIcon} />
+                                            <Text style={styles.menuText}>Follow this item's author</Text>
+                                        </Button>
+                                    </MenuOption>
+                                }
+                                {
+                                    !isOwner &&
+                                    <MenuOption onSelect={() => this.unfollowAuthor(this.props.item)}>
+                                        <Button iconLeft transparent dark onPress={() => this.unfollowAuthor(this.props.item)}>
+                                            <Icon name='md-walk' style={styles.menuIcon} />
+                                            <Text style={styles.menuText}>Unfollow this person</Text>
+                                        </Button>
+                                    </MenuOption>
+                                }
+                                {
+                                    isOwner && !isBoosted && // TODO (#149): check if group manager
                                     <MenuOption onSelect={() => this.boost(this.props.item)}>
                                         <Button iconLeft transparent dark onPress={() => this.boost(this.props.item)}>
-                                            <Icon name='md-flame' style={styles.menuIcon} />
+                                            <Icon name='md-flash' style={styles.menuIcon} />
                                             <Text style={styles.menuText}>Boost Post</Text>
                                         </Button>
                                     </MenuOption>
