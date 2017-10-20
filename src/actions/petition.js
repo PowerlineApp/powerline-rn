@@ -21,7 +21,7 @@ async function signUserPetition(token: string, petitionId: string) {
 async function signLeaderPetition(token: string, petitionId: string, option: string) {
     try {
         let response = await fetch(`${API_URL}/v2/polls/${petitionId}/answers/${option}`, {
-            method: 'POST',
+            method: 'PUT',
             headers: {
                 'token': token,
                 'Content-Type': 'application/json',

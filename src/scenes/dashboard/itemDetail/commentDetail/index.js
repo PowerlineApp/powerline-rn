@@ -190,6 +190,7 @@ class CommentDetail extends Component {
 
     // Rendering methods
     render() {
+        console.log(this.item);
         return (
             <MenuContext customStyles={menuContextStyles}>
                 <Container style={styles.container}>

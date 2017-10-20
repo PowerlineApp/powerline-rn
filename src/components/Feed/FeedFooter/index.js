@@ -14,6 +14,18 @@ class FeedFooter extends Component {
         };
     }
 
+    redirect (item, options) {
+        let type;
+        if (item.poll) {
+            type = 'poll';
+        } else if (item.post) {
+            type = 'post';
+        } else if (item.petition) {
+            type = 'petition';
+        }
+        Actions.itemDetail({entityType: type, entityId: item.entity.id, ...options});
+    }
+
     // changes the upvote/downvote color to indicate selection, sets the upvote/downvote number before the response comes. if the requisition fails, undo all
     async vote (item, option) {
         // uses lodash.cloneDeep to avoid keeping references
@@ -130,33 +142,33 @@ class FeedFooter extends Component {
         // console.log(item.entity.type);
         let res;
         if (item.entity.type === 'user-petition') {
-            // console.log('user-petition');
+            console.log('user-petition');
             try {
                 res = await signUserPetition(token, item.id);
-                // console.log(res);
+                console.log(res);
             } catch (error) {
-                // console.log('error on request => ', error);
+                console.log('error on request => ', error);
                 this.setState({signing: false, item: originalItem});
             }
         } else if (item.entity.type === 'petition') {
-            // console.log('leader-petition');
+            console.log('leader-petition');
             try {
                 res = await signLeaderPetition(token, item.id, item.option === 1 ? 1 : 2);
-                // console.log(res);
+                console.log(res);
             } catch (error) {
-                // console.log('error on request => ', error);
+                console.log('error on request => ', error);
                 this.setState({signing: false, item: originalItem});
             }
         }
 
-        // console.log('xXresXx', res);
+        console.log('xXresXx', res);
     }
 
     _renderReplyIcon (item, type) {
         // console.log(item);
         console.log('typee, ', type, item.entity.type, '  - ', item.description);
         return (
-            <Label style={styles.footerText} onPress={() => Actions.itemDetail({entityId: item.id, entityType: type, commenting: true})}>
+            <Label style={styles.footerText} onPress={() => this.redirect(item, {commenting: true})}>
                 {'Reply '}
                 {item.comments_count ? item.comments_count : 0}
             </Label>
@@ -170,7 +182,7 @@ class FeedFooter extends Component {
         if (item.zone === 'expired') {
             return (
                 <CardItem footer style={{ height: 35 }}>
-                    <Left style={{ justifyContent: 'flex-start' }}>
+                    <Left style={{ justifyContent: 'space-between' }}>
                         <Button iconLeft transparent style={styles.footerButton}>
                             <Icon active name='ios-undo' style={styles.footerIcon} />
                             {this._renderReplyIcon(item, 'post')}
@@ -218,11 +230,12 @@ class FeedFooter extends Component {
     _renderUserPetitionFooter (item) {
         // console.log(item.entity.type ? item.entity.type : '==================');
         // console.log(item);
-        let isSigned = item.user_petition.is_subscribed;
+        let isSigned = false;
+        console.log(item.poll, item.user_petition);
         // console.log(item);
         return (
             <CardItem footer style={{ height: 35 }}>
-                <Left style={{ justifyContent: 'flex-end' }}>
+                <Left style={{ justifyContent: 'space-between' }}>
                     <Button iconLeft transparent style={styles.footerButton}>
                         <Icon name='md-arrow-dropdown' style={styles.footerIcon} />
                         <Label style={styles.footerText} onPress={() => this.sign(item)} > {isSigned ? 'Sign' : 'Unsign'}</Label>
@@ -238,11 +251,11 @@ class FeedFooter extends Component {
     _renderLeaderPetitionFooter (item) {
         // console.log(item.entity.type ? item.entity.type : '==================');
         // console.log(item);
-        let isSigned = item.poll.is_subscribed;
+        let isSigned = false;
         // console.log(item);
         return (
             <CardItem footer style={{ height: 35 }}>
-                <Left style={{ justifyContent: 'flex-end' }}>
+                <Left style={{ justifyContent: 'space-between' }}>
                     <Button iconLeft transparent style={styles.footerButton}>
                         <Icon name='md-arrow-dropdown' style={styles.footerIcon} />
                         <Label style={styles.footerText} onPress={() => this.sign(item)} > {isSigned ? 'Sign' : 'Unsign'}</Label>
@@ -261,7 +274,7 @@ class FeedFooter extends Component {
 
         return (
             <CardItem footer style={{ height: 35 }}>
-                <Left style={{ justifyContent: 'flex-end' }}>
+                <Left style={{ justifyContent: 'space-between' }}>
                     <Button iconLeft transparent style={styles.footerButton}>
                         <Icon name='md-arrow-dropdown' style={styles.footerIcon} />
                         <Label style={styles.footerText}>Answer</Label>
@@ -280,7 +293,7 @@ class FeedFooter extends Component {
 
         return (
             <CardItem footer style={{ height: 35 }}>
-                <Left style={{ justifyContent: 'flex-end' }}>
+                <Left style={{ justifyContent: 'space-between' }}>
                     <Button iconLeft transparent style={styles.footerButton}>
                         <Icon name='md-arrow-dropdown' style={styles.footerIcon} />
                         <Label style={styles.footerText}>Pay</Label>
@@ -298,8 +311,8 @@ class FeedFooter extends Component {
         // console.log(item.entity.type ? item.entity.type : '==================');
         return (
             <CardItem footer style={{ height: 35 }}>
-                <Left style={{ justifyContent: 'flex-end' }}>
-                    <Button iconLeft transparent style={styles.footerButton} onPress={() => Actions.itemDetail({entityType: 'poll', entityId: item.id})} >
+                <Left style={{ justifyContent: 'space-between' }}>
+                    <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item)} >
                         <Icon name='md-arrow-dropdown' style={styles.footerIcon} />
                         <Label style={styles.footerText}>RSVP</Label>
                     </Button>
@@ -318,8 +331,8 @@ class FeedFooter extends Component {
         // console.log(item.description);
         return (
             <CardItem footer style={{ height: 35 }}>
-                <Left style={{ justifyContent: 'flex-end' }}>
-                    <Button iconLeft transparent style={styles.footerButton} onPress={() => Actions.itemDetail({entityType: 'post', entityId: item.id})} >
+                <Left style={{ justifyContent: 'space-between' }}>
+                    <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item)} >
                         <Icon name='md-arrow-dropdown' style={styles.footerIcon} />
                         <Label style={styles.footerText}>Discuss</Label>
                     </Button>
@@ -373,7 +386,7 @@ class FeedFooter extends Component {
         case 'user-petition':
             return this._renderUserPetitionFooter(item);
         case 'petition':
-            return this._renderLeaderPetitionFooter(item);
+            return this._renderUserPetitionFooter(item);
         case 'question':
             return this._renderQuestionFooter(item);
         case 'payment-request':

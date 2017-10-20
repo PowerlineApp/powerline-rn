@@ -8,6 +8,7 @@ import FeedHeader from '../FeedHeader';
 import FeedMetaData from '../FeedMetaData';
 import FeedFooter from '../FeedFooter';
 import FeedCarousel from '../FeedCarousel';
+import FeedCommentPreview from '../FeedCommentPreview';
 
 class FeedActivity extends Component {
     _renderPostOrUserPetitionCard (item) {
@@ -18,6 +19,7 @@ class FeedActivity extends Component {
                 <FeedMetaData item={item} />
                 <View style={styles.borderContainer} />
                 <FeedFooter item={item} profile={this.props.profile} token={this.props.token} />
+                <FeedCommentPreview item={item} />
             </Card>
         );
     }
@@ -30,6 +32,7 @@ class FeedActivity extends Component {
                 <FeedCarousel item={item} />
                 <View style={styles.borderContainer} />
                 <FeedFooter item={item} profile={this.props.profile} token={this.props.token} />
+                <FeedCommentPreview item={item} />
             </Card>
         );
     }

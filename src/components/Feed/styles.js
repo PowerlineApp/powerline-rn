@@ -123,5 +123,9 @@ export default {
     },
     menuText: {
         color: '#293f53'
+    },
+    commentPreviewContainer: {
+        backgroundColor: '#F8F8F8',
+        minHeight: 64
     }
 };
