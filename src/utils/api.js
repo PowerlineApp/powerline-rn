@@ -37,6 +37,9 @@ const api = {
     put: (token: string, url: string, data: object): Promise => {
         return api._request('PUT', token, url, data);
     },
+    patch: (token: string, url: string): Promise => {
+        return api._request('PATCH', token, url);
+    },
 };
 
 export default api;

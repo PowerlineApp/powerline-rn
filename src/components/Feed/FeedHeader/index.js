@@ -12,7 +12,7 @@ import Menu, {
 } from 'react-native-popup-menu';
 
 import { WINDOW_WIDTH } from 'PLConstants';
-import { deletePost, deletePetition, sharePost } from 'PLActions';
+import { deletePost, deletePetition, boostPost, sharePost } from 'PLActions';
 
 import styles from '../styles';
 
@@ -23,6 +23,11 @@ class FeedHeader extends Component {
             entityType: item.entity.type,
             isEditEnabled: true
         });
+        this.menu && this.menu.close();
+    }
+
+    boost(item) {
+        this.props.dispatch(boostPost(item.entity.type, item.entity.id, item.group.id, item.id));
         this.menu && this.menu.close();
     }
 
@@ -74,6 +79,8 @@ class FeedHeader extends Component {
                 title = this.props.item.user.full_name;
                 break;
         }
+
+        console.warn('itemxzcsadf:', this.props.item);
         return (
             <CardItem style={{ paddingBottom: 0 }}>
                 <Left>
@@ -116,9 +123,18 @@ class FeedHeader extends Component {
                                 <MenuOption onSelect={() => this.notify(this.props.item)}>
                                     <Button iconLeft transparent dark onPress={() => this.notify(this.props.item)}>
                                         <Icon name='md-megaphone' style={styles.menuIcon} />
-                                        <Text style={styles.menuText}>Notify the followers</Text>
+                                        <Text style={styles.menuText}>Share this post to followers</Text>
                                     </Button>
                                 </MenuOption>
+                                {
+                                    isOwner && // TODO (#149): check if group manager
+                                    <MenuOption onSelect={() => this.boost(this.props.item)}>
+                                        <Button iconLeft transparent dark onPress={() => this.boost(this.props.item)}>
+                                            <Icon name='md-flame' style={styles.menuIcon} />
+                                            <Text style={styles.menuText}>Boost Post</Text>
+                                        </Button>
+                                    </MenuOption>
+                                }
                                 {
                                     isOwner && !isBoosted &&
                                     <MenuOption onSelect={() => this.edit(this.props.item)}>
