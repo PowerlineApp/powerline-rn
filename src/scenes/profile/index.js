@@ -7,6 +7,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import {
+    ActionSheet,
     Container,
     Header,
     Left,
@@ -35,7 +36,7 @@ import styles , { sliderWidth, itemWidth } from './styles';
 const PLColors = require('PLColors');
 import PLLoader from 'PLLoader';
 
-import { loadUserProfileById, resetActivities, votePost, loadActivitiesByUserId, getFollowingUser, unFollowings, putFollowings } from 'PLActions';
+import { loadUserProfileById, resetActivities, editFollowers, votePost, loadActivitiesByUserId, getFollowingUser, unFollowings, putFollowings } from 'PLActions';
 import TimeAgo from 'react-native-timeago';
 import ImageLoad from 'react-native-image-placeholder';
 import YouTube from 'react-native-youtube';
@@ -112,6 +113,34 @@ class Profile extends Component{
         this.follow = this.follow.bind(this);
     }
 
+    mute() {
+        var { token, id, dispatch } = this.props;
+        ActionSheet.show(
+            {
+                options: ['1 hour', '8 hours', '24 hours'],
+                title: 'MUTE NOTIFICATIONS FOR THIS USER'
+            },
+
+            buttonIndex => {
+                var hours = 1;
+                if (buttonIndex == 1) {
+                    hours = 8;
+                } else if (buttonIndex == 2) {
+                    hours = 24;
+                }
+
+                var newDate = new Date((new Date()).getTime() + 1000 * 60 * 60 * hours);
+                editFollowers(token, id, false, newDate)
+                    .then(data => {
+
+                    })
+                    .catch(err => {
+
+                    });
+            }
+        );
+    }
+
     follow(){
         var { token, id } = this.props;
         if(this.state.following_status != null){
@@ -184,11 +213,21 @@ class Profile extends Component{
                 <Container style={styles.container}> 
                     {this.state.user?      
                     <View style={{backgroundColor: PLColors.main}}>
-                        <View>                            
-                            <Button transparent onPress={() => Actions.pop()}>
-                                <Icon active name="arrow-back" style={{color: 'white'}}/>
-                            </Button>                           
-                        </View>                        
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingTop: 20 }}>
+                            <View>                            
+                                <Button transparent onPress={() => Actions.pop()}>
+                                    <Icon active name="arrow-back" style={{color: 'white'}}/>
+                                </Button>                           
+                            </View>
+                            {
+                                this.state.following_status === 'active' &&
+                                <View>
+                                    <Button transparent onPress={() => this.mute()}>
+                                        <Icon active name="md-volume-off" style={{ color: 'white' }} />
+                                    </Button>
+                                </View>
+                            }
+                        </View> 
                         <View style={{justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}>
                             <Thumbnail source={{uri: this.state.user.avatar_file_name+'&w=50&h=50&auto=compress,format,q=95'}} style={{marginBottom: 8}}/>  
                             <TouchableWithoutFeedback onPress={() => this.follow()}>                              
