@@ -66,6 +66,7 @@ function loadActivitiesByUserId(token, page = 0, per_page = 20, group = 'all', u
 
 //Should be for loading public groups (Town/state/country) or by public groups (e.g. Save the Whales)
 function loadActivityByEntityId(token, entityType, entityId) {
+    console.log('about to fetch => ' + '/v2/activities?_format=json&' + entityType + '_id=' + entityId);
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2/activities?_format=json&' + entityType + '_id=' + entityId, {
             method: 'GET',

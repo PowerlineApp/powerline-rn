@@ -18,9 +18,9 @@ async function signUserPetition(token: string, petitionId: string) {
         handleError(error);
     }
 }
-async function signLeaderPetition(token: string, petitionId: string) {
+async function signLeaderPetition(token: string, petitionId: string, option: string) {
     try {
-        let response = await fetch(`${API_URL}/v2/micro-petitions/${petitionId}/sign`, {
+        let response = await fetch(`${API_URL}/v2/polls/${petitionId}/answers/${option}`, {
             method: 'POST',
             headers: {
                 'token': token,
@@ -53,23 +53,7 @@ async function unsubscribeFromUserPetition(token: string, petitionId: string) {
         handleError(error);
     }
 }
-async function unsubscribeFromLeaderPetition(token: string, petitionId: string) {
-    try {
-        let response = await fetch(`${API_URL}/v2/user/micro-petitions/${petitionId}/sign`, {
-            method: 'DELETE',
-            headers: {
-                'token': token,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-            })
-        });
-        response = response.ok;
-        return response;
-    } catch (error) {
-        handleError(error);
-    }
-}
+
 
 
 function handleError(error) {
@@ -81,6 +65,5 @@ function handleError(error) {
 module.exports = {
     signUserPetition,
     unsubscribeFromUserPetition,
-    signLeaderPetition,
-    unsubscribeFromLeaderPetition
+    signLeaderPetition
 };

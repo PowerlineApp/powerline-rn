@@ -25,6 +25,7 @@ class FeedActivity extends Component {
     _renderGroupCard (item) {
         return (
             <Card>
+                <FeedHeader item={item} />
                 <FeedDescription item={item} />
                 <FeedCarousel item={item} />
                 <View style={styles.borderContainer} />

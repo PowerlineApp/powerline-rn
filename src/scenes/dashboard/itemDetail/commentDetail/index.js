@@ -56,6 +56,7 @@ class CommentDetail extends Component {
     }
 
     componentWillMount() {
+        console.log('props', this.props);
         const { props: { comment } } = this;
         this.rootComment = comment;
 

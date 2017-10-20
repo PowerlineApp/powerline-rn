@@ -37,7 +37,7 @@ async function votePost(token: string, postId: string, option: string) {
                 option: option,
             })
         });
-        console.log(response);
+        // console.log('res ==>', response);
         let responseJson = await response.json();
         if (responseJson.status === 200) {
             if (option === 'upvote') {
@@ -52,6 +52,35 @@ async function votePost(token: string, postId: string, option: string) {
         handleError(error);
     }
 }
+async function undoVotePost(token: string, postId: string) {
+    console.log(token, postId, 'undo');
+    try {
+        let response = await fetch(`${API_URL}/v2/posts/${postId}/vote`, {
+            method: 'DELETE',
+            headers: {
+                'token': token,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({})
+        });
+        console.log('res ==>', response);
+        if (response.status === 200) {
+            if (option === 'upvote') {
+                showToast('Upvoted');
+            }
+            if (option === 'downvote') {
+                showToast('Downvoted');
+            }
+        }
+        return response;
+    } catch (error) {
+        handleError(error);
+    }
+}
+
+
+
+
 async function unsubscribeFromPost(token: string, postId: string) {
     try {
         let response = await fetch(`${API_URL}/v2/user/posts/${postId}`, {
@@ -316,6 +345,7 @@ function handleError(error) {
 
 module.exports = {
     votePost,
+    undoVotePost,
     loadPostComments,
     addCommentToPost,
     ratePostComment,

@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -684,7 +683,7 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		6F7DE6451F98400B00CE27E4 /* Recovered References */ = {
+		6FBEFC0E1F96C48C005E5B8A /* Recovered References */ = {
 			isa = PBXGroup;
 			children = (
 				71629848DDD64885A3F61DB8 /* libSplashScreen.a */,
@@ -758,7 +757,7 @@
 				81FB7AC7A826CA81EDF6F494 /* Pods */,
 				67BC7E46E199A3175E28B8B6 /* Frameworks */,
 				5DFBB4D655204255A07169DD /* Resources */,
-				6F7DE6451F98400B00CE27E4 /* Recovered References */,
+				6FBEFC0E1F96C48C005E5B8A /* Recovered References */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";

@@ -6,7 +6,7 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Container, Header, Title, Textarea, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, List, ListItem, Item, Input } from 'native-base';
+import { Container, Card, Header, Title, Textarea, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, List, ListItem, Item, Input } from 'native-base';
 import { Image, View, StyleSheet, TouchableOpacity, Platform, KeyboardAvoidingView, Keyboard, TextInput, ListView } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
@@ -83,18 +83,20 @@ class ItemDetail extends Component {
     componentWillMount() {
         this.keyboardDidShowListener = Keyboard.addListener('keyboardWillShow', this._keyboardWillShow.bind(this));
         this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide.bind(this));
-
-        this.loadEntity();
+        
     }
-
+    
     componentDidMount(){
         // this.addCommentInput.focus(); 
+        console.log('=xx=x=x=x=x=x=x=x=x==x')
+        console.log('propss', this.props.entityType, this.props.entityId);
         if (this.props.commenting){
             console.log('commenting...')
             setTimeout(
                 () => this._onAddComment()
                 , 1000);
-        }   
+            }   
+        this.loadEntity();
     }
     
     onCommentInputRef = r => {
@@ -162,8 +164,9 @@ class ItemDetail extends Component {
 
     // API Calls
     async loadEntity() {
+        console.log(this.props.entityId, this.props.entityType);
         const { props: { token, entityId, entityType, dispatch } } = this;
-
+        console.log(entityId, entityType)
         this.setState({ isLoading: true });
         loadActivityByEntityId(token, entityType, entityId).then(data => {
             if (data.payload && data.payload[0]) {

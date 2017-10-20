@@ -7,7 +7,26 @@ import styles from '../styles';
 
 class FeedDescription extends Component {
     goItemDetail (entityId, entityType) {
-        Actions.itemDetail({ entityId: entityId, entityType: entityType });
+        let type;
+        console.log('entityType: ', entityType);
+        switch (entityType) {
+        case 'user-petition':
+            type = 'petition';
+            break;
+        case 'petition':
+            type = 'poll';
+            break;
+        case 'question':
+            type = 'poll';
+            break;
+        case 'post':
+            type = 'post';
+            break;
+        case 'leader-petition':
+            type = 'poll';
+        }
+        console.log('type: ', type);
+        Actions.itemDetail({ entityId: entityId, entityType: type });
     }
     _renderTitle (item) {
         if (item.title) {
