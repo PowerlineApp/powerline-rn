@@ -7,14 +7,12 @@ import styles from '../styles';
 
 class FeedDescription extends Component {
     redirect (item, options) {
-        let type;
-        if (item.poll) {
-            type = 'poll';
-        } else if (item.post) {
-            type = 'post';
-        } else if (item.petition) {
-            type = 'petition';
-        }
+        let type = 'poll';
+        if (item.entity.type === 'post') {
+            type = 'post'
+          } else if (item.entity.type === 'user-petition'){
+            type = 'petition' 
+          }
         Actions.itemDetail({entityType: type, entityId: item.entity.id, ...options});
     }
 

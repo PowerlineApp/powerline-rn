@@ -3,7 +3,7 @@ var { Action, ThunkAction } = require('./types');
 
 async function signUserPetition(token: string, petitionId: string) {
     try {
-        console.log('to the api => ', token, petitionId)
+        console.log('to the api => ', token, petitionId, 'sign')
         let response = await fetch(`${API_URL}/v2/user-petitions/${petitionId}/sign`, {
             method: 'POST',
             headers: {

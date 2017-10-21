@@ -185,13 +185,11 @@ class Home extends Component {
         console.log('===>', item, '====>', options);
         // return;
         item = item.notification.payload.additionalData.entity.target;
-        let type;
+        let type = 'poll';
         if (item.type == 'post') {
           type = 'post'
         } else if (item.type == 'user-petition'){
           type = 'petition' 
-        } else {
-          type = 'poll';
         }
 
         console.log('about to go: ', type, item.id)

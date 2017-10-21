@@ -749,7 +749,7 @@ class ItemDetail extends Component {
                 {this._renderDescription(item, state)}
                 <FeedMetaData item={item} />
                 <View style={styles.borderContainer} />
-                <FeedFooter item={item} />
+                <FeedFooter item={item} profile={this.props.profile} token={this.props.token} />
             </View>
         );
     }
@@ -760,7 +760,7 @@ class ItemDetail extends Component {
                 <FeedDescription item={item} />
                 <FeedCarousel item={item} />
                 <View style={styles.borderContainer} />
-                <FeedFooter item={item} />
+                <FeedFooter item={item} profile={this.props.profile} token={this.props.token} />
             </Card>
         );
     }
