@@ -3,10 +3,12 @@ var { API_URL, PER_PAGE } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
 
 //Newsfeed activities can be loaded by All, by Group (town/state/country/group), by Friends, by Specific user, or by Favorites
-async function loadActivities(token: string, page: ?number = 0, perPage: ?number = PER_PAGE, group: ?string = 'all', user: ?string = 'all', followed = 'false'): Promise<Action> {
-    console.log(token, page, perPage, group, user, followed)
+async function loadActivities(token: string, page: ?number = 0, perPage: ?number = PER_PAGE, group: ?string = 'all', user: ?string = 'all', followed = 'all'): Promise<Action> {
+    console.log(`${API_URL}/v2/activities?_format=json&user=${user}&group=${group}&page=${page + 1}&per_page=${perPage}&followed=${followed}`);
+    // '/api/v2/activities?user=all&group=all&page=1&per_page=20&followed=true'
+    // '/api/v2/activities?user=all&group=all&followed=true&page=0&per_page=20'
     try {
-        var response = await fetch(`${API_URL}/v2/activities?_format=json&user=${user}&group=${group}&page=${page + 1}&per_page=${perPage}&followed=${followed}`, {
+        var response = await fetch(`${API_URL}/v2/activities?_format=json&user=${user}&group=${group}&followed=${followed}&page=${page + 1}&per_page=${perPage}`, {
             method: 'GET',
             headers: {
                 'token': token,
@@ -35,6 +37,40 @@ async function loadActivities(token: string, page: ?number = 0, perPage: ?number
         return Promise.reject(error);
     }
 }
+async function loadFriendsActivities(token: string, page: ?number = 0, perPage: ?number = PER_PAGE): Promise<Action> {
+    try {
+        var response = await fetch(`${API_URL}/v2/activities?_format=json&followed=true&page=${page + 1}&per_page=${perPage}`, {
+            method: 'GET',
+            headers: {
+                'token': token,
+                'Content-Type': 'application/json',
+            }
+        });
+        var json = await response.json();
+        if (json.totalItems) {
+            // console.log('${API_URL}/v2/activities?_format=json&followed=true&page=${page + 1}&per_page=${perPage} --- load friends activities return: ', json.payload.map(item => item.title + item.description))
+            const action = {
+                type: 'LOADED_ACTIVITIES',
+                data: {
+                    page: json.page,
+                    totalItems: json.totalItems,
+                    items: json.items,
+                    payload: json.payload,
+                },
+            };
+            return Promise.resolve(action);
+        }
+        else {
+            return Promise.reject(json);
+        }
+    } catch (error) {
+        // TEST PURPOSE:
+        console.error(error);
+        return Promise.reject(error);
+    }
+}
+
+
 
 function resetActivities(): ThunkAction {
     return (dispatch) => {
@@ -45,6 +81,7 @@ function resetActivities(): ThunkAction {
 }
 
 function loadActivitiesByUserId(token, page = 0, per_page = 20, group = 'all', user) {
+    // console.log(token, page, per_page, group, user)
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2/activities?_format=json&user=' + user + '&group=' + group + '&page=' + page + '&per_page=' + per_page, {
             method: 'GET',
@@ -118,4 +155,5 @@ module.exports = {
     loadActivitiesByUserId,
     loadActivityByEntityId,
     putSocialActivity,
+    loadFriendsActivities
 }
