@@ -100,11 +100,11 @@ const datas = [
 
 class SideBar extends Component {
 
-  static propTypes = {
-    logOut: React.PropTypes.func,
-    closeDrawer: React.PropTypes.func,
-    navigateTo: React.PropTypes.func,
-  }
+  // static propTypes = {
+  //   logOut: React.PropTypes.func,
+  //   closeDrawer: React.PropTypes.func,
+  //   navigateTo: React.PropTypes.func,
+  // }
 
   navigateTo(route) {
     this.props.navigateTo(route, 'home');

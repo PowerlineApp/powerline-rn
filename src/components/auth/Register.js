@@ -26,13 +26,13 @@ var {GooglePlacesAutocomplete} = require('react-native-google-places-autocomplet
 
 class Register extends React.Component{
 
-    static propTypes = {
-        back: React.PropTypes.func.isRequired,
-        onLoggedIn: React.PropTypes.func.isRequired,
-        isFb: React.PropTypes.bool.isRequired,
-        fbData: React.PropTypes.object.isRequired,
-        tour: React.PropTypes.func.isRequired
-    };
+    // static propTypes = {
+    //     back: React.PropTypes.func.isRequired,
+    //     onLoggedIn: React.PropTypes.func.isRequired,
+    //     isFb: React.PropTypes.bool.isRequired,
+    //     fbData: React.PropTypes.object.isRequired,
+    //     tour: React.PropTypes.func.isRequired
+    // };
 
     state: {
         isLoading: boolean;

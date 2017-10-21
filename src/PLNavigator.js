@@ -42,10 +42,10 @@ var RouterWithRedux = connect()(Router);
 
 class PLNavigator extends React.Component {
 
-  static propTypes = {
-    drawerState: React.PropTypes.string,
-    closeDrawer: React.PropTypes.func,
-  }
+  // static propTypes = {
+  //   drawerState: React.PropTypes.string,
+  //   closeDrawer: React.PropTypes.func,
+  // }
 
   componentDidUpdate() {
     if (this.props.drawerState === 'opened') {

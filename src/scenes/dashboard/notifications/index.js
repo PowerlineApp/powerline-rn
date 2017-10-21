@@ -20,7 +20,7 @@ import Menu, {
     MenuOption,
     renderers
 } from 'react-native-popup-menu';
-var TimeAgo = require('react-native-timeago');
+// var TimeAgo = require('react-native-timeago');
 import PLLoader from 'PLLoader';
 
 const PLColors = require('PLColors');
@@ -230,7 +230,7 @@ class Notifications extends Component{
                                     <Body style={styles.listItemBody}>
                                         <Text style={styles.text1}>You were invited you a group: <Text style={styles.text3}>{value.official_name}</Text></Text>
                                         <Text note style={styles.text2}>
-                                            <Icon name="people" style={styles.icon}/> <TimeAgo time={value.created_at} />
+                                            {/* <Icon name="people" style={styles.icon}/> <TimeAgo time={value.created_at} /> */}
                                         </Text>
                                     </Body>
                                     <Right style={styles.inviteRightItem}>

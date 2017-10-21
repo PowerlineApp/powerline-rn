@@ -32,9 +32,9 @@ const PLColors = require('PLColors');
 import { getGroupDetails, inviteAllFollowers, getFollowers, unJoinGroup, getGroupPermissions } from 'PLActions';
 
 class GroupProfile extends Component{
-    static propTypes = {
-        token: React.PropTypes.string
-    };
+    // static propTypes = {
+    //     token: React.PropTypes.string
+    // };
 // The user will be asked to share the information with group owner upon joining the group
 //GH59
     permissionsLabels = {

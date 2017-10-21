@@ -41,23 +41,23 @@ export default class PLOverlayLoader extends Component {
     super(props);
   }
 
-  static propTypes = {
-    visible: React.PropTypes.bool,
-    color: React.PropTypes.string,
-    logo: React.PropTypes.bool,
-    indicatorSize: React.PropTypes.oneOf(SIZES),
-    messageFontSize: React.PropTypes.number,
-    message: React.PropTypes.string
-  };
+  // static propTypes = {
+  //   visible: React.PropTypes.bool,
+  //   color: React.PropTypes.string,
+  //   logo: React.PropTypes.bool,
+  //   indicatorSize: React.PropTypes.oneOf(SIZES),
+  //   messageFontSize: React.PropTypes.number,
+  //   message: React.PropTypes.string
+  // };
 
-  static defaultProps = {
-    visible: false,
-    color: 'white',
-    logo: false,
-    indicatorSize: 'large',
-    messageFontSize: 24,
-    message: '',
-  };
+  // static defaultProps = {
+  //   visible: false,
+  //   color: 'white',
+  //   logo: false,
+  //   indicatorSize: 'large',
+  //   messageFontSize: 24,
+  //   message: '',
+  // };
 
   render() {
     const messageStyle = {

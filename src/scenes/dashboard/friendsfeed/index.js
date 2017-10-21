@@ -20,9 +20,9 @@ import FriendActivity from './activities';
 
 //There are two tabs 1) The feed itself, and 2) a tab that is actually a shortcut to the My Influences screen
 class Friendsfeed extends Component{
-    static propTypes = {
-        token: React.PropTypes.string
-    }
+    // static propTypes = {
+    //     token: React.PropTypes.string
+    // }
 
     constructor(props){
         super(props);

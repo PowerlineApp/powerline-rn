@@ -26,15 +26,5 @@ const ContentPlaceholder = ({ empty, title, children, ...otherProps }) => {
   );
 };
 
-ContentPlaceholder.propTypes = {
-  empty: PropTypes.bool,
-  title: PropTypes.string,
-  children: PropTypes.children,
-};
-
-ContentPlaceholder.defaultProps = {
-  empty: false,
-  title: '',
-};
 
 export default ContentPlaceholder;

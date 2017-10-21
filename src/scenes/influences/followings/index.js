@@ -28,9 +28,9 @@ import ContentPlaceholder from '../../../components/ContentPlaceholder';
 import PLLoader from 'PLLoader';
 
 class Followings extends Component {
-  static propTypes = {
-    token: React.PropTypes.string
-  }
+  // static propTypes = {
+  //   token: React.PropTypes.string
+  // }
 
   constructor(props) {
     super(props);
