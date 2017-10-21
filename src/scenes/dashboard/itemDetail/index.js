@@ -88,10 +88,10 @@ class ItemDetail extends Component {
     
     componentDidMount(){
         // this.addCommentInput.focus(); 
-        console.log('=xx=x=x=x=x=x=x=x=x==x')
-        console.log('propss', this.props.entityType, this.props.entityId);
+        // console.log('=xx=x=x=x=x=x=x=x=x==x')
+        // console.log('propss', this.props.entityType, this.props.entityId);
         if (this.props.commenting){
-            console.log('commenting...')
+            // console.log('commenting...')
             setTimeout(
                 () => this._onAddComment()
                 , 1000);
@@ -164,9 +164,9 @@ class ItemDetail extends Component {
 
     // API Calls
     async loadEntity() {
-        console.log(this.props.entityId, this.props.entityType);
+        // console.log(this.props.entityId, this.props.entityType);
         const { props: { token, entityId, entityType, dispatch } } = this;
-        console.log(entityId, entityType)
+        // console.log(entityId, entityType)
         this.setState({ isLoading: true });
         loadActivityByEntityId(token, entityType, entityId).then(data => {
             if (data.payload && data.payload[0]) {
@@ -302,7 +302,7 @@ class ItemDetail extends Component {
             isLoading: false,
         });
 
-        console.warn(response);
+        // console.warn(response);
         if (response.status === 200 && response.ok) {
             this.loadComments();
             this.resetEditComment();
@@ -441,7 +441,7 @@ class ItemDetail extends Component {
                 this.updateSuggestionList(this.props.token, suggestionSearch);
                 this.setState({displaySuggestionBox: displayMention, init: i, end: end});
             } else {
-                console.log('false');
+                // console.log('false');
                 this.setState({suggestionList: [], displaySuggestionBox: false});
             }
         }, 100);
@@ -789,7 +789,7 @@ class ItemDetail extends Component {
 
     render() {
         // console.log(this.item);
-        console.log(this.refs);
+        // console.log(this.refs);
         if (this.item === null) {
             return (
                 <PLOverlayLoader visible={this.state.isLoading} logo />

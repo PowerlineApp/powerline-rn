@@ -17,13 +17,26 @@ import { deletePost, deletePetition } from 'PLActions';
 import styles from '../styles';
 
 class FeedHeader extends Component {
+    redirect (item, options) {
+        let type;
+        if (item.poll) {
+            type = 'poll';
+        } else if (item.post) {
+            type = 'post';
+        } else if (item.petition) {
+            type = 'petition';
+        }
+        Actions.itemDetail({entityType: type, entityId: item.entity.id, ...options});
+    }
+
     edit (item) {
-        Actions.itemDetail({
-            entityId: item.entity.id,
-            entityType: item.entity.type,
-            isEditEnabled: true
-        });
+        // Actions.itemDetail({
+        //     entityId: item.entity.id,
+        //     entityType: item.entity.type,
+        //     isEditEnabled: true
+        // });
         this.menu && this.menu.close();
+        this.redirect(item, {isEditEnabled: true});
     }
 
     delete (item) {

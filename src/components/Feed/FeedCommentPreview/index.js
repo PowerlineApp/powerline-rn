@@ -16,6 +16,18 @@ class FeedCommentPreview extends Component {
         return text;
     }
 
+    redirect (item, options) {
+        let type;
+        if (item.poll) {
+            type = 'poll';
+        } else if (item.post) {
+            type = 'post';
+        } else if (item.petition) {
+            type = 'petition';
+        }
+        Actions.itemDetail({entityType: type, entityId: item.entity.id, ...options});
+    }
+
     render () {
         let {item} = this.props;
         let previewData = null;
@@ -31,9 +43,9 @@ class FeedCommentPreview extends Component {
             previewData = item.user_petition;
         }
         let comment = previewData.comments[0];
-        if (!comment) { return null; }
+        if (!comment) { return <View />; }
         return (
-            <TouchableOpacity onPress={() => Actions.itemDetail({entityType: item.entity.type, id: item.entity.id})} >
+            <TouchableOpacity onPress={() => this.redirect(item)} >
                 <CardItem style={styles.commentPreviewContainer} >
                     <Left>
                         <View>

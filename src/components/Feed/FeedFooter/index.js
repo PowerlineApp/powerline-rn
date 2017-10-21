@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Actions} from 'react-native-router-flux';
 import { Button, Icon, Left, CardItem, Label } from 'native-base';
 import styles from '../styles';
-import { votePost, loadActivityByEntityId, signUserPetition, signLeaderPetition, undoVotePost } from 'PLActions';
+import { votePost, loadActivityByEntityId, signUserPetition, unsignUserPetition, signLeaderPetition, undoVotePost } from 'PLActions';
 import _ from 'lodash';
 
 class FeedFooter extends Component {
@@ -23,6 +23,7 @@ class FeedFooter extends Component {
         } else if (item.petition) {
             type = 'petition';
         }
+        // console.log(options);
         Actions.itemDetail({entityType: type, entityId: item.entity.id, ...options});
     }
 
@@ -105,17 +106,20 @@ class FeedFooter extends Component {
         // console.log("res ==> ", response);
         if (response.user || response.status == 204) {
             // console.log(token, originalItem.entity);
-            loadActivityByEntityId(token, this.state.item.entity.type, this.state.item.entity.id).then(data => {
-                // console.log(data);
-                if (data.payload && data.payload[0]) {
-                    this.setState({item: data.payload[0], postingVote: false});
-                }
-            }).catch(err => {
-                // resets this.state.item
-                // console.log('strange err', err);
-                this.setState({item: originalItem, postingVote: false});
-                alert('Something went wrong to vote');
-            });
+            setTimeout( 
+                () => {
+                    loadActivityByEntityId(token, this.state.item.entity.type, this.state.item.entity.id).then(data => {
+                        // console.log(data);
+                        if (data.payload && data.payload[0]) {
+                            this.setState({item: data.payload[0], postingVote: false});
+                        }
+                    }).catch(err => {
+                        // resets this.state.item
+                        // console.log('strange err', err);
+                        this.setState({item: originalItem, postingVote: false});
+                        alert('Something went wrong to vote');
+                    })
+                }, 1000);
         } else {
             this.setState({item: originalItem, postingVote: false});
             let message = 'Something went wrong to vote';
@@ -129,50 +133,47 @@ class FeedFooter extends Component {
 
     async sign (item) {
         let {token} = this.props;
-        // console.log(item);
+        // console.log('item before', item);
 
         // saving original item to change it back if the sign request fails
         let originalItem = _.cloneDeep(this.state.item);
         let newItem = _.cloneDeep(this.state.item);
-        this.setState({signing: true});
-
+        
         // avoid double tapping until the response comes
         if (this.state.signing) return;
-
+        
         // console.log(item.entity.type);
         let res;
         if (item.entity.type === 'user-petition') {
-            console.log('user-petition');
-            try {
-                res = await signUserPetition(token, item.id);
-                console.log(res);
-            } catch (error) {
-                console.log('error on request => ', error);
+            let option = item.user_petition.signatures[0] ? item.user_petition.signatures[0].option_id : 2;
+            this.setState({signing: true, item: {...originalItem, user_petition: {...originalItem.user_petition, signatures : [{option_id : option === 1 ? 2 : 1}]}}});
+            // console.log('type => ', typeof item.user_petition.is_subscribed);
+            // console.log('user-petition, isSubscribed ? ', item.user_petition.is_subscribed);
+            if (option === 1){
+                res = await unsignUserPetition(token, item.entity.id);
+            } else {
+                res = await signUserPetition(token, item.entity.id);
+            }
+            console.log('res', res)
+            if (res) {
+                this.setState({signing: false});
+            } else {
                 this.setState({signing: false, item: originalItem});
             }
-        } else if (item.entity.type === 'petition') {
-            console.log('leader-petition');
-            try {
-                res = await signLeaderPetition(token, item.id, item.option === 1 ? 1 : 2);
-                console.log(res);
-            } catch (error) {
-                console.log('error on request => ', error);
+        } else {
+            // console.log('poll');
+            let option = item.poll.signatures[0] ? item.poll.signatures[0].option_id : 2;
+            this.setState({signing: true, item: {...originalItem, poll: {...originalItem.poll, signatures : [{option_id : option === 1 ? 2 : 1}]}}});
+            res = await signLeaderPetition(token, item.entity.id, option === 1 ? 2 : 1);
+            console.log('res: ', res);
+            if (res) {
+                this.setState({signing: false});
+            } else {
                 this.setState({signing: false, item: originalItem});
             }
+            // this.setState({signing: false, item: res})
+            // console.log('error on request => ', error);
         }
-
-        console.log('xXresXx', res);
-    }
-
-    _renderReplyIcon (item, type) {
-        // console.log(item);
-        console.log('typee, ', type, item.entity.type, '  - ', item.description);
-        return (
-            <Label style={styles.footerText} onPress={() => this.redirect(item, {commenting: true})}>
-                {'Reply '}
-                {item.comments_count ? item.comments_count : 0}
-            </Label>
-        );
     }
 
     // on this one we need this to control upvote / downvote before a response comes from the API
@@ -182,10 +183,13 @@ class FeedFooter extends Component {
         if (item.zone === 'expired') {
             return (
                 <CardItem footer style={{ height: 35 }}>
-                    <Left style={{ justifyContent: 'space-between' }}>
-                        <Button iconLeft transparent style={styles.footerButton}>
+                    <Left style={{ justifyContent: 'flex-end' }}>
+                        <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, {commenting: true})} >
                             <Icon active name='ios-undo' style={styles.footerIcon} />
-                            {this._renderReplyIcon(item, 'post')}
+                            <Label style={styles.footerText} >
+                                {'Reply '}
+                                {item.comments_count ? item.comments_count : 0}
+                            </Label>
                         </Button>
                     </Left>
                 </CardItem>
@@ -217,9 +221,12 @@ class FeedFooter extends Component {
                             <Icon active name='md-arrow-dropdown' style={isVotedDown ? styles.footerIconBlue : styles.footerIcon} />
                             <Label style={isVotedDown ? styles.footerTextBlue : styles.footerText}>Downvote {item.downvotes_count ? item.downvotes_count : 0}</Label>
                         </Button>
-                        <Button iconLeft transparent style={styles.footerButton}>
+                        <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, {commenting: true})} >
                             <Icon active name='ios-undo' style={styles.footerIcon} />
-                            {this._renderReplyIcon(item, 'post')}
+                            <Label style={styles.footerText} >
+                                {'Reply '}
+                                {item.comments_count ? item.comments_count : 0}
+                            </Label>
                         </Button>
                     </Left>
                 </CardItem>
@@ -230,19 +237,25 @@ class FeedFooter extends Component {
     _renderUserPetitionFooter (item) {
         // console.log(item.entity.type ? item.entity.type : '==================');
         // console.log(item);
-        let isSigned = false;
-        console.log(item.poll, item.user_petition);
+        console.log(item.user_petition)
+        let isSigned = (item.user_petition.signatures[0] ? item.user_petition.signatures[0].option_id : 2) === 1;
+        console.log(item.user_petition.signatures[0] ? item.user_petition.signatures[0].option_id : 2)
+        // console.log(item);
+        // console.log(item.user_petition);
         // console.log(item);
         return (
             <CardItem footer style={{ height: 35 }}>
                 <Left style={{ justifyContent: 'space-between' }}>
-                    <Button iconLeft transparent style={styles.footerButton}>
+                    <Button iconLeft transparent style={styles.footerButton} onPress={() => this.sign(item)} >
                         <Icon name='md-arrow-dropdown' style={styles.footerIcon} />
-                        <Label style={styles.footerText} onPress={() => this.sign(item)} > {isSigned ? 'Sign' : 'Unsign'}</Label>
+                        <Label style={styles.footerText} > { isSigned ? 'Unsign' : 'Sign'}</Label>
                     </Button>
-                    <Button iconLeft transparent style={styles.footerButton}>
+                    <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, {commenting: true})} >
                         <Icon active name='ios-undo' style={styles.footerIcon} />
-                        {this._renderReplyIcon(item, 'petition')}
+                        <Label style={styles.footerText} >
+                            {'Reply '}
+                            {item.comments_count ? item.comments_count : 0}
+                        </Label>
                     </Button>
                 </Left>
             </CardItem>
@@ -251,18 +264,21 @@ class FeedFooter extends Component {
     _renderLeaderPetitionFooter (item) {
         // console.log(item.entity.type ? item.entity.type : '==================');
         // console.log(item);
-        let isSigned = false;
+        let isSigned = item.poll.signatures[0] ? item.poll.signatures[0].option_id : 2;
         // console.log(item);
         return (
             <CardItem footer style={{ height: 35 }}>
                 <Left style={{ justifyContent: 'space-between' }}>
-                    <Button iconLeft transparent style={styles.footerButton}>
+                    <Button iconLeft transparent style={styles.footerButton} onPress={() => this.sign(item)}>
                         <Icon name='md-arrow-dropdown' style={styles.footerIcon} />
-                        <Label style={styles.footerText} onPress={() => this.sign(item)} > {isSigned ? 'Sign' : 'Unsign'}</Label>
+                        <Label style={styles.footerText} > {isSigned ? 'Unsign' : 'Sign'}</Label>
                     </Button>
-                    <Button iconLeft transparent style={styles.footerButton}>
+                    <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, {commenting: true})} >
                         <Icon active name='ios-undo' style={styles.footerIcon} />
-                        {this._renderReplyIcon(item, 'petition')}
+                        <Label style={styles.footerText} >
+                            {'Reply '}
+                            {item.comments_count ? item.comments_count : 0}
+                        </Label>
                     </Button>
                 </Left>
             </CardItem>
@@ -275,13 +291,16 @@ class FeedFooter extends Component {
         return (
             <CardItem footer style={{ height: 35 }}>
                 <Left style={{ justifyContent: 'space-between' }}>
-                    <Button iconLeft transparent style={styles.footerButton}>
+                    <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item)} >
                         <Icon name='md-arrow-dropdown' style={styles.footerIcon} />
                         <Label style={styles.footerText}>Answer</Label>
                     </Button>
-                    <Button iconLeft transparent style={styles.footerButton}>
+                    <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, {commenting: true})} >
                         <Icon active name='ios-undo' style={styles.footerIcon} />
-                        {this._renderReplyIcon(item, 'poll')}
+                        <Label style={styles.footerText} >
+                            {'Reply '}
+                            {item.comments_count ? item.comments_count : 0}
+                        </Label>
                     </Button>
                 </Left>
             </CardItem>
@@ -294,13 +313,16 @@ class FeedFooter extends Component {
         return (
             <CardItem footer style={{ height: 35 }}>
                 <Left style={{ justifyContent: 'space-between' }}>
-                    <Button iconLeft transparent style={styles.footerButton}>
+                    <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item)} >
                         <Icon name='md-arrow-dropdown' style={styles.footerIcon} />
                         <Label style={styles.footerText}>Pay</Label>
                     </Button>
-                    <Button iconLeft transparent style={styles.footerButton}>
+                    <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, {commenting: true})} >
                         <Icon active name='ios-undo' style={styles.footerIcon} />
-                        {this._renderReplyIcon(item, 'poll')}
+                        <Label style={styles.footerText} >
+                            {'Reply '}
+                            {item.comments_count ? item.comments_count : 0}
+                        </Label>
                     </Button>
                 </Left>
             </CardItem>
@@ -316,9 +338,12 @@ class FeedFooter extends Component {
                         <Icon name='md-arrow-dropdown' style={styles.footerIcon} />
                         <Label style={styles.footerText}>RSVP</Label>
                     </Button>
-                    <Button iconLeft transparent style={styles.footerButton}>
+                    <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, {commenting: true})} >
                         <Icon active name='ios-undo' style={styles.footerIcon} />
-                        {this._renderReplyIcon(item, 'poll')}
+                        <Label style={styles.footerText} >
+                            {'Reply '}
+                            {item.comments_count ? item.comments_count : 0}
+                        </Label>
                     </Button>
                 </Left>
             </CardItem>
@@ -336,9 +361,12 @@ class FeedFooter extends Component {
                         <Icon name='md-arrow-dropdown' style={styles.footerIcon} />
                         <Label style={styles.footerText}>Discuss</Label>
                     </Button>
-                    <Button iconLeft transparent style={styles.footerButton}>
+                    <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, {commenting: true})} >
                         <Icon active name='ios-undo' style={styles.footerIcon} />
-                        {this._renderReplyIcon(item, 'post')}
+                        <Label style={styles.footerText} >
+                            {'Reply '}
+                            {item.comments_count ? item.comments_count : 0}
+                        </Label>
                     </Button>
                 </Left>
             </CardItem>
@@ -346,7 +374,7 @@ class FeedFooter extends Component {
     }
 
     _renderDefaultFooter (item) {
-        // console.log(item.entity.type ? item.entity.type : '==================');
+        console.log(item.entity.type ? item.entity.type : '==================');
 
         return (
             <CardItem footer style={{ height: 35 }}>
@@ -396,7 +424,7 @@ class FeedFooter extends Component {
         case 'leader-news':
             return this._renderLeadNewsFooter(item);
         default:
-            return this._renderDefaultFooter(item);
+            return null;
         }
     }
 }

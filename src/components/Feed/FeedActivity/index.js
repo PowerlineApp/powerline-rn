@@ -38,14 +38,14 @@ class FeedActivity extends Component {
     }
 
     render () {
-        let {item} = this.props;
+        let {item, displayCommentPreview} = this.props;
 
         switch (item.entity.type) {
         case 'post':
         case 'user-petition':
-            return this._renderPostOrUserPetitionCard(item);
+            return this._renderPostOrUserPetitionCard(item, displayCommentPreview);
         default:
-            return this._renderGroupCard(item);
+            return this._renderGroupCard(item, displayCommentPreview);
         }
     }
 }
