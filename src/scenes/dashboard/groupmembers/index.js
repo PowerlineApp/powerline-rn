@@ -31,7 +31,7 @@ import {
 import styles from './styles';
 
 const PLColors = require('PLColors');
-import { getGroupMembers, followAllMembers } from 'PLActions';
+import { getGroupMembers, followAllMembers, acceptFollower, unFollowings, putFollowings } from 'PLActions';
 
 class GroupMembers extends Component{
     constructor(props){
@@ -41,7 +41,11 @@ class GroupMembers extends Component{
             members: []
         };
 
-        var { token, id } = this.props;
+        this.getMembers();
+    }
+    
+    getMembers(){
+        let { token, id } = this.props;
         getGroupMembers(token, id).then(data => {
             this.setState({
                 members: data.payload
@@ -86,6 +90,41 @@ class GroupMembers extends Component{
                 }
             ]
         );
+        this.getMembers();        
+    }
+
+    removeFollowing(index) {
+        var { token } = this.props;
+    
+        Alert.alert("Confirm", "Do you want to stop following " + this.state.members[index].username + " ?", [
+          {
+            text: 'Cancel'
+          },
+          {
+            text: 'OK',
+            onPress: () => {
+                unFollowings(token, this.state.members[index].id)
+                .then((ret) => {
+                    this.getMembers();        
+                })
+                .catch(err => {
+    
+                });
+            }
+          }
+        ]);
+    }
+    
+      follow(index){
+        var { token } = this.props;
+        putFollowings(token, this.state.members[index].id)
+        .then(() => {
+            this.getMembers();
+        })
+        .catch(err => {
+            
+        });
+        
     }
 
     render(){
@@ -120,13 +159,32 @@ class GroupMembers extends Component{
                         </ListItem>
                         {
                             this.state.members.map((user, index) => {
+                                console.log('user', user)
                                 return (
-                                    <ListItem key={index} style={{backgroundColor: 'white', marginLeft: 0, paddingLeft: 17}} onPress={() => this.goToProfile(user.id)}>
-                                        <Thumbnail square source={{uri: user.avatar_file_name+'&w=50&h=50&auto=compress,format,q=95'}}/>
+                                    <ListItem key={index} style={{backgroundColor: 'white', marginLeft: 0, paddingLeft: 17}} >
+                                        <TouchableOpacity onPress={() => this.goToProfile(user.id)} >
+                                            <Thumbnail square source={{uri: user.avatar_file_name+'&w=50&h=50&auto=compress,format,q=95'}}/>
+                                        </TouchableOpacity>
                                         <Body>
-                                            <Text>{user.username}</Text>
-                                            <Text note>{user.first_name} {user.last_name}</Text>
+                                            <Text onPress={() => this.goToProfile(user.id)} >{user.username}</Text>
+                                            <Text note onPress={() => this.goToProfile(user.id)} >{user.first_name} {user.last_name}</Text>
                                         </Body>
+                                            {
+                                                user.following 
+                                                ?   <TouchableOpacity onPress={() => this.removeFollowing(index)}>
+                                                        <View style={styles.followButtonContainer}>
+                                                            <Icon name="ios-person" style={styles.activeIconLarge} />
+                                                            <Icon name="remove-circle" style={styles.activeIconSmall} />
+                                                        </View>
+                                                    </TouchableOpacity>
+                                                :   <TouchableOpacity onPress={() => this.follow(index)}>
+                                                        <View style={styles.followButtonContainer}>
+                                                            <Icon name="ios-person" style={styles.activeIconLarge} />
+                                                            <Icon name="add-circle" style={styles.activeIconSmall} />
+                                                        </View>
+                                                    </TouchableOpacity>
+                                                    
+                                            }
                                     </ListItem>
                                 )
                             })
