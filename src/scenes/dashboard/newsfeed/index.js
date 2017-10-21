@@ -22,6 +22,7 @@ import Menu, {
     MenuOption,
     renderers
 } from 'react-native-popup-menu';
+import ConversationActivity from '../../../components/Conversation/ConversationActivity';
 import FeedActivity from '../../../components/Feed/FeedActivity';
 import ContentPlaceholder from '../../../components/ContentPlaceholder';
 
@@ -51,7 +52,8 @@ class Newsfeed extends Component {
             dataArray: [],
             dataSource: ds,
             text: "",
-            showAvatar: true
+            showAvatar: true,
+            lastOffset: 0
         };
     }
 
@@ -170,6 +172,7 @@ class Newsfeed extends Component {
 
     _onBeginReached() {
         this.props.dispatch(resetActivities());
+
         this.loadInitialActivities();
     }
 
@@ -182,12 +185,6 @@ class Newsfeed extends Component {
         }
     }
 
-    // Feed common components
-
-    _renderHeader(item) {
-        return <FeedHeader item={item} />
-    }
-
     onChangeText(text){
         this.setState({
             text: text
@@ -195,108 +192,45 @@ class Newsfeed extends Component {
     }
 
     onCreatePost(){
-        var { token, group, dispatch } = this.props;
-
+        if (this.state.postingOnGroup){
+            return;
+        }
+        var { token, savedGroup, dispatch } = this.props;
+        this.setState({postingOnGroup: true})
+        console.log(token, savedGroup, this.state.text)
         if(this.state.text != "" || this.state.text.trim() != ""){           
-            createPostToGroup(token, group, this.state.text)
+            createPostToGroup(token, savedGroup.group, this.state.text)
             .then(data => {
                 this.setState({
                     text: ""
                 });
                 dispatch({type: 'DELETE_ACTIVITIES'});
-                dispatch(loadActivities(token, 0, 20, group ))
+                this.loadInitialActivities();
+                this.setState({postingOnGroup: false})
             })
             .catch(err => {
-
+                this.setState({postingOnGroup: false})
             })
         }
     }
 
     render() {
-        if(this.props.group != 'all' && this.props.payload.length <= this.props.groupLimit){
-            return (
-                <Container style={styles.container}>
-                <View style={styles.groupHeaderContainer}>
-                    {this.state.showAvatar && this.props.savedGroup && this.props.savedGroup.groupAvatar != '' && this.props.savedGroup.groupAvatar != null ?
-                        <Thumbnail square source={{ uri: this.props.savedGroup.groupAvatar + '&w=200&h=200&auto=compress,format,q=95' }} style={styles.groupAvatar} /> : null}
-                    <Text style={styles.groupName}>{this.props.savedGroup.groupName}</Text>
-                </View>
-                {this.state.isRefreshing && <PLLoader position="bottom" />}
-                <ContentPlaceholder
-                    empty={!this.state.isRefreshing && !this.state.isLoading && this.state.dataArray.length === 0}
-                    title="The world belongs to those who speak up! Be the first to create a post!"
-                    refreshControl={Platform.OS === 'android' &&
-                        <RefreshControl
-                            refreshing={false}
-                            onRefresh={this._onRefresh.bind(this)}
-                        />
-                    }
-                    onScroll={(e) => {                           
-                        var height = e.nativeEvent.contentSize.height;
-                        var offset = e.nativeEvent.contentOffset.y;
-                        if ((WINDOW_HEIGHT + offset) >= height && offset > 0) {
-                            this.setState({
-                                showAvatar: false
-                            });
-                        } else {
-                            this.setState({
-                                showAvatar: true
-                            });
-                        }
-
-                        if (Platform.OS === 'ios' && offset < -3) {
-                            this._onRefresh();
-                        }
-                    }}
-                >
-                    <View style={{flex: 1, height:(this.state.showAvatar && this.props.groupAvatar != '' && this.props.groupAvatar != null? (height - 364):( height -  308)), justifyContent: 'flex-end'}}>
-                    <List>
-                        {this.state.dataArray.map((activity, index) => {
-                            return (
-                                <ListItem avatar key={index} style={{backgroundColor: 'white', marginLeft: 0, paddingLeft: 15}}>
-                                    <Left>
-                                        <Thumbnail small source={{uri: activity.user.avatar_file_name+'&w=200&h=200&auto=compress,format,q=95'}}/>
-                                    </Left>
-                                    <Body style={{borderBottomWidth: 0}}>
-                                        <Text style={styles.title}>{activity.user.full_name}</Text>
-                                        <Text note style={styles.subtitle}>{activity.description}</Text>
-                                    </Body>
-                                    <Right style={{borderBottomWidth: 0}}>
-                                        <Text style={styles.activityTime}><TimeAgo time={activity.sent_at}/></Text>
-                                        <Button transparent small onPress={() => this.vote(activity, 'upvote')}>
-                                            <Icon name="md-arrow-dropup" style={activity.upvotes_count!=0? styles.footerIconBlue : styles.footerIcon}/>
-                                            <Label style={activity.upvotes_count!=0? styles.footerTextBlue : styles.footerText}>{activity.upvotes_count ? activity.upvotes_count : 0}</Label>
-                                        </Button>
-                                    </Right>
-                                </ListItem>
-                            );
-                        })}                                                
-                    </List>
-                    </View>
-                </ContentPlaceholder>
-                <Footer style={styles.CFooter}>
-                    <Item style={styles.CFooterItem}>
-                        <Thumbnail small source={{uri: this.props.profile.avatar_file_name+'&w=200&h=200&auto=compress,format,q=95'}}/>
-                        <Input style={styles.CFooterItemInput} value={this.state.text} onChangeText={(text) => this.onChangeText(text)}/>
-                        <Button transparent style={styles.sendBtn} onPress={() => this.onCreatePost()}>
-                            <Text>SEND</Text>
-                            <Icon name="md-send"/>
-                        </Button>
-                    </Item>
-                </Footer>
-                </Container>
-            );
-        } else{
-            return (
+        // test if we should show conversationFeed or ActivityFeed
+        let conversationView = this.props.group != 'all' && this.props.payload.length <= this.props.groupLimit;
+        conversationView = false;    
+        // console.log({token, savedGroup} = this.props)
+        return (
                 // The default view of the newsfeed is the All feed.
                 <Container style={styles.container}>
                 {
                     this.props.savedGroup && this.props.savedGroup.group != 'all' &&
-                    <View style={styles.groupHeaderContainer}>
-                        {this.state.showAvatar && this.props.savedGroup.groupAvatar != '' && this.props.savedGroup.groupAvatar != null ?
-                            <Thumbnail square source={{ uri: this.props.savedGroup.groupAvatar + '&w=200&h=200&auto=compress,format,q=95' }} style={styles.groupAvatar} /> : null}
-                        <Text style={styles.groupName}>{this.props.savedGroup.groupName}</Text>
-                    </View>
+                    <TouchableOpacity onPress={() => Actions.groupprofile({id: this.props.savedGroup.group})}>
+                        <View style={styles.groupHeaderContainer}>
+                            {this.state.showAvatar && this.props.savedGroup.groupAvatar != '' && this.props.savedGroup.groupAvatar != null ?
+                                <Thumbnail square source={{ uri: this.props.savedGroup.groupAvatar + '&w=200&h=200&auto=compress,format,q=95' }} style={styles.groupAvatar} /> : null}
+                            <Text style={styles.groupName}>{this.props.savedGroup.groupName}</Text>
+                        </View>
+                    </TouchableOpacity>
                 }
                 {this.state.isRefreshing && <PLLoader position="bottom" />}
                 <ContentPlaceholder
@@ -311,15 +245,10 @@ class Newsfeed extends Component {
                     onScroll={(e) => {
                         var height = e.nativeEvent.contentSize.height;
                         var offset = e.nativeEvent.contentOffset.y;
-                        if ((WINDOW_HEIGHT + offset) >= height && offset > 0) {
-                            this._onEndReached();
-                            this.setState({
-                                showAvatar: false
-                            })
-                        } else {
-                            this.setState({
-                                showAvatar: true
-                            });
+                        if (offset > 30){
+                            this.setState({showAvatar : false})
+                        } else if (offset < 20) {
+                            this.setState({showAvatar: true})
                         }
 
                         if (Platform.OS === 'ios' && offset < -3) {
@@ -328,15 +257,34 @@ class Newsfeed extends Component {
                     }}
                 >
                     <ListView dataSource={this.state.dataSource} renderRow={item => {
-                        return <FeedActivity item={item} token={this.props.token} profile={this.props.profile} />
+                        return  (conversationView 
+                            ? <ConversationActivity item={item} token={this.props.token} profile={this.props.profile} /> 
+                            : <FeedActivity item={item} token={this.props.token} profile={this.props.profile} /> 
+                        )
                     }} />
                     <PLOverlayLoader visible={this.state.isLoading} logo />
                     {this._renderTailLoading()}
                 </ContentPlaceholder>
+                {
+                    /**
+                     * if we are in conversation view, we have a textinput
+                     */
+                    conversationView 
+                    ?   <Footer style={styles.CFooter}>
+                            <Item style={styles.CFooterItem}>
+                                <Thumbnail small source={{uri: this.props.profile.avatar_file_name+'&w=200&h=200&auto=compress,format,q=95'}}/>
+                                <Input style={styles.CFooterItemInput} value={this.state.text} onChangeText={(text) => !this.state.postingOnGroup ? this.onChangeText(text) : {}}/>
+                                <Button transparent style={styles.sendBtn} onPress={() => this.onCreatePost()}>
+                                    <Text color={'#ccc'} >SEND</Text>
+                                    <Icon name="md-send" color={'#ccc'}/>
+                                </Button>
+                            </Item>
+                        </Footer>
+                    : null
+                }
                 </Container>
             );
         }        
-    }
 }
 
 const optionsStyles = {

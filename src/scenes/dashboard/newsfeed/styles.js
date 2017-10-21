@@ -144,12 +144,18 @@ export default {
     },
 
     sendBtn: {
-        height: 56
+        height: 56,
+        color: '#ccc'
     },
 
     CFooterItemInput: {
         paddingLeft: 15,
         fontSize: 20
+    },
+    CFooterItemInputDisabled: {
+        paddingLeft: 15,
+        fontSize: 20,
+        color: '#ccc'
     },
 
     groupAvatar: {

@@ -185,7 +185,7 @@ class Profile extends Component{
                     {this.state.user?      
                     <View style={{backgroundColor: PLColors.main}}>
                         <View>                            
-                            <Button transparent onPress={() => Actions.pop()}>
+                            <Button transparent onPress={() => Actions.pop()} style={{width: 50, height: 50 }} >
                                 <Icon active name="arrow-back" style={{color: 'white'}}/>
                             </Button>                           
                         </View>                        

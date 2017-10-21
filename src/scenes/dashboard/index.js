@@ -269,7 +269,7 @@ class Home extends Component {
     }
     _openGroup(token, data){
       let {target} = data.notification.payload.additionalData.entity;
-      Actions.groupprofile(440);
+      Actions.groupprofile({id: target.id});
     }
     _viewPoll(token, data){
       let {target} = data.notification.payload.additionalData.entity;
