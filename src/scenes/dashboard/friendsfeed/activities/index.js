@@ -100,10 +100,11 @@ class FriendActivity extends Component {
 
     async loadInitialActivities() {
         this.setState({ isRefreshing: true });
-        const { props: { token, dispatch } } = this;
+        const { props: { token, dispatch, page } } = this;
         try {
             await Promise.race([
-                dispatch(loadActivities(token)),
+                dispatch(loadActivities(token, page, 1, null, true)),
+                // dispatch(loadActivities(token, null, null, null, null, true)),
                 timeout(15000),
             ]);
         } catch (e) {
