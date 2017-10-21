@@ -222,7 +222,7 @@ class NewPetition extends Component {
                         </Button>
                     </Right>
                 </Header>
-                <Content>
+                <ScrollView>
                     <List>
                         <ListItem style={styles.community_container} onPress={() => this.toggleCommunity()}>
                             <View style={styles.avatar_container}>
@@ -281,7 +281,7 @@ class NewPetition extends Component {
                             </View> : null
                         }
                     </View>
-                </Content>
+                </ScrollView>
                 <Footer style={{alignItems: 'center', justifyContent: 'space-between', backgroundColor: PLColors.main, paddingLeft: 10, paddingRight: 10}}>
                     {this.state.petition_remaining
                         ? <Label style={{color: 'white', fontSize: 10}}>
