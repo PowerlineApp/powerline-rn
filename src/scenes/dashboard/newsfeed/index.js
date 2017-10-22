@@ -4,6 +4,7 @@
 //Group feed will look very different depending on if in Feed view or Conversation view.
 
 import React, { Component } from 'react';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { ActionSheet, Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, ListItem, Thumbnail, List, Card, CardItem, Label, Footer } from 'native-base';
@@ -214,10 +215,16 @@ class Newsfeed extends Component {
         }
     }
 
+    
+
     render() {
         // test if we should show conversationFeed or ActivityFeed
         let conversationView = this.props.group != 'all' && this.props.payload.length <= this.props.groupLimit;
-        conversationView = false;    
+        let dataSouce = this.state.dataSource;
+        if (dataSouce[0] && conversationView) {
+            dataSouce = dataSouce.reverse();
+        }
+        conversationView = true;    
         // console.log({token, savedGroup} = this.props)
         return (
                 // The default view of the newsfeed is the All feed.
@@ -236,7 +243,8 @@ class Newsfeed extends Component {
                 <ContentPlaceholder
                     empty={!this.state.isRefreshing && !this.state.isLoading && this.state.dataArray.length === 0}
                     title="The world belongs to those who speak up! Be the first to create a post!"    
-                    refreshControl={Platform.OS === 'android' &&
+                    refreshControl={
+                        Platform.OS === 'android' && !conversationView &&
                         <RefreshControl
                             refreshing={false}
                             onRefresh={this._onRefresh.bind(this)}
@@ -245,18 +253,35 @@ class Newsfeed extends Component {
                     onScroll={(e) => {
                         var height = e.nativeEvent.contentSize.height;
                         var offset = e.nativeEvent.contentOffset.y;
-                        if (offset > 30){
+                        if (offset > 30 && this.state.showAvatar){
                             this.setState({showAvatar : false})
-                        } else if (offset < 20) {
+                        } else if (offset < 20 && !this.state.showAvatar) {
                             this.setState({showAvatar: true})
                         }
 
-                        if (Platform.OS === 'ios' && offset < -3) {
-                            this._onRefresh();
+                        console.log(offset, height)
+
+                        if (offset < -3) {
+                            if (conversationView){
+                                console.log('_onEndReached')
+                                this._onEndReached();
+                            } else {
+                                console.log('refresh')
+                                this._onRefresh();
+                            }
+                        }
+                        if (offset > height + 3){
+                            if (conversationView){
+                                console.log('refresh')
+                                this._onRefresh();
+                            } else {
+                                console.log('_onEndReached')
+                                this._onEndReached();
+                            }
                         }
                     }}
                 >
-                    <ListView dataSource={this.state.dataSource} renderRow={item => {
+                    <ListView dataSource={dataSouce} renderRow={item => {
                         return  (conversationView 
                             ? <ConversationActivity item={item} token={this.props.token} profile={this.props.profile} /> 
                             : <FeedActivity item={item} token={this.props.token} profile={this.props.profile} /> 
@@ -270,16 +295,17 @@ class Newsfeed extends Component {
                      * if we are in conversation view, we have a textinput
                      */
                     conversationView 
-                    ?   <Footer style={styles.CFooter}>
-                            <Item style={styles.CFooterItem}>
-                                <Thumbnail small source={{uri: this.props.profile.avatar_file_name+'&w=200&h=200&auto=compress,format,q=95'}}/>
-                                <Input style={styles.CFooterItemInput} value={this.state.text} onChangeText={(text) => !this.state.postingOnGroup ? this.onChangeText(text) : {}}/>
-                                <Button transparent style={styles.sendBtn} onPress={() => this.onCreatePost()}>
-                                    <Text color={'#ccc'} >SEND</Text>
-                                    <Icon name="md-send" color={'#ccc'}/>
-                                </Button>
-                            </Item>
-                        </Footer>
+                     ?       <Footer style={styles.CFooter}>
+                                <Item style={styles.CFooterItem}>
+                                    <Thumbnail small source={{uri: this.props.profile.avatar_file_name+'&w=200&h=200&auto=compress,format,q=95'}}/>
+                                    <Input style={styles.CFooterItemInput} value={this.state.text} onChangeText={(text) => !this.state.postingOnGroup ? this.onChangeText(text) : {}}/>
+                                    <Button transparent style={styles.sendBtn} onPress={() => this.onCreatePost()}>
+                                        <Text color={'#ccc'} >SEND</Text>
+                                        <Icon name="md-send" color={'#ccc'}/>
+                                    </Button>
+                                </Item>
+                                <KeyboardSpacer />
+                            </Footer>
                     : null
                 }
                 </Container>

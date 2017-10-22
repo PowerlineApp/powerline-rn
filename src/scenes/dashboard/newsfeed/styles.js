@@ -1,8 +1,8 @@
-var PLColors = require('PLColors');
-var { StyleSheet, Dimensions, Platform } = require('react-native');
+let PLColors = require('PLColors');
+let { StyleSheet, Dimensions, Platform } = require('react-native');
 
-const { WINDOW_WIDTH: viewportWidth, WINDOW_HEIGHT: viewportHeight } = require('PLConstants');
-const { width, height } = Dimensions.get('window');
+let { WINDOW_WIDTH: viewportWidth, WINDOW_HEIGHT: viewportHeight } = require('PLConstants');
+let { width, height } = Dimensions.get('window');
 
 function wp(percentage) {
     const value = (percentage * viewportWidth) / 100;
@@ -132,7 +132,8 @@ export default {
     },
 
     CFooter: {
-        backgroundColor: 'transparent'
+        backgroundColor: 'transparent',
+        height: 55
     },
 
     CFooterItem: {
