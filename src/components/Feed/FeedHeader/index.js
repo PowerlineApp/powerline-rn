@@ -37,13 +37,26 @@ class FeedHeader extends Component {
             }
         }).catch(err => {});
     }
-    edit(item) {
-        Actions.itemDetail({
-            entityId: item.entity.id,
-            entityType: item.entity.type,
-            isEditEnabled: true
-        });
+    redirect (item, options) {
+        let type;
+        if (item.poll) {
+            type = 'poll';
+        } else if (item.post) {
+            type = 'post';
+        } else if (item.petition) {
+            type = 'petition';
+        }
+        Actions.itemDetail({entityType: type, entityId: item.entity.id, ...options});
+    }
+
+    edit (item) {
+        // Actions.itemDetail({
+        //     entityId: item.entity.id,
+        //     entityType: item.entity.type,
+        //     isEditEnabled: true
+        // });
         this.menu && this.menu.close();
+        this.redirect(item, {isEditEnabled: true});
     }
 
     boost(item) {

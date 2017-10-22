@@ -86,8 +86,8 @@ class Profile extends Component{
 
         });
 
-        loadActivitiesByUserId(token, 1, 20, id).then(data => {
-            console.log(data);
+        loadActivitiesByUserId(token, 1, 20, null, id).then(data => {
+            // console.log('res ---', data);
             this.setState({
                 activities: data.payload
             });

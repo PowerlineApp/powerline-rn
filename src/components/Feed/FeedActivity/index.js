@@ -8,6 +8,7 @@ import FeedHeader from '../FeedHeader';
 import FeedMetaData from '../FeedMetaData';
 import FeedFooter from '../FeedFooter';
 import FeedCarousel from '../FeedCarousel';
+import FeedCommentPreview from '../FeedCommentPreview';
 
 class FeedActivity extends Component {
     _renderPostOrUserPetitionCard (item) {
@@ -18,6 +19,7 @@ class FeedActivity extends Component {
                 <FeedMetaData item={item} />
                 <View style={styles.borderContainer} />
                 <FeedFooter item={item} profile={this.props.profile} token={this.props.token} />
+                <FeedCommentPreview item={item} />
             </Card>
         );
     }
@@ -25,23 +27,25 @@ class FeedActivity extends Component {
     _renderGroupCard (item) {
         return (
             <Card>
+                <FeedHeader item={item} />
                 <FeedDescription item={item} />
                 <FeedCarousel item={item} />
                 <View style={styles.borderContainer} />
                 <FeedFooter item={item} profile={this.props.profile} token={this.props.token} />
+                <FeedCommentPreview item={item} />
             </Card>
         );
     }
 
     render () {
-        let {item} = this.props;
+        let {item, displayCommentPreview} = this.props;
 
         switch (item.entity.type) {
         case 'post':
         case 'user-petition':
-            return this._renderPostOrUserPetitionCard(item);
+            return this._renderPostOrUserPetitionCard(item, displayCommentPreview);
         default:
-            return this._renderGroupCard(item);
+            return this._renderGroupCard(item, displayCommentPreview);
         }
     }
 }

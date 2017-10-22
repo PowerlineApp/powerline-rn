@@ -136,4 +136,8 @@ export default {
         color: PLColors.main,
         fontWeight: '500'
     },
+    commentPreviewContainer: {
+        backgroundColor: '#F8F8F8',
+        minHeight: 64
+    }
 };

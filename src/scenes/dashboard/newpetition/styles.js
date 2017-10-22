@@ -77,6 +77,7 @@ export default {
 
     community_list_container: {
         position: 'absolute',
+        flex: 1,
         left: 0,
         top: 0,
         width: width,

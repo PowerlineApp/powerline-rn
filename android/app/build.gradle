@@ -72,7 +72,6 @@ import com.android.build.OutputFile
  * ]
  */
 
-<<<<<<< ours
 buildscript {
     repositories {
         maven { url 'https://maven.fabric.io/public' }
@@ -87,11 +86,9 @@ buildscript {
         classpath 'io.fabric.tools:gradle:1.+'
     }
 }
-=======
 project.ext.react = [
     entryFile: "index.js"
 ]
->>>>>>> theirs
 
 apply from: "../../node_modules/react-native/react.gradle"
 

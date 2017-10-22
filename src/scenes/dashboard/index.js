@@ -21,7 +21,7 @@ import styles from './styles';
 
 import {
   loadUserProfile,
-  loadActivities, 
+  loadActivities,
   registerDevice,
   acceptFollowers,
   unFollowers,
@@ -30,13 +30,14 @@ import {
   getFollowers,
   votePost,
   joinGroup,
-  signPetition,
+  signUserPetition,
   unsubscribeFromPoll,
   unsubscribeFromPost,
   unsubscribeFromPetition,
   getComments,
   loadUserGroups
 } from 'PLActions';
+
 
 // Tab Scenes
 //GH13 - Newsfeed / Standard Item Container / Same for Group Feed
@@ -54,42 +55,42 @@ var DeviceInfo = require('react-native-device-info');
 const isIOS = Platform.OS === 'ios';
 
 const FooterTabButton = ({ badge = 0, active, onPress, name, title }) => {
-  const buttonProps = {
-    style: styles.containerTabButton,
-    active,
-    onPress,
-  };
+    const buttonProps = {
+        style: styles.containerTabButton,
+        active,
+        onPress
+    };
 
-  const BudgeButton = ({ children }) => <Button badge {...buttonProps}>{children}</Button>;
-  const NormalButton = ({ children }) => <Button {...buttonProps}>{children}</Button>;
+    const BudgeButton = ({ children }) => <Button badge {...buttonProps}>{children}</Button>;
+    const NormalButton = ({ children }) => <Button {...buttonProps}>{children}</Button>;
 
-  let content = null;
-  if (badge > 0) {
-    content = (
-      <BudgeButton>
-        <Badge><Text>{badge}</Text></Badge>
-        <Icon active={active} name={name} />
-        <Text numberOfLines={1} style={styles.tabText}>{title}</Text>
-      </BudgeButton>
-    )
-  } else {
-    content = (
-      <NormalButton>
-        <Icon active={active} name={name} />
-        <Text numberOfLines={1} style={styles.tabText}>{title}</Text>
-      </NormalButton>
+    let content = null;
+    if (badge > 0) {
+        content = (
+            <BudgeButton>
+                <Badge><Text>{badge}</Text></Badge>
+                <Icon active={active} name={name} />
+                <Text numberOfLines={1} style={styles.tabText}>{title}</Text>
+            </BudgeButton>
     );
-  }
+    } else {
+        content = (
+            <NormalButton>
+                <Icon active={active} name={name} />
+                <Text numberOfLines={1} style={styles.tabText}>{title}</Text>
+            </NormalButton>
+    );
+    }
 
-  if (isIOS) {
-    return content;
-  }
+    if (isIOS) {
+        return content;
+    }
 
-  return (
-    <View style={[styles.containerTabButton, styles.borderTop]}>
-      { content }
-    </View>
-  );
+    return (
+        <View style={[styles.containerTabButton, styles.borderTop]}>
+            { content }
+        </View>
+    );
 };
 
 const optionsRenderer = options => (
@@ -102,446 +103,411 @@ const optionsRenderer = options => (
 )
 
 class Home extends Component {
-
-  // static propTypes = {
-  //   openDrawer: React.PropTypes.func,
-  // }
-
-  constructor(props) {
-    super(props);
-    if(props.notification){
-      this.state = {
-        tab1: false,
-        tab2: false,
-        tab3: false,
-        tab4: true,
-        group: 'all',
-        search: ''
-      };
-    }else{
-      this.state = {
-        tab1: true,
-        tab2: false,
-        tab3: false,
-        tab4: false,
-        group: 'all',
-        search: ''
-      };
+    static propTypes = {
+      openDrawer: React.PropTypes.func,
     }
 
-    this.onIds = this.onIds.bind(this);
-    this.onOpened = this.onOpened.bind(this);
-    this.onReceived = this.onReceived.bind(this);
-    this.onRegistered = this.onRegistered.bind(this);
-  }
+    constructor (props) {
+        super(props);
+        if (props.notification) {
+            this.state = {
+                tab1: false,
+                tab2: false,
+                tab3: false,
+                tab4: true,
+                group: 'all',
+                search: ''
+            };
+        } else {
+            this.state = {
+                tab1: true,
+                tab2: false,
+                tab3: false,
+                tab4: false,
+                group: 'all',
+                search: ''
+            };
+        }
 
-  componentWillMount() {
-    const { props: { profile, token, dispatch } } = this;
+        this.onIds = this.onIds.bind(this);
+        this.onOpened = this.onOpened.bind(this);
+        this.onReceived = this.onReceived.bind(this);
+        this.onRegistered = this.onRegistered.bind(this);
+    }
 
-    OneSignal.configure();
+    componentWillMount () {
+        const { props: { profile, token, dispatch } } = this;
+
+        OneSignal.configure();
 
     // When user logs in, the device subscription is set to True to allow for notifications. If false, device cannot receive notifications
-    OneSignal.setSubscription(true);
-    OneSignal.enableSound(true);
-    OneSignal.enableVibrate(true);
-    
-    OneSignal.addEventListener('ids', this.onIds);
+        OneSignal.setSubscription(true);
+        OneSignal.enableSound(true);
+        OneSignal.enableVibrate(true);
 
-    OneSignal.addEventListener('opened', this.onOpened);
+        OneSignal.addEventListener('ids', this.onIds);
 
-    OneSignal.addEventListener('received', this.onReceived);
-    OneSignal.addEventListener('registered', this.onRegistered);
+        OneSignal.addEventListener('opened', this.onOpened);
 
-    if (!profile) {
-      this.loadCurrentUserProfile();
+        OneSignal.addEventListener('received', this.onReceived);
+        OneSignal.addEventListener('registered', this.onRegistered);
+
+        if (!profile) {
+            this.loadCurrentUserProfile();
+        }
+
+        ShareExtension.data().then((data) => {
+            if (data.type != "" && data.value != "") {
+                Actions.newpost({data: data});
+            }
+        });
     }
 
-    ShareExtension.data().then((data) => {
-        if(data.type != "" && data.value != ""){
-          Actions.newpost({data: data});
-        }        
-    });
-
-    this.props.loadUserGroups(token);
-  }
-
-  onReceived(data){
+    onReceived (data) {
     // console.log('received: ', data);
-  }
+    }
 
-  onRegistered(data){
+    onRegistered (data) {
     // console.log('registered :', data);
-  }
+    }
 
-  onIds(data){
-    var { token } = this.props;
-    AsyncStorage.setItem('pushId', data.userId);
+    onIds (data) {
+        var { token } = this.props;
+        AsyncStorage.setItem('pushId', data.userId);
 
-    var params = {
-      id: data.userId,
-      identifier: DeviceInfo.getUniqueID(),
-      timezone: (new Date()).getTimezoneOffset()* 60,
-      version: DeviceInfo.getVersion(),
-      os: DeviceInfo.getSystemName(),
-      model: DeviceInfo.getModel(),
-      type: Platform.OS
-    };
+        var params = {
+            id: data.userId,
+            identifier: DeviceInfo.getUniqueID(),
+            timezone: (new Date()).getTimezoneOffset() * 60,
+            version: DeviceInfo.getVersion(),
+            os: DeviceInfo.getSystemName(),
+            model: DeviceInfo.getModel(),
+            type: Platform.OS
+        };
 
-    //Device needs to be registered with Powerline backend after token received from OneSignal
-    registerDevice(token, params)
+    // Device needs to be registered with Powerline backend after token received from OneSignal
+        registerDevice(token, params)
     .then(data => {
     })
     .catch(err => {
     });
-  }
-  
-    // these are the action buttons actions
-    _signPetition(token, data){
-      let {target} = data.notification.payload.additionalData.entity;
-      
-      signPetition(token, target.id).then(res => console.log(res));
-    }
-    _viewPetition(token, data){
-      let {target} = data.notification.payload.additionalData.entity;
-      Actions.itemDetail({ entityId: target.id, entityType: target.type });
     }
 
-    _mutePetition(token, data){
-      let {target} = data.notification.payload.additionalData.entity;
-      
-      unsubscribeFromPetition(token, target.id).then(ans => console.log(ans));
-    }
-    _openComment(token, data){
-      let {target} = data.notification.payload.additionalData.entity;
-      // this is to be changed!!! the commentDetail component doesnt accept an id, but the comment object, so I must do this!
-      let comment = getComments(token, target.type, target.id).then(
-        res => {
-          Actions.commentDetail({
-            comment: res.comments.find(comment => comment.id === target.comment_id), 
-            entityType: target.type,
-            entityId: target.id
-           });
+    redirect (item, options = {}) {
+        console.log('===>', item, '====>', options);
+        // return;
+        item = item.notification.payload.additionalData.entity.target;
+        let type = 'poll';
+        if (item.type == 'post') {
+          type = 'post'
+        } else if (item.type == 'user-petition'){
+          type = 'petition' 
         }
-      )      
+
+        console.log('about to go: ', type, item.id)
+        Actions.itemDetail({entityType: type, entityId: item.id, ...options});
     }
-    _openPost(token, data){
-      let {target} = data.notification.payload.additionalData.entity;
-      Actions.itemDetail({ entityId: entity.id, entityType: entity.type });
+
+    // these are the action buttons actions
+    _signPetition (token, data) {
+        let {target} = data.notification.payload.additionalData.entity;
+
+        signUserPetition(token, target.id).then(res => console.log(res));
     }
-    _approveFollowRequest(token, data, dispatch){
-      acceptFollowers(token, data.notification.payload.additionalData.entity.target.id).then((ret) => {  
-        dispatch({type: 'RESET_FOLLOWERS'});
-        getFollowers(token, 1, 20).then(ret1 => {
-          dispatch({type: 'LOAD_FOLLOWERS', data: ret1});
+    _viewPetition (data) {
+        this.redirect(data);
+    }
+
+    _mutePetition (token, data) {
+        let {target} = data.notification.payload.additionalData.entity;
+
+        unsubscribeFromPetition(token, target.id).then(ans => console.log(ans));
+    }
+    _openComment (token, data) {
+        let {target} = data.notification.payload.additionalData.entity;
+      // this is to be changed!!! the commentDetail component doesnt accept an id, but the comment object, so I must do this!
+        let comment = getComments(token, target.type, target.id).then(
+        res => {
+            Actions.commentDetail({
+                comment: res.comments.find(comment => comment.id === target.comment_id),
+                entityType: target.type,
+                entityId: target.id
+            });
+        }
+      );
+    }
+    _openPost (data) {
+        this.redirect(data);
+    }
+    _approveFollowRequest (token, data, dispatch) {
+        acceptFollowers(token, data.notification.payload.additionalData.entity.target.id).then((ret) => {
+            dispatch({type: 'RESET_FOLLOWERS'});
+            getFollowers(token, 1, 20).then(ret1 => {
+                dispatch({type: 'LOAD_FOLLOWERS', data: ret1});
+            }).catch(err => {
+
+            });
+            Actions.myInfluences();
         }).catch(err => {
-          
-        });      
-        Actions.myInfluences();
-      }).catch(err => {
-        console.log(err);
-      });
+            console.log(err);
+        });
     }
-    _ignoreFollowRequest(token, data, dispatch){
-      unFollowers(token, data.notification.payload.additionalData.entity.target.id).then((ret) => {   
-        dispatch({type: 'RESET_FOLLOWERS'});
-        getFollowers(token, 1, 20).then(ret1 => {
-          dispatch({type: 'LOAD_FOLLOWERS', data: ret1});
+    _ignoreFollowRequest (token, data, dispatch) {
+        unFollowers(token, data.notification.payload.additionalData.entity.target.id).then((ret) => {
+            dispatch({type: 'RESET_FOLLOWERS'});
+            getFollowers(token, 1, 20).then(ret1 => {
+                dispatch({type: 'LOAD_FOLLOWERS', data: ret1});
+            }).catch(err => {
+
+            });
+            Actions.myInfluences();
         }).catch(err => {
-          
-        });               
-        Actions.myInfluences();                    
-      }).catch(err => {
-        
-      });
+
+        });
     }
-    _upvotePost(token, data){
-      let {target} = data.notification.payload.additionalData.entity;
-      votePost(token, target.id, 'upvote')
+    _upvotePost (token, data) {
+        let {target} = data.notification.payload.additionalData.entity;
+        votePost(token, target.id, 'upvote');
     }
-    _downvotePost(token, data){
-      let {target} = data.notification.payload.additionalData.entity;
-      votePost(token, target.id, 'downvote')
+    _downvotePost (token, data) {
+        let {target} = data.notification.payload.additionalData.entity;
+        votePost(token, target.id, 'downvote');
     }
-    _sharePost(token, data){
+    _sharePost (token, data) {
       // TODO
     }
-    _viewPost(token, data){
-      let {target} = data.notification.payload.additionalData.entity;
-      Actions.itemDetail({ entityId: target.id, entityType: target.type });
+    _viewPost (data) {
+        this.redirect(data);
     }
-    _mutePost(token, data){
-      let {target} = data.notification.payload.additionalData.entity;
-      unsubscribeFromPost(token, target.id)
+    _mutePost (token, data) {
+        let {target} = data.notification.payload.additionalData.entity;
+        unsubscribeFromPost(token, target.id);
     }
-    _joinGroup(token, data){
-      let groupId = data.notification.payload.additionalData.entity.target.id;
-      joinGroup(token, groupId)
+    _joinGroup (token, data) {
+        let groupId = data.notification.payload.additionalData.entity.target.id;
+        joinGroup(token, groupId);
     }
-    _ignoreInvite(token, data){
+    _ignoreInvite (token, data) {
       // does nothing? if yes, working
     }
     _openGroup(token, data){
       let {target} = data.notification.payload.additionalData.entity;
-      Actions.groupprofile(440);
+      Actions.groupprofile({id: target.id});
     }
-    _viewPoll(token, data){
-      let {target} = data.notification.payload.additionalData.entity;
-      Actions.itemDetail({ entityId: target.id, entityType: target.type });
+    _viewPoll (data) {
+        this.redirect(data);
     }
-    _mutePoll(token, data){
-      let {target} = data.notification.payload.additionalData.entity;      
-      unsubscribeFromPoll(token, target.id);
+    _mutePoll (token, data) {
+        let {target} = data.notification.payload.additionalData.entity;
+        unsubscribeFromPoll(token, target.id);
     }
-    _replyComment(token, data){
+    _replyComment (data) {
       // navigates to the post/petition/poll -> opens comment -> fill the input with the other user username // for now it only goes to the post/poll/petition
       // console.log('replyComment', token, data);
-      let {target} = data.notification.payload.additionalData.entity;
-      Actions.itemDetail({ entityId: target.id, entityType: target.type });
+        this.redirect(data);
     }
 
-    _shareAnnouncement(token, data){
+    _shareAnnouncement (token, data) {
       // TODO
       // console.log('shareAnnouncement', token, data);
     }
 
-    _rspv(token, data){
-      // console.log('rspv', token, data);
-      let {target} = data.notification.payload.additionalData.entity;      
-      Actions.itemDetail({ entityId: target.id, entityType: target.type });
+    _rspv (data) {
+        this.redirect(data);
     }
 
-    _handleDefault(token, data){
-      // user didnt click an action button? redirect to a specific place, depending on the notification
-      let {type} = data.notification.payload.additionalData;
-      switch(type){
-        case 'own-post-commented' || 'follow-post-commented' || 'own-post-voted' || 'own-post-commented' :
-          this._viewPost(token, data);
-          break;
-        case 'user-petition-boosted' || 'own-user-petition-commented' || 'own-user-petition-signed' || 'follow-user-petition-commented' || 'petition-created':
-          this._viewPetition(token, data);
-          break;
-        case 'comment-mentioned' || 'comment-replied':
-          this._openComment(token, data);
-          break;
-        case 'post-mentioned':
-          this._viewPost(token, data);
-          break;
-        case 'follow-request':
-          Actions.myInfluences();
-          break;
-        case 'follow-post-created':
-          this._viewPost(token, data);
-          break;
-        case 'post-boosted':
-          this._viewPost(token, data);
-          break;
-        case 'follow-user-petition-created':
-          this._viewPetition(token, data);
-          break;
-        case 'own-post-boosted':
-          this._viewPost(token, data);
-          break;
-        case 'group-permissions-changed':
-          this._openGroup(token, data);
-          break;
-        case 'poll-answered' || 'own-poll-commented' || 'follow-poll-commented' || 'poll-created':
-          this._viewPoll(token, data);
-          break;
-
-      }
-    }
-
-  onOpened(data){
-    let { token,dispatch } = this.props;
-    let {action} = data;
-    if (!action) return;
-    let {actionID} = action;
-    console.log(actionID, data);
-    switch(actionID){
-      case 'ignore-button': 
-        break;
-      case 'sign-petition-button': 
-        this._signPetition(token, data);
-        break;
-      case 'view-petition-button': 
-        this._viewPetition(token, data);
-        break;
-      case 'mute-petition-button': 
-        this._mutePetition(token, data);
-        break;
-      case 'open-comment-button': 
-        this._openComment(token, data);
-        break;
-      case 'open-post-button': 
-        this._openPost(token, data);
-        break;
-      case 'open-poll-button':
-        this._viewPoll(token, data);
-      case 'approve-follow-request-button': 
-        this._approveFollowRequest(token, data, dispatch);
-        break;
-      case 'ignore-follow-request-button': 
-        this._ignoreFollowRequest(token, data, dispatch);
-        break;
-      case 'upvote-post-button': 
-        this._upvotePost(token, data);
-        break;
-      case 'downvote-post-button': 
-        this._downvotePost(token, data);
-        break;
-      case 'share-post-button': 
-        this._sharePost(token, data);
-        break;
+    onOpened (data) {
+        let { token, dispatch } = this.props;
+        let {action} = data;
+        if (!action) return;
+        let {actionID} = action;
+        console.log(actionID, data);
+        switch (actionID) {
+        case 'ignore-button':
+            break;
+        case 'sign-petition-button':
+            this._signPetition(token, data);
+            break;
+        case 'view-petition-button':
+            this._viewPetition(data);
+            break;
+        case 'mute-petition-button':
+            this._mutePetition(token, data);
+            break;
+        case 'open-comment-button':
+            this._openComment(token, data);
+            break;
+        case 'open-post-button':
+            this._openPost(data);
+            break;
+        case 'open-poll-button':
+            this._viewPoll(data);
+            break;
+        case 'approve-follow-request-button':
+            this._approveFollowRequest(token, data, dispatch);
+            break;
+        case 'ignore-follow-request-button':
+            this._ignoreFollowRequest(token, data, dispatch);
+            break;
+        case 'upvote-post-button':
+            this._upvotePost(token, data);
+            break;
+        case 'downvote-post-button':
+            this._downvotePost(token, data);
+            break;
+        case 'share-post-button':
+            this._sharePost(token, data);
+            break;
       // own post boosted and own post commented, follow post commented, own post voted
-      case 'view-post-button': 
-        this._viewPost(token,data);
-        break;
-      case 'mute-post-button': 
-        this._mutePost(token, data);
-        break;
+        case 'view-post-button':
+            this._viewPost(data);
+            break;
+        case 'mute-post-button':
+            this._mutePost(token, data);
+            break;
       // invite
-      case 'join-group-button': 
-        this._joinGroup(token, data);
-        break;
-      case 'ignore-invite-button': 
-        this._ignoreInvite(token, data);
-        break;
-      //group permission changed
-      case 'open-group-button': 
-        this._openGroup(token, data);
-        break;
+        case 'join-group-button':
+            this._joinGroup(token, data);
+            break;
+        case 'ignore-invite-button':
+            this._ignoreInvite(token, data);
+            break;
+      // group permission changed
+        case 'open-group-button':
+            this._openGroup(token, data);
+            break;
       // own poll commented, poll answered and follow poll commented
-      case 'view-poll-button': 
-        this._viewPoll(token, data);
-        break;
-      case 'mute-poll-button': 
-        this._mutePoll(token, data);
-        break;
+        case 'view-poll-button':
+            this._viewPoll(data);
+            break;
+        case 'mute-poll-button':
+            this._mutePoll(token, data);
+            break;
       // comment replied
-      case 'reply-comment-button': 
-        this._replyComment(token, data);
-        break;
+        case 'reply-comment-button':
+            this._replyComment(data);
+            break;
       // announcement
-      case 'share-announcement-button': 
-        this._shareAnnouncement(token, data);
-        break;
-      case 'respond-button':
-        this._viewPoll(token, data);
-      case 'rsvp-button':
-        this.rspv(token, data);
-      default: 
-        this._handleDefault(token, data);
+        case 'share-announcement-button':
+            this._shareAnnouncement(token, data);
+            break;
+        case 'respond-button':
+            this._viewPoll(data);
+            break;
+        case 'rsvp-button':
+            this.rspv(data);
+            break;
+        default:
+            this.redirect(data);
+        }
     }
-  }
 
-  async loadCurrentUserProfile() {
-    const { props: { token, dispatch } } = this;
-    try {
-      await Promise.race([
-        dispatch(loadUserProfile(token)),
-        timeout(15000),
-      ]);
-    } catch (e) {
-      const message = e.message || e;
-      if (message !== 'Timed out') {
-        alert(message);
-      }
-      else {
-        alert('Timed out. Please check internet connection');
-      }
-      return;
-    } finally {
+    async loadCurrentUserProfile () {
+        const { props: { token, dispatch } } = this;
+        try {
+            await Promise.race([
+                dispatch(loadUserProfile(token)),
+                timeout(15000)
+            ]);
+        } catch (e) {
+            const message = e.message || e;
+            if (message !== 'Timed out') {
+                alert(message);
+            } else {
+                alert('Timed out. Please check internet connection');
+            }
+        } finally {
+        }
     }
-  }
 
   // Newsfeed Tab
-  toggleTab1() {
-    this.setState({
-      tab1: true,
-      tab2: false,
-      tab3: false,
-      tab4: false,
-    });
-  }
+    toggleTab1 () {
+        this.setState({
+            tab1: true,
+            tab2: false,
+            tab3: false,
+            tab4: false
+        });
+    }
 
   // Friends Feed Tab
-  toggleTab2() {
-    this.setState({
-      tab1: false,
-      tab2: true,
-      tab3: false,
-      tab4: false,
-    });
-  }
+    toggleTab2 () {
+        this.setState({
+            tab1: false,
+            tab2: true,
+            tab3: false,
+            tab4: false
+        });
+    }
 
   // Messages Tab
-  toggleTab3() {
-    this.setState({
-      tab1: false,
-      tab2: false,
-      tab3: true,
-      tab4: false,
-    });
-  }
+    toggleTab3 () {
+        this.setState({
+            tab1: false,
+            tab2: false,
+            tab3: true,
+            tab4: false
+        });
+    }
 
   // Notifications Feed Tab
-  toggleTab4() {
-    this.setState({
-      tab1: false,
-      tab2: false,
-      tab3: false,
-      tab4: true,
-    });
-  }
-
-  //JC: I believe this loads to the group feed when a group is selected from Group Selector More menu
-  selectGroup(group) {
-    var { token, dispatch } =  this.props;
-    if(group == 'all'){
-      dispatch({type: 'RESET_ACTIVITIES'});
-      dispatch(loadActivities(token, 0, 20, 'all'));
+    toggleTab4 () {
+        this.setState({
+            tab1: false,
+            tab2: false,
+            tab3: false,
+            tab4: true
+        });
     }
-    this.setState({ group: group });
-  }
 
-  //This is the menu to create new content (GH8)
-  selectNewItem(value) {
-    this.bottomMenu.close();
-    if(value == 'post'){
-      Actions.newpost();
-    }else if(value == 'petition'){
-      Actions.newpetition();
-    //The ability to create new "leader" content has not yet been added, but it will go here (GH118)
+  // JC: I believe this loads to the group feed when a group is selected from Group Selector More menu
+    selectGroup (group) {
+        var { token, dispatch } = this.props;
+        if (group == 'all') {
+            dispatch({type: 'RESET_ACTIVITIES'});
+            dispatch(loadActivities(token, 0, 20, 'all'));
+        }
+        this.setState({ group: group });
     }
-  }
+
+  // This is the menu to create new content (GH8)
+    selectNewItem (value) {
+        this.bottomMenu.close();
+        if (value == 'post') {
+            Actions.newpost();
+        } else if (value == 'petition') {
+            Actions.newpetition();
+    // The ability to create new "leader" content has not yet been added, but it will go here (GH118)
+        }
+    }
 
   onRef = r => {
     this.bottomMenu = r;
   }
 
-  //Tapping the "More" button should open the Group Selector which lists all groups the user is joined to
-  goToGroupSelector() {
-    this.setState({
-      group: 'more'
-    });
-    Actions.groupSelector();
-  }
-
-  renderSelectedTab() {
-    if (this.state.tab1) {
-      return <Newsfeed />;
-    } else if (this.state.tab2){
-      return <Friendsfeed/>;
-    } else if (this.state.tab3) {
-      return <Messages />;
-    } else if (this.state.tab4) {
-      return <Notifications />;
-    } else {
-      return (
-        <View style={{ flex: 1 }} />
-      );
+  // Tapping the "More" button should open the Group Selector which lists all groups the user is joined to
+    goToGroupSelector () {
+        this.setState({
+            group: 'more'
+        });
+        Actions.groupSelector();
     }
-  }
+
+    renderSelectedTab () {
+        if (this.state.tab1) {
+            return <Newsfeed />;
+        } else if (this.state.tab2) {
+            return <Friendsfeed />;
+        } else if (this.state.tab3) {
+            return <Messages />;
+        } else if (this.state.tab4) {
+            return <Notifications />;
+        } else {
+            return (
+                <View style={{ flex: 1 }} />
+            );
+        }
+    }
 
   //Badge for activities should appear on the Newsfeed icon tab in the lower-left
   //The count represents the number of Priority zone items. Priority zone items include:
@@ -646,11 +612,11 @@ class Home extends Component {
                 name="ios-flash"
                 title="NEWSFEED"
               />
-              <FooterTabButton
-                active={this.state.tab2}
-                onPress={() => this.toggleTab2()}
-                name="md-people"
-                title="FRIENDS"
+                            <FooterTabButton
+                                active={this.state.tab2}
+                                onPress={() => this.toggleTab2()}
+                                name='md-people'
+                                title='FRIENDS'
               />
             {/* This is the New Item Menu GH8. Only New Post and New Petition are expected to work at this time */}
               <Button style={isIOS ? {} : { height: 75 }}>
@@ -719,31 +685,31 @@ class Home extends Component {
                 name="md-mail"
                 title="MESSAGES"
               />
-              {/* This is the Notifications Feed tab. It should be working. */}
-              <FooterTabButton
-                active={this.state.tab4}
-                onPress={() => this.toggleTab4()}
-                name="md-notifications"
-                title="NOTIFICATIONS"
+                            {/* This is the Notifications Feed tab. It should be working. */}
+                            <FooterTabButton
+                                active={this.state.tab4}
+                                onPress={() => this.toggleTab4()}
+                                name='md-notifications'
+                                title='NOTIFICATIONS'
               />
-            </FooterTab>
-          </Footer>
-        </Container>
-      </MenuContext >
-    );
-  }
+                        </FooterTab>
+                    </Footer>
+                </Container>
+            </MenuContext >
+        );
+    }
 }
 
 const optionsStyles = {
-  optionsContainer: {
-    backgroundColor: '#fafafa',
-    paddingLeft: 5,
-  },
+    optionsContainer: {
+        backgroundColor: '#fafafa',
+        paddingLeft: 5
+    }
 };
 
 const menuContextStyles = {
-  menuContextWrapper: styles.container,
-  backdrop: styles.backdrop,
+    menuContextWrapper: styles.container,
+    backdrop: styles.backdrop
 };
 
 function bindAction(dispatch) {
@@ -760,14 +726,10 @@ async function timeout(ms: number): Promise {
 }
 
 const mapStateToProps = state => ({
-  token: state.user.token,
-  profile: state.user.profile,
-  activities: state.activities.payload,
-  pushId: state.user.pushId,
-  town: state.groups.town,
-  state: state.groups.state,
-  country: state.groups.country,
-  newsfeedUnreadCount: state.activities.newsfeedUnreadCount,
+    token: state.user.token,
+    profile: state.user.profile,
+    activities: state.activities.payload,
+    pushId: state.user.pushId
 });
 
 export default connect(mapStateToProps, bindAction)(Home);

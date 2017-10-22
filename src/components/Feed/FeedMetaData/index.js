@@ -7,7 +7,7 @@ import styles from '../styles';
 class FeedMetaData extends Component {
     render () {
         let {item} = this.props;
-
+        // console.log('================ metadata', item);
         // This isn't working currently. It is designed to give user preview of any embedded URL in the item.
         // GH13
         if (item.metadata && item.metadata.image) {
@@ -19,7 +19,7 @@ class FeedMetaData extends Component {
                             <TouchableOpacity
                                 activeOpacity={0.7}
                                 style={styles.metaContainer}
-                                onPress={() => { alert(`You've clicked metadata`); }}>
+                                onPress={() => { }}>
                                 <View style={styles.imageContainer}>
                                     <Image
                                         source={{ uri: item.metadata.image + '&w=50&h=50&auto=compress,format,q=95' }}
