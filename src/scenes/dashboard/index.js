@@ -103,9 +103,9 @@ const optionsRenderer = options => (
 )
 
 class Home extends Component {
-    static propTypes = {
-      openDrawer: React.PropTypes.func,
-    }
+    // static propTypes = {
+    //   openDrawer: React.PropTypes.func,
+    // }
 
     constructor (props) {
         super(props);
