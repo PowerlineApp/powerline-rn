@@ -200,6 +200,7 @@ class NewPost extends Component {
 
     render () {
         return (
+
             <Container style={styles.container}>
                 <Header style={styles.header}>
                     <Left>
@@ -216,7 +217,9 @@ class NewPost extends Component {
                         </Button>
                     </Right>
                 </Header>
-                <Content>
+
+                <ScrollView>
+                    <View style={styles.main_content}>
                     <List>
                         <ListItem style={styles.community_container} onPress={() => this.toggleCommunity()}>
                             <View style={styles.avatar_container}>
@@ -235,7 +238,6 @@ class NewPost extends Component {
                             </Right>
                         </ListItem>
                     </List>
-                    <ScrollView style={styles.main_content}>
                         <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
                         <Textarea
                             maxLength={POST_MAX_LENGTH}
@@ -271,19 +273,19 @@ class NewPost extends Component {
                                     </List>
                                 </ScrollView>
                             </View> : null}
-                    </ScrollView>
-                </Content>
+                    </View>
+                </ScrollView>
                 <Footer style={{alignItems: 'center', justifyContent: 'space-between', backgroundColor: PLColors.main, paddingLeft: 10, paddingRight: 10}}>
                     {this.state.posts_remaining
                         ? <Label style={{color: 'white', fontSize: 10}}>
                         You have <Label style={{fontWeight: 'bold'}}>{this.state.posts_remaining}</Label> posts left in this group
                     </Label>
                     : <Label />
-                    }
+                }
                     {/* Related: GH 151 */}
                     <Label style={{color: 'white'}}>
                         {
-                          (POST_MAX_LENGTH - this.state.content.length)
+                            (POST_MAX_LENGTH - this.state.content.length)
                         }
                     </Label>
                 </Footer>
