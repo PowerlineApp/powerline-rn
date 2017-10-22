@@ -36,15 +36,9 @@ import styles , { sliderWidth, itemWidth } from './styles';
 const PLColors = require('PLColors');
 import PLLoader from 'PLLoader';
 
-<<<<<<< HEAD
 import { loadUserProfileById, resetActivities, votePost, loadActivitiesByUserId, getFollowingUser, unFollowings, putFollowings } from 'PLActions';
 // import TimeAgo from 'react-native-timeago';
 // import ImageLoad from 'react-native-image-placeholder';
-=======
-import { loadUserProfileById, resetActivities, editFollowers, votePost, loadActivitiesByUserId, getFollowingUser, unFollowings, putFollowings } from 'PLActions';
-import TimeAgo from 'react-native-timeago';
-import ImageLoad from 'react-native-image-placeholder';
->>>>>>> develop
 import YouTube from 'react-native-youtube';
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
 const { youTubeAPIKey } = require('PLEnv');

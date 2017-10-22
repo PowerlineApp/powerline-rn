@@ -3,13 +3,8 @@ import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { TouchableHighlight, View, Image } from 'react-native';
 
-<<<<<<< HEAD
 import { Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem } from 'native-base';
 // import TimeAgo from 'react-native-timeago';
-=======
-import { Text, Button, ActionSheet, Icon, Left, Right, Body, Thumbnail, CardItem } from 'native-base';
-import TimeAgo from 'react-native-timeago';
->>>>>>> develop
 import Menu, {
     MenuTrigger,
     MenuOptions,
