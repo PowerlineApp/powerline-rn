@@ -69,14 +69,14 @@ function loadActivityByEntityId(token, entityType, entityId) {
     console.log('about to fetch => ' + '/v2/activities?_format=json&' + entityType + '_id=' + entityId + '&page=1&per_page=20');
     // /api/v2/activities?petition_id=349&page=1&per_page=20
     return new Promise((resolve, reject) => {
-        fetch(API_URL + '/v2/activities?' + entityType + '_id=' + entityId + '&page=1&per_page=20', {
+        fetch(API_URL + '/v2/activities?_format=json&' + entityType + '_id=' + entityId + '&page=1&per_page=20', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
                 'token': token
             }
         })
-            .then((res) => {console.log(res); return res.json()})
+            .then((res) => {console.log('res', res); return res.json()})
             .then(data => {
                 console.log("Load Activity by Entity Id API success", data);
                 resolve(data);

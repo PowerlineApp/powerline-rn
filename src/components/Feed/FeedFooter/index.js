@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {View} from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import { Button, Icon, Left, CardItem, Label } from 'native-base';
 import styles from '../styles';
@@ -39,6 +40,7 @@ class FeedFooter extends Component {
             return;
         }
         if (this.state.postingVote) {
+            console.log('posting already!')
             return;
         }
         // uses this state to avoid double clicking, the user is allowed to vote again only when the last request is done
@@ -100,29 +102,39 @@ class FeedFooter extends Component {
                 response = await votePost(this.props.token, item.entity.id, option);
             }
         }
-        // console.log("res ==> ", response);
-        if (response.user || response.status == 204) {
-            // console.log(token, originalItem.entity);
-                loadActivityByEntityId(token, 'post', this.state.item.entity.id).then(data => {
-                    // console.log(data);
-                    if (data.payload && data.payload[0]) {
-                        this.setState({item: data.payload[0], postingVote: false});
-                    }
-                }).catch(err => {
-                    // resets this.state.item
-                    // console.log('strange err', err);
-                    this.setState({item: originalItem, postingVote: false});
-                    alert('Something went wrong to vote');
-                })
-        } else {
-            this.setState({item: originalItem, postingVote: false});
-            let message = 'Something went wrong to vote';
-            // console.log(response);
-            if (response.errors) {
-                message = response.message;
-            }
-            alert(message);
+
+        try {
+            let res2 = await loadActivityByEntityId(token, 'post', item.entity.id);
+            console.log('res2', res2)
+            this.setState({item: res2.payload[0], postingVote: false})
+        } catch (error) {
+            console.warn(error)
+            this.setState({item: originalItem, postingVote: false})
         }
+
+        // console.log("res ==> ", response);
+        // if (response.user || response.status == 204) {
+        //     // console.log(token, originalItem.entity);
+        //         loadActivityByEntityId(token, 'post', this.state.item.entity.id).then(data => {
+        //             // console.log(data);
+        //             if (data.payload && data.payload[0]) {
+        //                 this.setState({item: data.payload[0], postingVote: false});
+        //             }
+        //         }).catch(err => {
+        //             // resets this.state.item
+        //             // console.log('strange err', err);
+        //             this.setState({item: originalItem, postingVote: false});
+        //             alert('bbbSomething went wrong to vote');
+        //         })
+        // } else {
+        //     this.setState({item: originalItem, postingVote: false});
+        //     let message = 'aaaaSomething went wrong to vote';
+        //     // console.log(response);
+        //     if (response.errors) {
+        //         message = response.message;
+        //     }
+        //     alert(message);
+        // }
     }
 
     /**
@@ -138,7 +150,10 @@ class FeedFooter extends Component {
         // let newItem = _.cloneDeep(item);
         
         // avoid double tapping until the response comes
-        if (this.state.signing) return;
+        if (this.state.signing) {
+            console.log('signing already')
+            return;
+        }
         
         // console.log(item.entity.type);
         let entity = 'poll';
@@ -168,18 +183,28 @@ class FeedFooter extends Component {
             // // this.setState({signing: false, item: res})
             // // console.log('error on request => ', error);
         }
-        
-        loadActivityByEntityId(token, entity, item.entity.id).then(data => {
-            // console.log(data);
-            if (data.payload && data.payload[0]) {
-                this.setState({signing: false, item: data.payload[0]});
-            }
-        }).catch(err => {
-            // resets this.state.item
-            console.log('strange err', err);
-            this.setState({signing: false, item: originalItem});
-            alert('Something went wrong to signing');
-        })
+        try {
+            let res2 = await loadActivityByEntityId(token, entity, item.entity.id);
+            console.log('res2', res2.payload[0])
+            this.setState({item: res2.payload[0], signing: false})
+        } catch (error) {
+            console.warn(error)
+            this.setState({item: originalItem, signing: false})
+        }
+
+
+
+        // loadActivityByEntityId(token, entity, item.entity.id).then(data => {
+        //     console.log(data);
+        //     if (data.payload && data.payload[0]) {
+        //         this.setState({signing: false, item: data.payload[0]});
+        //     }
+        // }).catch(err => {
+        //     // resets this.state.item
+        //     console.log('strange err', err);
+        //     this.setState({signing: false, item: originalItem});
+        //     alert('Something went wrong to signing');
+        // })
 
 
     }
@@ -249,10 +274,11 @@ class FeedFooter extends Component {
         console.log(item.entity.type, item.description)
         let isSigned = false;     // (item.user_petition.signatures[0] ? item.user_petition.signatures[0].option_id : 2) === 1;
         if (
-            item && item.poll &&
-            item.poll.answers && item.poll.answers[0]
+            item && item.user_petition &&
+            item.user_petition.signatures && item.user_petition.signatures[0]
         ) {
-            let vote = item.poll.answers[0];
+            let vote = item.user_petition.signatures[0];
+            console.log('vote', vote);
             if (vote.option_id === 1) {
                 isSigned = true;
             }
@@ -262,7 +288,7 @@ class FeedFooter extends Component {
         if (this.state.signing){
             isSigned = !isSigned;
         }
-        console.log('got here');
+        console.log('got here, signed ? ', isSigned);
         return (
             <CardItem footer style={{ height: 35 }}>
                 <Left style={{ justifyContent: 'space-between' }}>
@@ -429,24 +455,38 @@ class FeedFooter extends Component {
 
     render () {
         let {item} = this.state;
+        // console.log('item in state => ', item)
+        let footer = null
         switch (item.entity.type) {
         case 'post':
-            return this._renderPostFooter(item);
+            footer =  this._renderPostFooter(item);
+            break;
         case 'user-petition':
-            return this._renderUserPetitionFooter(item);
+            footer =  this._renderUserPetitionFooter(item);
+            break;
         case 'petition':
-            return this._renderLeaderPetitionFooter(item);
+            footer =  this._renderLeaderPetitionFooter(item);
+            break;
         case 'question':
-            return this._renderQuestionFooter(item);
+            footer =  this._renderQuestionFooter(item);
+            break;
         case 'payment-request':
-            return;
+            footer = null;
+            break;
         case 'leader-event':
-            return this._renderLeaderEventFooter(item);
+            footer =  this._renderLeaderEventFooter(item);
+            break;
         case 'leader-news':
-            return this._renderLeadNewsFooter(item);
+            footer =  this._renderLeadNewsFooter(item);
+            break;
         default:
-            return null;
+            footer =  null;
         }
+        return (
+            <View style={{backgroundColor: '#ff0'}} >
+                {footer}
+            </View>
+        )
     }
 }
 

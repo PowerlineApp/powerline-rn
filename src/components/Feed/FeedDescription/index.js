@@ -34,7 +34,6 @@ class FeedDescription extends Component {
 
     render () {
         let {item} = this.props;
-
         return (
             <CardItem style={{paddingLeft: 15, paddingRight: 15}}>
                 <Left>

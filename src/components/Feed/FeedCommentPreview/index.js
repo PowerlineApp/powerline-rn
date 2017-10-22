@@ -43,7 +43,8 @@ class FeedCommentPreview extends Component {
             previewData = item.user_petition;
         }
         let comment = previewData.comments[0];
-        if (!comment) { return <View />; }
+        if (!comment) { return  null; }
+        console.log('comment preview:', comment.user.full_name,' - ', comment.comment_body,' - ', item.title, item.description)
         return (
             <TouchableOpacity onPress={() => this.redirect(item)} >
                 <CardItem style={styles.commentPreviewContainer} >

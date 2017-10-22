@@ -3,7 +3,7 @@ var { Action, ThunkAction } = require('./types');
 
 async function signUserPetition(token: string, petitionId: string) {
     try {
-        console.log('to the api => ', token, petitionId, 'sign')
+        console.log('to the api => ', token, petitionId, 'sign --- ' + `${API_URL}/v2/user-petitions/${petitionId}/sign`)
         let response = await fetch(`${API_URL}/v2/user-petitions/${petitionId}/sign`, {
             method: 'POST',
             headers: {
@@ -23,7 +23,7 @@ async function signUserPetition(token: string, petitionId: string) {
 }
 
 async function unsignUserPetition(token: string, petitionId: string) {
-    console.log('to the api => ', token, petitionId, 'delete')
+    console.log('to the api => ', token, petitionId, 'delete --- ' +  `${API_URL}/v2/user-petitions/${petitionId}/sign`)
     try {
         let response = await fetch(`${API_URL}/v2/user-petitions/${petitionId}/sign`, {
             method: 'DELETE',
@@ -48,7 +48,7 @@ async function unsignUserPetition(token: string, petitionId: string) {
 }
 
 async function signLeaderPetition(token: string, petitionId: string, option: string) {
-    console.log('to the api => ', token, petitionId, option)
+    console.log('to the api => ', token, petitionId, option, ' --- ' + `${API_URL}/v2/polls/${petitionId}/answers/${option}`)
     try {
         let response = await fetch(`${API_URL}/v2/polls/${petitionId}/answers/${option}`, {
             method: 'PUT',
