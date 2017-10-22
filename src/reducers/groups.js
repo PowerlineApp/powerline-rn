@@ -62,8 +62,8 @@ function groups(state: State = initialState, action: Action): State {
                 othersStack = othersStack.concat(group);
             }
         });
-
         return {
+            ...state,
             page: action.data.page,
             items: action.data.items,
             payload: payloadStack,

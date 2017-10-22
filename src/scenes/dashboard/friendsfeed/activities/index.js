@@ -69,35 +69,6 @@ class FriendActivity extends Component {
         });
     }
 
-    mute(item) {
-        //console.log(item);
-        var { token, dispatch } = this.props;
-        ActionSheet.show(
-            {
-                options: ['1 hour', '8 hours', '24 hours'],
-                title: 'MUTE NOTIFICATIONS FOR THIS USER'
-            },
-
-            buttonIndex => {
-                var hours = 1;
-                if (buttonIndex == 1) {
-                    hours = 8;
-                } else if (buttonIndex == 2) {
-                    hours = 24;
-                }
-
-                var newDate = new Date((new Date()).getTime() + 1000 * 60 * 60 * hours);
-                editFollowers(token, item.owner.id, false, newDate)
-                    .then(data => {
-
-                    })
-                    .catch(err => {
-
-                    });
-            }
-        );
-    }
-
     async loadInitialActivities() {
         this.setState({ isRefreshing: true });
         const { props: { token, dispatch } } = this;
