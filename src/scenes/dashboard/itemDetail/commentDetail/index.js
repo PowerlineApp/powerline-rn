@@ -56,6 +56,7 @@ class CommentDetail extends Component {
     }
 
     componentWillMount() {
+        console.log('props', this.props);
         const { props: { comment } } = this;
         this.rootComment = comment;
 
@@ -189,6 +190,7 @@ class CommentDetail extends Component {
 
     // Rendering methods
     render() {
+        console.log(this.item);
         return (
             <MenuContext customStyles={menuContextStyles}>
                 <Container style={styles.container}>

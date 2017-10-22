@@ -26,7 +26,7 @@ class FeedContext extends Component {
             return (
                 <ImageLoad
                     placeholderSource={require('img/empty_image.png')}
-                    source={{ uri: entry.imageSrc + '&w=50&h=50&auto=compress,format,q=95' }}
+                    source={{ uri: entry.imageSrc + '&w=200&h=200&auto=compress,format,q=95' }}
                     style={styles.image}
                     />
             );
@@ -43,7 +43,7 @@ class FeedContext extends Component {
                         videoId={videoid}
                         controls={1}
                         style={styles.player}
-            />
+                    />
                 );
             } else {
                 return (
@@ -51,7 +51,7 @@ class FeedContext extends Component {
                         style={styles.player}
                         javaScriptEnabled
                         source={{ uri: `https://www.youtube.com/embed/${videoid}?rel=0&autoplay=0&showinfo=0&controls=0` }}
-            />
+                    />
                 );
             }
         } else {

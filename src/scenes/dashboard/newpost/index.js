@@ -241,6 +241,7 @@ class NewPost extends Component {
                         <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
                         <Textarea
                             maxLength={POST_MAX_LENGTH}
+                            autoFocus
                             onSelectionChange={this.onSelectionChange}
                             placeholderTextColor='rgba(0,0,0,0.1)'
                             style={styles.textarea}

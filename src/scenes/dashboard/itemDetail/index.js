@@ -6,7 +6,7 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Container, Header, Title, Textarea, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, List, ListItem, Item, Input } from 'native-base';
+import { Container, Card, Header, Title, Textarea, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, List, ListItem, Item, Input } from 'native-base';
 import { Image, View, StyleSheet, TouchableOpacity, Platform, KeyboardAvoidingView, Keyboard, TextInput, ListView } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
@@ -83,8 +83,24 @@ class ItemDetail extends Component {
     componentWillMount() {
         this.keyboardDidShowListener = Keyboard.addListener('keyboardWillShow', this._keyboardWillShow.bind(this));
         this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide.bind(this));
-
+        
+    }
+    
+    componentDidMount(){
+        // this.addCommentInput.focus(); 
+        // console.log('=xx=x=x=x=x=x=x=x=x==x')
+        // console.log('propss', this.props.entityType, this.props.entityId);
+        if (this.props.commenting){
+            // console.log('commenting...')
+            setTimeout(
+                () => this._onAddComment()
+                , 1000);
+            }   
         this.loadEntity();
+    }
+    
+    onCommentInputRef = r => {
+        this.addCommentInput = r;
     }
 
     componentWillUnmount() {
@@ -106,9 +122,6 @@ class ItemDetail extends Component {
         this.addCommentView = r;
     }
 
-    onCommentInputRef = r => {
-        this.addCommentInput = r;
-    }
 
     _onAddComment(comment) {
         this.setState({ placeholderTitle: randomPlaceholder('comment') });
@@ -151,8 +164,9 @@ class ItemDetail extends Component {
 
     // API Calls
     async loadEntity() {
+        // console.log(this.props.entityId, this.props.entityType);
         const { props: { token, entityId, entityType, dispatch } } = this;
-
+        // console.log(entityId, entityType)
         this.setState({ isLoading: true });
         loadActivityByEntityId(token, entityType, entityId).then(data => {
             if (data.payload && data.payload[0]) {
@@ -288,7 +302,7 @@ class ItemDetail extends Component {
             isLoading: false,
         });
 
-        console.warn(response);
+        // console.warn(response);
         if (response.status === 200 && response.ok) {
             this.loadComments();
             this.resetEditComment();
@@ -427,7 +441,7 @@ class ItemDetail extends Component {
                 this.updateSuggestionList(this.props.token, suggestionSearch);
                 this.setState({displaySuggestionBox: displayMention, init: i, end: end});
             } else {
-                console.log('false');
+                // console.log('false');
                 this.setState({suggestionList: [], displaySuggestionBox: false});
             }
         }, 100);
@@ -505,8 +519,7 @@ class ItemDetail extends Component {
                                                 <TextInput
                                                     autoFocus
                                                     style={styles.commentInput}
-                                                    ref={this.onCommentInputRef}
-                                                    placeholder={this.state.placeholderTitle}
+                                                    ref={this.onCommentInputRef}                                                    placeholder={this.state.placeholderTitle}
                                                     defaultValue={this.state.defaultInputValue}
                                                     onChangeText={commentText => this.setState({ commentText })}
                                                     onSelectionChange={(e) => this.onSelectionChange(e)}
@@ -736,7 +749,7 @@ class ItemDetail extends Component {
                 {this._renderDescription(item, state)}
                 <FeedMetaData item={item} />
                 <View style={styles.borderContainer} />
-                <FeedFooter item={item} />
+                <FeedFooter item={item} profile={this.props.profile} token={this.props.token} />
             </View>
         );
     }
@@ -747,7 +760,7 @@ class ItemDetail extends Component {
                 <FeedDescription item={item} />
                 <FeedCarousel item={item} />
                 <View style={styles.borderContainer} />
-                <FeedFooter item={item} />
+                <FeedFooter item={item} profile={this.props.profile} token={this.props.token} />
             </Card>
         );
     }
@@ -776,6 +789,7 @@ class ItemDetail extends Component {
 
     render() {
         // console.log(this.item);
+        // console.log(this.refs);
         if (this.item === null) {
             return (
                 <PLOverlayLoader visible={this.state.isLoading} logo />
