@@ -7,16 +7,22 @@ import { parseString } from 'react-native-xml2js';
 import styles from '../styles';
 
 class FeedDescription extends Component {
-  goItemDetail(entityId, entityType) {
-    Actions.itemDetail({ entityId: entityId, entityType: entityType });
-  }
-
-  _renderTitle(item) {
-    if (item.title) {
-      return (<Text style={styles.title}>{item.title}</Text>);
-    } else {
-      return null;
+    redirect (item, options) {
+        let type = 'poll';
+        if (item.entity.type === 'post') {
+            type = 'post'
+          } else if (item.entity.type === 'user-petition'){
+            type = 'petition' 
+          }
+        Actions.itemDetail({entityType: type, entityId: item.entity.id, ...options});
     }
+
+    _renderTitle (item) {
+        if (item.title) {
+            return (<Text style={styles.title}>{item.title}</Text>);
+        } else {
+            return null;
+        }
   }
   // The priority zone counter lists the count of total priority zone items in the newsfeed
   _renderZoneIcon(item) {
@@ -62,8 +68,8 @@ class FeedDescription extends Component {
             <Label style={styles.commentCount}>{item.responses_count}</Label>
           </View>
           <Body style={styles.descBodyContainer}>
-            <TouchableOpacity onPress={() => this.goItemDetail(item.entity.id, item.entity.type)}>
-              {this._renderTitle(item)}
+          <TouchableOpacity onPress={() => this.redirect(item)}>
+          {this._renderTitle(item)}
               <ParsedText
                 style={styles.description}
                 parse={
@@ -86,3 +92,4 @@ class FeedDescription extends Component {
   }
 }
 export default FeedDescription;
+

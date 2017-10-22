@@ -348,11 +348,11 @@ function getUsersByGroup(token, groupId, query){
         })
         .then((res) => res.json())
         .then(data => {
-            console.log("get Group Users API Success", data);
+            // console.log("get Group Users API Success", data);
             resolve(data);
         })
         .catch(err => {
-            console.log("get Group Users API Error", err);
+            // console.log("get Group Users API Error", err);
             reject(err);
         });
     })

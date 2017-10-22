@@ -30,7 +30,7 @@ class FeedCarousel extends Component {
                     </TouchableOpacity>
                 );
             });
-
+            if (slides.length < 0){ return null}
             return (
                 <CardItem cardBody>
                     <Carousel

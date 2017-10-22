@@ -56,6 +56,7 @@ class CommentDetail extends Component {
     }
 
     componentWillMount() {
+        console.log('props', this.props);
         const { props: { comment } } = this;
         this.rootComment = comment;
 
@@ -189,12 +190,13 @@ class CommentDetail extends Component {
 
     // Rendering methods
     render() {
+        console.log(this.item);
         return (
             <MenuContext customStyles={menuContextStyles}>
                 <Container style={styles.container}>
                     <Header style={styles.header}>
                         <Left>
-                            <Button transparent onPress={() => Actions.pop()}>
+                            <Button transparent onPress={() => Actions.pop()} style={{width: 50, height: 50 }}  >
                                 <Icon active name="arrow-back" style={{ color: 'white' }} />
                             </Button>
                         </Left>

@@ -142,4 +142,3 @@ PLLoader.defaultProps = {
   backgroundColor: '#ED225B55',
   getStyle: undefined,
 };
-

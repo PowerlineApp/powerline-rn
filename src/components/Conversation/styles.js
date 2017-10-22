@@ -1,8 +1,8 @@
-let PLColors = require('PLColors');
-let { StyleSheet, Dimensions, Platform } = require('react-native');
+var PLColors = require('PLColors');
+var { StyleSheet, Dimensions, Platform } = require('react-native');
 
-let { WINDOW_WIDTH: viewportWidth, WINDOW_HEIGHT: viewportHeight } = require('PLConstants');
-let { width, height } = Dimensions.get('window');
+const { WINDOW_WIDTH: viewportWidth, WINDOW_HEIGHT: viewportHeight } = require('PLConstants');
+const { width, height } = Dimensions.get('window');
 
 function wp(percentage) {
     const value = (percentage * viewportWidth) / 100;
@@ -29,6 +29,10 @@ export default {
         fontWeight: 'bold',
     },
     subtitle: {
+        color: '#8694ab',
+        fontSize: 10,
+    },
+    itemTime: {
         color: '#8694ab',
         fontSize: 10,
     },
@@ -132,8 +136,7 @@ export default {
     },
 
     CFooter: {
-        backgroundColor: 'transparent',
-        height: 55
+        backgroundColor: 'transparent'
     },
 
     CFooterItem: {
@@ -145,18 +148,12 @@ export default {
     },
 
     sendBtn: {
-        height: 56,
-        color: '#ccc'
+        height: 56
     },
 
     CFooterItemInput: {
         paddingLeft: 15,
         fontSize: 20
-    },
-    CFooterItemInputDisabled: {
-        paddingLeft: 15,
-        fontSize: 20,
-        color: '#ccc'
     },
 
     groupAvatar: {

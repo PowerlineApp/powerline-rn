@@ -8,7 +8,7 @@ import { Actions } from 'react-native-router-flux';
 import { ActionSheet, Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, ListItem, Thumbnail, List, Card, CardItem, Label } from 'native-base';
 import { ListView, View, RefreshControl, TouchableOpacity, Image, WebView, Platform, Share } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
-import { loadActivities, resetActivities, editFollowers, loadActivityByEntityId } from 'PLActions';
+import { loadActivities, resetActivities, editFollowers, loadActivityByEntityId, loadFriendsActivities } from 'PLActions';
 import styles, { sliderWidth, itemWidth } from './styles';
 import TimeAgo from 'react-native-timeago';
 import ImageLoad from 'react-native-image-placeholder';
@@ -74,7 +74,7 @@ class FriendActivity extends Component {
         const { props: { token, dispatch } } = this;
         try {
             await Promise.race([
-                dispatch(loadActivities(token)),
+                dispatch(loadFriendsActivities(token, 0, 20)),
                 timeout(15000),
             ]);
         } catch (e) {
@@ -99,7 +99,7 @@ class FriendActivity extends Component {
         const { props: { token, page, dispatch } } = this;
         try {
             await Promise.race([
-                dispatch(loadActivities(token, page)),
+                dispatch(loadFriendsActivities(token, page, 20)),
                 timeout(15000),
             ]);
         } catch (e) {
