@@ -209,7 +209,7 @@ class NewPetition extends Component {
             <Container style={styles.container}>
                 <Header style={styles.header}>
                     <Left>
-                        <Button transparent onPress={() => Actions.pop()}>
+                        <Button transparent onPress={() => Actions.pop()} style={{width: 50, height: 50 }}  >
                             <Icon active name='arrow-back' style={{color: 'white'}} />
                         </Button>
                     </Left>

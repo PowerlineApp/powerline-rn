@@ -6,7 +6,8 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Container, Card, Header, Title, Textarea, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, List, ListItem, Item, Input } from 'native-base';
+import {ScrollView} from 'react-native';
+import { Container, Header, Title, Textarea, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, List, ListItem, Item, Input } from 'native-base';
 import { Image, View, StyleSheet, TouchableOpacity, Platform, KeyboardAvoidingView, Keyboard, TextInput, ListView } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
@@ -509,21 +510,25 @@ class ItemDetail extends Component {
                                     width: WINDOW_WIDTH,
                                     // height: this.state.visibleHeight,
                                     // this needs adjustment for android / ios - doesnt work well for android with the suggestionbox
-                                    height: WINDOW_HEIGHT /2 + 50
+                                    minHeight: Platform.OS ==='android' ? 50 :  WINDOW_HEIGHT/2 + 50
                                 }}>
+                                        <ScrollView keyboardShoulPersisTaps>
                                         <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
+                                        </ScrollView>
                                         <CardItem>
                                             <Left>
                                             <Thumbnail small source={thumbnail ? { uri: thumbnail+'&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                                             <Body>
                                                 <TextInput
                                                     autoFocus
+                                                    keyboardShoulPersisTaps
                                                     style={styles.commentInput}
                                                     ref={this.onCommentInputRef}                                                    placeholder={this.state.placeholderTitle}
                                                     defaultValue={this.state.defaultInputValue}
                                                     onChangeText={commentText => this.setState({ commentText })}
                                                     onSelectionChange={(e) => this.onSelectionChange(e)}
-
+                                                    multiline
+                                                    numberOfLines={3}
                                                 />
                                             </Body>
                                             <Right style={{ flex: 0.3 }}>
@@ -817,7 +822,7 @@ class ItemDetail extends Component {
                                 ref={(navTitleView) => { this.navTitleView = navTitleView; }}>
                                 <Header style={{ backgroundColor: 'transparent' }}>
                                     <Left>
-                                        <Button transparent onPress={this.onBackPress}>
+                                        <Button transparent onPress={this.onBackPress} style={{width: 50, height: 50 }}  >
                                             <Icon active name="arrow-back" style={{ color: 'white' }} />
                                         </Button>
                                     </Left>
@@ -830,7 +835,7 @@ class ItemDetail extends Component {
                         )}
                         renderForeground={() => (
                             <Left style={styles.titleContainer}>
-                                <Button transparent onPress={this.onBackPress}>
+                                <Button transparent onPress={this.onBackPress} style={{width: 50, height: 50 }} >
                                     <Icon active name="md-arrow-back" style={{ color: 'white' }} />
                                 </Button>
                                 <Body style={{ marginTop: -12 }}>

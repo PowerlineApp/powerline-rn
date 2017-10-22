@@ -290,9 +290,9 @@ class Home extends Component {
     _ignoreInvite (token, data) {
       // does nothing? if yes, working
     }
-    _openGroup (token, data) {
-        let {target} = data.notification.payload.additionalData.entity;
-        Actions.groupprofile(440);
+    _openGroup(token, data){
+      let {target} = data.notification.payload.additionalData.entity;
+      Actions.groupprofile({id: target.id});
     }
     _viewPoll (data) {
         this.redirect(data);
