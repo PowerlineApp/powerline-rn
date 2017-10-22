@@ -1,8 +1,8 @@
-var PLColors = require('PLColors');
-var { StyleSheet, Dimensions } = require('react-native');
+let PLColors = require('PLColors');
+let { StyleSheet, Dimensions, Platform } = require('react-native');
 
-const { WINDOW_WIDTH: viewportWidth, WINDOW_HEIGHT: viewportHeight } = require('PLConstants');
-const { width, height } = Dimensions.get('window');
+let { WINDOW_WIDTH: viewportWidth, WINDOW_HEIGHT: viewportHeight } = require('PLConstants');
+let { width, height } = Dimensions.get('window');
 
 function wp(percentage) {
     const value = (percentage * viewportWidth) / 100;
@@ -18,6 +18,11 @@ export const sliderWidth = viewportWidth;
 export const itemWidth = slideWidth + itemHorizontalMargin * 2;
 
 export default {
+    container: {
+        ...Platform.select({
+            android: { marginBottom: -20 }
+        })
+    },
     title: {
         color: '#21354a',
         fontSize: 12,
@@ -127,7 +132,8 @@ export default {
     },
 
     CFooter: {
-        backgroundColor: 'transparent'
+        backgroundColor: 'transparent',
+        height: 55
     },
 
     CFooterItem: {
@@ -139,12 +145,18 @@ export default {
     },
 
     sendBtn: {
-        height: 56
+        height: 56,
+        color: '#ccc'
     },
 
     CFooterItemInput: {
         paddingLeft: 15,
         fontSize: 20
+    },
+    CFooterItemInputDisabled: {
+        paddingLeft: 15,
+        fontSize: 20,
+        color: '#ccc'
     },
 
     groupAvatar: {

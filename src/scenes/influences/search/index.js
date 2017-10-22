@@ -73,7 +73,7 @@ class SearchFollowing extends Component {
             <Container style={styles.container}>
                 <Header style={styles.header}>
                     <Left>
-                        <Button transparent onPress={() => Actions.pop()}>
+                        <Button transparent onPress={() => Actions.pop()} style={{width: 50, height: 50 }}  >
                             <Icon active name="arrow-back" style={{color: 'white'}}/>
                         </Button>
                     </Left>
@@ -92,7 +92,7 @@ class SearchFollowing extends Component {
                                 return (
                                     <ListItem avatar onPress={() => this.goToProfile(user.id)} key={index}>
                                         <Left>
-                                            <Thumbnail source={{uri: user.avatar_file_name}}/>
+                                            <Thumbnail source={{uri: user.avatar_file_name+'&w=50&h=50&auto=compress,format,q=95'}}/>
                                         </Left>
                                         <Body>
                                             <Text>{user.username}</Text>

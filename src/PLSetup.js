@@ -48,4 +48,17 @@ global.LOG = (...args) => {
   return args[args.length - 1];
 };
 
+global.WARN = (...args) => {
+  console.warn('/------------------------------\\');
+  console.warn(...args);
+  console.warn('\\------------------------------/');
+  return args[args.length - 1];
+};
+
+global.ALERT = arg => {
+  try {
+    alert(JSON.stringify(arg, null, 2));
+  } catch(e) {}
+};
+
 module.exports = setup;

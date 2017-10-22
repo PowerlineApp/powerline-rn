@@ -3,7 +3,7 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, Spinner, List, ListItem, Item, Input } from 'native-base';
+import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, List, ListItem, Item, Input } from 'native-base';
 import { Image, View, StyleSheet, TouchableOpacity, Platform, KeyboardAvoidingView, Keyboard, TextInput, ListView, RefreshControl } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
@@ -20,8 +20,12 @@ import Menu, {
     MenuOption,
     renderers
 } from 'react-native-popup-menu';
-import OrientationLoadingOverlay from 'react-native-orientation-loading-overlay';
+import PLOverlayLoader from 'PLOverlayLoader';
+import PLLoader from 'PLLoader';
+
 import { getChildComments, addComment, rateComment } from 'PLActions';
+import SuggestionBox from '../../../../common/suggestionBox';
+
 
 const { SlideInMenu } = renderers;
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
@@ -52,6 +56,7 @@ class CommentDetail extends Component {
     }
 
     componentWillMount() {
+        console.log('props', this.props);
         const { props: { comment } } = this;
         this.rootComment = comment;
 
@@ -151,6 +156,7 @@ class CommentDetail extends Component {
 
     //User can rate comment up or down
     async rate(comment, option) {
+        // console.log('=x=x=x=x=x=', rate, option);
         this.setState({ isLoading: true });
 
         const { props: { entityType, token } } = this;
@@ -184,12 +190,13 @@ class CommentDetail extends Component {
 
     // Rendering methods
     render() {
+        console.log(this.item);
         return (
             <MenuContext customStyles={menuContextStyles}>
                 <Container style={styles.container}>
                     <Header style={styles.header}>
                         <Left>
-                            <Button transparent onPress={() => Actions.pop()}>
+                            <Button transparent onPress={() => Actions.pop()} style={{width: 50, height: 50 }}  >
                                 <Icon active name="arrow-back" style={{ color: 'white' }} />
                             </Button>
                         </Left>
@@ -213,7 +220,7 @@ class CommentDetail extends Component {
                         {this._renderLoadMore()}
                         {this._renderCommentsLoading()}
                         {this._renderAddComment()}
-                        <OrientationLoadingOverlay visible={this.state.isLoading} />
+                        <PLOverlayLoader visible={this.state.isLoading} logo />
                     </Content>
                 </Container>
             </MenuContext >
@@ -229,7 +236,7 @@ class CommentDetail extends Component {
         return (
             <CardItem style={styles.rootContainer}>
                 <Left>
-                    <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                    <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail+'&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                     <Body style={{ alignSelf: 'flex-start' }}>
                         <Text style={styles.title}>{title}</Text>
                         <Text style={styles.description} numberOfLines={5}>{comment.comment_body}</Text>
@@ -267,7 +274,7 @@ class CommentDetail extends Component {
         return (
             <CardItem style={{ paddingBottom: 0, marginLeft: 40, marginTop: 5 }}>
                 <Left>
-                    <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                    <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail+'&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                     <Body style={{ alignSelf: 'flex-start' }}>
                         <TouchableOpacity onPress={() => this._onCommentBody(comment)}>
                             <Text style={styles.title}>{title}</Text>
@@ -300,7 +307,7 @@ class CommentDetail extends Component {
     _renderCommentsLoading() {
         if (this.state.isCommentsLoading === true) {
             return (
-                <Spinner color='gray' />
+                <PLLoader position="bottom" />
             );
         } else {
             return null;
@@ -322,24 +329,93 @@ class CommentDetail extends Component {
         }
     }
 
+
+    substitute (mention) {
+        let {init, end} = this.state;
+        let newContent = this.state.commentText;
+        let initialLength = newContent.length;
+
+        let firstPart = newContent.substr(0, init);
+        let finalPart = newContent.substr(end, initialLength);
+
+        let finalString = firstPart + mention + finalPart;
+
+        this.setState({commentText: finalString, displaySuggestionBox: false, lockSuggestionPosition: end});
+    }
+
+    onSelectionChange (event) {
+        let {start, end} = event.nativeEvent.selection;
+        // let userRole = this.state.grouplist[this.state.selectedGroupIndex].user_role;
+        setTimeout(() => {
+            if (start !== end) return;
+            if (start === this.state.lockSuggestionPosition) return;
+            let text = this.state.commentText;
+            let displayMention = false;
+            let i;
+
+            for (i = start - 1; i >= 0; i--) {
+                if (text.charAt(i) === ' ') break;
+                if (text.charAt(i) === '@' && (i === 0 || text.charAt(i - 1) === ' ')) {
+                    // if (text.slice(i, i + 9) === "@everyone" && userRole === 'owner' && userRole === 'manager') {
+                    //     alert("Are you sure you want to alert everyone in the group?");
+                    //     break;
+                    // }
+                    if (text.charAt(i + 1) && text.charAt(i + 1) !== ' ' && text.charAt(i + 2) && text.charAt(i + 2) !== ' ') {
+                        displayMention = true;
+                        for (let j = start - 1; text.charAt(j) && text.charAt(j) !== ' '; j++) end = j + 1;
+                    } else {
+                        displayMention = false;
+                    }
+                    break;
+                }
+            }
+            if (displayMention) {
+                let suggestionSearch = text.slice(i + 1, end);
+                this.updateSuggestionList(this.props.token, suggestionSearch);
+                this.setState({displaySuggestionBox: displayMention, init: i, end: end});
+            } else {
+                console.log('false');
+                this.setState({suggestionList: [], displaySuggestionBox: false});
+            }
+        }, 100);
+    }
+
+    updateSuggestionList (token, suggestionSearch) {
+        // this.setState({suggestionList: []});
+        // console.log(this.item);
+        getUsersByGroup(token, this.item.group.id, suggestionSearch).then(data => {
+            this.setState({suggestionList: data.payload});
+        }).catch(err => {
+
+        });
+    }
+
     _renderAddComment() {
         const { props: { profile } } = this;
         var thumbnail: string = '';
         thumbnail = profile.avatar_file_name ? profile.avatar_file_name : '';
 
         return (
-            <Menu renderer={SlideInMenu} ref={this.onRef} onOpen={() => { this.openedAddCommentView() }}>
+            <Menu renderer={SlideInMenu} ref={this.onRef}>
                 <MenuTrigger />
                 <MenuOptions optionsContainerStyle={{
                     backgroundColor: 'white',
                     width: WINDOW_WIDTH,
                     height: WINDOW_HEIGHT / 2 + 50,
                 }}>
+                    <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
                     <CardItem>
                         <Left>
-                            <Thumbnail small source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                            <Thumbnail small source={thumbnail ? { uri: thumbnail+'&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                             <Body>
-                                <TextInput style={styles.commentInput} ref={this.onCommentInputRef} placeholder="Comment..." onChangeText={commentText => this.setState({ commentText })} />
+                                <TextInput 
+                                    autoFocus
+                                    style={styles.commentInput}
+                                    ref={this.onCommentInputRef}
+                                    placeholder="Comment..." 
+                                    onChangeText={commentText => this.setState({ commentText })}
+                                    onSelectionChange={(e) => this.onSelectionChange(e)}
+                                />
                             </Body>
                             <Right style={{ flex: 0.3 }}>
                                 <TouchableOpacity style={{ flexDirection: 'row' }} onPress={() => this._onSendComment()}>
@@ -388,6 +464,7 @@ class CommentDetail extends Component {
     }
 
     _onRate(comment, option) {
+        // console.log('=x=x=x=x=x=x=', comment, option);
         const { props: { profile } } = this;
         this.rate(comment, option);
     }
@@ -406,9 +483,9 @@ class CommentDetail extends Component {
     }
 
     openedAddCommentView() {
-        setTimeout(() => {
-            this.addCommentInput.focus();
-        }, 100);
+        // setTimeout(() => {
+        //     this.addCommentInput.focus();
+        // }, 100);
     }
 
     getIndex(comment) {

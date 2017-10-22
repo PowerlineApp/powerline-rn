@@ -8,9 +8,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
-import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, Spinner, ListItem, Thumbnail, List, Badge } from 'native-base';
-import { View, RefreshControl } from 'react-native';
+import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, ListItem, Thumbnail, List, Badge } from 'native-base';
+import { View, RefreshControl, Platform } from 'react-native';
 import { loadUserGroups, clearGroupsInCache, loadActivities,resetActivities } from 'PLActions';
+import PLLoader from 'PLLoader';
+
 import styles from './styles';
 
 const PLColors = require('PLColors');
@@ -22,58 +24,15 @@ class GroupSelector extends Component {
         token: React.PropTypes.string,
     }
 
-    otherGroups: Array<Object>;
-    townGroup: Object;
-    stateGroup: Object;
-    countryGroup: Object;
 
     constructor(props) {
         super(props);
         this.state = {
             isLoading: false,
-            isLoadingTail: false,
+            // isLoadingTail: false,
         };
-        this.otherGroups = [];
-        this.townGroup = null;
-        this.stateGroup = null;
-        this.countryGroup = null;
     }
 
-    componentWillMount() {
-        const { props: { page, payload } } = this;
-        if (page === 0) {
-            this.loadInitialGroups();
-        }
-        else if (payload.length != 0) {
-            this.filterGroups(payload);
-        }
-    }
-
-    componentWillUpdate() {
-        const { props: { payload } } = this;
-        if (payload.length != 0) {
-            this.filterGroups(payload);
-        }
-    }
-
-    filterGroups(payload) {
-        var others = [];
-        payload.forEach(function (group) {
-            if (group.group_type_label === "local") {
-                this.townGroup = group;
-            }
-            else if (group.group_type_label === "state") {
-                this.stateGroup = group;
-            } else if (group.group_type_label === "country") {
-                this.countryGroup = group;
-            }
-            else {
-                others.push(group);
-            }
-        }, this);
-        this.otherGroups = others;
-        console.log(others);
-    }
 
     //Shows user's joined groups, including town/state/country groups
     async loadInitialGroups() {
@@ -98,53 +57,53 @@ class GroupSelector extends Component {
         }
     }
 
-    async loadNextGroups() {
-        this.setState({ isLoadingTail: true });
-        const { props: { token, page, dispatch } } = this;
-        try {
-            await Promise.race([
-                dispatch(loadUserGroups(token, page)),
-                timeout(15000),
-            ]);
-        } catch (e) {
-            const message = e.message || e;
-            if (message !== 'Timed out') {
-                alert(message);
-            }
-            else {
-                alert('Timed out. Please check internet connection');
-            }
-            return;
-        } finally {
-            this.setState({ isLoadingTail: false });
-        }
-    }
+    // async loadNextGroups() {
+    //     this.setState({ isLoadingTail: true });
+    //     const { props: { token, page, dispatch } } = this;
+    //     try {
+    //         await Promise.race([
+    //             dispatch(loadUserGroups(token, page)),
+    //             timeout(15000),
+    //         ]);
+    //     } catch (e) {
+    //         const message = e.message || e;
+    //         if (message !== 'Timed out') {
+    //             alert(message);
+    //         }
+    //         else {
+    //             alert('Timed out. Please check internet connection');
+    //         }
+    //         return;
+    //     } finally {
+    //         this.setState({ isLoadingTail: false });
+    //     }
+    // }
 
     _onRefresh() {
         this.props.dispatch(clearGroupsInCache());
         this.loadInitialGroups();
     }
 
-    _onEndReached() {
-        const { props: { page, count } } = this;
-        if (this.state.isLoadingTail === false && count > 0) {
-            this.loadNextGroups();
-        }
-    }
+    // _onEndReached() {
+    //     const { props: { page, count } } = this;
+    //     if (this.state.isLoadingTail === false && count > 0) {
+    //         this.loadNextGroups();
+    //     }
+    // }
 
-    _renderTailLoading() {
-        if (this.state.isLoadingTail === true) {
-            return (
-                <Spinner color='gray' />
-            );
-        } else {
-            return null;
-        }
-    }
+    // _renderTailLoading() {
+    //     if (this.state.isLoadingTail === true) {
+    //         return (
+    //             <PLLoader position="bottom" />
+    //         );
+    //     } else {
+    //         return null;
+    //     }
+    // }
 
     //Selecting this should load the Town Group Feed into the Newsfeed tab
     _renderTownGroup() {
-        if (this.townGroup) {
+        if (this.props.town !== 'Town') {
             return (
                 <ListItem icon style={{ paddingVertical: 5 }}>
                     <Left>
@@ -153,7 +112,7 @@ class GroupSelector extends Component {
                         </Button>
                     </Left>
                     <Body>
-                        <Text style={styles.cellText}>{this.townGroup.official_name}</Text>
+                        <Text style={styles.cellText}>{this.props.town}</Text>
                     </Body>
                 </ListItem>
             );
@@ -164,7 +123,7 @@ class GroupSelector extends Component {
 
     //Selecting this should load the State Group Feed into the Newsfeed tab
     _renderStateGroup() {
-        if (this.stateGroup) {
+        if (this.props.state !== 'State') {
             return (
                 <ListItem icon style={{ paddingVertical: 5 }}>
                     <Left>
@@ -173,7 +132,7 @@ class GroupSelector extends Component {
                         </Button>
                     </Left>
                     <Body>
-                        <Text style={styles.cellText}>{this.stateGroup.official_name}</Text>
+                        <Text style={styles.cellText}>{this.props.state}</Text>
                     </Body>
                 </ListItem>
             );
@@ -183,7 +142,7 @@ class GroupSelector extends Component {
     }
     //Selecting this should load the Country Group Feed into the Newsfeed tab
     _renderCountryGroup() {
-        if (this.countryGroup) {
+        if (this.props.country !== 'Country') {
             return (
                 <ListItem icon style={{ paddingVertical: 5 }}>
                     <Left>
@@ -192,7 +151,7 @@ class GroupSelector extends Component {
                         </Button>
                     </Left>
                     <Body>
-                        <Text style={styles.cellText}>{this.countryGroup.official_name}</Text>
+                        <Text style={styles.cellText}>{this.props.country}</Text>
                     </Body>
                 </ListItem>
             );
@@ -218,12 +177,11 @@ class GroupSelector extends Component {
     }
 
     render() {
-
         return (
             <Container style={styles.container}>
                 <Header searchBar rounded style={styles.header}>
                     <Left style={{ flex: 0.1 }}>
-                        <Button transparent onPress={() => Actions.pop()}>
+                        <Button transparent onPress={() => Actions.pop()} style={{width: 50, height: 50 }}  >
                             <Icon active name="arrow-back" style={{ color: 'white' }} />
                         </Button>
                     </Left>
@@ -234,19 +192,20 @@ class GroupSelector extends Component {
                 </Header>
 
                 <Content padder
-                    refreshControl={
+                    refreshControl={Platform.OS === 'android' &&
                         <RefreshControl
-                            refreshing={this.state.isLoading}
+                            refreshing={false}
                             onRefresh={this._onRefresh.bind(this)}
                         />
                     }
                     onScroll={(e) => {
-                        var height = e.nativeEvent.contentSize.height;
                         var offset = e.nativeEvent.contentOffset.y;
-                        if ((WINDOW_HEIGHT + offset) >= height && offset > 0) {
-                            this._onEndReached();
+                        if (Platform.OS === 'ios' && offset < -3) {
+                            this._onRefresh();
                         }
-                    }}>
+                    }}
+                >
+                    {this.state.isLoading && <PLLoader position="bottom" padder />}
                     <ListItem itemHeader first style={{ borderBottomWidth: 0 }}>
                         <Left>
                             <Text style={styles.titleText}>Choose Group</Text>
@@ -262,10 +221,10 @@ class GroupSelector extends Component {
                     {this._renderStateGroup()}
                     {this._renderCountryGroup()}
                     <List
-                        dataArray={this.otherGroups} renderRow={(group) =>
+                        dataArray={this.props.others} renderRow={(group) =>
                             <ListItem avatar style={{ paddingVertical: 5 }} onPress={() => this.goToGroupFeed(group.id, group.official_name, group.avatar_file_path, group.conversation_view_limit)} badge>                                
                                 <Left style={{position: 'relative'}}>                                
-                                    <Thumbnail small source={group.avatar_file_path ? { uri: group.avatar_file_path } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} style={styles.thumbnail} />
+                                    <Thumbnail small source={group.avatar_file_path ? { uri: group.avatar_file_path+'&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} style={styles.thumbnail} />
                                     {group.priority_item_count!=0?
                                     <Badge style={{position: 'absolute', bottom: 0, right: -5, height: 18, paddingLeft: 3, paddingRight: 3, paddingTop: 1.7, paddingBottom: 1.7}}>
                                         <Text style={{fontSize: 11, lineHeight: 14, textAlign: 'center'}}>
@@ -279,9 +238,8 @@ class GroupSelector extends Component {
                             </ListItem>
                         }>
                     </List>
-                    {this._renderTailLoading()}
                 </Content>
-            </Container >
+            </Container>
         );
     }
 }
@@ -296,7 +254,10 @@ const mapStateToProps = state => ({
     token: state.user.token,
     page: state.groups.page,
     count: state.groups.items,
-    payload: state.groups.payload,
+    others: state.groups.others,
+    town: state.groups.town,
+    state: state.groups.state,
+    country: state.groups.country,
 });
 
 

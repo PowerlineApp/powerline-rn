@@ -116,7 +116,7 @@ class GroupSearch extends Component{
             <Container style={styles.container}>
                 <Header style={styles.header}>
                     <Left>
-                        <Button transparent onPress={() => Actions.pop()}>
+                        <Button transparent onPress={() => Actions.pop()} style={{width: 50, height: 50 }}  >
                             <Icon active name="arrow-back" style={{color: 'white'}}/>
                         </Button>
                     </Left>
@@ -148,7 +148,7 @@ class GroupSearch extends Component{
                                     <ListItem style={styles.listItem} key={index} onPress={() => this.goToProfile(group)}>
                                         {
                                             group.avatar_file_path?
-                                            <Thumbnail square source={{uri: group.avatar_file_path}}/>:
+                                            <Thumbnail square source={{uri: group.avatar_file_path+'&w=50&h=50&auto=compress,format,q=95'}}/>:
                                             <View style={{width: 56, height: 56}}/>
                                         }
                                         <Body>
@@ -176,7 +176,7 @@ class GroupSearch extends Component{
                                     <ListItem style={styles.listItem} key={index} onPress={() => this.goToProfile(group)}>
                                         {
                                             group.avatar_file_path?
-                                            <Thumbnail square source={{uri: group.avatar_file_path}}/>:
+                                            <Thumbnail square source={{uri: group.avatar_file_path+'&w=50&h=50&auto=compress,format,q=95'}}/>:
                                             <View style={{width: 56, height: 56}}/>
                                         }
                                         <Body>
@@ -204,7 +204,7 @@ class GroupSearch extends Component{
                                             <ListItem style={styles.listItem} key={index} onPress={() => this.goToProfile(group)}>
                                                 {
                                                     group.avatar_file_path?
-                                                    <Thumbnail square source={{uri: group.avatar_file_path}}/>:
+                                                    <Thumbnail square source={{uri: group.avatar_file_path+'&w=50&h=50&auto=compress,format,q=95'}}/>:
                                                     <View style={{width: 56, height: 56}}/>
                                                 }
                                                 <Body>

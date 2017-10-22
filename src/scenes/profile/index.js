@@ -7,6 +7,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import {
+    ActionSheet,
     Container,
     Header,
     Left,
@@ -20,7 +21,6 @@ import {
     Grid,
     Col,
     Row,
-    Spinner, 
     ListItem, 
     Thumbnail, 
     List, 
@@ -34,7 +34,9 @@ import { RefreshControl, TouchableOpacity, Image, WebView, Platform } from 'reac
 import Carousel from 'react-native-snap-carousel';
 import styles , { sliderWidth, itemWidth } from './styles';
 const PLColors = require('PLColors');
-import { loadUserProfileById, resetActivities, votePost, loadActivitiesByUserId, getFollowingUser, unFollowings, putFollowings } from 'PLActions';
+import PLLoader from 'PLLoader';
+
+import { loadUserProfileById, resetActivities, editFollowers, votePost, loadActivitiesByUserId, getFollowingUser, unFollowings, putFollowings } from 'PLActions';
 import TimeAgo from 'react-native-timeago';
 import ImageLoad from 'react-native-image-placeholder';
 import YouTube from 'react-native-youtube';
@@ -44,6 +46,9 @@ import {
     TouchableWithoutFeedback,
     Alert
 } from 'react-native';
+
+// custom components import
+import FeedActivity from '../../components/Feed/FeedActivity';
 
 import Menu, {
     MenuContext,
@@ -81,7 +86,8 @@ class Profile extends Component{
 
         });
 
-        loadActivitiesByUserId(token, 1, 20, id).then(data => {
+        loadActivitiesByUserId(token, 1, 20, null, id).then(data => {
+            // console.log('res ---', data);
             this.setState({
                 activities: data.payload
             });
@@ -105,6 +111,34 @@ class Profile extends Component{
         });
 
         this.follow = this.follow.bind(this);
+    }
+
+    mute() {
+        var { token, id, dispatch } = this.props;
+        ActionSheet.show(
+            {
+                options: ['1 hour', '8 hours', '24 hours'],
+                title: 'MUTE NOTIFICATIONS FOR THIS USER'
+            },
+
+            buttonIndex => {
+                var hours = 1;
+                if (buttonIndex == 1) {
+                    hours = 8;
+                } else if (buttonIndex == 2) {
+                    hours = 24;
+                }
+
+                var newDate = new Date((new Date()).getTime() + 1000 * 60 * 60 * hours);
+                editFollowers(token, id, false, newDate)
+                    .then(data => {
+
+                    })
+                    .catch(err => {
+
+                    });
+            }
+        );
     }
 
     follow(){
@@ -146,45 +180,6 @@ class Profile extends Component{
         }
     }
 
-    componentWillMount(){
-        
-    }
-
-    //This is for upvoting/downvoting a post. Needs attention GH128
-    async vote(item, option) {
-        let response = await votePost(this.props.token, item.entity.id, option);
-        if (response.code) {
-            let code = response.code;
-            switch (code) {
-                case 400:
-                    alert('User already answered to this post.');
-                    break;
-                case 200:
-                    break;
-                default:
-                    alert('Something went wrong');
-                    break;
-            }
-        }
-        else {
-            alert('Something went wrong');
-        }
-    }
-
-    //When an item includes a YouTube attachment or when a YouTube link is included in the body of the item
-    youtubeGetID(url) {
-        var ID = '';
-        url = url.replace(/(>|<)/gi, '').split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
-        if (url[2] !== undefined) {
-            ID = url[2].split(/[^0-9a-z_\-]/i);
-            ID = ID[0];
-        }
-        else {
-            ID = url;
-        }
-        return ID;
-    }
-
     _onRefresh() {
         this.props.dispatch(resetActivities());
         this.loadInitialActivities();
@@ -200,378 +195,15 @@ class Profile extends Component{
     _renderTailLoading() {
         if (this.state.isLoadingTail === true) {
             return (
-                <Spinner color='gray' />
+                <PLLoader position="bottom" />
             );
-        } else {
-            return null;
-        }
-    }
-
-    //This is the count of priority zone content GH33
-    _renderZoneIcon(item) {
-        if (item.zone === 'prioritized') {
-            return (<Icon active name="ios-flash" style={styles.zoneIcon} />);
-        } else {
-            return null;
-        }
-    }
-
-    _renderContext(entry) {
-        if (entry.type === "image") {
-            return (
-                <ImageLoad
-                    placeholderSource={require('img/empty_image.png')}
-                    source={{ uri: entry.imageSrc }}
-                    style={styles.image}
-                />
-            );
-        }
-        else if (entry.type === "video") {
-            var url = entry.text.toString();
-            var videoid = this.youtubeGetID(url);
-            if (Platform.OS === 'ios') {
-                return (
-                    <YouTube
-                        ref={(component) => {
-                            this._youTubeRef = component;
-                        }}
-                        apiKey={youTubeAPIKey}
-                        videoId={videoid}
-                        controls={1}
-                        style={styles.player}
-                    />
-                );
-            } else {
-                return (
-                    <WebView
-                        style={styles.player}
-                        javaScriptEnabled={true}
-                        source={{ uri: `https://www.youtube.com/embed/${videoid}?rel=0&autoplay=0&showinfo=0&controls=0` }}
-                    />
-                );
-            }
-        }
-        else {
-            return null;
-        }
-    }
-
-    //If an item has multiple attachments (leader content) it could be multiple videos or pictures, displayed as carousel, three items max
-    _renderCarousel(item) {
-        if (item.poll) {
-            const slides = item.poll.educational_context.map((entry, index) => {
-                return (
-                    <TouchableOpacity
-                        key={`entry-${index}`}
-                        activeOpacity={0.7}
-                        style={styles.slideInnerContainer}
-                    >
-                        <View style={[styles.imageContainer, (index + 1) % 2 === 0 ? styles.imageContainerEven : {}]}>
-                            {this._renderContext(entry)}
-                            <View style={[styles.radiusMask, (index + 1) % 2 === 0 ? styles.radiusMaskEven : {}]} />
-                        </View>
-                    </TouchableOpacity>
-                );
-            });
-
-            return (
-                <CardItem cardBody>
-                    <Carousel
-                        sliderWidth={sliderWidth}
-                        itemWidth={itemWidth}
-                        inactiveSlideScale={1}
-                        inactiveSlideOpacity={1}
-                        enableMomentum={true}
-                        autoplay={false}
-                        autoplayDelay={500}
-                        autoplayInterval={2500}
-                        containerCustomStyle={styles.slider}
-                        contentContainerCustomStyle={styles.sliderContainer}
-                        showsHorizontalScrollIndicator={false}
-                        snapOnAndroid={true}
-                        removeClippedSubviews={false}
-                    >
-                        {slides}
-                    </Carousel>
-                </CardItem>
-            );
-        } else {
-            return null;
-        }
-    }
-
-    _renderTitle(item) {
-        if (item.title) {
-            return (<Text style={styles.title}>{item.title}</Text>);
         } else {
             return null;
         }
     }
 
     _renderHeader(item) {
-        var thumbnail: string = '';
-        var title: string = '';
-
-        switch (item.entity.type) {
-            case 'post' || 'user-petition':
-                thumbnail = item.owner.avatar_file_path ? item.owner.avatar_file_path : '';
-                title = item.owner.first_name + ' ' + item.owner.last_name;
-                break;
-            default:
-                thumbnail = item.group.avatar_file_path ? item.group.avatar_file_path : '';
-                title = item.user.full_name;
-                break;
-        }
-        return (
-            <CardItem>
-                <Left>
-                    <Thumbnail small source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
-                    <Body>
-                        <Text style={styles.title}>{title}</Text>
-                        <Text note style={styles.subtitle}>{item.group.official_name} � <TimeAgo time={item.sent_at} hideAgo={true} /></Text>
-                    </Body>
-                    <Right style={{ flex: 0.2 }}>
-                        {/* Dropdown menu for Standard Item Container... Should be same as Item Detail Screen */}
-                        <Menu>
-                            <MenuTrigger>
-                                <Icon name="ios-arrow-down" style={styles.dropDownIcon} />
-                            </MenuTrigger>
-                            <MenuOptions customStyles={optionsStyles}>
-                                <MenuOption>
-                                    <Button iconLeft transparent dark>
-                                        <Icon name="logo-rss" style={styles.menuIcon} />
-                                        <Text style={styles.menuText}>Subscribe to this Post</Text>
-                                    </Button>
-                                </MenuOption>
-                                <MenuOption>
-                                    <Button iconLeft transparent dark>
-                                        <Icon name="ios-heart" style={styles.menuIcon} />
-                                        <Text style={styles.menuText}>Add to Favorites</Text>
-                                    </Button>
-                                </MenuOption>
-                                <MenuOption>
-                                    <Button iconLeft transparent dark>
-                                        <Icon name="md-person-add" style={styles.menuIcon} />
-                                        <Text style={styles.menuText}>Add to Contact</Text>
-                                    </Button>
-                                </MenuOption>
-                            </MenuOptions>
-                        </Menu>
-                    </Right>
-                </Left>
-            </CardItem>
-        );
-    }
-
-    //The footer will be different for the Standard Item Container depending on the type of item it is:
-    //Post = Upvote, Downvote, Reply
-    //Petition = Sign, Reply... for user petitions and group petitions
-    //Group Poll (aka question) = Answer, Reply
-    //Group Fundraiser (aka payment_request)= Donate, Reply
-    //Group Discussion (leader_news) = Reply
-    //Group Event (leader_event) = RSVP, Reply
-    //If we are viewing the item in Item Detail Screen, an added button Analytics appears for Posts.
-    _renderFooter(item) {
-        switch (item.entity.type) {
-            case 'post':
-                return (
-                    <CardItem footer style={{ height: 35 }}>
-                        <Left style={{ justifyContent: 'flex-end' }}>
-                            <Button iconLeft transparent style={styles.footerButton} onPress={() => this.vote(item, 'upvote')}>
-                                <Icon name="md-arrow-dropup" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Upvote {item.rate_up ? item.rate_up : 0}</Label>
-                            </Button>
-                            <Button iconLeft transparent style={styles.footerButton} onPress={() => this.vote(item, 'downvote')}>
-                                <Icon active name="md-arrow-dropdown" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Downvote {item.rate_up ? item.rate_down : 0}</Label>
-                            </Button>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
-                            </Button>
-                        </Left>
-                    </CardItem>
-                );
-                break;
-            case 'petition':
-            case 'user-petition':
-                return (
-                    <CardItem footer style={{ height: 35 }}>
-                        <Left style={{ justifyContent: 'flex-end' }}>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon name="md-arrow-dropdown" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Sign</Label>
-                            </Button>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
-                            </Button>
-                        </Left>
-                    </CardItem>
-                );
-                break;
-            case 'question':
-                return (
-                    <CardItem footer style={{ height: 35 }}>
-                        <Left style={{ justifyContent: 'flex-end' }}>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon name="md-arrow-dropdown" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Answer</Label>
-                            </Button>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
-                            </Button>
-                        </Left>
-                    </CardItem>
-                );
-                break;
-            case 'payment-request':
-                return (
-                    <CardItem footer style={{ height: 35 }}>
-                        <Left style={{ justifyContent: 'flex-end' }}>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon name="md-arrow-dropdown" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Pay</Label>
-                            </Button>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
-                            </Button>
-                        </Left>
-                    </CardItem>
-                );
-                break;
-            case 'leader-event':
-                return (
-                    <CardItem footer style={{ height: 35 }}>
-                        <Left style={{ justifyContent: 'flex-end' }}>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon name="md-arrow-dropdown" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>RSVP</Label>
-                            </Button>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
-                            </Button>
-                        </Left>
-                    </CardItem>
-                );
-                break;
-            case 'leader-news':
-                return (
-                    <CardItem footer style={{ height: 35 }}>
-                        <Left style={{ justifyContent: 'flex-end' }}>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon name="md-arrow-dropdown" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Discuss</Label>
-                            </Button>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
-                            </Button>
-                        </Left>
-                    </CardItem>
-                );
-                break;
-            default:
-                return (
-                    <CardItem footer style={{ height: 35 }}>
-                        <Left style={{ justifyContent: 'flex-end' }}>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon name="md-arrow-dropup" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Upvote {item.rate_up ? item.rate_up : 0}</Label>
-                            </Button>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon active name="md-arrow-dropdown" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Downvote {item.rate_up ? item.rate_down : 0}</Label>
-                            </Button>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
-                            </Button>
-                        </Left>
-                    </CardItem>
-                );
-                break;
-        }
-    }
-
-    //If the item is a 'priority zone' item, it should display the zone icon. If not, it does not.
-    //The responses count appears below the avatar. It counts total engagement with the post (votes + comments)
-    _renderDescription(item) {
-        return (
-            <CardItem>
-                <Left>
-                    <View style={styles.descLeftContainer}>
-                        {this._renderZoneIcon(item)}
-                        <Label style={styles.commentCount}>{item.responses_count}</Label>
-                    </View>
-                    <Body style={styles.descBodyContainer}>
-                        {this._renderTitle(item)}
-                        <Text style={styles.description} numberOfLines={5}>{item.description}</Text>
-                    </Body>
-                </Left>
-            </CardItem>
-        );
-    }
-
-    //This isn't working currently. It is designed to give user preview of any embedded URL in the item. 
-    //GH13
-    _renderMetadata(item) {
-        if (item.metadata && item.metadata.image) {
-            return (
-                <CardItem>
-                    <Left>
-                        <View style={styles.descLeftContainer} />
-                        <Body>
-                            <TouchableOpacity
-                                activeOpacity={0.7}
-                                style={styles.metaContainer}
-                                onPress={() => { alert(`You've clicked metadata`); }}>
-                                <View style={styles.imageContainer}>
-                                    <ImageLoad
-                                        placeholderSource={require('img/empty_image.png')}
-                                        source={{ uri: item.metadata.image }}
-                                        style={styles.image}
-                                    />
-                                </View>
-                                <View style={styles.textContainer}>
-                                    <Text style={styles.title} numberOfLines={2}>{item.metadata.title}</Text>
-                                    <Text style={styles.description} numberOfLines={2}>{item.metadata.description}</Text>
-                                </View>
-                            </TouchableOpacity>
-                        </Body>
-                    </Left>
-                </CardItem>
-            );
-        } else {
-            return null;
-        }
-    }
-
-    postOrUserPetitionCard(item) {
-        return (
-            <Card>
-                {this._renderHeader(item)}
-                {this._renderDescription(item)}
-                {this._renderMetadata(item)}
-                <View style={styles.borderContainer} />
-                {this._renderFooter(item)}
-            </Card>
-        );
-    }
-
-    groupCard(item) {
-        return (
-            <Card>
-                {this._renderHeader(item)}
-                {this._renderDescription(item)}
-                {this._renderCarousel(item)}
-                <View style={styles.borderContainer} />
-                {this._renderFooter(item)}
-            </Card>
-        );
+        return <FeedHeader item={item} />
     }
 
     // It would appear that the below is the User Profile Screen GH44
@@ -581,13 +213,23 @@ class Profile extends Component{
                 <Container style={styles.container}> 
                     {this.state.user?      
                     <View style={{backgroundColor: PLColors.main}}>
-                        <View>                            
-                            <Button transparent onPress={() => Actions.pop()}>
-                                <Icon active name="arrow-back" style={{color: 'white'}}/>
-                            </Button>                           
-                        </View>                        
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingTop: 20 }}>
+                            <View>                            
+                                <Button transparent onPress={() => Actions.pop()}>
+                                    <Icon active name="arrow-back" style={{color: 'white'}}/>
+                                </Button>                           
+                            </View>
+                            {
+                                this.state.following_status === 'active' &&
+                                <View>
+                                    <Button transparent onPress={() => this.mute()}>
+                                        <Icon active name="md-volume-off" style={{ color: 'white' }} />
+                                    </Button>
+                                </View>
+                            }
+                        </View> 
                         <View style={{justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}>
-                            <Thumbnail source={{uri: this.state.user.avatar_file_name}} style={{marginBottom: 8}}/>  
+                            <Thumbnail source={{uri: this.state.user.avatar_file_name+'&w=50&h=50&auto=compress,format,q=95'}} style={{marginBottom: 8}}/>  
                             <TouchableWithoutFeedback onPress={() => this.follow()}>                              
                                 <View  style={{flexDirection: 'row', backgroundColor: 'white', padding: 1, marginTop: 30, marginLeft: -15, width: 28, height: 28, borderRadius: 24, borderWidth: 1, borderColor: '#11c1f3'}}>
                                     {this.state.following_status == 'pending'?
@@ -622,13 +264,7 @@ class Profile extends Component{
                     {/*This is driven by Activity API for specific user*/}
                     <Content>                   
                         <List dataArray={this.state.activities} renderRow={item => {
-                            switch (item.entity.type) {
-                                case 'post':
-                                case 'user-petition':
-                                    return this.postOrUserPetitionCard(item);
-                                default:
-                                    return this.groupCard(item);
-                            }
+                            return <FeedActivity item={item} token={this.props.token} profile={this.props.profile} />
                         }}
                         />
                     </Content>              
@@ -643,13 +279,6 @@ const menuContextStyles = {
   backdrop: styles.backdrop,
 };
 
-const optionsStyles = {
-    optionsContainer: {
-        backgroundColor: '#fafafa',
-        paddingLeft: 5,
-        width: WINDOW_WIDTH,
-    },
-};
 
 async function timeout(ms: number): Promise {
     return new Promise((resolve, reject) => {

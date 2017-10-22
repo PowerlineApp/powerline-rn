@@ -6,7 +6,13 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { Content, Text, List, ListItem, Left, Body, Right,Thumbnail, Button, Icon} from 'native-base';
-
+import {
+    TouchableOpacity,
+    View,
+    Alert,
+    Platform,
+    RefreshControl
+} from 'react-native';
 import Menu, {
     MenuContext,
     MenuTrigger,
@@ -14,17 +20,14 @@ import Menu, {
     MenuOption,
     renderers
 } from 'react-native-popup-menu';
+var TimeAgo = require('react-native-timeago');
+import PLLoader from 'PLLoader';
 
 const PLColors = require('PLColors');
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
 var { getActivities, unFollowers, acceptFollowers, putSocialActivity, getInvites, joinGroup,getGroupDetails } = require('PLActions');
-var TimeAgo = require('react-native-timeago');
-import {
-    TouchableOpacity,
-    View,
-    Alert,
-    RefreshControl
-} from 'react-native';
+
+import ContentPlaceholder from '../../../components/ContentPlaceholder';
 import styles from './styles';
 
 class Notifications extends Component{
@@ -38,7 +41,7 @@ class Notifications extends Component{
     }
 
     componentWillMount(){
-        this.onRefresh();
+        this._onRefresh();
     }
 
     loadActivities(){
@@ -46,7 +49,6 @@ class Notifications extends Component{
 
         dispatch({type: 'RESET_NOTIFICATION'});
         getActivities(token).then(res => {
-            console.log(res);
             dispatch({type: 'LOAD_NOTIFICATION', data: res});
             this.setState({
                 refreshing: false
@@ -181,22 +183,39 @@ class Notifications extends Component{
         
     }
 
-    onRefresh(){
+    _onRefresh(){
         this.setState({
             refreshing: true
         });
         this.loadActivities();
     }
- // There are three general types of activities that show up in the Notifications Feed. A social activity update (e.g someone mentioned you in a comment), a Social Follow Request (User A wants to follow you), and a Group Join invite (You were invited to Save the Whales)
-
-    render (){
+ 
+   // There are three general types of activities that show up in the Notifications Feed. A social activity update (e.g someone mentioned you in a comment), a Social Follow Request (User A wants to follow you), and a Group Join invite (You were invited to Save the Whales)
+    render() {
         return (
-            <Content
-                refreshControl={
+            <ContentPlaceholder
+                empty={
+                    !this.state.refreshing && 
+                    this.props.notifications.length === 0
+                }
+                title="Seems quiet a bit quiet in here. Are you following anyone?"
+                refreshControl={Platform.OS === 'android' &&
                     <RefreshControl
-                        refreshing={this.state.refreshing}
-                        onRefresh={this.onRefresh.bind(this)}
-                        />}>
+                        refreshing={false}
+                        onRefresh={this._onRefresh.bind(this)}
+                    />
+                }
+                onScroll={(e) => {
+                    var height = e.nativeEvent.contentSize.height;
+                    var offset = e.nativeEvent.contentOffset.y;
+
+                    if (Platform.OS === 'ios' && offset < -3) {
+                        this._onRefresh();
+                    }
+                }}
+                style={styles.container}
+            >
+                {this.state.refreshing && <PLLoader position="bottom" />}
                 <List style={{backgroundColor: 'white'}}>
                     {
                         this.state.invites.map((value, index) => {
@@ -204,7 +223,7 @@ class Notifications extends Component{
                                 <ListItem avatar key={index} style={styles.listItem}>
                                     <Left>
                                         {value.avatar_file_path?
-                                        <Thumbnail small source={{uri: value.avatar_file_path}}/>:
+                                        <Thumbnail small source={{uri: value.avatar_file_path+'&w=50&h=50&auto=compress,format,q=95'}}/>:
                                         <Thumbnail small source={require('img/blank_person.png')}/>
                                         }
                                     </Left>
@@ -233,7 +252,7 @@ class Notifications extends Component{
                                 <ListItem avatar key={index} style={styles.listItem}>
                                     {value.target.image?
                                     <Left>
-                                        <Thumbnail small source={{ uri: value.target.image }} />
+                                        <Thumbnail small source={{ uri: value.target.image+'&w=50&h=50&auto=compress,format,q=95' }} />
                                     </Left>:
                                     <Left>
                                         <Thumbnail small source={require('img/blank_person.png')} />
@@ -274,7 +293,7 @@ class Notifications extends Component{
                         })
                     }
                 </List>
-            </Content>
+            </ContentPlaceholder>
         );
     }
 

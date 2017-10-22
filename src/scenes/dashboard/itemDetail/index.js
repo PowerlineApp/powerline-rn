@@ -6,7 +6,8 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, Spinner, List, ListItem, Item, Input } from 'native-base';
+import {ScrollView} from 'react-native';
+import { Container, Header, Title, Textarea, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, List, ListItem, Item, Input } from 'native-base';
 import { Image, View, StyleSheet, TouchableOpacity, Platform, KeyboardAvoidingView, Keyboard, TextInput, ListView } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
@@ -23,8 +24,24 @@ import Menu, {
     MenuOption,
     renderers
 } from 'react-native-popup-menu';
-import OrientationLoadingOverlay from 'react-native-orientation-loading-overlay';
-import { getComments, votePost, addComment, rateComment, loadActivityByEntityId } from 'PLActions';
+import { getComments, votePost, getUsersByGroup, addComment, editComment, deleteComment, rateComment, loadActivityByEntityId, deletePost, deletePetition, changePost, changePetition } from 'PLActions';
+import PLOverlayLoader from 'PLOverlayLoader';
+import randomPlaceholder from '../../../utils/placeholder';
+import _ from 'lodash';
+import PLLoader from 'PLLoader';
+
+
+// custom components import
+import FeedFooter from '../../../components/Feed/FeedFooter';
+import FeedHeader from '../../../components/Feed/FeedHeader';
+import FeedCarousel from '../../../components/Feed/FeedCarousel';
+import FeedDescription from '../../../components/Feed/FeedDescription';
+import FeedContext from '../../../components/Feed/FeedContext';
+import FeedMetaData from '../../../components/Feed/FeedMetaData';
+import FeedActivity from '../../../components/Feed/FeedActivity';
+
+import SuggestionBox from '../../../common/suggestionBox';
+
 
 const { youTubeAPIKey } = require('PLEnv');
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
@@ -47,10 +64,15 @@ class ItemDetail extends Component {
         this.state = {
             isLoading: false,
             isCommentsLoading: false,
+            isEditMode: props.isEditEnabled || false,
             visibleHeight: 50,
             commentText: '',
+            defaultInputValue: '',
+            editedCommentId: null,
             dataArray: [],
             dataSource: ds,
+            inputDescription: '',
+            placeholderTitle: '',
         };
         this.commentToReply = null;
         this.isLoadedAll = false;
@@ -62,8 +84,24 @@ class ItemDetail extends Component {
     componentWillMount() {
         this.keyboardDidShowListener = Keyboard.addListener('keyboardWillShow', this._keyboardWillShow.bind(this));
         this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide.bind(this));
-
+        
+    }
+    
+    componentDidMount(){
+        // this.addCommentInput.focus(); 
+        // console.log('=xx=x=x=x=x=x=x=x=x==x')
+        // console.log('propss', this.props.entityType, this.props.entityId);
+        if (this.props.commenting){
+            // console.log('commenting...')
+            setTimeout(
+                () => this._onAddComment()
+                , 1000);
+            }   
         this.loadEntity();
+    }
+    
+    onCommentInputRef = r => {
+        this.addCommentInput = r;
     }
 
     componentWillUnmount() {
@@ -85,35 +123,30 @@ class ItemDetail extends Component {
         this.addCommentView = r;
     }
 
-    onCommentInputRef = r => {
-        this.addCommentInput = r;
-    }
 
     _onAddComment(comment) {
+        this.setState({ placeholderTitle: randomPlaceholder('comment') });
         this.commentToReply = comment ? comment : null;
         this.addCommentView.open();
     }
 
     _onSendComment() {
-        if (this.state.commentText === '') {
+        const { commentText, editedCommentId } = this.state;
+
+        if (commentText === '') {
             alert("There is no comment to send. Try again.");
         } else {
-            this.doComment(this.state.commentText);
-        }
-    }
-
-    //I am not sure what this is, we should come back to this.
-    _onVote(item, option) {
-        const { props: { profile } } = this;
-        if (profile.id === item.user.id) {
-            alert("Unable to vote because you're the owner of the item.")
-        } else {
-            this.vote(item, option);
+            if (editedCommentId !== null) {
+                this.doEditComment(commentText);
+            } else {
+                this.doComment(commentText);
+            }
         }
     }
 
     //Comments can be voted up or down. It's called "rating" a comment
     _onRate(comment, option) {
+        // console.log('_onRate =x=x=x=x=x', comment, option);
         const { props: { profile } } = this;
         this.rate(comment, option);
     }
@@ -132,13 +165,14 @@ class ItemDetail extends Component {
 
     // API Calls
     async loadEntity() {
+        // console.log(this.props.entityId, this.props.entityType);
         const { props: { token, entityId, entityType, dispatch } } = this;
-
+        // console.log(entityId, entityType)
         this.setState({ isLoading: true });
         loadActivityByEntityId(token, entityType, entityId).then(data => {
             if (data.payload && data.payload[0]) {
                 this.item = data.payload[0];
-                this.setState({ isLoading: false });
+                this.setState({ isLoading: false, inputDescription: this.item.description });
                 this.loadComments();
             }
         }).catch(e => {
@@ -163,6 +197,7 @@ class ItemDetail extends Component {
                 this.nextCursor = null;
                 this.isLoadedAll = true;
             }
+            // console.log('response', response);
             this.setState({
                 dataArray: response.comments,
             });
@@ -223,54 +258,6 @@ class ItemDetail extends Component {
         });
     }
 
-    async vote(item, option) {
-        const { props: { profile, token } } = this;
-
-        if (profile.id === item.user.id) {
-            return;
-        }
-        if (item.post.votes && item.post.votes[0]) {
-            return;
-        }
-
-        var response;
-
-        this.setState({ isLoading: true });
-
-        switch (item.entity.type) {
-            case 'post':
-                response = await votePost(this.props.token, item.entity.id, option);
-                break;
-            default:
-                return;
-                break;
-        }
-
-        if (response.user) {
-            loadActivityByEntityId(token, item.entity.type, item.entity.id).then(data => {
-                if (data.payload && data.payload[0]) {
-                    this.item = data.payload[0];
-                    this.setState({
-                        isLoading: false,
-                    });
-                }
-            }).catch(err => {
-                this.setState({
-                    isLoading: false,
-                });
-            });
-        }
-        else {
-            this.setState({
-                isLoading: false,
-            });
-            let message = 'Something went wrong to vote';
-            if (response.errors.errors.length) {
-                message = response.errors.errors[0];
-            }
-            setTimeout(() => alert(message), 1000);
-        }
-    }
     //GH17
     //Users should be able to create comments and reply to a comment
     async doComment(commentText) {
@@ -297,16 +284,61 @@ class ItemDetail extends Component {
         }
     }
 
-    //User should be able to up/down rate a comment
-    async rate(comment, option) {
+    editComment = (comment) => {
+        this.setState({ editedCommentId: comment.id, defaultInputValue: comment.comment_body });
+        this.addCommentView && this.addCommentView.open();
+    }
+
+    resetEditComment = () => this.setState({
+        defaultInputValue: '',
+        editedCommentId: null,
+    })
+
+    async doEditComment(commentText) {
         this.setState({ isLoading: true });
+        let response = await editComment(this.item.entity.type, this.props.token, this.state.editedCommentId, commentText);
+
+        this.addCommentView.close();
+        this.setState({
+            isLoading: false,
+        });
+
+        // console.warn(response);
+        if (response.status === 200 && response.ok) {
+            this.loadComments();
+            this.resetEditComment();
+        } else {
+            alert(response.message ? response.message : 'Something went wrong to edit');
+            this.resetEditComment();
+        }
+        this.menuComment && this.menuComment.close();
+    }
+
+    async deleteComment(comment) {
+        let response = await deleteComment(this.item.entity.type, this.props.token, comment.id);
+        if (response.status === 204 && response.ok) {
+            this.loadComments();
+        } else {
+            alert(response.message ? response.message : 'Something went wrong to delete');
+        }
+        this.menuComment && this.menuComment.close();
+    }
+
+    async rate(comment, option) {
+        let originalComment = _.cloneDeep(comment);
+        // console.log('=x=x=x=x=x=x', comment, option);
+
+        // to control if a rating is being requested.
+        if (this.state.isRating){
+            return;
+        }
+
+        this.setState({ isRating: true });
 
         const { props: { entityType, token } } = this;
-        var response;
-        response = await rateComment(token, entityType, comment.id, option);
-        // console.error(response);
-        this.setState({ isLoading: false });
+        let response = await rateComment(token, entityType, comment.id, option);
 
+        this.setState({ isRating: false });
         if (response && response.comment_body) {
             this.loadComments();
         } else {
@@ -315,18 +347,45 @@ class ItemDetail extends Component {
         }
     }
 
-    // Private Functions    
-    youtubeGetID(url) {
-        var ID = '';
-        url = url.replace(/(>|<)/gi, '').split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
-        if (url[2] !== undefined) {
-            ID = url[2].split(/[^0-9a-z_\-]/i);
-            ID = ID[0];
+    save = () => {
+        const { inputDescription } = this.state;
+
+        if (inputDescription !== '') {
+            if (this.item.entity.type === 'post') {
+                this.props.dispatch(changePost(this.item.entity.id, this.item.id, inputDescription));
+            }
+            if (this.item.entity.type === 'user-petition') {
+                this.props.dispatch(changePetition(this.item.entity.id, this.item.id, inputDescription));
+            }
+            this.item.description = inputDescription;
+            this.setState({ isEditMode: false });
+        } else {
+            alert('Description is empty.')
         }
-        else {
-            ID = url;
+    }
+
+    dismiss = () => {
+        this.setState({
+            inputDescription: this.item.description,
+            isEditMode: false,
+        });
+    }
+    
+    edit(item) {
+        this.setState({ isEditMode: true });
+        this.menu && this.menu.close();
+    }
+
+    delete(item) {
+        if (item.entity.type === 'post') {
+            this.props.dispatch(deletePost(item.entity.id, item.id));
         }
-        return ID;
+        if (item.entity.type === 'user-petition') {
+            this.props.dispatch(deletePetition(item.entity.id, item.id));
+        }
+
+        this.onBackPress();
+        this.menu && this.menu.close();
     }
 
     openedAddCommentView() {
@@ -335,374 +394,94 @@ class ItemDetail extends Component {
         }, 100);
     }
 
-    getIndex(comment) {
-        for (var index = 0; index < this.state.dataArray.length; index++) {
-            var element = this.state.dataArray[index];
-            if (element.id === comment.id) {
-                return index;
-            }
-        }
-        return -1;
-    }
-
-    // A lot of below looks like duplication of Newsfeed / User Profile screen. Should not be like this.
-    // Rendering Functions
-    _renderZoneIcon(item) {
-        if (item.zone === 'prioritized') {
-            return (<Icon active name="ios-flash" style={styles.zoneIcon} />);
-        } else {
-            return null;
-        }
-    }
-
-    _renderContext(entry) {
-        if (entry.type === "image") {
-            return (
-                <ImageLoad
-                    placeholderSource={require('img/empty_image.png')}
-                    source={{ uri: entry.imageSrc }}
-                    style={styles.image}
-                />
-            );
-        }
-        else if (entry.type === "video") {
-            var url = entry.text.toString();
-            var videoid = this.youtubeGetID(url);
-            if (Platform.OS === 'ios') {
-                return (
-                    <YouTube
-                        ref={(component) => {
-                            this._youTubeRef = component;
-                        }}
-                        apiKey={youTubeAPIKey}
-                        videoId={videoid}
-                        controls={1}
-                        style={styles.player}
-                    />
-                );
-            } else {
-                return (
-                    <WebView
-                        style={styles.player}
-                        javaScriptEnabled={true}
-                        source={{ uri: `https://www.youtube.com/embed/${videoid}?rel=0&autoplay=0&showinfo=0&controls=0` }}
-                    />
-                );
-            }
-        }
-        else {
-            return null;
-        }
-    }
-
-    _renderCarousel(item) {
-        if (item.poll) {
-            const slides = item.poll.educational_context.map((entry, index) => {
-                return (
-                    <TouchableOpacity
-                        key={`entry-${index}`}
-                        activeOpacity={0.7}
-                        style={styles.slideInnerContainer}
-                    >
-                        <View style={[styles.imageContainer, (index + 1) % 2 === 0 ? styles.imageContainerEven : {}]}>
-                            {this._renderContext(entry)}
-                            <View style={[styles.radiusMask, (index + 1) % 2 === 0 ? styles.radiusMaskEven : {}]} />
-                        </View>
-                    </TouchableOpacity>
-                );
-            });
-
-            return (
-                <CardItem cardBody>
-                    <Carousel
-                        sliderWidth={sliderWidth}
-                        itemWidth={itemWidth}
-                        inactiveSlideScale={1}
-                        inactiveSlideOpacity={1}
-                        enableMomentum={true}
-                        autoplay={false}
-                        autoplayDelay={500}
-                        autoplayInterval={2500}
-                        containerCustomStyle={styles.slider}
-                        contentContainerCustomStyle={styles.sliderContainer}
-                        showsHorizontalScrollIndicator={false}
-                        snapOnAndroid={true}
-                        removeClippedSubviews={false}
-                    >
-                        {slides}
-                    </Carousel>
-                </CardItem>
-            );
-        } else {
-            return null;
-        }
-    }
-
-    _renderTitle(item) {
-        if (item.title) {
-            return (<Text style={styles.title}>{item.title}</Text>);
-        } else {
-            return null;
-        }
-    }
-
-    _renderPostFooter(item) {
-        if (item.zone === 'expired') {
-            return (
-                <CardItem footer style={{ height: 35 }}>
-                    <Left style={{ justifyContent: 'flex-start' }}>
-                        <Button iconLeft transparent style={styles.footerButton}>
-                            <Icon active name="ios-undo" style={styles.footerIcon} />
-                            <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
-                        </Button>
-                    </Left>
-                </CardItem>
-            );
-        } else {
-            if (item.post.votes && item.post.votes[0]) {
-                let vote = item.post.votes[0];
-                var isVotedUp = false;
-                var isVotedDown = false;
-                if (vote.option === 1) {
-                    isVotedUp = true;
-                }
-                else if (vote.option === 2) {
-                    isVotedDown = true;
-                }
-            }
-            return (
-                <CardItem footer style={{ height: 35 }}>
-                    <Left style={{ justifyContent: 'space-between' }}>
-                        <Button iconLeft transparent style={styles.footerButton} onPress={() => this.vote(item, 'upvote')}>
-                            <Icon name="md-arrow-dropup" style={isVotedUp ? styles.footerIconBlue : styles.footerIcon} />
-                            <Label style={isVotedUp ? styles.footerTextBlue : styles.footerText}>Upvote {item.upvotes_count ? item.upvotes_count : 0}</Label>
-                        </Button>
-                        <Button iconLeft transparent style={styles.footerButton} onPress={() => this.vote(item, 'downvote')}>
-                            <Icon active name="md-arrow-dropdown" style={isVotedDown ? styles.footerIconBlue : styles.footerIcon} />
-                            <Label style={isVotedDown ? styles.footerTextBlue : styles.footerText}>Downvote {item.downvotes_count ? item.downvotes_count : 0}</Label>
-                        </Button>
-                        <Button iconLeft transparent style={styles.footerButton}>
-                            <Icon active name="ios-undo" style={styles.footerIcon} />
-                            <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
-                        </Button>
-                    </Left>
-                </CardItem>
-            );
-        }
-    }
-
     _renderHeader(item) {
-        var thumbnail: string = '';
-        var title: string = '';
+        return <FeedHeader item={item} />
+    }
 
-        switch (item.entity.type) {
-            case 'post' || 'user-petition':
-                thumbnail = item.owner.avatar_file_path ? item.owner.avatar_file_path : '';
-                title = item.owner.first_name + ' ' + item.owner.last_name;
-                break;
-            default:
-                thumbnail = item.group.avatar_file_path ? item.group.avatar_file_path : '';
-                title = item.user.full_name;
-                break;
-        }
+    substitute (mention) {
+        let {init, end} = this.state;
+        let newContent = this.state.commentText;
+        let initialLength = newContent.length;
+
+        let firstPart = newContent.substr(0, init);
+        let finalPart = newContent.substr(end, initialLength);
+
+        let finalString = firstPart + mention + finalPart;
+
+        this.setState({commentText: finalString, displaySuggestionBox: false, lockSuggestionPosition: end});
+    }
+
+    onSelectionChange (event) {
+        let {start, end} = event.nativeEvent.selection;
+        // let userRole = this.state.grouplist[this.state.selectedGroupIndex].user_role;
+        setTimeout(() => {
+            if (start !== end) return;
+            if (start === this.state.lockSuggestionPosition) return;
+            let text = this.state.commentText;
+            let displayMention = false;
+            let i;
+
+            for (i = start - 1; i >= 0; i--) {
+                if (text.charAt(i) === ' ') break;
+                if (text.charAt(i) === '@' && (i === 0 || text.charAt(i - 1) === ' ')) {
+                    // if (text.slice(i, i + 9) === "@everyone" && userRole === 'owner' && userRole === 'manager') {
+                    //     alert("Are you sure you want to alert everyone in the group?");
+                    //     break;
+                    // }
+                    if (text.charAt(i + 1) && text.charAt(i + 1) !== ' ' && text.charAt(i + 2) && text.charAt(i + 2) !== ' ') {
+                        displayMention = true;
+                        for (let j = start - 1; text.charAt(j) && text.charAt(j) !== ' '; j++) end = j + 1;
+                    } else {
+                        displayMention = false;
+                    }
+                    break;
+                }
+            }
+            if (displayMention) {
+                let suggestionSearch = text.slice(i + 1, end);
+                this.updateSuggestionList(this.props.token, suggestionSearch);
+                this.setState({displaySuggestionBox: displayMention, init: i, end: end});
+            } else {
+                // console.log('false');
+                this.setState({suggestionList: [], displaySuggestionBox: false});
+            }
+        }, 100);
+    }
+
+    updateSuggestionList (token, suggestionSearch) {
+        // this.setState({suggestionList: []});
+        // console.log(this.item);
+        getUsersByGroup(token, this.item.group.id, suggestionSearch).then(data => {
+            this.setState({suggestionList: data.payload});
+        }).catch(err => {
+
+        });
+    }
+    changeContent (text) {
+        this.setState({
+            inputDescription: text
+        });
+    }
+    _renderTextarea(item, state) {
         return (
-            <CardItem style={{ paddingBottom: 0 }}>
-                <Left>
-                    <Thumbnail small source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
-                    <Body>
-                        <Text style={styles.title}>{title}</Text>
-                        <Text note style={styles.subtitle}>{item.group.official_name} • <TimeAgo time={item.sent_at} hideAgo={true} /></Text>
-                    </Body>
-                    <Right style={{ flex: 0.2 }}>
-                        <Menu>
-                            <MenuTrigger>
-                                <Icon name="ios-arrow-down" style={styles.dropDownIcon} />
-                            </MenuTrigger>
-                            <MenuOptions customStyles={optionsStyles}>
-                                <MenuOption>
-                                    <Button iconLeft transparent dark>
-                                        <Icon name="logo-rss" style={styles.menuIcon} />
-                                        <Text style={styles.menuText}>Subscribe to this Post</Text>
-                                    </Button>
-                                </MenuOption>
-                                <MenuOption>
-                                    <Button iconLeft transparent dark>
-                                        <Icon name="ios-heart" style={styles.menuIcon} />
-                                        <Text style={styles.menuText}>Add to Favorites</Text>
-                                    </Button>
-                                </MenuOption>
-                                <MenuOption>
-                                    <Button iconLeft transparent dark>
-                                        <Icon name="md-person-add" style={styles.menuIcon} />
-                                        <Text style={styles.menuText}>Add to Contact</Text>
-                                    </Button>
-                                </MenuOption>
-                            </MenuOptions>
-                        </Menu>
-                    </Right>
-                </Left>
-            </CardItem>
-        );
-    }
-
-    _renderFooter(item) {
-        switch (item.entity.type) {
-            case 'post':
-                return this._renderPostFooter(item);
-                break;
-            case 'petition':
-            case 'user-petition':
-                return (
-                    <CardItem footer style={{ height: 35 }}>
-                        <Left style={{ justifyContent: 'flex-end' }}>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon name="md-arrow-dropdown" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Sign</Label>
-                            </Button>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
-                            </Button>
-                        </Left>
-                    </CardItem>
-                );
-                break;
-            case 'question':
-                return (
-                    <CardItem footer style={{ height: 35 }}>
-                        <Left style={{ justifyContent: 'flex-end' }}>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon name="md-arrow-dropdown" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Answer</Label>
-                            </Button>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
-                            </Button>
-                        </Left>
-                    </CardItem>
-                );
-                break;
-            case 'payment-request':
-                return (
-                    <CardItem footer style={{ height: 35 }}>
-                        <Left style={{ justifyContent: 'flex-end' }}>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon name="md-arrow-dropdown" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Pay</Label>
-                            </Button>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
-                            </Button>
-                        </Left>
-                    </CardItem>
-                );
-                break;
-            case 'leader-event':
-                return (
-                    <CardItem footer style={{ height: 35 }}>
-                        <Left style={{ justifyContent: 'flex-end' }}>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon name="md-arrow-dropdown" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>RSVP</Label>
-                            </Button>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
-                            </Button>
-                        </Left>
-                    </CardItem>
-                );
-                break;
-            case 'leader-news':
-                return (
-                    <CardItem footer style={{ height: 35 }}>
-                        <Left style={{ justifyContent: 'flex-end' }}>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon name="md-arrow-dropdown" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Discuss</Label>
-                            </Button>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
-                            </Button>
-                        </Left>
-                    </CardItem>
-                );
-                break;
-            default:
-                return (
-                    <CardItem footer style={{ height: 35 }}>
-                        <Left style={{ justifyContent: 'flex-end' }}>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon name="md-arrow-dropup" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Upvote {item.rate_up ? item.rate_up : 0}</Label>
-                            </Button>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon active name="md-arrow-dropdown" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Downvote {item.rate_up ? item.rate_down : 0}</Label>
-                            </Button>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
-                            </Button>
-                        </Left>
-                    </CardItem>
-                );
-                break;
-        }
-    }
-
-    _renderDescription(item) {
-        return (
-            <CardItem>
-                <Left>
-                    <View style={styles.descLeftContainer}>
-                        {this._renderZoneIcon(item)}
-                        <Label style={styles.commentCount}>{item.responses_count}</Label>
-                    </View>
-                    <Body style={styles.descBodyContainer}>
-                        <TouchableOpacity>
-                            {this._renderTitle(item)}
-                            <Text style={styles.description} numberOfLines={5}>{item.description}</Text>
-                        </TouchableOpacity>
-                    </Body>
-                </Left>
-            </CardItem>
-        );
-    }
-
-    _renderMetadata(item) {
-        if (item.metadata && item.metadata.image) {
-            return (
-                <CardItem style={{ paddingTop: 0 }}>
-                    <Left>
-                        <View style={styles.descLeftContainer} />
-                        <Body>
-                            <TouchableOpacity
-                                activeOpacity={0.7}
-                                style={styles.metaContainer}
-                                onPress={() => { alert(`You've clicked metadata`); }}>
-                                <View style={styles.imageContainer}>
-                                    <ImageLoad
-                                        placeholderSource={require('img/empty_image.png')}
-                                        source={{ uri: item.metadata.image }}
-                                        style={styles.image}
-                                    />
-                                </View>
-                                <View style={styles.textContainer}>
-                                    <Text style={styles.title} numberOfLines={2}>{item.metadata.title}</Text>
-                                    <Text style={styles.description} numberOfLines={2}>{item.metadata.description}</Text>
-                                </View>
-                            </TouchableOpacity>
-                        </Body>
-                    </Left>
-                </CardItem>
-            );
-        } else {
-            return null;
-        }
+            <View>
+                <View style={styles.editIconsContainer}>
+                    <TouchableOpacity onPress={this.save}>
+                        <Icon name="md-checkmark" style={styles.editIcon} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={this.dismiss}>
+                        <Icon name="md-close" /* name="md-trash" */ style={styles.editIcon} />
+                    </TouchableOpacity>
+                </View>
+                <Textarea
+                    maxLength={300}
+                    placeholderTextColor="rgba(0,0,0,0.1)"
+                    style={styles.textarea}
+                    value={state.inputDescription}
+                    onChangeText={(text) => this.changeContent(text)}
+                />
+            </View>
+        )
     }
 
     //Above looks like duplicative of newsfeed / user profile
@@ -712,27 +491,45 @@ class ItemDetail extends Component {
         const { props: { profile } } = this;
         var thumbnail: string = '';
         thumbnail = profile.avatar_file_name ? profile.avatar_file_name : '';
-
+        
         return (
             <TouchableOpacity onPress={() => this._onAddComment()}>
                 <CardItem>
                     <Left>
-                        <Thumbnail small source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                        <Thumbnail small source={thumbnail ? { uri: thumbnail+'&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                         <Body>
                             <Text style={styles.addCommentTitle}>Add Comment...</Text>
-                            <Menu renderer={SlideInMenu} ref={this.onRef} onOpen={() => { this.openedAddCommentView() }}>
+                            <Menu
+                                renderer={SlideInMenu}
+                                ref={this.onRef}
+                                onBackdropPress={this.resetEditComment}
+                            >
                                 <MenuTrigger />
                                 <MenuOptions optionsContainerStyle={{
                                     backgroundColor: 'white',
                                     width: WINDOW_WIDTH,
                                     // height: this.state.visibleHeight,
-                                    height: WINDOW_HEIGHT / 2 + 50,
+                                    // this needs adjustment for android / ios - doesnt work well for android with the suggestionbox
+                                    minHeight: Platform.OS ==='android' ? 50 :  WINDOW_HEIGHT/2 + 50
                                 }}>
-                                    <CardItem>
-                                        <Left>
-                                            <Thumbnail small source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                                        <ScrollView keyboardShoulPersisTaps>
+                                        <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
+                                        </ScrollView>
+                                        <CardItem>
+                                            <Left>
+                                            <Thumbnail small source={thumbnail ? { uri: thumbnail+'&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                                             <Body>
-                                                <TextInput style={styles.commentInput} ref={this.onCommentInputRef} placeholder="Comment..." onChangeText={commentText => this.setState({ commentText })} />
+                                                <TextInput
+                                                    autoFocus
+                                                    keyboardShoulPersisTaps
+                                                    style={styles.commentInput}
+                                                    ref={this.onCommentInputRef}                                                    placeholder={this.state.placeholderTitle}
+                                                    defaultValue={this.state.defaultInputValue}
+                                                    onChangeText={commentText => this.setState({ commentText })}
+                                                    onSelectionChange={(e) => this.onSelectionChange(e)}
+                                                    multiline
+                                                    numberOfLines={3}
+                                                />
                                             </Body>
                                             <Right style={{ flex: 0.3 }}>
                                                 <TouchableOpacity style={{ flexDirection: 'row' }} onPress={() => this._onSendComment()}>
@@ -757,7 +554,7 @@ class ItemDetail extends Component {
     _renderCommentsLoading() {
         if (this.state.isCommentsLoading === true) {
             return (
-                <Spinner color='gray' />
+                <PLLoader position="bottom" />
             );
         } else {
             return null;
@@ -765,6 +562,7 @@ class ItemDetail extends Component {
     }
 
     _renderComment(comment) {
+        // console.log('_renderComment', comment)
         if (comment.children) {
             if (comment.children.length === 0) {
                 return this._renderRootComment(comment);
@@ -772,15 +570,15 @@ class ItemDetail extends Component {
                 return (
                     <View>
                         {this._renderRootComment(comment)}
-                        {this._renderChildComment(comment.children[0])}
+                        {this._renderRootComment(comment.children[0], true)}
                     </View>
                 );
             } else if (comment.children.length === 2) {
                 return (
                     <View>
                         {this._renderRootComment(comment)}
-                        {this._renderChildComment(comment.children[0])}
-                        {this._renderChildComment(comment.children[1])}
+                        {this._renderRootComment(comment.children[0], true)}
+                        {this._renderRootComment(comment.children[1], true)}
                     </View>
                 );
             }
@@ -790,17 +588,23 @@ class ItemDetail extends Component {
         }
     }
 
-    //If a root comment has a reply, it is a root and a parent.
-    _renderRootComment(comment) {
+    _renderRootComment = (comment, isChild = false) => {
         var thumbnail: string = comment.author_picture ? comment.author_picture : '';
-        var title: string = (comment.user.first_name || '') + ' ' + (comment.user.last_name || '');
+        let title: string = (comment.user ? comment.user.first_name : '' || '') + ' ' + (comment.user ? comment.user.last_name : '' || '');        
         var rateUp: number = (comment.rate_count || 0) / 2 + comment.rate_sum / 2;
         var rateDown: number = (comment.rate_count || 0) / 2 - comment.rate_sum / 2;
+        let rateValue = comment.rate_value;
 
+        const style: object = { paddingBottom: 0 };
+        if (isChild) {
+            style.marginLeft = 40;
+            style.marginTop = 5;
+        }
+    
         return (
-            <CardItem style={{ paddingBottom: 0 }}>
+            <CardItem style={style}>
                 <Left>
-                    <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                    <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail+'&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                     <Body style={{ alignSelf: 'flex-start' }}>
                         <TouchableOpacity onPress={() => this._onCommentBody(comment)}>
                             <Text style={styles.title}>{title}</Text>
@@ -810,11 +614,11 @@ class ItemDetail extends Component {
                         <View style={styles.commentFooterContainer}>
                             <Button iconLeft small transparent onPress={() => this._onRate(comment, 'up')}>
                                 <Icon name="md-arrow-dropup" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>{rateUp ? rateUp : 0}</Label>
+                                <Label style={rateValue === 'up' ? styles.footerTextBlue : styles.footerText}>{rateUp ? rateUp : 0}</Label>
                             </Button>
                             <Button iconLeft small transparent onPress={() => this._onRate(comment, 'down')}>
                                 <Icon active name="md-arrow-dropdown" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>{rateDown ? rateDown : 0}</Label>
+                                <Label style={rateValue === 'down' ? styles.footerTextBlue : styles.footerText}>{rateDown ? rateDown : 0}</Label>
                             </Button>
                             <Button iconLeft small transparent onPress={() => this._onAddComment(comment)}>
                                 <Icon active name="ios-undo" style={styles.footerIcon} />
@@ -822,54 +626,73 @@ class ItemDetail extends Component {
                             </Button>
                         </View>
                     </Body>
-                    <Right style={{ flex: 0.1, alignSelf: 'flex-start' }}>
-                        <Icon name="md-more" style={styles.commentMoreIcon} />
-                    </Right>
+                    {
+                        comment.is_owner && comment.user.id === this.props.userId &&
+                        <Right style={{ flex: 0.1, alignSelf: 'flex-start' }}>
+                            <Menu ref={ref => { this.menuComment = ref; }}>
+                                <MenuTrigger>
+                                    <Icon name="md-more" style={styles.commentMoreIcon} />
+                                </MenuTrigger>
+                                <MenuOptions customStyles={optionsStyles}>
+                                    <MenuOption onSelect={() => this.editComment(comment)}>
+                                        <Button iconLeft transparent dark onPress={() => this.editComment(comment)}>
+                                            <Icon name="md-create" style={styles.menuIcon} />
+                                            <Text style={styles.menuText}>Edit comment</Text>
+                                        </Button>
+                                    </MenuOption>
+                                    <MenuOption onSelect={() => this.deleteComment(comment)}>
+                                        <Button iconLeft transparent dark onPress={() => this.deleteComment(comment)}>
+                                            <Icon name="md-trash" style={styles.menuIcon} />
+                                            <Text style={styles.menuText}>Delete comment</Text>
+                                        </Button>
+                                    </MenuOption>
+                                </MenuOptions>
+                            </Menu>
+                        </Right>
+                    }
                 </Left>
             </CardItem>
         );
     }
 
-    //These are replies to a parent / root comment
-    _renderChildComment(comment) {
+    // _renderChildComment(comment) {
+    //     var thumbnail: string = comment.author_picture ? comment.author_picture : '';
+    //     var title: string = comment.user.first_name + ' ' + comment.user.last_name;
+    //     var rateUp: number = (comment.rate_count || 0) / 2 + comment.rate_sum / 2;
+    //     var rateDown: number = (comment.rate_count || 0) / 2 - comment.rate_sum / 2;
 
-        var thumbnail: string = comment.author_picture ? comment.author_picture : '';
-        var title: string = comment.user.first_name + ' ' + comment.user.last_name;
-        var rateUp: number = (comment.rate_count || 0) / 2 + comment.rate_sum / 2;
-        var rateDown: number = (comment.rate_count || 0) / 2 - comment.rate_sum / 2;
-
-        return (
-            <CardItem style={{ paddingBottom: 0, marginLeft: 40, marginTop: 5 }}>
-                <Left>
-                    <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
-                    <Body style={{ alignSelf: 'flex-start' }}>
-                        <TouchableOpacity onPress={() => this._onCommentBody(comment)}>
-                            <Text style={styles.title}>{title}</Text>
-                            <Text style={styles.description} numberOfLines={5}>{comment.comment_body}</Text>
-                            <Text note style={styles.subtitle}><TimeAgo time={comment.created_at} /></Text>
-                        </TouchableOpacity>
-                        <View style={styles.commentFooterContainer}>
-                            <Button iconLeft small transparent onPress={() => this._onRate(comment, 'up')}>
-                                <Icon name="md-arrow-dropup" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>{rateUp ? rateUp : 0}</Label>
-                            </Button>
-                            <Button iconLeft small transparent onPress={() => this._onRate(comment, 'down')}>
-                                <Icon active name="md-arrow-dropdown" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>{rateDown ? rateDown : 0}</Label>
-                            </Button>
-                            <Button iconLeft small transparent onPress={() => this._onAddComment(comment)} >
-                                <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>{comment.child_count ? comment.child_count : 0}</Label>
-                            </Button>
-                        </View>
-                    </Body>
-                    <Right style={{ flex: 0.1, alignSelf: 'flex-start' }}>
-                        <Icon name="md-more" style={styles.commentMoreIcon} />
-                    </Right>
-                </Left>
-            </CardItem>
-        );
-    }
+    //     return (
+    //         <CardItem style={{ paddingBottom: 0, marginLeft: 40, marginTop: 5 }}>
+    //             <Left>
+    //                 <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+    //                 <Body style={{ alignSelf: 'flex-start' }}>
+    //                     <TouchableOpacity onPress={() => this._onCommentBody(comment)}>
+    //                         <Text style={styles.title}>{title}</Text>
+    //                         <Text style={styles.description} numberOfLines={5}>{comment.comment_body}</Text>
+    //                         <Text note style={styles.subtitle}><TimeAgo time={comment.created_at} /></Text>
+    //                     </TouchableOpacity>
+    //                     <View style={styles.commentFooterContainer}>
+    //                         <Button iconLeft small transparent onPress={() => this._onRate(comment, 'up')}>
+    //                             <Icon name="md-arrow-dropup" style={styles.footerIcon} />
+    //                             <Label style={styles.footerText}>{rateUp ? rateUp : 0}</Label>
+    //                         </Button>
+    //                         <Button iconLeft small transparent onPress={() => this._onRate(comment, 'down')}>
+    //                             <Icon active name="md-arrow-dropdown" style={styles.footerIcon} />
+    //                             <Label style={styles.footerText}>{rateDown ? rateDown : 0}</Label>
+    //                         </Button>
+    //                         <Button iconLeft small transparent onPress={() => this._onAddComment(comment)} >
+    //                             <Icon active name="ios-undo" style={styles.footerIcon} />
+    //                             <Label style={styles.footerText}>{comment.child_count ? comment.child_count : 0}</Label>
+    //                         </Button>
+    //                     </View>
+    //                 </Body>
+    //                 <Right style={{ flex: 0.1, alignSelf: 'flex-start' }}>
+    //                     <Icon name="md-more" style={styles.commentMoreIcon} />
+    //                 </Right>
+    //             </Left>
+    //         </CardItem>
+    //     );
+    // }
 
     _renderLoadMore() {
         if (this.state.isCommentsLoading === false && this.isLoadedAll === false && this.state.dataArray.length > 0) {
@@ -885,15 +708,53 @@ class ItemDetail extends Component {
             return null;
         }
     }
+    _renderTitle (item) {
+        if (item.title) {
+            return (<Text style={styles.title}>{item.title}</Text>);
+        } else {
+            return null;
+        }
+    }
+    // The priority zone counter lists the count of total priority zone items in the newsfeed
+    _renderZoneIcon (item) {
+        if (item.zone === 'prioritized') {
+            return (<Icon active name='ios-flash' style={styles.zoneIcon} />);
+        } else {
+            return null;
+        }
+    }
+    _renderDescription(item, state) {
+        return (
+            <CardItem>
+                <Left>
+                    <View style={styles.descLeftContainer}>
+                        {this._renderZoneIcon(item)}
+                        <Label style={styles.commentCount}>{item.responses_count}</Label>
+                    </View>
+                    <Body style={styles.descBodyContainer}>
+                        <View>
+                            {this._renderTitle(item)}
+                            {
+                                state.isEditMode
+                                ?
+                                    this._renderTextarea(item, state)
+                                :
+                                    <Text style={styles.description} numberOfLines={5}>{item.description}</Text>
+                            }
+                        </View>
+                    </Body>
+                </Left>
+            </CardItem>
+        );
+    }
 
-    //Below looks duplicative of newsfeed / user profile 
-    _renderPostOrUserPetitionCard(item) {
+    _renderPostOrUserPetitionCard(item, state) {
         return (
             <View>
-                {this._renderDescription(item)}
-                {this._renderMetadata(item)}
+                {this._renderDescription(item, state)}
+                <FeedMetaData item={item} />
                 <View style={styles.borderContainer} />
-                {this._renderFooter(item)}
+                <FeedFooter item={item} profile={this.props.profile} token={this.props.token} />
             </View>
         );
     }
@@ -901,19 +762,19 @@ class ItemDetail extends Component {
     _renderGroupCard(item) {
         return (
             <Card>
-                {this._renderDescription(item)}
-                {this._renderCarousel(item)}
+                <FeedDescription item={item} />
+                <FeedCarousel item={item} />
                 <View style={styles.borderContainer} />
-                {this._renderFooter(item)}
+                <FeedFooter item={item} profile={this.props.profile} token={this.props.token} />
             </Card>
         );
     }
 
-    _renderActivity(item) {
+    _renderActivity(item, state) {
         switch (item.entity.type) {
             case 'post':
             case 'user-petition':
-                return this._renderPostOrUserPetitionCard(item);
+                return this._renderPostOrUserPetitionCard(item, state);
                 break;
             default:
                 return this._renderGroupCard(item);
@@ -921,10 +782,22 @@ class ItemDetail extends Component {
         }
     }
 
+    onBackPress = () => {
+        const { backTo } = this.props;
+
+        if (backTo) {
+            Actions.popTo(backTo);
+        } else {
+            Actions.pop();
+        }
+    }
+
     render() {
+        // console.log(this.item);
+        // console.log(this.refs);
         if (this.item === null) {
             return (
-                <OrientationLoadingOverlay visible={this.state.isLoading} />
+                <PLOverlayLoader visible={this.state.isLoading} logo />
             );
         }
         let item = this.item;
@@ -949,7 +822,7 @@ class ItemDetail extends Component {
                                 ref={(navTitleView) => { this.navTitleView = navTitleView; }}>
                                 <Header style={{ backgroundColor: 'transparent' }}>
                                     <Left>
-                                        <Button transparent onPress={() => Actions.pop()}>
+                                        <Button transparent onPress={this.onBackPress} style={{width: 50, height: 50 }}  >
                                             <Icon active name="arrow-back" style={{ color: 'white' }} />
                                         </Button>
                                     </Left>
@@ -962,11 +835,11 @@ class ItemDetail extends Component {
                         )}
                         renderForeground={() => (
                             <Left style={styles.titleContainer}>
-                                <Button transparent onPress={() => Actions.pop()}>
+                                <Button transparent onPress={this.onBackPress} style={{width: 50, height: 50 }} >
                                     <Icon active name="md-arrow-back" style={{ color: 'white' }} />
                                 </Button>
                                 <Body style={{ marginTop: -12 }}>
-                                    <Thumbnail size={50} source={item.group.avatar_file_path ? { uri: item.group.avatar_file_path } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                                    <Thumbnail size={50} source={item.group.avatar_file_path ? { uri: item.group.avatar_file_path+'&w=200&h=200&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                                     <Text style={styles.imageTitle}>{item.group.official_name}</Text>
                                 </Body>
                             </Left>
@@ -976,7 +849,7 @@ class ItemDetail extends Component {
                             onDisplay={() => this.navTitleView.fadeOut(100)}>
                             {this._renderHeader(item)}
                         </TriggeringView>
-                        {this._renderActivity(item)}
+                        {this._renderActivity(item, this.state)}
                         <View style={styles.borderContainer} />
                         {this._renderAddComment()}
                         <View style={styles.borderContainer} />
@@ -987,7 +860,7 @@ class ItemDetail extends Component {
                         {this._renderLoadMore()}
                         {this._renderCommentsLoading()}
                         <View style={{ height: 50 }} />
-                        <OrientationLoadingOverlay visible={this.state.isLoading} />
+                        <PLOverlayLoader visible={this.state.isLoading} logo />
                     </HeaderImageScrollView>
                 </Container>
             </MenuContext>
@@ -1009,6 +882,7 @@ const menuContextStyles = {
 const mapStateToProps = state => ({
     token: state.user.token,
     profile: state.user.profile,
+    userId: state.user.id,
 });
 
 export default connect(mapStateToProps)(ItemDetail);

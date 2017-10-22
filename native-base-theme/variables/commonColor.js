@@ -1,6 +1,7 @@
 import color from 'color';
 
 import { Platform, Dimensions, PixelRatio } from 'react-native';
+import { darkenHex } from './hex';
 
 const deviceHeight = Dimensions.get('window').height;
 const deviceWidth = Dimensions.get('window').width;
@@ -170,7 +171,7 @@ export default {
   iosStatusbar: 'light-content',
   toolbarDefaultBorder: '#2874F0',
   get statusBarColor() {
-    return color(this.toolbarDefaultBg).darken(0.2).hexString();
+    return darkenHex(this.toolbarDefaultBg);
   },
 
 
@@ -243,7 +244,7 @@ export default {
   radioColor: '#7e7e7e',
 
   get radioSelectedColor() {
-    return color(this.radioColor).darken(0.2).hexString();
+    return darkenHex(this.radioColor);    
   },
 
 
@@ -280,7 +281,7 @@ export default {
   contentPadding: 10,
 
   get darkenHeader() {
-    return color(this.tabBgColor).darken(0.03).hexString();
+    return darkenHex(this.tabBgColor, 0.03);        
   },
 
   dropdownBg: '#000',

@@ -1,6 +1,6 @@
 'use strict';
 
-import type {Action } from '../actions/types';
+import type { Action } from '../actions/types';
 
 export type State = {
     page: number;
@@ -11,6 +11,8 @@ export type State = {
     groupName: string;
     groupAvatar: string;
     groupLimit: number;
+    savedGroup: object;
+    newsfeedUnreadCount: number;
 };
 
 const initialState = {
@@ -21,12 +23,19 @@ const initialState = {
     group: 'all',
     groupName: '',
     groupAvatar: '',
-    groupLimit: 10
+    groupLimit: 10,
+    savedGroup: {
+        group: 'all',
+        groupName: '',
+        groupAvatar: '',
+    },
+    newsfeedUnreadCount: 0,
 };
 
 const payloadStack: Array<Object> = [];
 
 function activities(state: State = initialState, action: Action): State {
+    console.log(action);
     if (action.type === 'LOADED_ACTIVITIES') {
         payloadStack = payloadStack.concat(action.data.payload);
         return {
@@ -36,14 +45,25 @@ function activities(state: State = initialState, action: Action): State {
             totalItems: action.data.totalItems,
             payload: payloadStack,
             count: action.data.payload.length,
+            newsfeedUnreadCount: action.data.newsfeedUnreadCount,
         };
     }
-    if (action.type === 'RESET_ACTIVITIES' || action.type === 'LOGGED_OUT') {
+    
+    if (action.type === 'RESET_ACTIVITIES') {
+        payloadStack = [];
+        return {
+            ...initialState,
+            savedGroup: state.savedGroup,
+            newsfeedUnreadCount: state.newsfeedUnreadCount,
+        };
+    }
+
+    if (action.type === 'LOGGED_OUT') {
         payloadStack = [];
         return initialState;
     }
 
-    if(action.type == 'SET_GROUP'){
+    if(action.type === 'SET_GROUP'){
         payloadStack = [];
         return {
             ...state,
@@ -51,17 +71,66 @@ function activities(state: State = initialState, action: Action): State {
             groupName: action.data.name,
             groupAvatar: action.data.avatar,
             groupLimit: action.data.limit,
-            payload: []
+            payload: [],
+            savedGroup: {
+                group: action.data.id,
+                groupName: action.data.name,
+                groupAvatar: action.data.avatar,
+            },
         }
     }
 
-    if(action.type == 'DELETE_ACTIVITIES'){
+    if(action.type === 'DELETE_ACTIVITIES'){
         payloadStack = [];
         return {
             ...state,
             payload: []
         }
     }
+
+    if (action.type === 'DELETE_ACTIVITY') {
+        payloadStack = state.payload.filter(activity => activity.id !== action.id);
+        return {
+            ...state,
+            payload: payloadStack,
+            count: state.payload.count - 1,
+        }
+    }
+
+    if (action.type === 'CHANGE_ACTIVITY_DESCRIPTION') {
+        payloadStack = state.payload.map(activity => {
+            if (activity.id === action.data.id) {
+                return {
+                    ...activity,
+                    description: action.data.description
+                }
+            } else {
+                return activity;
+            }
+        });
+        return {
+            ...state,
+            payload: payloadStack,
+        }
+    }
+
+    if (action.type === 'BOOST_ACTIVITY') {
+        payloadStack = state.payload.map(activity => {
+            if (activity.id === action.id) {
+                return {
+                    ...activity,
+                    zone: 'prioritized'
+                }
+            } else {
+                return activity;
+            }
+        });
+        return {
+            ...state,
+            payload: payloadStack,
+        }
+    }
+
     return state;
 }
 
