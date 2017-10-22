@@ -124,7 +124,6 @@ export default {
     menuText: {
         color: '#293f53'
     },
-<<<<<<< HEAD
     url: {
         color: PLColors.main,
         fontWeight: '500'
@@ -137,10 +136,8 @@ export default {
         color: PLColors.main,
         fontWeight: '500'
     },
-=======
     commentPreviewContainer: {
         backgroundColor: '#F8F8F8',
         minHeight: 64
     }
->>>>>>> issue-13
 };
