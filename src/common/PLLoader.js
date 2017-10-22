@@ -116,29 +116,30 @@ export default class PLLoader extends React.Component {
   }
 }
 
-PLLoader.propTypes = {
-  interval: React.PropTypes.number,
-  size: React.PropTypes.number,
-  pulseMaxSize: React.PropTypes.number,
-  avatarBackgroundColor: React.PropTypes.string,
-  pressInValue: React.PropTypes.number,
-  pressDuration: React.PropTypes.number,
-  borderColor: React.PropTypes.string,
-  backgroundColor: React.PropTypes.string,
-  position: React.PropTypes.oneOf(['center', 'bottom']),
-  getStyle: React.PropTypes.func,
-};
+// PLLoader.propTypes = {
+//   interval: React.PropTypes.number,
+//   size: React.PropTypes.number,
+//   pulseMaxSize: React.PropTypes.number,
+//   avatarBackgroundColor: React.PropTypes.string,
+//   pressInValue: React.PropTypes.number,
+//   pressDuration: React.PropTypes.number,
+//   borderColor: React.PropTypes.string,
+//   backgroundColor: React.PropTypes.string,
+//   position: React.PropTypes.oneOf(['center', 'bottom']),
+//   getStyle: React.PropTypes.func,
+// };
 
-PLLoader.defaultProps = {
-  interval: 2000,
-  size: 100,
-  pulseMaxSize: 250,
-  avatarBackgroundColor: 'white',
-  pressInValue: 0.8,
-  pressDuration: 150,
-  pressInEasing: Easing.in,
-  pressOutEasing: Easing.in,
-  borderColor: '#D8335B',
-  backgroundColor: '#ED225B55',
-  getStyle: undefined,
-};
+// PLLoader.defaultProps = {
+//   interval: 2000,
+//   size: 100,
+//   pulseMaxSize: 250,
+//   avatarBackgroundColor: 'white',
+//   pressInValue: 0.8,
+//   pressDuration: 150,
+//   pressInEasing: Easing.in,
+//   pressOutEasing: Easing.in,
+//   borderColor: '#D8335B',
+//   backgroundColor: '#ED225B55',
+//   getStyle: undefined,
+// };
+

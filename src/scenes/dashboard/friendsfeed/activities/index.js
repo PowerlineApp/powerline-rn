@@ -10,8 +10,8 @@ import { ListView, View, RefreshControl, TouchableOpacity, Image, WebView, Platf
 import Carousel from 'react-native-snap-carousel';
 import { loadActivities, resetActivities, editFollowers, loadActivityByEntityId, loadFriendsActivities } from 'PLActions';
 import styles, { sliderWidth, itemWidth } from './styles';
-import TimeAgo from 'react-native-timeago';
-import ImageLoad from 'react-native-image-placeholder';
+// import TimeAgo from 'react-native-timeago';
+// import ImageLoad from 'react-native-image-placeholder';
 import YouTube from 'react-native-youtube';
 import PLOverlayLoader from 'PLOverlayLoader';
 import PLLoader from 'PLLoader';
@@ -33,9 +33,9 @@ const { youTubeAPIKey } = require('PLEnv');
 
 class FriendActivity extends Component {
 
-    static propTypes = {
-        token: React.PropTypes.string,
-    }
+    // static propTypes = {
+    //     token: React.PropTypes.string,
+    // }
 
     constructor(props) {
         super(props);

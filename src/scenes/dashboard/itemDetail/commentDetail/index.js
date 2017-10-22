@@ -6,11 +6,11 @@ import { connect } from 'react-redux';
 import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, List, ListItem, Item, Input } from 'native-base';
 import { Image, View, StyleSheet, TouchableOpacity, Platform, KeyboardAvoidingView, Keyboard, TextInput, ListView, RefreshControl } from 'react-native';
 import { Actions } from 'react-native-router-flux';
-import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
+// import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
 import * as Animatable from 'react-native-animatable';
 import styles, { MAX_HEIGHT, MIN_HEIGHT, optionsStyles, sliderWidth, itemWidth } from './styles';
-import TimeAgo from 'react-native-timeago';
-import ImageLoad from 'react-native-image-placeholder';
+// import TimeAgo from 'react-native-timeago';
+// import ImageLoad from 'react-native-image-placeholder';
 import Carousel from 'react-native-snap-carousel';
 import YouTube from 'react-native-youtube';
 import Menu, {
@@ -240,7 +240,7 @@ class CommentDetail extends Component {
                     <Body style={{ alignSelf: 'flex-start' }}>
                         <Text style={styles.title}>{title}</Text>
                         <Text style={styles.description} numberOfLines={5}>{comment.comment_body}</Text>
-                        <Text note style={styles.subtitle}><TimeAgo time={comment.created_at} /></Text>
+                        <Text note style={styles.subtitle}>{/*<TimeAgo time={comment.created_at} />*/}</Text>
                         <View style={styles.commentFooterContainer}>
                             <Button iconLeft small transparent onPress={() => this._onRate(comment, 'up')}>
                                 <Icon name="md-arrow-dropup" style={styles.footerIcon} />
@@ -279,7 +279,7 @@ class CommentDetail extends Component {
                         <TouchableOpacity onPress={() => this._onCommentBody(comment)}>
                             <Text style={styles.title}>{title}</Text>
                             <Text style={styles.description} numberOfLines={5}>{comment.comment_body}</Text>
-                            <Text note style={styles.subtitle}><TimeAgo time={comment.created_at} /></Text>
+                            <Text note style={styles.subtitle}>{/*<TimeAgo time={comment.created_at} />*/}</Text>
                         </TouchableOpacity>
                         <View style={styles.commentFooterContainer}>
                             <Button iconLeft small transparent onPress={() => this._onRate(comment, 'up')}>

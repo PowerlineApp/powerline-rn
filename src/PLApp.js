@@ -5,7 +5,8 @@
 
 'use strict';
 
-var React = require('React');
+import React, { Component } from 'react';
+import OneSignal from 'react-native-onesignal';
 var AppState = require('AppState');
 var Platform = require('Platform');
 var LoginScene = require('./scenes/auth/LoginScene');
@@ -21,37 +22,36 @@ var { version } = require('./PLEnv.js');
 var { StackNavigator } = require('react-navigation');
 var RegisterScene  = require('./scenes/auth/RegisterScene');
 var TourScene = require('./scenes/auth/TourScene');
-import OneSignal from 'react-native-onesignal';
 
-var PLApp = React.createClass({
-  displayName: 'PLApp',
+class PLApp extends Component {
+  // displayName: 'PLApp',
 
-  componentDidMount: function () { 
+  componentDidMount (){ 
 
     if (Platform.OS === 'android') {
       SplashScreen.hide();
       
     }
     AppState.addEventListener('change', this.handleAppStateChange);
-  },
-
-  componentWillUnmount: function () {
+  }
+  componentWillUnmount() {
     AppState.removeEventListener('change', this.handleAppStateChange);
-  },
+  }
+  
 
-  handleAppStateChange: function (appState) {
+  handleAppStateChange (appState) {
     if (appState === 'active') {
     }
-  },
+  }
 
-  render: function () {
+  render() {
     if (!this.props.isLoggedIn) {
       return <LoginStack />;
     }
     return <PLNavigator />;
-  },
+  }
 
-});
+};
 
 var styles = StyleSheet.create({
   container: {

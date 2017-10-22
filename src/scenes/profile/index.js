@@ -36,9 +36,9 @@ import styles , { sliderWidth, itemWidth } from './styles';
 const PLColors = require('PLColors');
 import PLLoader from 'PLLoader';
 
-import { loadUserProfileById, resetActivities, editFollowers, votePost, loadActivitiesByUserId, getFollowingUser, unFollowings, putFollowings } from 'PLActions';
-import TimeAgo from 'react-native-timeago';
-import ImageLoad from 'react-native-image-placeholder';
+import { loadUserProfileById, resetActivities, votePost, loadActivitiesByUserId, getFollowingUser, unFollowings, putFollowings } from 'PLActions';
+// import TimeAgo from 'react-native-timeago';
+// import ImageLoad from 'react-native-image-placeholder';
 import YouTube from 'react-native-youtube';
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
 const { youTubeAPIKey } = require('PLEnv');
@@ -59,9 +59,9 @@ import Menu, {
 } from 'react-native-popup-menu';
 
 class Profile extends Component{
-    static propTypes = {
-        token: React.PropTypes.string
-    };
+    // static propTypes = {
+    //     token: React.PropTypes.string
+    // };
 
     constructor(props){
         super(props);

@@ -33,9 +33,9 @@ import { loadRepresentatyInfo, loadCommittees, loadSponsoredBills } from 'PLActi
 import PLLoader from 'PLLoader';
 
 class RepresentatyProfile extends Component{
-    static propTypes = {
-        token: React.PropTypes.string
-    };
+    // static propTypes = {
+    //     token: React.PropTypes.string
+    // };
 
     constructor(props){
         super(props);

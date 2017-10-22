@@ -20,9 +20,9 @@ const { WINDOW_HEIGHT } = require('PLConstants');
 
 class GroupSelector extends Component {
 
-    static propTypes = {
-        token: React.PropTypes.string,
-    }
+    // static propTypes = {
+    //     token: React.PropTypes.string,
+    // }
 
 
     constructor(props) {

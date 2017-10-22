@@ -12,8 +12,8 @@ import { ListView, View, RefreshControl, TouchableOpacity, Image, WebView, Platf
 import Carousel from 'react-native-snap-carousel';
 import { loadActivities, resetActivities, votePost, editFollowers, loadActivityByEntityId, createPostToGroup, deletePost, deletePetition } from 'PLActions';
 import styles, { sliderWidth, itemWidth } from './styles';
-import TimeAgo from 'react-native-timeago';
-import ImageLoad from 'react-native-image-placeholder';
+// import TimeAgo from 'react-native-timeago';
+// import ImageLoad from 'react-native-image-placeholder';
 import YouTube from 'react-native-youtube';
 
 import Menu, {
@@ -37,9 +37,9 @@ const { width, height } = Dimensions.get('window');
 
 class Newsfeed extends Component {
 
-    static propTypes = {
-        token: React.PropTypes.string,
-    }
+    // static propTypes = {
+    //     token: React.PropTypes.string,
+    // }
 
     constructor(props) {
         super(props);

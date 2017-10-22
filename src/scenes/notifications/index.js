@@ -18,7 +18,7 @@ import Menu, {
 const PLColors = require('PLColors');
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
 var { getActivities } = require('PLActions');
-var TimeAgo = require('react-native-timeago');
+// var TimeAgo = require('react-native-timeago');
 import {
     TouchableOpacity,
     View

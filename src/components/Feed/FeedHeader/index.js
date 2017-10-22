@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { TouchableHighlight, View, Image } from 'react-native';
 
-import { Text, Button, ActionSheet, Icon, Left, Right, Body, Thumbnail, CardItem } from 'native-base';
-import TimeAgo from 'react-native-timeago';
+import { Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem } from 'native-base';
+// import TimeAgo from 'react-native-timeago';
 import Menu, {
     MenuTrigger,
     MenuOptions,
@@ -178,7 +178,7 @@ class FeedHeader extends Component {
                     </TouchableHighlight>
                     <Body>
                         <Text style={styles.title} onPress={() => this.onPressAuthor(this.props.item)} >{title}</Text>
-                        <Text note style={styles.subtitle} onPress={() => this.onPressGroup(this.props.item)} >{this.props.item.group.official_name} • <TimeAgo time={this.props.item.sent_at} hideAgo /></Text>
+                        <Text note style={styles.subtitle} onPress={() => this.onPressGroup(this.props.item)} >{this.props.item.group.official_name} • {/*<TimeAgo time={this.props.item.sent_at} hideAgo />*/}</Text>
                     </Body>
                     <Right style={{ flex: 0.2 }}>
                         <Menu ref={(ref) => { this.menu = ref; }}>

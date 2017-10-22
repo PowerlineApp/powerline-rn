@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {View} from 'react-native';
 import styles from '../styles';
-import TimeAgo from 'react-native-timeago';
+// import TimeAgo from 'react-native-timeago';
 import {Card, Text, Label, Left, Body, Right, ListItem, Thumbnail, Icon, Button} from 'native-base';
 
 class ConversationActivity extends Component {
@@ -18,7 +18,7 @@ class ConversationActivity extends Component {
                     <Text note style={styles.mainDescription}>{item.description}</Text>
                 </Body>
                 <Right style={{borderBottomWidth: 0}}>
-                    <Text style={styles.itemTime}><TimeAgo time={item.sent_at}/></Text>
+                    {/* <Text style={styles.itemTime}><TimeAgo time={item.sent_at}/></Text> */}
                     <Button transparent small>
                         <Icon name="md-arrow-dropup" style={item.upvotes_count!=0? styles.footerIconBlue : styles.footerIcon}/>
                         <Label style={item.upvotes_count!=0? styles.footerTextBlue : styles.footerText}>{item.upvotes_count ? item.upvotes_count : 0}</Label>
