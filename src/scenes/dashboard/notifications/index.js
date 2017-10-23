@@ -263,18 +263,18 @@ class Notifications extends Component{
                                         {
                                             value.type == 'comment-mentioned' || value.type == 'post-mentioned'?
                                             <Text note style={styles.text2}>                                                    
-                                                <Icon name="chatboxes" style={styles.icon}/> <TimeAgo time={value.created_at} />
+                                                <Icon name="chatboxes" style={styles.icon}/> {/*<TimeAgo time={value.created_at} />*/}
                                             </Text>:
                                             value.type == 'own-post-commented'?
                                             <Text note style={styles.text2}>                                                   
-                                                <Icon name="podium" style={styles.icon}/> <TimeAgo time={value.created_at} />
+                                                <Icon name="podium" style={styles.icon}/> {/*<TimeAgo time={value.created_at} />*/}
                                             </Text>:
                                             value.type == 'follow-request'?
                                             <Text note style={styles.text2}>
-                                                <Icon name="contact" style={styles.icon}/> <TimeAgo time={value.created_at} />
+                                                <Icon name="contact" style={styles.icon}/> {/*<TimeAgo time={value.created_at} />*/}
                                             </Text>:
                                             <Text note style={styles.text2}>
-                                                <Icon name="people" style={styles.icon}/> <TimeAgo time={value.created_at} />
+                                                <Icon name="people" style={styles.icon}/> {/*<TimeAgo time={value.created_at} />*/}
                                             </Text>
                                         }
                                     </Body>

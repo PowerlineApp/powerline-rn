@@ -77,10 +77,10 @@ class Notifications extends Component{
                                             {
                                               value.type == 'comment-mentioned' || value.type == 'post-mentioned'?
                                               <Text note style={{color: PLColors.lightText}}>                                                    
-                                                    <Icon name="chatboxes" style={styles.icon}/> <TimeAgo time={value.created_at} />
+                                                    <Icon name="chatboxes" style={styles.icon}/> {/*<TimeAgo time={value.created_at} /> */}
                                               </Text>:
                                               <Text note style={{color: PLColors.lightText}}>                                                   
-                                                    <Icon name="podium" style={styles.icon}/> <TimeAgo time={value.created_at} />
+                                                    <Icon name="podium" style={styles.icon}/> {/*<TimeAgo time={value.created_at} />*/}
                                               </Text>
                                             }
                                         </Body>
@@ -91,7 +91,7 @@ class Notifications extends Component{
                                     <ListItem avatar key={index} style={{height: 130}}>
                                         <Body style={{height: 130}}>
                                             <Text style={{color: PLColors.main}}>{this.showText(value.html_message)}</Text>
-                                            <Text note style={{color: PLColors.lightText}}><Icon name="contact" style={styles.icon}/> <TimeAgo time={value.created_at} /></Text>
+                                            <Text note style={{color: PLColors.lightText}}><Icon name="contact" style={styles.icon}/> {/*<TimeAgo time={value.created_at} />*/}</Text>
                                         </Body>
                                         <Right>
                                             <TouchableOpacity>
@@ -111,7 +111,7 @@ class Notifications extends Component{
                                     <ListItem avatar key={index} style={{height: 95}}>
                                         <Body style={{height: 95}}>
                                             <Text style={{color: PLColors.main}}>{this.showText(value.html_message)}</Text>
-                                            <Text note style={{color: PLColors.lightText}}><Icon name="people" style={styles.icon}/> <TimeAgo time={value.created_at} /></Text>
+                                            <Text note style={{color: PLColors.lightText}}><Icon name="people" style={styles.icon}/> {/*<TimeAgo time={value.created_at} />*/}</Text>
                                         </Body>
                                         <Right>
                                             <TouchableOpacity>
