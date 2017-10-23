@@ -147,28 +147,33 @@ class FeedHeader extends Component {
         Actions.groupprofile({ id: item.group.id });
     }
 
+    isGroupOwnerOrManager(item) {
+        return item.group.user_role === 'manager' || item.group.user_role === 'owner';
+    }
+    
+
     render() {
+        const { item } = this.props;
         let thumbnail = '';
         let title = '';
         let isBoosted = false;
-        const isOwner = this.props.item.owner.id === this.props.userId;
+        const isOwner = item.owner.id === this.props.userId;
 
-        switch (this.props.item.entity.type) {
+        switch (item.entity.type) {
             case 'post' || 'user-petition':
-                thumbnail = this.props.item.owner.avatar_file_path ? this.props.item.owner.avatar_file_path : '';
-                title = this.props.item.owner ? this.props.item.owner.first_name : '' + ' ' + this.props.item.owner ? this.props.item.owner.last_name : '';
+                thumbnail = item.owner.avatar_file_path ? item.owner.avatar_file_path : '';
+                title = item.owner ? item.owner.first_name : '' + ' ' + item.owner ? item.owner.last_name : '';
                 break;
             default:
-                thumbnail = this.props.item.group.avatar_file_path ? this.props.item.group.avatar_file_path : '';
-                title = this.props.item.user.full_name;
+                thumbnail = item.group.avatar_file_path ? item.group.avatar_file_path : '';
+                title = item.user.full_name;
                 break;
         }
 
-        console.warn('itemxzcsadf:', this.props.item);
         return (
             <CardItem style={{ paddingBottom: 0 }}>
                 <Left>
-                    <TouchableHighlight onPress={() => this.onPressThumbnail(this.props.item)} underlayColor={'#fff'}>
+                    <TouchableHighlight onPress={() => this.onPressThumbnail(item)} underlayColor={'#fff'}>
                         <View>
                             <Thumbnail small
                                 source={thumbnail ? { uri: thumbnail + '&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")}
@@ -177,8 +182,8 @@ class FeedHeader extends Component {
                         </View>
                     </TouchableHighlight>
                     <Body>
-                        <Text style={styles.title} onPress={() => this.onPressAuthor(this.props.item)} >{title}</Text>
-                        <Text note style={styles.subtitle} onPress={() => this.onPressGroup(this.props.item)} >{this.props.item.group.official_name} • <TimeAgo time={this.props.item.sent_at} hideAgo /></Text>
+                        <Text style={styles.title} onPress={() => this.onPressAuthor(item)}>{title}</Text>
+                        <Text note style={styles.subtitle} onPress={() => this.onPressGroup(item)}>{item.group.official_name} • <TimeAgo time={item.sent_at} hideAgo /></Text>
                     </Body>
                     <Right style={{ flex: 0.2 }}>
                         <Menu ref={(ref) => { this.menu = ref; }}>
@@ -194,8 +199,8 @@ class FeedHeader extends Component {
                                 </MenuOption>
                                 {
                                     !isOwner && this.state.isFollowed &&
-                                    <MenuOption onSelect={() => this.mute(this.props.item)}>
-                                        <Button iconLeft transparent dark onPress={() => this.mute(this.props.item)}>
+                                    <MenuOption onSelect={() => this.mute(item)}>
+                                        <Button iconLeft transparent dark onPress={() => this.mute(titem)}>
                                             <Icon name='md-volume-off' style={styles.menuIcon} />
                                             <Text style={styles.menuText}>Mute Notifications from this User</Text>
                                         </Button>
@@ -213,8 +218,8 @@ class FeedHeader extends Component {
                                         <Text style={styles.menuText}>Add to Contact</Text>
                                     </Button>
                                 </MenuOption>
-                                <MenuOption onSelect={() => this.notify(this.props.item)}>
-                                    <Button iconLeft transparent dark onPress={() => this.notify(this.props.item)}>
+                                <MenuOption onSelect={() => this.notify(item)}>
+                                    <Button iconLeft transparent dark onPress={() => this.notify(item)}>
                                         <Icon name='md-megaphone' style={styles.menuIcon} />
                                         <Text style={styles.menuText}>Share this post to followers</Text>
                                     </Button>
@@ -238,9 +243,9 @@ class FeedHeader extends Component {
                                     </MenuOption>
                                 } */}
                                 {
-                                    isOwner && !isBoosted && // TODO (#149): check if group manager
-                                    <MenuOption onSelect={() => this.boost(this.props.item)}>
-                                        <Button iconLeft transparent dark onPress={() => this.boost(this.props.item)}>
+                                    this.isGroupOwnerOrManager(item) && !isBoosted && // TODO (#149): check if group manager
+                                    <MenuOption onSelect={() => this.boost(item)}>
+                                        <Button iconLeft transparent dark onPress={() => this.boost(item)}>
                                             <Icon name='md-flash' style={styles.menuIcon} />
                                             <Text style={styles.menuText}>Boost Post</Text>
                                         </Button>
@@ -248,8 +253,8 @@ class FeedHeader extends Component {
                                 }
                                 {
                                     isOwner && !isBoosted &&
-                                    <MenuOption onSelect={() => this.edit(this.props.item)}>
-                                        <Button iconLeft transparent dark onPress={() => this.edit(this.props.item)}>
+                                    <MenuOption onSelect={() => this.edit(item)}>
+                                        <Button iconLeft transparent dark onPress={() => this.edit(item)}>
                                             <Icon name='md-create' style={styles.menuIcon} />
                                             <Text style={styles.menuText}>Edit Post</Text>
                                         </Button>
@@ -257,8 +262,8 @@ class FeedHeader extends Component {
                                 }
                                 {
                                     isOwner &&
-                                    <MenuOption onSelect={() => this.delete(this.props.item)}>
-                                        <Button iconLeft transparent dark onPress={() => this.delete(this.props.item)}>
+                                    <MenuOption onSelect={() => this.delete(item)}>
+                                        <Button iconLeft transparent dark onPress={() => this.delete(item)}>
                                             <Icon name='md-trash' style={styles.menuIcon} />
                                             <Text style={styles.menuText}>Delete Post</Text>
                                         </Button>

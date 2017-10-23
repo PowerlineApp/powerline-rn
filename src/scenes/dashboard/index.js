@@ -729,7 +729,10 @@ const mapStateToProps = state => ({
     token: state.user.token,
     profile: state.user.profile,
     activities: state.activities.payload,
-    pushId: state.user.pushId
+    pushId: state.user.pushId,
+    town: state.groups.town,
+    state: state.groups.state,
+    country: state.groups.country,
 });
 
 export default connect(mapStateToProps, bindAction)(Home);
