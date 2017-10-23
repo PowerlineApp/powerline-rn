@@ -131,6 +131,27 @@ function activities(state: State = initialState, action: Action): State {
         }
     }
 
+    if (action.type === 'CHANGE_FOLLOW_STATUS') {
+        const { follow_status, id } = action.data;
+        payloadStack = state.payload.map(activity => {
+            if (activity.id === id) {
+                return {
+                    ...activity,
+                    user: {
+                        ...activity.user,
+                        follow_status,
+                    }
+                }
+            } else {
+                return activity;
+            }
+        });
+        return {
+            ...state,
+            payload: payloadStack,
+        }
+    }
+
     return state;
 }
 

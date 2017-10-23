@@ -46,27 +46,6 @@ function getFollowers(token, page,per_page){
     });
 }
 
-//To stop following someone
-function unFollowings(token, id){
-    return new Promise((resolve, reject) => {
-        fetch(API_URL + '/v2/user/followings/' + id, {
-            method: 'DELETE',
-            headers: {
-                'token': token,
-                'Content-Type': 'application/json'
-            }
-        })        
-        .then(() => {
-            console.log("UnFollowing API call Success:");
-            resolve();
-        })
-        .catch(err => {
-            console.log("UnFollowing API call Error", err);
-            reject(err);
-        });
-    });
-}
-
 //To stop allowing a user to follow you. All users must be approved to be followers. this undoes an approved follower
 function unFollowers(token, id){
     return new Promise((resolve, reject) => {
@@ -131,8 +110,7 @@ function searchForUsersFollowableByCurrentUser(token, queryText, page = 0, max_c
     });
 }
 
-
-function putFollowings(token, id){
+function putFollowings(token, id, activityId: number){
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2/user/followings/' + id, {
             method: 'PUT',
@@ -143,10 +121,37 @@ function putFollowings(token, id){
         })      
         .then(() => {
             console.log("Following a user,  API call Success:");
-            resolve();
+            resolve({
+                type: 'CHANGE_FOLLOW_STATUS',
+                data: { id: activityId, follow_status: 'pending' },
+            });
         })
         .catch(err => {
             console.log("Following a user, API call Error", err);
+            reject(err);
+        });
+    });
+}
+
+//To stop following someone
+function unFollowings(token, id, activityId: number){
+    return new Promise((resolve, reject) => {
+        fetch(API_URL + '/v2/user/followings/' + id, {
+            method: 'DELETE',
+            headers: {
+                'token': token,
+                'Content-Type': 'application/json'
+            }
+        })        
+        .then(() => {
+            console.log("UnFollowing API call Success:");
+            resolve({
+                type: 'CHANGE_FOLLOW_STATUS',
+                data: { id: activityId, follow_status: null },
+            });
+        })
+        .catch(err => {
+            console.log("UnFollowing API call Error", err);
             reject(err);
         });
     });

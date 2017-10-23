@@ -26,18 +26,7 @@ import {
 import styles from '../styles';
 
 class FeedHeader extends Component {
-    state = {
-        isFollowed: false,
-    }
-
-    componentDidMount() {
-        getFollowingUser(this.props.token, this.props.item.owner.id).then(data => {
-            if (!data.code && data.status === 'active') {
-                this.setState({ isFollowed: true });
-            }
-        }).catch(err => {});
-    }
-    redirect (item, options) {
+    redirect(item, options) {
         let type;
         if (item.poll) {
             type = 'poll';
@@ -46,17 +35,12 @@ class FeedHeader extends Component {
         } else if (item.petition) {
             type = 'petition';
         }
-        Actions.itemDetail({entityType: type, entityId: item.entity.id, ...options});
+        Actions.itemDetail({ entityType: type, entityId: item.entity.id, ...options });
     }
 
-    edit (item) {
-        // Actions.itemDetail({
-        //     entityId: item.entity.id,
-        //     entityType: item.entity.type,
-        //     isEditEnabled: true
-        // });
+    edit(item) {
         this.menu && this.menu.close();
-        this.redirect(item, {isEditEnabled: true});
+        this.redirect(item, { isEditEnabled: true });
     }
 
     boost(item) {
@@ -66,14 +50,14 @@ class FeedHeader extends Component {
 
     unmute(item) {
         var { token, dispatch } = this.props;
-        
+
         editFollowers(token, item.owner.id, false, newDate)
-        .then(data => {
+            .then(data => {
 
-        })
-        .catch(err => {
+            })
+            .catch(err => {
 
-        });
+            });
     }
 
     mute(item) {
@@ -94,15 +78,15 @@ class FeedHeader extends Component {
 
                 var newDate = new Date((new Date()).getTime() + 1000 * 60 * 60 * hours);
                 editFollowers(token, item.owner.id, false, newDate)
-                .then(data => {
-                    console.warn(JSON)
-                })
-                .catch(err => {
+                    .then(data => {
+                        console.warn(JSON)
+                    })
+                    .catch(err => {
 
-                });
+                    });
             }
         );
-        this.menu && this.menu.close();        
+        this.menu && this.menu.close();
     }
 
     delete(item) {
@@ -117,18 +101,18 @@ class FeedHeader extends Component {
     }
 
     followAuthor(item) {
-        this.props.dispatch(putFollowings(this.props.token, item.owner.id));
+        this.props.dispatch(putFollowings(this.props.token, item.owner.id, item.id));
         this.menu && this.menu.close();
     }
 
     unfollowAuthor(item) {
-        this.props.dispatch(unFollowings(this.props.token, item.owner.id));
+        this.props.dispatch(unFollowings(this.props.token, item.owner.id, item.id)); 
         this.menu && this.menu.close();
     }
 
     notify(item) {
         sharePost(this.props.token, item.entity.id);
-        
+
         this.menu && this.menu.close();
     }
 
@@ -150,7 +134,7 @@ class FeedHeader extends Component {
     isGroupOwnerOrManager(item) {
         return item.group.user_role === 'manager' || item.group.user_role === 'owner';
     }
-    
+
 
     render() {
         const { item } = this.props;
@@ -158,6 +142,8 @@ class FeedHeader extends Component {
         let title = '';
         let isBoosted = false;
         const isOwner = item.owner.id === this.props.userId;
+        const canUnfollow = item.user.follow_status === 'active';
+        const canFollow = item.user.follow_status === null;
 
         switch (item.entity.type) {
             case 'post' || 'user-petition':
@@ -198,9 +184,9 @@ class FeedHeader extends Component {
                                     </Button>
                                 </MenuOption>
                                 {
-                                    !isOwner && this.state.isFollowed &&
+                                    !isOwner && canUnfollow &&
                                     <MenuOption onSelect={() => this.mute(item)}>
-                                        <Button iconLeft transparent dark onPress={() => this.mute(titem)}>
+                                        <Button iconLeft transparent dark onPress={() => this.mute(item)}>
                                             <Icon name='md-volume-off' style={styles.menuIcon} />
                                             <Text style={styles.menuText}>Mute Notifications from this User</Text>
                                         </Button>
@@ -224,26 +210,32 @@ class FeedHeader extends Component {
                                         <Text style={styles.menuText}>Share this post to followers</Text>
                                     </Button>
                                 </MenuOption>
-                                {/* {
-                                    !isOwner &&
+                                {
+                                    canFollow &&
                                     <MenuOption onSelect={() => this.followAuthor(this.props.item)}>
                                         <Button iconLeft transparent dark onPress={() => this.followAuthor(this.props.item)}>
-                                            <Icon name='md-walk' style={styles.menuIcon} />
+                                            <View style={styles.buttonContainer}>
+                                                <Icon name="ios-person" style={styles.activeIconLarge} />
+                                                <Icon name="ios-add-circle-outline" style={styles.activeIconSmall} />
+                                            </View>
                                             <Text style={styles.menuText}>Follow this item's author</Text>
                                         </Button>
                                     </MenuOption>
                                 }
                                 {
-                                    !isOwner &&
+                                    canUnfollow &&
                                     <MenuOption onSelect={() => this.unfollowAuthor(this.props.item)}>
                                         <Button iconLeft transparent dark onPress={() => this.unfollowAuthor(this.props.item)}>
-                                            <Icon name='md-walk' style={styles.menuIcon} />
+                                            <View style={styles.buttonContainer}>
+                                                <Icon name="ios-person" style={styles.activeIconLarge} />
+                                                <Icon name="ios-remove-circle-outline" style={styles.activeIconSmall} />
+                                            </View>
                                             <Text style={styles.menuText}>Unfollow this person</Text>
                                         </Button>
                                     </MenuOption>
-                                } */}
+                                }
                                 {
-                                    this.isGroupOwnerOrManager(item) && !isBoosted && // TODO (#149): check if group manager
+                                    this.isGroupOwnerOrManager(item) && !isBoosted &&
                                     <MenuOption onSelect={() => this.boost(item)}>
                                         <Button iconLeft transparent dark onPress={() => this.boost(item)}>
                                             <Icon name='md-flash' style={styles.menuIcon} />

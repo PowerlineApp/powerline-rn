@@ -139,5 +139,21 @@ export default {
     commentPreviewContainer: {
         backgroundColor: '#F8F8F8',
         minHeight: 64
-    }
+    },
+    buttonContainer: {
+        flexDirection: 'row'
+    },
+    activeIconLarge: {
+        color: '#223549',
+        fontSize: 25,
+        width: 15,
+        marginRight: 0
+    },
+    activeIconSmall: {
+        color: PLColors.lightText,
+        fontSize: 8,
+        width: 8,
+        marginTop: 15,
+        marginRight: 12
+    },
 };
