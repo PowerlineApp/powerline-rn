@@ -59,8 +59,8 @@ class Newsfeed extends Component {
     }
 
     componentWillMount() {
-        this.props.dispatch(resetActivities());
-        this.loadInitialActivities();
+        // this.props.dispatch(resetActivities());
+        // this.loadInitialActivities();
     }
 
     componentWillReceiveProps(nextProps) {
