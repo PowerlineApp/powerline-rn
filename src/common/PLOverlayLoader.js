@@ -9,6 +9,7 @@ import {
   Text,
   StyleSheet
 } from 'react-native';
+import PropTypes from 'prop-types';
 import PLLoader from './PLLoader';
 
 const styles = StyleSheet.create({
@@ -41,23 +42,23 @@ export default class PLOverlayLoader extends Component {
     super(props);
   }
 
-  // static propTypes = {
-  //   visible: React.PropTypes.bool,
-  //   color: React.PropTypes.string,
-  //   logo: React.PropTypes.bool,
-  //   indicatorSize: React.PropTypes.oneOf(SIZES),
-  //   messageFontSize: React.PropTypes.number,
-  //   message: React.PropTypes.string
-  // };
+  static propTypes = {
+    visible: PropTypes.bool,
+    color: PropTypes.string,
+    logo: PropTypes.bool,
+    indicatorSize: PropTypes.oneOf(SIZES),
+    messageFontSize: PropTypes.number,
+    message: PropTypes.string
+  };
 
-  // static defaultProps = {
-  //   visible: false,
-  //   color: 'white',
-  //   logo: false,
-  //   indicatorSize: 'large',
-  //   messageFontSize: 24,
-  //   message: '',
-  // };
+  static defaultProps = {
+    visible: false,
+    color: 'white',
+    logo: false,
+    indicatorSize: 'large',
+    messageFontSize: 24,
+    message: '',
+  };
 
   render() {
     const messageStyle = {

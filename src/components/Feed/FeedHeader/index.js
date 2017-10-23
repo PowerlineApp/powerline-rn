@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { TouchableHighlight, View, Image } from 'react-native';
 
-import { Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem } from 'native-base';
+import { ActionSheet, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem } from 'native-base';
 // import TimeAgo from 'react-native-timeago';
 import Menu, {
     MenuTrigger,
@@ -268,6 +268,7 @@ class FeedHeader extends Component {
                         </Menu>
                     </Right>
                 </Left>
+                <ActionSheet ref={(c) => { ActionSheet.actionsheetInstance = c; }} />
             </CardItem>
         );
     }

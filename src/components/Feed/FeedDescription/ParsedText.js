@@ -2,7 +2,7 @@ import React from 'react';
 import ReactNative from 'react-native';
 import PropTypes from 'prop-types';
 
-import TextExtraction from './lib/TextExtraction';
+import TextExtraction from './TextExtraction';
 
 const PATTERNS = {
   url: /(https?:\/\/|www\.)[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)/i,

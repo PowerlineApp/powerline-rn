@@ -2,6 +2,7 @@
  * @providesModule PLLoader
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import { View, Image, TouchableOpacity, Animated, Easing, Platform } from 'react-native';
 import Pulse from './Pulse';
 import PLColors from './PLColors';
@@ -79,7 +80,7 @@ export default class PLLoader extends React.Component {
             position={position}
             small={!isCenter}
             {...this.props}
-            padder={padder ? themeStyle.contentPadding : 0}            
+            padder={padder ? themeStyle.contentPadding : 0}
           />
         ))}
 
@@ -116,30 +117,30 @@ export default class PLLoader extends React.Component {
   }
 }
 
-// PLLoader.propTypes = {
-//   interval: React.PropTypes.number,
-//   size: React.PropTypes.number,
-//   pulseMaxSize: React.PropTypes.number,
-//   avatarBackgroundColor: React.PropTypes.string,
-//   pressInValue: React.PropTypes.number,
-//   pressDuration: React.PropTypes.number,
-//   borderColor: React.PropTypes.string,
-//   backgroundColor: React.PropTypes.string,
-//   position: React.PropTypes.oneOf(['center', 'bottom']),
-//   getStyle: React.PropTypes.func,
-// };
+PLLoader.propTypes = {
+  interval: PropTypes.number,
+  size: PropTypes.number,
+  pulseMaxSize: PropTypes.number,
+  avatarBackgroundColor: PropTypes.string,
+  pressInValue: PropTypes.number,
+  pressDuration: PropTypes.number,
+  borderColor: PropTypes.string,
+  backgroundColor: PropTypes.string,
+  position: PropTypes.oneOf(['center', 'bottom']),
+  getStyle: PropTypes.func,
+};
 
-// PLLoader.defaultProps = {
-//   interval: 2000,
-//   size: 100,
-//   pulseMaxSize: 250,
-//   avatarBackgroundColor: 'white',
-//   pressInValue: 0.8,
-//   pressDuration: 150,
-//   pressInEasing: Easing.in,
-//   pressOutEasing: Easing.in,
-//   borderColor: '#D8335B',
-//   backgroundColor: '#ED225B55',
-//   getStyle: undefined,
-// };
+PLLoader.defaultProps = {
+  interval: 2000,
+  size: 100,
+  pulseMaxSize: 250,
+  avatarBackgroundColor: 'white',
+  pressInValue: 0.8,
+  pressDuration: 150,
+  pressInEasing: Easing.in,
+  pressOutEasing: Easing.in,
+  borderColor: '#D8335B',
+  backgroundColor: '#ED225B55',
+  getStyle: undefined,
+};
 

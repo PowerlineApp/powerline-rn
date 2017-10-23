@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { Actions } from 'react-native-router-flux';
 import { View, TouchableOpacity, Linking } from 'react-native';
-// import ParsedText from 'react-native-parsed-text';
 import { Text, Left, Body, CardItem, Label, Icon } from 'native-base';
 import { parseString } from 'react-native-xml2js';
+import ParsedText from './ParsedText';
 import styles from '../styles';
 
 class FeedDescription extends Component {
@@ -83,7 +83,7 @@ class FeedDescription extends Component {
                 childrenProps={{ allowFontScaling: false }}
               >
                 {item.description}
-              </ParsedText> */}
+              </ParsedText>
             </TouchableOpacity>
           </Body>
         </Left>

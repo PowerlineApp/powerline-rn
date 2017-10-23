@@ -36,7 +36,7 @@ import styles , { sliderWidth, itemWidth } from './styles';
 const PLColors = require('PLColors');
 import PLLoader from 'PLLoader';
 
-import { loadUserProfileById, resetActivities, votePost, loadActivitiesByUserId, getFollowingUser, unFollowings, putFollowings } from 'PLActions';
+import { editFollowers, loadUserProfileById, resetActivities, votePost, loadActivitiesByUserId, getFollowingUser, unFollowings, putFollowings } from 'PLActions';
 // import TimeAgo from 'react-native-timeago';
 // import ImageLoad from 'react-native-image-placeholder';
 import YouTube from 'react-native-youtube';
@@ -269,6 +269,7 @@ class Profile extends Component{
                         />
                     </Content>              
                 </Container>
+                <ActionSheet ref={(c) => { ActionSheet.actionsheetInstance = c; }} />
             </MenuContext>
         );
     }
