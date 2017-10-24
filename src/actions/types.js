@@ -24,7 +24,8 @@ export type Action =
   | { type: 'LOADED_USER_PROFILE', data: Object }
   | { type: 'DELETE_ACTIVITY', id: number }
   | { type: 'CHANGE_ACTIVITY_DESCRIPTION', data: { id: number, description: string }}
-  | { type: 'BOOST_ACTIVITY', id: number };
+  | { type: 'BOOST_ACTIVITY', id: number }
+  | { type: 'CHANGE_FOLLOW_STATUS', data: { id: number, follow_status: 'pending' | 'active' | null }};
 
 export type Dispatch = (action: Action | ThunkAction | PromiseAction | Array<Action>) => any;
 export type GetState = () => Object;

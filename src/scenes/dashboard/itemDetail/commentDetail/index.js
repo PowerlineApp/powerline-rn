@@ -3,7 +3,7 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, List, ListItem, Item, Input } from 'native-base';
+import { Spinner, Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, List, ListItem, Item, Input } from 'native-base';
 import { Image, View, StyleSheet, TouchableOpacity, Platform, KeyboardAvoidingView, Keyboard, TextInput, ListView, RefreshControl } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
@@ -21,7 +21,6 @@ import Menu, {
     renderers
 } from 'react-native-popup-menu';
 import PLOverlayLoader from 'PLOverlayLoader';
-import PLLoader from 'PLLoader';
 
 import { getChildComments, addComment, rateComment } from 'PLActions';
 import SuggestionBox from '../../../../common/suggestionBox';
@@ -307,7 +306,7 @@ class CommentDetail extends Component {
     _renderCommentsLoading() {
         if (this.state.isCommentsLoading === true) {
             return (
-                <PLLoader position="bottom" />
+                <Spinner color='gray' />
             );
         } else {
             return null;

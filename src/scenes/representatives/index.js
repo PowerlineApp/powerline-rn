@@ -32,10 +32,12 @@ import {
     View,
     RefreshControl
 } from 'react-native';
+import { Platform } from 'react-native';
 
 const PLColors = require('PLColors');
 import styles from './styles';
 import { getRepresentatives, openDrawer } from 'PLActions';
+import PLOverlayLoader from 'PLOverlayLoader';
 
 class Representatives extends Component {
     constructor(props) {
@@ -102,12 +104,18 @@ class Representatives extends Component {
                         </Body>
                     </Header>
                     <Content
-                        refreshControl={
+                        refreshControl={Platform.OS === 'android' &&
                             <RefreshControl
-                                refreshing={this.state.refreshing}
+                                refreshing={false}
                                 onRefresh={this._onRefresh.bind(this)}
                             />
-                        }>
+                        }
+                        onScroll={(e) => {
+                            var offset = e.nativeEvent.contentOffset.y;
+                            if (Platform.OS === 'ios' && offset < -3) {
+                                this._onRefresh();
+                            }
+                        }}>
                         <List style={{ backgroundColor: 'white' }}>
                             {
                                 this.state.groups.map((group, index) => {
@@ -138,6 +146,7 @@ class Representatives extends Component {
                             }
                         </List>
                     </Content>
+                    <PLOverlayLoader visible={this.state.refreshing} logo />
                 </Container>
             </MenuContext>
         );

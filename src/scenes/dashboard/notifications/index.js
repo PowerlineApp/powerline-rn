@@ -20,8 +20,9 @@ import Menu, {
     MenuOption,
     renderers
 } from 'react-native-popup-menu';
+import PLOverlayLoader from 'PLOverlayLoader';
+
 var TimeAgo = require('react-native-timeago');
-import PLLoader from 'PLLoader';
 
 const PLColors = require('PLColors');
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
@@ -215,7 +216,6 @@ class Notifications extends Component{
                 }}
                 style={styles.container}
             >
-                {this.state.refreshing && <PLLoader position="bottom" />}
                 <List style={{backgroundColor: 'white'}}>
                     {
                         this.state.invites.map((value, index) => {
@@ -293,6 +293,7 @@ class Notifications extends Component{
                         })
                     }
                 </List>
+                <PLOverlayLoader visible={this.state.refreshing} logo />
             </ContentPlaceholder>
         );
     }

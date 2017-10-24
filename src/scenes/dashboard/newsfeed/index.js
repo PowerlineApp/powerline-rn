@@ -28,7 +28,6 @@ import FeedActivity from '../../../components/Feed/FeedActivity';
 import ContentPlaceholder from '../../../components/ContentPlaceholder';
 
 import PLOverlayLoader from 'PLOverlayLoader';
-import PLLoader from 'PLLoader';
 const PLColors = require('PLColors');
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
 const { youTubeAPIKey } = require('PLEnv');
@@ -84,7 +83,7 @@ class Newsfeed extends Component {
         const { props: { token, dispatch, page, group } } = this;
         try {
             await Promise.race([
-                dispatch(loadActivities(token, 0, 20, group )),
+                dispatch(loadActivities(token, 0, 20, group)),
                 timeout(15000),
             ]);
         } catch (e) {
@@ -147,47 +146,39 @@ class Newsfeed extends Component {
         this.loadInitialActivities();
     }
 
-    //Related: GH160
-    _renderTailLoading() {
-        if (this.state.isLoadingTail === true) {
-            return <PLLoader position="bottom" />
-        } else {
-            return null;
-        }
-    }
-
-    onChangeText(text){
+    onChangeText(text) {
         this.setState({
             text: text
         });
     }
 
-    onCreatePost(){
-        if (this.state.postingOnGroup){
+    onCreatePost() {
+        if (this.state.postingOnGroup) {
             return;
         }
         var { token, savedGroup, dispatch } = this.props;
-        this.setState({postingOnGroup: true})
+        this.setState({ postingOnGroup: true })
         console.log(token, savedGroup, this.state.text)
-        if(this.state.text != "" || this.state.text.trim() != ""){           
+        if (this.state.text != "" || this.state.text.trim() != "") {
             createPostToGroup(token, savedGroup.group, this.state.text)
-            .then(data => {
-                this.setState({
-                    text: ""
-                });
-                dispatch({type: 'DELETE_ACTIVITIES'});
-                this.loadInitialActivities();
-                this.setState({postingOnGroup: false})
-            })
-            .catch(err => {
-                this.setState({postingOnGroup: false})
-            })
+                .then(data => {
+                    this.setState({
+                        text: ""
+                    });
+                    dispatch({ type: 'DELETE_ACTIVITIES' });
+                    this.loadInitialActivities();
+                    this.setState({ postingOnGroup: false })
+                })
+                .catch(err => {
+                    this.setState({ postingOnGroup: false })
+                })
         }
     }
 
-    
+
 
     render() {
+        const { isRefreshing, isLoading, isLoadingTail } = this.state;
         // test if we should show conversationFeed or ActivityFeed
         let conversationView = this.props.group != 'all' && this.props.payload.length <= this.props.groupLimit;
         let dataSouce = this.state.dataSource;
@@ -195,14 +186,14 @@ class Newsfeed extends Component {
             dataSouce = dataSouce.reverse();
         }
         // this is hardcode for testing purposes -- I will remove once ConversationFeed is 100% working /Felipe
-        conversationView = false;    
+        conversationView = false;
         // console.log({token, savedGroup} = this.props)
         return (
-                // The default view of the newsfeed is the All feed.
-                <Container style={styles.container}>
+            // The default view of the newsfeed is the All feed.
+            <Container style={styles.container}>
                 {
                     this.props.savedGroup && this.props.savedGroup.group != 'all' &&
-                    <TouchableOpacity onPress={() => Actions.groupprofile({id: this.props.savedGroup.group})}>
+                    <TouchableOpacity onPress={() => Actions.groupprofile({ id: this.props.savedGroup.group })}>
                         <View style={styles.groupHeaderContainer}>
                             {this.state.showAvatar && this.props.savedGroup.groupAvatar != '' && this.props.savedGroup.groupAvatar != null ?
                                 <Thumbnail square source={{ uri: this.props.savedGroup.groupAvatar + '&w=200&h=200&auto=compress,format,q=95' }} style={styles.groupAvatar} /> : null}
@@ -210,10 +201,9 @@ class Newsfeed extends Component {
                         </View>
                     </TouchableOpacity>
                 }
-                {this.state.isRefreshing && <PLLoader position="bottom" />}
                 <ContentPlaceholder
                     empty={!this.state.isRefreshing && !this.state.isLoading && this.state.dataArray.length === 0}
-                    title="The world belongs to those who speak up! Be the first to create a post!"    
+                    title="The world belongs to those who speak up! Be the first to create a post!"
                     refreshControl={
                         Platform.OS === 'android' && !conversationView &&
                         <RefreshControl
@@ -224,16 +214,16 @@ class Newsfeed extends Component {
                     onScroll={(e) => {
                         var height = e.nativeEvent.contentSize.height;
                         var offset = e.nativeEvent.contentOffset.y;
-                        if (offset > 30 && this.state.showAvatar){
-                            this.setState({showAvatar : false})
+                        if (offset > 30 && this.state.showAvatar) {
+                            this.setState({ showAvatar: false })
                         } else if (offset < 20 && !this.state.showAvatar) {
-                            this.setState({showAvatar: true})
+                            this.setState({ showAvatar: true })
                         }
 
-                        console.log(offset, height)
+                        LOG(offset, height)
 
                         if (offset < -3) {
-                            if (conversationView){
+                            if (conversationView) {
                                 console.log('_onEndReached')
                                 this._onEndReached();
                             } else {
@@ -241,8 +231,8 @@ class Newsfeed extends Component {
                                 this._onRefresh();
                             }
                         }
-                        if (offset > height + 3){
-                            if (conversationView){
+                        if ((WINDOW_HEIGHT + offset) >= height && offset > 0) {
+                            if (conversationView) {
                                 console.log('refresh')
                                 this._onRefresh();
                             } else {
@@ -253,35 +243,34 @@ class Newsfeed extends Component {
                     }}
                 >
                     <ListView dataSource={dataSouce} renderRow={item => {
-                        return  (conversationView 
-                            ? <ConversationActivity item={item} token={this.props.token} profile={this.props.profile} /> 
-                            : <FeedActivity item={item} token={this.props.token} profile={this.props.profile} /> 
+                        return (conversationView
+                            ? <ConversationActivity item={item} token={this.props.token} profile={this.props.profile} />
+                            : <FeedActivity item={item} token={this.props.token} profile={this.props.profile} />
                         )
                     }} />
-                    <PLOverlayLoader visible={this.state.isLoading} logo />
-                    {this._renderTailLoading()}
+                    <PLOverlayLoader visible={isLoading || isLoadingTail || isRefreshing} logo />
                 </ContentPlaceholder>
                 {
                     /**
                      * if we are in conversation view, we have a textinput
                      */
-                    conversationView 
-                     ?       <Footer style={styles.CFooter}>
-                                <Item style={styles.CFooterItem}>
-                                    <Thumbnail small source={{uri: this.props.profile.avatar_file_name+'&w=200&h=200&auto=compress,format,q=95'}}/>
-                                    <Input style={styles.CFooterItemInput} value={this.state.text} onChangeText={(text) => !this.state.postingOnGroup ? this.onChangeText(text) : {}}/>
-                                    <Button transparent style={styles.sendBtn} onPress={() => this.onCreatePost()}>
-                                        <Text color={'#ccc'} >SEND</Text>
-                                        <Icon name="md-send" color={'#ccc'}/>
-                                    </Button>
-                                </Item>
-                                <KeyboardSpacer />
-                            </Footer>
-                    : null
+                    conversationView
+                        ? <Footer style={styles.CFooter}>
+                            <Item style={styles.CFooterItem}>
+                                <Thumbnail small source={{ uri: this.props.profile.avatar_file_name + '&w=200&h=200&auto=compress,format,q=95' }} />
+                                <Input style={styles.CFooterItemInput} value={this.state.text} onChangeText={(text) => !this.state.postingOnGroup ? this.onChangeText(text) : {}} />
+                                <Button transparent style={styles.sendBtn} onPress={() => this.onCreatePost()}>
+                                    <Text color={'#ccc'} >SEND</Text>
+                                    <Icon name="md-send" color={'#ccc'} />
+                                </Button>
+                            </Item>
+                            <KeyboardSpacer />
+                        </Footer>
+                        : null
                 }
-                </Container>
-            );
-        }        
+            </Container>
+        );
+    }
 }
 
 const optionsStyles = {

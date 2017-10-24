@@ -49,7 +49,7 @@ class Friendsfeed extends Component{
                     </Col>
                 </Grid>
                 </View>
-                <FriendActivity/>
+                <FriendActivity />
             </Container>
         );
     }
