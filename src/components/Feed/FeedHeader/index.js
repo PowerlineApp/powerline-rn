@@ -221,10 +221,10 @@ class FeedHeader extends Component {
                                     </Button>
                                 </MenuOption>
                                 {
-                                    // canInviteUpvoters &&
+                                    canInviteUpvoters &&
                                     <MenuOption onSelect={() => this.inviteUpvoters(item)}>
                                         <Button iconLeft transparent dark onPress={() => this.inviteUpvoters(item)}>
-                                            <Icon name='md-megaphone' style={styles.menuIcon} />
+                                            <Image source={require("img/invite_upvoters.png")} style={[styles.menuIcon, { marginLeft: -2, marginRight: 12 }]} />
                                             <Text style={styles.menuText}>Invite Upvoters to a Group</Text>
                                         </Button>
                                     </MenuOption>

@@ -119,7 +119,8 @@ export default {
     },
     menuIcon: {
         color: '#223549',
-        width: 25
+        width: 25,
+        height: 25,
     },
     menuText: {
         color: '#293f53'

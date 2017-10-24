@@ -57,7 +57,7 @@ class GroupInvite extends Component {
         });
     }
 
-    invite() {
+    async invite() {
         const { token, grouplist, entityId: id, entityType: type } = this.props;
         const { selectedGroupIndex } = this.state;
         let groupId = null;
@@ -67,16 +67,15 @@ class GroupInvite extends Component {
         }
         groupId = grouplist[selectedGroupIndex].id;
         
-        inviteUpvotersToGroup(token, id, groupId, type)
-            .then(data => {
-                if (data.status === 204) {
-                    showToast('Invites sends Successful!');
-                    Actions.pop();
-                }
-            })
-            .catch(err => {
+        const response = await inviteUpvotersToGroup(token, id, groupId, type);
 
-            });
+        if (response.status === 204) {
+            showToast('Invites sends Successful!');
+            Actions.pop();
+        } else {
+            const responseJson = await response.json();
+            alert(responseJson.message);
+        }        
     }
 
     render() {
