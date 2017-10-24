@@ -170,7 +170,6 @@ class FriendActivity extends Component {
                     visible={isLoading || isLoadingTail || isRefreshing}
                     logo
                 />
-                {this._renderTailLoading()}
             </Content >
         );
     }

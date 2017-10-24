@@ -28,7 +28,6 @@ import FeedActivity from '../../../components/Feed/FeedActivity';
 import ContentPlaceholder from '../../../components/ContentPlaceholder';
 
 import PLOverlayLoader from 'PLOverlayLoader';
-import PLLoader from 'PLLoader';
 const PLColors = require('PLColors');
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
 const { youTubeAPIKey } = require('PLEnv');
@@ -145,15 +144,6 @@ class Newsfeed extends Component {
         this.props.dispatch(resetActivities());
 
         this.loadInitialActivities();
-    }
-
-    //Related: GH160
-    _renderTailLoading() {
-        if (this.state.isLoadingTail === true) {
-            return <PLLoader position="bottom" />
-        } else {
-            return null;
-        }
     }
 
     onChangeText(text) {

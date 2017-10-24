@@ -24,7 +24,7 @@ const PLColors = require('PLColors');
 import { getFollowers, unFollowers, acceptFollowers } from 'PLActions';
 import styles from './styles';
 import ContentPlaceholder from '../../../components/ContentPlaceholder';
-import PLLoader from 'PLLoader';
+import PLOverlayLoader from 'PLOverlayLoader';
 
 class Followers extends Component {
   static propTypes = {
@@ -147,7 +147,6 @@ class Followers extends Component {
           }
         }}
       >
-        {this.state.refreshing && <PLLoader position="bottom" />}
         { followers.length > 0 &&
           <List>
             {
@@ -188,6 +187,7 @@ class Followers extends Component {
             }
           </List>
         }
+        <PLOverlayLoader visible={refreshing} logo />
       </ContentPlaceholder>
     );
   }
