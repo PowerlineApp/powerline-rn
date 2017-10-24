@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { Actions } from 'react-native-router-flux';
 import { View, TouchableOpacity, Linking } from 'react-native';
-import ParsedText from 'react-native-parsed-text';
 import { Text, Left, Body, CardItem, Label, Icon } from 'native-base';
 import { parseString } from 'react-native-xml2js';
+import ParsedText from './ParsedText';
 import styles from '../styles';
 
 class FeedDescription extends Component {
@@ -68,8 +68,8 @@ class FeedDescription extends Component {
             <Label style={styles.commentCount}>{item.responses_count}</Label>
           </View>
           <Body style={styles.descBodyContainer}>
-          <TouchableOpacity onPress={() => this.redirect(item)}>
-          {this._renderTitle(item)}
+            <TouchableOpacity onPress={() => this.redirect(item)}>
+              {this._renderTitle(item)}
               <ParsedText
                 style={styles.description}
                 parse={
