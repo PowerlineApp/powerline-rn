@@ -14,7 +14,6 @@ import TimeAgo from 'react-native-timeago';
 import ImageLoad from 'react-native-image-placeholder';
 import YouTube from 'react-native-youtube';
 import PLOverlayLoader from 'PLOverlayLoader';
-import PLLoader from 'PLLoader';
 
 import Menu, {
     MenuContext,
@@ -137,17 +136,13 @@ class FriendActivity extends Component {
         return <FeedHeader item={item} />
     }
 
-    _renderTailLoading() {
-        if (this.state.isLoadingTail === true) {
-            return (
-                <PLLoader position="bottom" />
-            );
-        } else {
-            return null;
-        }
-    }
-
     render() {
+        const { 
+            isLoading,
+            isLoadingTail,
+            isRefreshing,
+        } = this.state;
+
         return (
             <Content
                 refreshControl={Platform.OS === 'android' &&
@@ -167,12 +162,14 @@ class FriendActivity extends Component {
                         this._onRefresh();
                     }
                 }}>
-                {this.state.isRefreshing && <PLLoader position="bottom" />}
                 <ListView dataSource={this.state.dataSource} renderRow={item => {
                     return <FeedActivity item={item} token={this.props.token} profile={this.props.profile}/>
                 }}
                 />
-                <PLOverlayLoader visible={this.state.isLoading} logo />
+                <PLOverlayLoader
+                    visible={isLoading || isLoadingTail || isRefreshing}
+                    logo
+                />
                 {this._renderTailLoading()}
             </Content >
         );

@@ -11,7 +11,7 @@ import { Actions } from 'react-native-router-flux';
 import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, ListItem, Thumbnail, List, Badge } from 'native-base';
 import { View, RefreshControl, Platform } from 'react-native';
 import { loadUserGroups, clearGroupsInCache, loadActivities,resetActivities } from 'PLActions';
-import PLLoader from 'PLLoader';
+import PLOverlayLoader from 'PLOverlayLoader';
 
 import styles from './styles';
 
@@ -91,16 +91,6 @@ class GroupSelector extends Component {
     //     }
     // }
 
-    // _renderTailLoading() {
-    //     if (this.state.isLoadingTail === true) {
-    //         return (
-    //             <PLLoader position="bottom" />
-    //         );
-    //     } else {
-    //         return null;
-    //     }
-    // }
-
     //Selecting this should load the Town Group Feed into the Newsfeed tab
     _renderTownGroup() {
         if (this.props.town !== 'Town') {
@@ -177,6 +167,7 @@ class GroupSelector extends Component {
     }
 
     render() {
+        const { isLoading, isRefreshing } = this.state;
         return (
             <Container style={styles.container}>
                 <Header searchBar rounded style={styles.header}>
@@ -205,7 +196,6 @@ class GroupSelector extends Component {
                         }
                     }}
                 >
-                    {this.state.isLoading && <PLLoader position="bottom" padder />}
                     <ListItem itemHeader first style={{ borderBottomWidth: 0 }}>
                         <Left>
                             <Text style={styles.titleText}>Choose Group</Text>
@@ -239,6 +229,7 @@ class GroupSelector extends Component {
                         }>
                     </List>
                 </Content>
+                <PLOverlayLoader visible={isLoading || isRefreshing} logo />
             </Container>
         );
     }
