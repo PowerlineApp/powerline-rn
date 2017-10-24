@@ -35,7 +35,8 @@ import {
   unsubscribeFromPost,
   unsubscribeFromPetition,
   getComments,
-  loadUserGroups
+  loadUserGroups,
+  getGroups
 } from 'PLActions';
 
 
@@ -160,6 +161,16 @@ class Home extends Component {
             if (data.type != "" && data.value != "") {
                 Actions.newpost({data: data});
             }
+        });
+    }
+
+    componentDidMount() {
+        getGroups(this.props.token)
+        .then(data => {
+            this.props.dispatch({
+                type: 'LOADED_GROUPS',
+                data: { payload: data.payload }
+            });
         });
     }
 

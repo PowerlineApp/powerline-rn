@@ -300,6 +300,7 @@ const mapStateToProps = state => ({
     groupAvatar: state.activities.groupAvatar,
     groupLimit: state.activities.groupLimit,
     savedGroup: state.activities.savedGroup,
+    chooseGroup: state.groups.others,
 });
 
 export default connect(mapStateToProps)(Newsfeed);
