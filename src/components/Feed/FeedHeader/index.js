@@ -10,6 +10,7 @@ import Menu, {
     MenuOptions,
     MenuOption
 } from 'react-native-popup-menu';
+import { showAlertOkCancel } from 'PLAlert';
 
 import { WINDOW_WIDTH } from 'PLConstants';
 import {
@@ -26,7 +27,7 @@ import {
 import styles from '../styles';
 
 class FeedHeader extends Component {
-    redirect(item, options) {
+    redirect(item, options, scene = 'itemDetail') {
         let type;
         if (item.poll) {
             type = 'poll';
@@ -35,7 +36,7 @@ class FeedHeader extends Component {
         } else if (item.petition) {
             type = 'petition';
         }
-        Actions.itemDetail({ entityType: type, entityId: item.entity.id, ...options });
+        Actions[scene]({ entityType: type, entityId: item.entity.id, ...options });
     }
 
     edit(item) {
@@ -116,6 +117,14 @@ class FeedHeader extends Component {
         this.menu && this.menu.close();
     }
 
+    inviteUpvoters(item) {
+        showAlertOkCancel('Are you sure you want to invite all of the upvoters of your post to this group? You can only do this once per boosted post!', () => {
+            this.redirect(item, null, 'groupInvite');
+        });
+
+        this.menu && this.menu.close();        
+    }
+
     onPressThumbnail(item) {
         console.log('just pressed thumbnail');
         Actions.profile({ id: item.owner.id });
@@ -135,20 +144,21 @@ class FeedHeader extends Component {
         return item.group.user_role === 'manager' || item.group.user_role === 'owner';
     }
 
-
     render() {
         const { item } = this.props;
         let thumbnail = '';
         let title = '';
-        let isBoosted = false;
-        const isOwner = item.owner.id === this.props.userId;
+        const isBoosted = item.zone === 'prioritized';
+        const isAuthor = item.owner.id === this.props.userId;
         const canUnfollow = item.user.follow_status === 'active';
         const canFollow = item.user.follow_status === null;
+        let canInviteUpvoters = false;
 
         switch (item.entity.type) {
             case 'post' || 'user-petition':
                 thumbnail = item.owner.avatar_file_path ? item.owner.avatar_file_path : '';
                 title = item.owner ? item.owner.first_name : '' + ' ' + item.owner ? item.owner.last_name : '';
+                canInviteUpvoters = isBoosted;
                 break;
             default:
                 thumbnail = item.group.avatar_file_path ? item.group.avatar_file_path : '';
@@ -184,7 +194,7 @@ class FeedHeader extends Component {
                                     </Button>
                                 </MenuOption>
                                 {
-                                    !isOwner && canUnfollow &&
+                                    !isAuthor && canUnfollow &&
                                     <MenuOption onSelect={() => this.mute(item)}>
                                         <Button iconLeft transparent dark onPress={() => this.mute(item)}>
                                             <Icon name='md-volume-off' style={styles.menuIcon} />
@@ -210,6 +220,15 @@ class FeedHeader extends Component {
                                         <Text style={styles.menuText}>Share this post to followers</Text>
                                     </Button>
                                 </MenuOption>
+                                {
+                                    // canInviteUpvoters &&
+                                    <MenuOption onSelect={() => this.inviteUpvoters(item)}>
+                                        <Button iconLeft transparent dark onPress={() => this.inviteUpvoters(item)}>
+                                            <Icon name='md-megaphone' style={styles.menuIcon} />
+                                            <Text style={styles.menuText}>Invite Upvoters to a Group</Text>
+                                        </Button>
+                                    </MenuOption>
+                                }
                                 {
                                     canFollow &&
                                     <MenuOption onSelect={() => this.followAuthor(this.props.item)}>
@@ -244,7 +263,7 @@ class FeedHeader extends Component {
                                     </MenuOption>
                                 }
                                 {
-                                    isOwner && !isBoosted &&
+                                    isAuthor && !isBoosted &&
                                     <MenuOption onSelect={() => this.edit(item)}>
                                         <Button iconLeft transparent dark onPress={() => this.edit(item)}>
                                             <Icon name='md-create' style={styles.menuIcon} />
@@ -253,7 +272,7 @@ class FeedHeader extends Component {
                                     </MenuOption>
                                 }
                                 {
-                                    isOwner &&
+                                    isAuthor &&
                                     <MenuOption onSelect={() => this.delete(item)}>
                                         <Button iconLeft transparent dark onPress={() => this.delete(item)}>
                                             <Icon name='md-trash' style={styles.menuIcon} />

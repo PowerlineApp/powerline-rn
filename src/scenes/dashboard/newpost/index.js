@@ -38,7 +38,7 @@ import { showToast } from 'PLToast';
 const { width, height } = Dimensions.get('window');
 import { loadUserData, getGroups, getUsersByGroup, createPostToGroup, getPetitionConfig } from 'PLActions';
 import randomPlaceholder from '../../../utils/placeholder';
-
+import CommunityView from '../../../components/CommunityView';
 const POST_MAX_LENGTH = 5000;
 
 class NewPost extends Component {
@@ -249,31 +249,13 @@ class NewPost extends Component {
                             value={this.state.content}
                             onChangeText={(text) => this.changeContent(text)}
                         />
-                        {this.state.showCommunity
-                            ? <View style={styles.community_list_container}>
-                                <View style={styles.community_list_back} />
-                                <ScrollView style={{flex: 1}}>
-                                    <List style={{width: 250}}>
-                                        { this.state.grouplist.map((item, index) => {
-                                            return (
-                                                <ListItem key={index} onPress={() => this.selectGroupList(index)}>
-                                                    { item.avatar_file_path
-                                                        ? <Thumbnail square style={{ width: 15, height: 15 }} source={{ uri: item.avatar_file_path + '&w=50&h=50&auto=compress,format,q=95'}} />
-                                                        : <View style={{width: 15, height: 15}} />
-                                                    }
-                                                    <Body>
-                                                        <Text style={{color: 'white', fontSize: 12}}>{item.official_name}</Text>
-                                                    </Body>
-                                                    <Right>
-                                                        <Icon name='ios-arrow-dropright' style={{color: 'white'}} />
-                                                    </Right>
-                                                </ListItem>
-                                            );
-                                        })
-                                    }
-                                    </List>
-                                </ScrollView>
-                            </View> : null}
+                        {
+                            this.state.showCommunity &&
+                            <CommunityView
+                                grouplist={this.state.grouplist}
+                                onPress={this.selectGroupList.bind(this)}
+                            />
+                        }
                     </View>
                 </ScrollView>
                 <Footer style={{alignItems: 'center', justifyContent: 'space-between', backgroundColor: PLColors.main, paddingLeft: 10, paddingRight: 10}}>

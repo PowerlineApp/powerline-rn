@@ -40,6 +40,7 @@ import { showToast } from 'PLToast';
 
 const PETITION_MAX_LENGTH = 7000;
 import randomPlaceholder from '../../../utils/placeholder';
+import CommunityView from '../../../components/CommunityView';
 
 class NewPetition extends Component {
     constructor (props) {
@@ -254,31 +255,12 @@ class NewPetition extends Component {
                             <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
                             <Textarea placeholderTextColor='rgba(0,0,0,0.1)' style={styles.textarea} onSelectionChange={this.onSelectionChange} placeholder={this.placeholderTitle} value={this.state.content} onChangeText={(text) => this.changeContent(text)} />
                         </View>
-                        {this.state.showCommunity
-                            ? <View style={styles.community_list_container}>
-                                <View style={styles.community_list_back} />
-                                <ScrollView style={{flex: 1}}>
-                                    <List style={{width: 250}}>
-                                        {
-                                        this.state.grouplist.map((item, index) => {
-                                            return (
-                                                <ListItem key={index} onPress={() => this.selectGroupList(index)}>
-                                                    {item.avatar_file_path
-                                                        ? <Thumbnail square style={{width: 15, height: 15}} source={{uri: item.avatar_file_path + '&w=50&h=50&auto=compress,format,q=95'}} />
-                                                    : <View style={{width: 15, height: 15}} />}
-                                                    <Body>
-                                                        <Text style={{color: 'white', fontSize: 12}}>{item.official_name}</Text>
-                                                    </Body>
-                                                    <Right>
-                                                        <Icon name='ios-arrow-dropright' style={{color: 'white'}} />
-                                                    </Right>
-                                                </ListItem>
-                                            );
-                                        })
-                                    }
-                                    </List>
-                                </ScrollView>
-                            </View> : null
+                        {
+                            this.state.showCommunity &&
+                            <CommunityView
+                                grouplist={this.state.grouplist}
+                                onPress={this.selectGroupList.bind(this)}
+                            />
                         }
                     </View>
                 </ScrollView>

@@ -77,6 +77,15 @@ function createGroup(token, groupData){
     });
 }
 
+async function inviteUpvotersToGroup(token: string, id: number, groupId: number, type: string): Promise<Action> {
+    console.log("Invite upvoters to group API");
+    return await api.put(
+        token,
+        `/v2/groups/${groupId}/invites`,
+        { [type]: id }
+    );
+}
+
 function getGroups(token){
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2/user/groups', {
@@ -377,5 +386,5 @@ module.exports = {
     loadFieldsToFillOnJoin,
     getGroupPermissions,
     getUsersByGroup,
-    
+    inviteUpvotersToGroup,
 }
