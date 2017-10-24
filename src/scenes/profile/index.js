@@ -37,8 +37,7 @@ const PLColors = require('PLColors');
 import PLLoader from 'PLLoader';
 
 import { editFollowers, loadUserProfileById, resetActivities, votePost, loadActivitiesByUserId, getFollowingUser, unFollowings, putFollowings } from 'PLActions';
-// import TimeAgo from 'react-native-timeago';
-// import ImageLoad from 'react-native-image-placeholder';
+import TimeAgo from '../../common/TimeAgo';
 import YouTube from 'react-native-youtube';
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
 const { youTubeAPIKey } = require('PLEnv');

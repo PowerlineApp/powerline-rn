@@ -13,8 +13,7 @@ import { Actions } from 'react-native-router-flux';
 // import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
 import * as Animatable from 'react-native-animatable';
 import styles, { MAX_HEIGHT, MIN_HEIGHT, optionsStyles, sliderWidth, itemWidth } from './styles';
-// import TimeAgo from 'react-native-timeago';
-// import ImageLoad from 'react-native-image-placeholder';
+import TimeAgo from '../../../common/TimeAgo';
 import Carousel from 'react-native-snap-carousel';
 import YouTube from 'react-native-youtube';
 import Menu, {

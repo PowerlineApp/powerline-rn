@@ -20,18 +20,15 @@ import Menu, {
     MenuOption,
     renderers
 } from 'react-native-popup-menu';
-// var TimeAgo = require('react-native-timeago');
+import TimeAgo from '../../../common/TimeAgo';
 import PLLoader from 'PLLoader';
-
-const PLColors = require('PLColors');
-const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
-var { getActivities, unFollowers, acceptFollowers, putSocialActivity, getInvites, joinGroup,getGroupDetails } = require('PLActions');
-
+import PLColors from 'PLColors';
+import { WINDOW_WIDTH, WINDOW_HEIGHT } from 'PLConstants';
+import { getActivities, unFollowers, acceptFollowers, putSocialActivity, getInvites, joinGroup,getGroupDetails } from 'PLActions';
 import ContentPlaceholder from '../../../components/ContentPlaceholder';
 import styles from './styles';
 
 class Notifications extends Component{
-    
     constructor(props){
         super(props);
         this.state = {

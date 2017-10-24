@@ -10,8 +10,7 @@ import { ListView, View, RefreshControl, TouchableOpacity, Image, WebView, Platf
 import Carousel from 'react-native-snap-carousel';
 import { loadActivities, resetActivities, editFollowers, loadActivityByEntityId, loadFriendsActivities } from 'PLActions';
 import styles, { sliderWidth, itemWidth } from './styles';
-// import TimeAgo from 'react-native-timeago';
-// import ImageLoad from 'react-native-image-placeholder';
+import TimeAgo from '../../../../common/TimeAgo';
 import YouTube from 'react-native-youtube';
 import PLOverlayLoader from 'PLOverlayLoader';
 import PLLoader from 'PLLoader';

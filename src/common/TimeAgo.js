@@ -4,7 +4,7 @@ import moment from 'moment';
 class TimeAgo extends Component {
     render() {
         return (
-            <Text>{moment(this.props.time).fromNow()}</Text>
+            <Text>{moment(this.props.time).fromNow(this.props.hideAgo)}</Text>
         )
     }
 }
