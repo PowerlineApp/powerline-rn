@@ -9,7 +9,7 @@ import { logOut, logOutWithPrompt, unregisterDevice } from 'PLActions';
 
 import styles from './style';
 import OneSignal from 'react-native-onesignal';
-import { AsyncStorage } from 'react-native';
+import { AsyncStorage, Keyboard } from 'react-native';
 
 const datas = [
   {
@@ -137,6 +137,7 @@ class SideBar extends Component {
     }else if(route == 'search'){
       Actions['search']();
     }else{
+      Keyboard.dismiss();
       Actions['home']();
     }
     this.props.closeDrawer();
