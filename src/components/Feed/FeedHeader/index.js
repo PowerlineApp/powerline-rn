@@ -10,7 +10,7 @@ import Menu, {
     MenuOptions,
     MenuOption
 } from 'react-native-popup-menu';
-import { showAlertOkCancel } from 'PLAlert';
+import { showAlertOkCancel, showAlertYesNo } from 'PLAlert';
 
 import { WINDOW_WIDTH } from 'PLConstants';
 import {
@@ -21,7 +21,10 @@ import {
     unFollowings,
     putFollowings,
     editFollowers,
-    getFollowingUser
+    getFollowingUser,
+    subscribeNotification,
+    unsubscribeNotification,
+    markAsSpam,
 } from 'PLActions';
 
 import styles from '../styles';
@@ -37,6 +40,16 @@ class FeedHeader extends Component {
             type = 'petition';
         }
         Actions[scene]({ entityType: type, entityId: item.entity.id, ...options });
+    }
+
+    subscribe(item) {
+        this.props.dispatch(subscribeNotification(this.props.token, item.entity.id, item.id, item.entity.type));
+        this.menu && this.menu.close();
+    }
+
+    unsubscribe(item) {
+        this.props.dispatch(unsubscribeNotification(this.props.token, item.entity.id, item.id, item.entity.type));
+        this.menu && this.menu.close();        
     }
 
     edit(item) {
@@ -125,6 +138,13 @@ class FeedHeader extends Component {
         this.menu && this.menu.close();        
     }
 
+    spam(item) {
+        showAlertOkCancel('Are you sure you want to report this item? Group leaders can only remove items that have been reported by multiple users.', () => {
+            this.props.dispatch(markAsSpam(this.props.token, item.entity.id, item.entity.type));
+        });
+        this.menu && this.menu.close();        
+    }
+
     onPressThumbnail(item) {
         console.log('just pressed thumbnail');
         Actions.profile({ id: item.owner.id });
@@ -144,6 +164,14 @@ class FeedHeader extends Component {
         return item.group.user_role === 'manager' || item.group.user_role === 'owner';
     }
 
+    isSubscribed(item) {
+        if (item[item.entity.type] !== undefined) {
+            return item[item.entity.type].is_subscribed;
+        }
+
+        return false;
+    }
+
     render() {
         const { item } = this.props;
         let thumbnail = '';
@@ -153,12 +181,15 @@ class FeedHeader extends Component {
         const canUnfollow = item.user.follow_status === 'active';
         const canFollow = item.user.follow_status === null;
         let canInviteUpvoters = false;
+        let canSpam = false;
 
         switch (item.entity.type) {
-            case 'post' || 'user-petition':
+            case 'post':
+            case 'user-petition':
                 thumbnail = item.owner.avatar_file_path ? item.owner.avatar_file_path : '';
                 title = item.owner ? item.owner.first_name : '' + ' ' + item.owner ? item.owner.last_name : '';
                 canInviteUpvoters = isBoosted;
+                canSpam = true;
                 break;
             default:
                 thumbnail = item.group.avatar_file_path ? item.group.avatar_file_path : '';
@@ -187,12 +218,23 @@ class FeedHeader extends Component {
                                 <Icon name='ios-arrow-down' style={styles.dropDownIcon} />
                             </MenuTrigger>
                             <MenuOptions customStyles={optionsStyles}>
-                                <MenuOption>
-                                    <Button iconLeft transparent dark>
-                                        <Icon name='logo-rss' style={styles.menuIcon} />
-                                        <Text style={styles.menuText}>Subscribe to this Post</Text>
-                                    </Button>
-                                </MenuOption>
+                                {
+                                    !this.isSubscribed(item)
+                                    ?
+                                    <MenuOption onSelect={() => this.subscribe(item)}>
+                                        <Button iconLeft transparent dark onPress={() => this.subscribe(item)}>
+                                            <Icon name='md-notifications' style={styles.menuIcon} />
+                                            <Text style={styles.menuText}>Subscribe to Notifications</Text>
+                                        </Button>
+                                    </MenuOption>
+                                    :
+                                    <MenuOption onSelect={() => this.unsubscribe(item)}>
+                                        <Button iconLeft transparent dark onPress={() => this.unsubscribe(item)}>
+                                            <Icon name='md-notifications-off' style={styles.menuIcon} />
+                                            <Text style={styles.menuText}>Unsubscribe</Text>
+                                        </Button>
+                                    </MenuOption>
+                                }
                                 {
                                     !isAuthor && canUnfollow &&
                                     <MenuOption onSelect={() => this.mute(item)}>
@@ -272,11 +314,20 @@ class FeedHeader extends Component {
                                     </MenuOption>
                                 }
                                 {
-                                    isAuthor &&
+                                    isAuthor && !isBoosted &&
                                     <MenuOption onSelect={() => this.delete(item)}>
                                         <Button iconLeft transparent dark onPress={() => this.delete(item)}>
                                             <Icon name='md-trash' style={styles.menuIcon} />
                                             <Text style={styles.menuText}>Delete Post</Text>
+                                        </Button>
+                                    </MenuOption>
+                                }
+                                {
+                                    canSpam &&
+                                    <MenuOption onSelect={() => this.spam(item)}>
+                                        <Button iconLeft transparent dark onPress={() => this.spam(item)}>
+                                            <Image source={require("img/spam.png")} style={[styles.menuIcon, { marginLeft: -2, marginRight: 12 }]} />
+                                            <Text style={styles.menuText}>Mark As Spam</Text>
                                         </Button>
                                     </MenuOption>
                                 }
