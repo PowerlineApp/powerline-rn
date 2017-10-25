@@ -171,15 +171,19 @@ function handleError(error) {
     alert(message);
 }
 
-function createPostToGroup(token, groupId, content){
+function createPostToGroup(token, groupId, content, base64image) {
     return new Promise((resolve, reject) => {
+        const body = { body: content };
+        if (base64image) {
+            body.image = base64image;
+        }
         fetch(API_URL + '/v2/groups/' + groupId + '/posts', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'token': token
             },
-            body: JSON.stringify({body: content})
+            body: JSON.stringify(body)
         })
         .then((res) => res.json())
         .then(data => {

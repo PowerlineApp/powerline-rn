@@ -93,6 +93,13 @@ export default {
         right: 0,
         backgroundColor: 'black',
         opacity: 0.4
+    },
+
+    deleteIcon: {
+        position: 'absolute',
+        right: 0,
+        top: 0,
+        fontSize: 25,
     }
 
 }

@@ -132,7 +132,7 @@ class NewPetition extends Component {
     }
 
     changeContent (text) {
-        if (text.length <= 7000) {
+        if (text.length <= PETITION_MAX_LENGTH) {
             this.setState({
                 content: text
             });
