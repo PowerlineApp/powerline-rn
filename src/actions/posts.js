@@ -197,11 +197,15 @@ function createPostToGroup(token, groupId, content, base64image) {
     });
 }
 
-function createPetition(token, groupId, title, content){
+function createPetition(token, groupId, title, content, base64image) {
     var data = {
         title: title,
         body: content
     };
+
+    if (base64image) {
+        data.image = base64image;
+    }
 
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2.2/groups/' + groupId + '/user-petitions', {

@@ -64,7 +64,8 @@ export default {
     main_content: {
         width: width, 
         height: (height - 185), 
-        position: 'relative'
+        // height: height, 
+        position: 'relative',
     },
 
     textarea: {
@@ -95,11 +96,18 @@ export default {
         opacity: 0.4
     },
 
-    deleteIcon: {
+    deleteIconContainer: {
         position: 'absolute',
-        right: 0,
-        top: 0,
+        right: -4,
+        top: -4,
+        width: 22,
+        height: 22,
+        borderRadius: 12,
+        overflow: 'hidden'
+    },
+    deleteIcon: {
         fontSize: 25,
+        backgroundColor: '#e2e7ea'        
     }
 
 }

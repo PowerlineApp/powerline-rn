@@ -204,7 +204,7 @@ class NewPost extends Component {
 
     attachImage = () => {
         if (this.state.image) {
-            this.setState({ image: null });       
+            this.setState({ image: null });
         } else {
             ActionSheet.show({
                 options: ["Take photo", "Choose from gallery"],
@@ -214,8 +214,7 @@ class NewPost extends Component {
                     ImagePicker.openCamera({
                         cropping: true,
                         includeBase64: true
-                      }).then(image => {
-                        console.log(image);
+                    }).then(image => {
                         this.setState({ image: image.data });
                     });
                 }
@@ -224,20 +223,11 @@ class NewPost extends Component {
                     ImagePicker.openPicker({
                         cropping: true,
                         includeBase64: true
-                      }).then(image => {
-                        console.log(image);
+                    }).then(image => {
                         this.setState({ image: image.data });
                     });
                 }
-            })
-            // ImagePicker.openPicker({
-            //     width: 300,
-            //     height: 400,
-            //     cropping: true
-            // }).then(image => {
-            //     console.log(image);
-            //     this.setState({ image: 'blabla' });        
-            // });
+            });
         }
     }
 
@@ -251,7 +241,7 @@ class NewPost extends Component {
                         </Button>
                     </Left>
                     <Body>
-                        <Title>New Post</Title>
+                        <Title style={{ color: 'white' }}>New Post</Title>
                     </Body>
                     <Right>
                         <Button transparent onPress={() => this.createPost()}>
@@ -299,18 +289,20 @@ class NewPost extends Component {
                             />
                         }
                     </View>
-                    <Button transparent onPress={this.attachImage}>
-                        {
-                            this.state.image ?
+                </ScrollView>
+                <Button transparent style={{ marginBottom: 8 }} onPress={this.attachImage}>
+                    {
+                        this.state.image ?
                             <View style={{ flexDirection: 'row', width: 100, height: 60, alignItems: 'center', justifyContent: 'center' }}>
                                 <Image source={{ uri: `data:image/png;base64,${this.state.image}` }} resizeMode="cover" style={{ width: 90, height: 50 }} />
-                                <Icon name="md-close-circle" style={styles.deleteIcon} />
+                                <View style={styles.deleteIconContainer}>
+                                    <Icon name="md-close-circle" style={styles.deleteIcon} />
+                                </View>
                             </View>
                             :
-                            <Image source={require("img/upload_image.png")} resizeMode="contain" style={{ width: 100, height: 60, tintColor: 'gray' }} />                            
-                        }
-                    </Button>
-                </ScrollView>
+                            <Image source={require("img/upload_image.png")} resizeMode="contain" style={{ width: 100, height: 60, tintColor: 'gray' }} />
+                    }
+                </Button>
                 <Footer style={{ alignItems: 'center', justifyContent: 'space-between', backgroundColor: PLColors.main, paddingLeft: 10, paddingRight: 10 }}>
                     {this.state.posts_remaining
                         ? <Label style={{ color: 'white', fontSize: 10 }}>

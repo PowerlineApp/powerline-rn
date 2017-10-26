@@ -24,14 +24,18 @@ import {
     List,
     ListItem,
     Thumbnail,
-    Input
+    Input,
+    ActionSheet
 } from 'native-base';
 const PLColors = require('PLColors');
+import ImagePicker from 'react-native-image-crop-picker';
+
 import styles from './styles';
 import SuggestionBox from '../../../common/suggestionBox';
 import {
     Dimensions,
     ScrollView,
+    Image,
     TextInput
 } from 'react-native';
 const { width, height } = Dimensions.get('window');
@@ -43,7 +47,7 @@ import randomPlaceholder from '../../../utils/placeholder';
 import CommunityView from '../../../components/CommunityView';
 
 class NewPetition extends Component {
-    constructor (props) {
+    constructor(props) {
         super(props);
 
         this.state = {
@@ -56,41 +60,42 @@ class NewPetition extends Component {
             petition_remaining: null,
             mentionEntry: null,
             suggestionSearch: '',
-            groupUsers: []
+            groupUsers: [],
+            image: null
         };
 
         this.placeholderTitle = randomPlaceholder('petition');
         this.onSelectionChange = this.onSelectionChange.bind(this);
     }
 
-    componentDidMount () {
+    componentDidMount() {
         var { token } = this.props;
         loadUserData(token).then(data => {
             this.setState({
                 profile: data
             });
         })
-        .catch(err => {
+            .catch(err => {
 
-        });
+            });
 
         getGroups(token).then(ret => {
             this.setState({
                 grouplist: ret.payload
             });
         })
-        .catch(err => {
+            .catch(err => {
 
-        });
+            });
     }
 
-    toggleCommunity () {
+    toggleCommunity() {
         this.setState({
             showCommunity: !this.state.showCommunity
         });
     }
 
-    selectGroupList (index) {
+    selectGroupList(index) {
         this.setState({
             selectedGroupIndex: index,
             showCommunity: false
@@ -99,17 +104,17 @@ class NewPetition extends Component {
         var { token } = this.props;
 
         getPetitionConfig(token, this.state.grouplist[index].id)
-        .then(data => {
-            this.setState({
-                petition_remaining: data.petitions_remaining
-            });
-        })
-        .catch(err => {
+            .then(data => {
+                this.setState({
+                    petition_remaining: data.petitions_remaining
+                });
+            })
+            .catch(err => {
 
-        });
+            });
     }
 
-    createPetition () {
+    createPetition() {
         if (this.state.selectedGroupIndex == -1) {
             alert('Where do you want to post this? Select a group');
             return;
@@ -122,16 +127,16 @@ class NewPetition extends Component {
         }
 
         var { token } = this.props;
-        createPetition(token, this.state.grouplist[this.state.selectedGroupIndex].id, this.state.title, this.state.content)
-        .then(data => {
-            showToast('Petition Successful!');
-            Actions.itemDetail({ entityId: data.id, entityType: 'user-petition', backTo: 'home' });
-        })
-        .catch(err => {
-        });
+        createPetition(token, this.state.grouplist[this.state.selectedGroupIndex].id, this.state.title, this.state.content, this.state.image)
+            .then(data => {
+                showToast('Petition Successful!');
+                Actions.itemDetail({ entityId: data.id, entityType: 'user-petition', backTo: 'home' });
+            })
+            .catch(err => {
+            });
     }
 
-    changeContent (text) {
+    changeContent(text) {
         if (text.length <= PETITION_MAX_LENGTH) {
             this.setState({
                 content: text
@@ -139,8 +144,8 @@ class NewPetition extends Component {
         }
     }
 
-    substitute (mention) {
-        let {init, end} = this.state;
+    substitute(mention) {
+        let { init, end } = this.state;
         let newContent = this.state.content;
         let initialLength = newContent.length;
 
@@ -149,11 +154,11 @@ class NewPetition extends Component {
 
         let finalString = firstPart + mention + ' ' + finalPart;
 
-        this.setState({content: finalString, displaySuggestionBox: false, lockSuggestionPosition: end});
+        this.setState({ content: finalString, displaySuggestionBox: false, lockSuggestionPosition: end });
     }
 
-    onSelectionChange (event) {
-        let {start, end} = event.nativeEvent.selection;
+    onSelectionChange(event) {
+        let { start, end } = event.nativeEvent.selection;
         let userRole = this.state.grouplist[this.state.selectedGroupIndex].user_role;
         setTimeout(() => {
             if (start !== end) return;
@@ -182,44 +187,73 @@ class NewPetition extends Component {
             if (displayMention) {
                 let suggestionSearch = text.slice(i + 1, end);
                 this.updateSuggestionList(this.props.token, suggestionSearch);
-                this.setState({displaySuggestionBox: displayMention, init: i, end: end});
+                this.setState({ displaySuggestionBox: displayMention, init: i, end: end });
             } else {
-                this.setState({suggestionList: [], displaySuggestionBox: false});
+                this.setState({ suggestionList: [], displaySuggestionBox: false });
             }
         }, 100);
     }
 
-    updateSuggestionList (token, suggestionSearch) {
-        this.setState({suggestionList: []});
+    updateSuggestionList(token, suggestionSearch) {
+        this.setState({ suggestionList: [] });
         getUsersByGroup(token, this.state.grouplist[this.state.selectedGroupIndex].id, suggestionSearch).then(data => {
-            this.setState({suggestionList: data.payload});
+            this.setState({ suggestionList: data.payload });
         }).catch(err => {
 
         });
     }
 
-    changeTitle (text) {
+    changeTitle(text) {
         this.setState({
             title: text
         });
     }
 
-    render () {
+    attachImage = () => {
+        if (this.state.image) {
+            this.setState({ image: null });
+        } else {
+            ActionSheet.show({
+                options: ["Take photo", "Choose from gallery"],
+                title: "Attach image"
+            }, buttonIndex => {
+                if (buttonIndex === 0) {
+                    ImagePicker.openCamera({
+                        cropping: true,
+                        includeBase64: true
+                    }).then(image => {
+                        this.setState({ image: image.data });
+                    });
+                }
+
+                if (buttonIndex === 1) {
+                    ImagePicker.openPicker({
+                        cropping: true,
+                        includeBase64: true
+                    }).then(image => {
+                        this.setState({ image: image.data });
+                    });
+                }
+            });
+        }
+    }
+
+    render() {
         console.log(this.state.displaySuggestionBox, this.state.displayMention);
         return (
             <Container style={styles.container}>
                 <Header style={styles.header}>
                     <Left>
-                        <Button transparent onPress={() => Actions.pop()} style={{width: 50, height: 50 }}  >
-                            <Icon active name='arrow-back' style={{color: 'white'}} />
+                        <Button transparent onPress={() => Actions.pop()} style={{ width: 50, height: 50 }}  >
+                            <Icon active name='arrow-back' style={{ color: 'white' }} />
                         </Button>
                     </Left>
                     <Body>
-                        <Title>New Petition</Title>
+                        <Title style={{ color: 'white' }}>New Petition</Title>
                     </Body>
                     <Right>
                         <Button transparent onPress={() => this.createPetition()}>
-                            <Label style={{color: 'white'}}>Send</Label>
+                            <Label style={{ color: 'white' }}>Send</Label>
                         </Button>
                     </Right>
                 </Header>
@@ -228,22 +262,22 @@ class NewPetition extends Component {
                         <ListItem style={styles.community_container} onPress={() => this.toggleCommunity()}>
                             <View style={styles.avatar_container}>
                                 <View style={styles.avatar_wrapper}>
-                                    <Thumbnail square style={styles.avatar_img} source={{uri: this.state.profile.avatar_file_name + '&w=50&h=50&auto=compress,format,q=95'}} />
+                                    <Thumbnail square style={styles.avatar_img} source={{ uri: this.state.profile.avatar_file_name + '&w=50&h=50&auto=compress,format,q=95' }} />
                                 </View>
                                 <View style={styles.avatar_subfix} />
                             </View>
                             <Body style={styles.community_text_container}>
-                                <Text style={{color: 'white'}}>
+                                <Text style={{ color: 'white' }}>
                                     {this.state.selectedGroupIndex == -1 ? 'Select a community' : this.state.grouplist[this.state.selectedGroupIndex].official_name}
                                 </Text>
                             </Body>
                             <Right style={styles.community_icon_container}>
-                                <Icon name='md-create' style={{color: 'white'}} />
+                                <Icon name='md-create' style={{ color: 'white' }} />
                             </Right>
                         </ListItem>
                     </List>
                     <View style={styles.main_content}>
-                        <View style={{padding: 10}}>
+                        <View style={{ padding: 10 }}>
                             <TextInput
                                 placeholder='Type Title here'
                                 style={styles.input_text}
@@ -264,14 +298,27 @@ class NewPetition extends Component {
                         }
                     </View>
                 </ScrollView>
-                <Footer style={{alignItems: 'center', justifyContent: 'space-between', backgroundColor: PLColors.main, paddingLeft: 10, paddingRight: 10}}>
-                    {this.state.petition_remaining
-                        ? <Label style={{color: 'white', fontSize: 10}}>
-                        You have <Label style={{fontWeight: 'bold'}}>{this.state.petition_remaining}</Label> petitions left in this group
-                    </Label>
-                    : <Label />
+                <Button transparent style={{ marginBottom: 8 }} onPress={this.attachImage}>
+                    {
+                        this.state.image ?
+                            <View style={{ flexDirection: 'row', width: 100, height: 60, alignItems: 'center', justifyContent: 'center' }}>
+                                <Image source={{ uri: `data:image/png;base64,${this.state.image}` }} resizeMode="cover" style={{ width: 90, height: 50 }} />
+                                <View style={styles.deleteIconContainer}>
+                                    <Icon name="md-close-circle" style={styles.deleteIcon} />
+                                </View>
+                            </View>
+                            :
+                            <Image source={require("img/upload_image.png")} resizeMode="contain" style={{ width: 100, height: 60, tintColor: 'gray' }} />
                     }
-                    <Label style={{color: 'white'}}>
+                </Button>
+                <Footer style={{ alignItems: 'center', justifyContent: 'space-between', backgroundColor: PLColors.main, paddingLeft: 10, paddingRight: 10 }}>
+                    {this.state.petition_remaining
+                        ? <Label style={{ color: 'white', fontSize: 10 }}>
+                            You have <Label style={{ fontWeight: 'bold' }}>{this.state.petition_remaining}</Label> petitions left in this group
+                    </Label>
+                        : <Label />
+                    }
+                    <Label style={{ color: 'white' }}>
                         {
                             (PETITION_MAX_LENGTH - this.state.content.length)
                         }

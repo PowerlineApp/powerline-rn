@@ -68,8 +68,8 @@ export default {
     },
 
     textarea: {
-        width: width - 20, 
-        height: (height - 234), 
+        width: width, 
+        height: (height - 185), 
         fontSize: 14, 
         color: 'rgba(0,0,0,0.6)', 
         zIndex: 5
@@ -111,6 +111,21 @@ export default {
         padding: 10,
         width: (width - 20),
         height: (height - 131)
+    },
+
+
+    deleteIconContainer: {
+        position: 'absolute',
+        right: -4,
+        top: -4,
+        width: 22,
+        height: 22,
+        borderRadius: 12,
+        overflow: 'hidden'
+    },
+    deleteIcon: {
+        fontSize: 25,
+        backgroundColor: '#e2e7ea'        
     }
 
 }
