@@ -4,6 +4,7 @@
 // https://api-dev.powerli.ne/api-doc#post--api-v2.2-groups-{group}-posts
 
 import React, { Component } from 'react';
+import {TextInput} from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import {
@@ -28,6 +29,7 @@ import {
 } from 'native-base';
 const PLColors = require('PLColors');
 import SuggestionBox from '../../../common/suggestionBox';
+import ShareFloatingAction from '../../../components/ShareFloatingAction';
 import styles from './styles';
 import {
     Dimensions,
@@ -123,8 +125,9 @@ class NewPost extends Component {
 
         createPostToGroup(token, groupId, this.state.content)
         .then(data => {
-            showToast('Post Successful!');
-            Actions.itemDetail({ entityId: data.id, entityType: 'post', backTo: 'home' });
+            showToast('Post Successful!', data);
+            Actions.itemDetail({ entityId: data.id, entityType: 'post', backTo: 'home', share: this.state.social });
+        
         })
         .catch(err => {
 
@@ -150,6 +153,15 @@ class NewPost extends Component {
         let finalString = firstPart + mention + finalPart;
 
         this.setState({content: finalString, displaySuggestionBox: false, lockSuggestionPosition: end});
+    }
+
+    isSelected(social){
+        return this.state.social === social
+        // return false;
+    }
+
+    setSelected(name){
+        this.setState({social : name})
     }
 
     onSelectionChange (event) {
@@ -238,7 +250,28 @@ class NewPost extends Component {
                             </Right>
                         </ListItem>
                     </List>
+
+
+                    <ScrollView>
                         <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
+                        <TextInput
+                            maxLength={POST_MAX_LENGTH}
+                            
+                            onSelectionChange={this.onSelectionChange}
+                            placeholderTextColor='rgba(0,0,0,0.1)'
+                            style={styles.textarea}
+                            multiline
+                            placeholder={this.placeholderTitle}
+                            value={this.state.content}
+                            onChangeText={(text) => this.changeContent(text)}
+                        />
+                    </ScrollView>
+                    <ShareFloatingAction 
+                        cb={(social) => this.setSelected(social)}
+                        isSelected={(social) => this.isSelected(social)}
+                    />
+
+                        {/* <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
                         <Textarea
                             maxLength={POST_MAX_LENGTH}
                             autoFocus
@@ -248,7 +281,8 @@ class NewPost extends Component {
                             placeholder={this.placeholderTitle}
                             value={this.state.content}
                             onChangeText={(text) => this.changeContent(text)}
-                        />
+                        /> */}
+
                         {
                             this.state.showCommunity &&
                             <CommunityView

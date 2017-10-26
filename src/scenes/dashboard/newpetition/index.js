@@ -29,6 +29,8 @@ import {
 const PLColors = require('PLColors');
 import styles from './styles';
 import SuggestionBox from '../../../common/suggestionBox';
+import ShareFloatingAction from '../../../components/ShareFloatingAction';
+
 import {
     Dimensions,
     ScrollView,
@@ -124,8 +126,8 @@ class NewPetition extends Component {
         var { token } = this.props;
         createPetition(token, this.state.grouplist[this.state.selectedGroupIndex].id, this.state.title, this.state.content)
         .then(data => {
-            showToast('Petition Successful!');
-            Actions.itemDetail({ entityId: data.id, entityType: 'user-petition', backTo: 'home' });
+            showToast('Petition Successful!', data);
+            Actions.itemDetail({ entityId: data.id, entityType: 'petition', backTo: 'home', share: this.state.social });
         })
         .catch(err => {
         });
@@ -204,6 +206,15 @@ class NewPetition extends Component {
         });
     }
 
+    isSelected(social){
+        return this.state.social === social
+        // return false;
+    }
+
+    setSelected(name){
+        this.setState({social : name})
+    }
+
     render () {
         console.log(this.state.displaySuggestionBox, this.state.displayMention);
         return (
@@ -243,7 +254,7 @@ class NewPetition extends Component {
                         </ListItem>
                     </List>
                     <View style={styles.main_content}>
-                        <View style={{padding: 10}}>
+                        <ScrollView style={{padding: 10}}>
                             <TextInput
                                 placeholder='Type Title here'
                                 style={styles.input_text}
@@ -254,7 +265,14 @@ class NewPetition extends Component {
                             />
                             <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
                             <Textarea placeholderTextColor='rgba(0,0,0,0.1)' style={styles.textarea} onSelectionChange={this.onSelectionChange} placeholder={this.placeholderTitle} value={this.state.content} onChangeText={(text) => this.changeContent(text)} />
-                        </View>
+                        </ScrollView>
+
+                        <ShareFloatingAction 
+                            cb={(social) => this.setSelected(social)}
+                            isSelected={(social) => this.isSelected(social)}
+                        />
+
+
                         {
                             this.state.showCommunity &&
                             <CommunityView

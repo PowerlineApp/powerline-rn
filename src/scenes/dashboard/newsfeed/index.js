@@ -186,7 +186,7 @@ class Newsfeed extends Component {
             dataSouce = dataSouce.reverse();
         }
         // this is hardcode for testing purposes -- I will remove once ConversationFeed is 100% working /Felipe
-        conversationView = false;
+        conversationView = true;
         // console.log({token, savedGroup} = this.props)
         return (
             // The default view of the newsfeed is the All feed.

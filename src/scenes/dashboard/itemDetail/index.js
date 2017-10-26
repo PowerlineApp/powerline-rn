@@ -5,6 +5,7 @@
 
 
 import React, { Component } from 'react';
+
 import { connect } from 'react-redux';
 import {ScrollView} from 'react-native';
 import { Spinner, Container, Header, Title, Textarea, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, List, ListItem, Item, Input } from 'native-base';
@@ -27,7 +28,13 @@ import Menu, {
 import { getComments, votePost, getUsersByGroup, addComment, editComment, deleteComment, rateComment, loadActivityByEntityId, deletePost, deletePetition, changePost, changePetition } from 'PLActions';
 import PLOverlayLoader from 'PLOverlayLoader';
 import randomPlaceholder from '../../../utils/placeholder';
+import { FloatingAction } from 'react-native-floating-action';
 import _ from 'lodash';
+
+import {
+    shareOnFacebook,
+    shareOnTwitter,
+  } from 'react-native-social-share';
 
 
 // custom components import
@@ -41,14 +48,12 @@ import FeedActivity from '../../../components/Feed/FeedActivity';
 
 import SuggestionBox from '../../../common/suggestionBox';
 
-
 const { youTubeAPIKey } = require('PLEnv');
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
 const { SlideInMenu } = renderers;
 const numberPerPage = 5;
 
 class ItemDetail extends Component {
-
     commentToReply: Object;
     isLoadedAll: boolean;
     item: Object;
@@ -162,17 +167,74 @@ class ItemDetail extends Component {
         Actions.commentDetail({ comment: comment, entityType: entityType, entityId: entityId });
     }
 
+    share(share, entity){
+        console.log('entity to be shared : ', share, entity)
+        if (!share) return;
+        else if (share === 'twitter'){
+            shareOnTwitter({
+                'text':'Global democratized marketplace for art',
+                'link':'https://artboost.com/',
+                'imagelink':'https://artboost.com/apple-touch-icon-144x144.png',
+                //or use image
+                'image': 'artboost-icon',
+              },
+              (results) => {
+                console.log(results);
+              }
+            );
+        } else if (share === 'facebook'){
+
+            shareOnFacebook({
+                'text':'Global democratized marketplace for art',
+                'link':'https://artboost.com/',
+                'imagelink':'https://artboost.com/apple-touch-icon-144x144.png',
+                //or use image
+                'image': 'artboost-icon',
+              },
+              (results) => {
+                console.log(results);
+              }
+            );
+        }
+    }
+
+
+
     // API Calls
     async loadEntity() {
         // console.log(this.props.entityId, this.props.entityType);
         const { props: { token, entityId, entityType, dispatch } } = this;
         // console.log(entityId, entityType)
         this.setState({ isLoading: true });
+
+        let type = 'poll';
+        if (entityType === 'user-petition') type = 'petition';
+        if (entityType === 'post') type = 'post'
+
+
         loadActivityByEntityId(token, entityType, entityId).then(data => {
+            console.log('data', data)
             if (data.payload && data.payload[0]) {
                 this.item = data.payload[0];
                 this.setState({ isLoading: false, inputDescription: this.item.description });
                 this.loadComments();
+                this.share(this.props.share, data.payload[0]);
+            } else {
+                console.log('Activity not found in database, should we wait for a while and try again later?')
+                setTimeout( () => {
+                    loadActivityByEntityId(token, entityType, entityId).then(data => {
+                        if (data.payload && data.payload[0]) {
+                            this.item = data.payload[0];
+                            this.setState({ isLoading: false, inputDescription: this.item.description });
+                            this.loadComments();
+                            this.share(this.props.share, data.payload[0]);
+                        }
+                    }).catch(e => {
+                        this.setState({ isLoading: false });
+                        const message = e.message || e;
+                        setTimeout(() => alert(message), 1000);
+                    })
+                }, 1000)
             }
         }).catch(e => {
             this.setState({ isLoading: false });
@@ -862,6 +924,34 @@ class ItemDetail extends Component {
                         <PLOverlayLoader visible={this.state.isLoading} logo />
                     </HeaderImageScrollView>
                 </Container>
+                <FloatingAction
+                        actions={
+                            [
+                                {
+                                    text: 'Facebook',
+                                    icon: require('../../../assets/facebook_logo.png'),
+                                    name: 'facebook',
+                                    position: 2,
+                                    color: '#3b5998'
+                                }, {
+                                    text: 'Twitter',
+                                    icon: require('../../../assets/twitter_logo.png'),
+                                    name: 'twitter',
+                                    position: 1,
+                                    color: '#55acee'
+                                }
+                            ]
+                        }
+                        onPressItem={
+                            (name) => {
+                                this.share(name, this.state.item)
+                            }
+                        }
+                        buttonColor='#71c9f1'
+                        overlayColor='rgba(0,0,0,0)'
+                        floatingIcon={require('../../../assets/share_icon.png')}
+                        >
+                        </FloatingAction>
             </MenuContext>
         );
     }
