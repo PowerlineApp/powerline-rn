@@ -6,7 +6,7 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import {ScrollView} from 'react-native';
+import { ScrollView } from 'react-native';
 import { Spinner, Container, Header, Title, Textarea, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, List, ListItem, Item, Input } from 'native-base';
 import { Image, View, StyleSheet, TouchableOpacity, Platform, KeyboardAvoidingView, Keyboard, TextInput, ListView } from 'react-native';
 import { Actions } from 'react-native-router-flux';
@@ -83,22 +83,22 @@ class ItemDetail extends Component {
     componentWillMount() {
         this.keyboardDidShowListener = Keyboard.addListener('keyboardWillShow', this._keyboardWillShow.bind(this));
         this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide.bind(this));
-        
+
     }
-    
-    componentDidMount(){
+
+    componentDidMount() {
         // this.addCommentInput.focus(); 
         // console.log('=xx=x=x=x=x=x=x=x=x==x')
         // console.log('propss', this.props.entityType, this.props.entityId);
-        if (this.props.commenting){
+        if (this.props.commenting) {
             // console.log('commenting...')
             setTimeout(
                 () => this._onAddComment()
                 , 1000);
-            }   
+        }
         this.loadEntity();
     }
-    
+
     onCommentInputRef = r => {
         this.addCommentInput = r;
     }
@@ -182,13 +182,16 @@ class ItemDetail extends Component {
     }
 
     async loadComments() {
+        
         const { props: { token, entityId, entityType, dispatch } } = this;
         this.setState({ isCommentsLoading: true });
+        WARN(entityType)
         try {
             let response = await Promise.race([
                 getComments(token, entityType, entityId),
                 timeout(15000),
             ]);
+            // LOG('rsp3ioj2fo2jf', response);
             if (response.nextCursor) {
                 this.nextCursor = response.nextCursor;
                 this.isLoadedAll = false;
@@ -328,7 +331,7 @@ class ItemDetail extends Component {
         // console.log('=x=x=x=x=x=x', comment, option);
 
         // to control if a rating is being requested.
-        if (this.state.isRating){
+        if (this.state.isRating) {
             return;
         }
 
@@ -369,7 +372,7 @@ class ItemDetail extends Component {
             isEditMode: false,
         });
     }
-    
+
     edit(item) {
         this.setState({ isEditMode: true });
         this.menu && this.menu.close();
@@ -397,8 +400,8 @@ class ItemDetail extends Component {
         return <FeedHeader item={item} />
     }
 
-    substitute (mention) {
-        let {init, end} = this.state;
+    substitute(mention) {
+        let { init, end } = this.state;
         let newContent = this.state.commentText;
         let initialLength = newContent.length;
 
@@ -407,11 +410,11 @@ class ItemDetail extends Component {
 
         let finalString = firstPart + mention + finalPart;
 
-        this.setState({commentText: finalString, displaySuggestionBox: false, lockSuggestionPosition: end});
+        this.setState({ commentText: finalString, displaySuggestionBox: false, lockSuggestionPosition: end });
     }
 
-    onSelectionChange (event) {
-        let {start, end} = event.nativeEvent.selection;
+    onSelectionChange(event) {
+        let { start, end } = event.nativeEvent.selection;
         // let userRole = this.state.grouplist[this.state.selectedGroupIndex].user_role;
         setTimeout(() => {
             if (start !== end) return;
@@ -439,24 +442,24 @@ class ItemDetail extends Component {
             if (displayMention) {
                 let suggestionSearch = text.slice(i + 1, end);
                 this.updateSuggestionList(this.props.token, suggestionSearch);
-                this.setState({displaySuggestionBox: displayMention, init: i, end: end});
+                this.setState({ displaySuggestionBox: displayMention, init: i, end: end });
             } else {
                 // console.log('false');
-                this.setState({suggestionList: [], displaySuggestionBox: false});
+                this.setState({ suggestionList: [], displaySuggestionBox: false });
             }
         }, 100);
     }
 
-    updateSuggestionList (token, suggestionSearch) {
+    updateSuggestionList(token, suggestionSearch) {
         // this.setState({suggestionList: []});
         // console.log(this.item);
         getUsersByGroup(token, this.item.group.id, suggestionSearch).then(data => {
-            this.setState({suggestionList: data.payload});
+            this.setState({ suggestionList: data.payload });
         }).catch(err => {
 
         });
     }
-    changeContent (text) {
+    changeContent(text) {
         this.setState({
             inputDescription: text
         });
@@ -490,12 +493,12 @@ class ItemDetail extends Component {
         const { props: { profile } } = this;
         var thumbnail: string = '';
         thumbnail = profile.avatar_file_name ? profile.avatar_file_name : '';
-        
+
         return (
             <TouchableOpacity onPress={() => this._onAddComment()}>
                 <CardItem>
                     <Left>
-                        <Thumbnail small source={thumbnail ? { uri: thumbnail+'&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                        <Thumbnail small source={thumbnail ? { uri: thumbnail + '&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                         <Body>
                             <Text style={styles.addCommentTitle}>Add Comment...</Text>
                             <Menu
@@ -509,20 +512,20 @@ class ItemDetail extends Component {
                                     width: WINDOW_WIDTH,
                                     // height: this.state.visibleHeight,
                                     // this needs adjustment for android / ios - doesnt work well for android with the suggestionbox
-                                    minHeight: Platform.OS ==='android' ? 50 :  WINDOW_HEIGHT/2 + 50
+                                    minHeight: Platform.OS === 'android' ? 50 : WINDOW_HEIGHT / 2 + 50
                                 }}>
-                                        <ScrollView keyboardShoulPersisTaps>
+                                    <ScrollView keyboardShoulPersisTaps>
                                         <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
-                                        </ScrollView>
-                                        <CardItem>
-                                            <Left>
-                                            <Thumbnail small source={thumbnail ? { uri: thumbnail+'&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                                    </ScrollView>
+                                    <CardItem>
+                                        <Left>
+                                            <Thumbnail small source={thumbnail ? { uri: thumbnail + '&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                                             <Body>
                                                 <TextInput
                                                     autoFocus
                                                     keyboardShoulPersisTaps
                                                     style={styles.commentInput}
-                                                    ref={this.onCommentInputRef}                                                    placeholder={this.state.placeholderTitle}
+                                                    ref={this.onCommentInputRef} placeholder={this.state.placeholderTitle}
                                                     defaultValue={this.state.defaultInputValue}
                                                     onChangeText={commentText => this.setState({ commentText })}
                                                     onSelectionChange={(e) => this.onSelectionChange(e)}
@@ -589,7 +592,7 @@ class ItemDetail extends Component {
 
     _renderRootComment = (comment, isChild = false) => {
         var thumbnail: string = comment.author_picture ? comment.author_picture : '';
-        let title: string = (comment.user ? comment.user.first_name : '' || '') + ' ' + (comment.user ? comment.user.last_name : '' || '');        
+        let title: string = (comment.user ? comment.user.first_name : '' || '') + ' ' + (comment.user ? comment.user.last_name : '' || '');
         var rateUp: number = (comment.rate_count || 0) / 2 + comment.rate_sum / 2;
         var rateDown: number = (comment.rate_count || 0) / 2 - comment.rate_sum / 2;
         let rateValue = comment.rate_value;
@@ -599,11 +602,11 @@ class ItemDetail extends Component {
             style.marginLeft = 40;
             style.marginTop = 5;
         }
-    
+
         return (
             <CardItem style={style}>
                 <Left>
-                    <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail+'&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                    <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail + '&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                     <Body style={{ alignSelf: 'flex-start' }}>
                         <TouchableOpacity onPress={() => this._onCommentBody(comment)}>
                             <Text style={styles.title}>{title}</Text>
@@ -707,7 +710,7 @@ class ItemDetail extends Component {
             return null;
         }
     }
-    _renderTitle (item) {
+    _renderTitle(item) {
         if (item.title) {
             return (<Text style={styles.title}>{item.title}</Text>);
         } else {
@@ -715,7 +718,7 @@ class ItemDetail extends Component {
         }
     }
     // The priority zone counter lists the count of total priority zone items in the newsfeed
-    _renderZoneIcon (item) {
+    _renderZoneIcon(item) {
         if (item.zone === 'prioritized') {
             return (<Icon active name='ios-flash' style={styles.zoneIcon} />);
         } else {
@@ -735,9 +738,9 @@ class ItemDetail extends Component {
                             {this._renderTitle(item)}
                             {
                                 state.isEditMode
-                                ?
+                                    ?
                                     this._renderTextarea(item, state)
-                                :
+                                    :
                                     <Text style={styles.description} numberOfLines={5}>{item.description}</Text>
                             }
                         </View>
@@ -821,7 +824,7 @@ class ItemDetail extends Component {
                                 ref={(navTitleView) => { this.navTitleView = navTitleView; }}>
                                 <Header style={{ backgroundColor: 'transparent' }}>
                                     <Left>
-                                        <Button transparent onPress={this.onBackPress} style={{width: 50, height: 50 }}  >
+                                        <Button transparent onPress={this.onBackPress} style={{ width: 50, height: 50 }}  >
                                             <Icon active name="arrow-back" style={{ color: 'white' }} />
                                         </Button>
                                     </Left>
@@ -834,11 +837,11 @@ class ItemDetail extends Component {
                         )}
                         renderForeground={() => (
                             <Left style={styles.titleContainer}>
-                                <Button transparent onPress={this.onBackPress} style={{width: 50, height: 50 }} >
+                                <Button transparent onPress={this.onBackPress} style={{ width: 50, height: 50 }} >
                                     <Icon active name="md-arrow-back" style={{ color: 'white' }} />
                                 </Button>
                                 <Body style={{ marginTop: -12 }}>
-                                    <Thumbnail size={50} source={item.group.avatar_file_path ? { uri: item.group.avatar_file_path+'&w=200&h=200&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                                    <Thumbnail size={50} source={item.group.avatar_file_path ? { uri: item.group.avatar_file_path + '&w=200&h=200&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                                     <Text style={styles.imageTitle}>{item.group.official_name}</Text>
                                 </Body>
                             </Left>

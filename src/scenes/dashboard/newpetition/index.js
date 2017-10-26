@@ -217,7 +217,7 @@ class NewPetition extends Component {
                 options: ["Take photo", "Choose from gallery"],
                 title: "Attach image"
             }, buttonIndex => {
-                if (buttonIndex === 0) {
+                if (buttonIndex == 0) {
                     ImagePicker.openCamera({
                         cropping: true,
                         includeBase64: true
@@ -226,7 +226,7 @@ class NewPetition extends Component {
                     });
                 }
 
-                if (buttonIndex === 1) {
+                if (buttonIndex == 1) {
                     ImagePicker.openPicker({
                         cropping: true,
                         includeBase64: true
@@ -298,7 +298,7 @@ class NewPetition extends Component {
                         }
                     </View>
                 </ScrollView>
-                <Button transparent style={{ marginBottom: 8 }} onPress={this.attachImage}>
+                <Button transparent style={{ marginBottom: 8, height: 60 }} onPress={this.attachImage}>
                     {
                         this.state.image ?
                             <View style={{ flexDirection: 'row', width: 100, height: 60, alignItems: 'center', justifyContent: 'center' }}>

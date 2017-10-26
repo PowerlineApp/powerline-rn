@@ -98,16 +98,28 @@ export default {
 
     deleteIconContainer: {
         position: 'absolute',
-        right: -4,
-        top: -4,
+        ...Platform.select({
+            ios: {
+                right: -4,
+                top: -4,
+                height: 22,    
+            },
+            android: {
+                right: -1,
+                top: -2,
+                height: 24,
+            }
+        }),
         width: 22,
-        height: 22,
         borderRadius: 12,
-        overflow: 'hidden'
+        overflow: 'hidden',
+        
     },
     deleteIcon: {
         fontSize: 25,
-        backgroundColor: '#e2e7ea'        
+        ...Platform.select({
+            ios: {  backgroundColor: '#e2e7ea' }
+        }),
     }
 
 }

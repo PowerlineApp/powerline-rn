@@ -12,7 +12,7 @@ class FeedDescription extends Component {
         if (item.entity.type === 'post') {
             type = 'post'
           } else if (item.entity.type === 'user-petition'){
-            type = 'petition' 
+            type = 'user-petition' 
           }
         Actions.itemDetail({entityType: type, entityId: item.entity.id, ...options});
     }

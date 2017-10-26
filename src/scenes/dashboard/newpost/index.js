@@ -210,16 +210,18 @@ class NewPost extends Component {
                 options: ["Take photo", "Choose from gallery"],
                 title: "Attach image"
             }, buttonIndex => {
-                if (buttonIndex === 0) {
+                if (buttonIndex == 0) {
+                    LOG('0', ImagePicker);
                     ImagePicker.openCamera({
                         cropping: true,
                         includeBase64: true
                     }).then(image => {
                         this.setState({ image: image.data });
-                    });
+                    }).catch(v => alert(JSON.stringify(v)));
                 }
 
-                if (buttonIndex === 1) {
+                if (buttonIndex == 1) {
+                    LOG('1'), ImagePicker;
                     ImagePicker.openPicker({
                         cropping: true,
                         includeBase64: true
@@ -290,7 +292,7 @@ class NewPost extends Component {
                         }
                     </View>
                 </ScrollView>
-                <Button transparent style={{ marginBottom: 8 }} onPress={this.attachImage}>
+                <Button transparent style={{ marginBottom: 8, height: 60 }} onPress={this.attachImage}>
                     {
                         this.state.image ?
                             <View style={{ flexDirection: 'row', width: 100, height: 60, alignItems: 'center', justifyContent: 'center' }}>
