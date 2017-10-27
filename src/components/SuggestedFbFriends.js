@@ -1,7 +1,19 @@
+// @flow
 import React, { PropTypes, PureComponent } from 'react';
 import { ListItem, Icon, Body, Text, Right, Thumbnail } from 'native-base';
 import { View, StyleSheet } from 'react-native';
 import PLColors from 'PLColors';
+
+type Friend = {
+  id: number;
+  avatar_file_name: ?string;
+  full_name: string;
+  username: string;
+  first_name: ?string;
+  last_name: ?string;
+  country: ?string;
+  interests: ?Array<object>;
+}
 
 class SuggestedFbFriends extends PureComponent {
   static propTypes = {
@@ -20,24 +32,24 @@ class SuggestedFbFriends extends PureComponent {
     const { friends, onPress, onAddPress } = this.props;
 
     if (friends.length > 0) {
-      let content = friends.map(friend => (
+      let content = friends.map((friend: Friend, index: number) => (
         <ListItem
           key={friend.id}
-          style={style.item}
+          style={styles.item}
           onPress={() => onPress(friend.id)}
         >
           {
-            friend.image ?
-              <Thumbnail square source={{ uri: friend.image }} />
+            friend.avatar_file_name ?
+              <Thumbnail square source={{ uri: friend.avatar_file_name }} />
               :
               <View style={styles.emptyThumbnail} />
           }
           <Body>
             <Text style={styles.usernameText}>{friend.username}</Text>
-            <Text style={styles.fullnameText}>{friend.fullname}</Text>
+            <Text style={styles.fullnameText}>{friend.full_name}</Text>
           </Body>
           <Right>
-            <Icon name="md-add-circle" style={styles.addIcon} onPress={() => onAddPress(id)} />
+            <Icon name="md-add-circle" style={styles.addIcon} onPress={() => onAddPress(friend.id, index)} />
           </Right>
         </ListItem>
       ));

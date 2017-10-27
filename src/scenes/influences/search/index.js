@@ -10,7 +10,7 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
-import { searchForUsersFollowableByCurrentUser, putFollowings } from 'PLActions';
+import { searchForUsersFollowableByCurrentUser, putFollowings, getFriendsSuggestions } from 'PLActions';
 import SuggestedFbFriends from '../../../components/SuggestedFbFriends';
 
 class SearchFollowing extends Component {
@@ -26,10 +26,19 @@ class SearchFollowing extends Component {
             queryText: "",
             users: [],
             page: 1,
-            max_count: 50
+            max_count: 50,
+            facebookFriends: [],
         };
 
         this.onChangeText = this.onChangeText.bind(this);
+    }
+
+    componentDidMount() {
+        getFriendsSuggestions(this.props.token)
+        .then(facebookFriends => {
+            this.setState({ facebookFriends });
+        }).catch((err) => {
+        })
     }
 
     onChangeText(text) {
@@ -55,6 +64,21 @@ class SearchFollowing extends Component {
         putFollowings(token, this.state.users[index].id)
             .then(() => {
                 this.state.users.splice(index, 1);
+                this.setState({
+                    page: 1,
+                    max_count: 50
+                });
+            })
+            .catch(err => {
+
+            });
+    }
+
+    followFacebook(id, index) {
+        var { token } = this.props;
+        putFollowings(token, id)
+            .then(() => {
+                this.state.facebookFriends.splice(index, 1);
                 this.setState({
                     page: 1,
                     max_count: 50
@@ -112,24 +136,9 @@ class SearchFollowing extends Component {
                             })
                         }
                         <SuggestedFbFriends
-                            friends={[{
-                                id: 0,
-                                username: 'althea.d.ford',
-                                fullname: 'Althea Ford',
-                                image: 'https://andrefrommalta.com/wp-content/uploads/2014/09/137392976177.jpg'
-                            }, {
-                                id: 1,
-                                username: 'Kcampion11',
-                                fullname: 'Kelly Campion',
-                                image: 'https://yt3.ggpht.com/-FJXWJ1x1bEQ/AAAAAAAAAAI/AAAAAAAAAAA/ZtyuZ-elFr4/s900-c-k-no-mo-rj-c0xffffff/photo.jpg'
-                            }, {
-                                id: 2,
-                                username: 'Test',
-                                fullname: 'No image',
-                            }]}
-                            friends={[]}
-                            onPress={(id) => LOG('PROFILE', id)}
-                            onAddPress={(id) => LOG('ADD', id)}
+                            friends={this.state.facebookFriends}
+                            onPress={(id) => this.goToProfile(id)}
+                            onAddPress={(id, index) => this.followFacebook(id, index)}
                         />
                     </List>
                 </Content>

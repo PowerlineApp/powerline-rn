@@ -6,7 +6,8 @@
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest",
     "bundle:android": "curl 'http://localhost:8081/index.android.bundle?platform=android&dev=false&minify=true' -o 'android/app/src/main/assets/index.android.bundle'",
-    "build:android": "(cd android/ && ./gradlew assembleRelease)"
+    "build:android": "(cd android/ && ./gradlew assembleRelease)",
+    "flow": "flow --show-all-errors"
   },
   "dependencies": {
     "native-base": "2.1.4",
@@ -44,6 +45,7 @@
   "devDependencies": {
     "babel-jest": "19.0.0",
     "babel-preset-react-native": "1.9.1",
+    "flow-bin": "0.42.0",
     "jest": "19.0.2",
     "react-test-renderer": "16.0.0-alpha.6"
   },

@@ -1,5 +1,7 @@
 var { API_URL, PER_PAGE } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
+var FacebookSDK = require('FacebookSDK');
+import api from '../utils/api';
 
 async function loadUserProfile(token: string): Promise<Action> {
     try {
@@ -28,7 +30,7 @@ async function loadUserProfile(token: string): Promise<Action> {
     }
 }
 
-function loadUserData(token){
+function loadUserData(token) {
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2/user?_format=json', {
             method: 'GET',
@@ -37,19 +39,19 @@ function loadUserData(token){
                 'Content-Type': 'application/json'
             }
         })
-        .then((res) => res.json())
-        .then(data => {
-            console.log("Load User Profile Success", data);
-            resolve(data);
-        })
-        .catch(err => {
-            console.log("Load User Profile Error", err);
-            reject(err);
-        })
+            .then((res) => res.json())
+            .then(data => {
+                console.log("Load User Profile Success", data);
+                resolve(data);
+            })
+            .catch(err => {
+                console.log("Load User Profile Error", err);
+                reject(err);
+            })
     });
 }
 
-function loadUserProfileById(token, id){
+function loadUserProfileById(token, id) {
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2/users/' + id, {
             method: 'GET',
@@ -58,19 +60,19 @@ function loadUserProfileById(token, id){
                 'Content-Type': 'application/json'
             }
         })
-        .then((res) => res.json())
-        .then(data => {
-            console.log("Load User Profile Success", data);
-            resolve(data);
-        })
-        .catch(err => {
-            console.log("Load User Profile Error", err);
-            reject(err);
-        })
+            .then((res) => res.json())
+            .then(data => {
+                console.log("Load User Profile Success", data);
+                resolve(data);
+            })
+            .catch(err => {
+                console.log("Load User Profile Error", err);
+                reject(err);
+            })
     });
 }
 
-function getInvites(token){
+function getInvites(token) {
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2/user/invites', {
             method: 'GET',
@@ -79,20 +81,20 @@ function getInvites(token){
                 'token': token
             }
         })
-        .then((res) => res.json())
-        .then(data => {
-            console.log("Get Invites API Success", data);
-            resolve(data);
-        })
-        .catch(err => {
-            console.log("Get Invites API Error", err);
-            reject(err);
-        })
+            .then((res) => res.json())
+            .then(data => {
+                console.log("Get Invites API Success", data);
+                resolve(data);
+            })
+            .catch(err => {
+                console.log("Get Invites API Error", err);
+                reject(err);
+            })
     });
 }
 
 //for registering for push notifications with Powerline backend. NOT for OneSignal
-function registerDevice(token, params){
+function registerDevice(token, params) {
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2/devices', {
             method: "POST",
@@ -102,20 +104,20 @@ function registerDevice(token, params){
             },
             body: JSON.stringify(params)
         })
-        .then((res) => res.json())
-        .then(data => {
-            console.log("Register Device API Success", JSON.stringify(data));
-            resolve(data);
-        })
-        .catch(err => {
-            console.log("Register Device API Error", JSON.stringify(err));
-            reject(err);
-        });
+            .then((res) => res.json())
+            .then(data => {
+                console.log("Register Device API Success", JSON.stringify(data));
+                resolve(data);
+            })
+            .catch(err => {
+                console.log("Register Device API Error", JSON.stringify(err));
+                reject(err);
+            });
     })
 }
 
 //for unregistering for push notifications with Powerline backend. NOT for OneSignal
-function unregisterDevice(token, id){
+function unregisterDevice(token, id) {
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2/devices/' + id, {
             method: 'DELETE',
@@ -124,18 +126,18 @@ function unregisterDevice(token, id){
                 'token': token
             }
         })
-        .then(data => {
-            console.log("Unregister Device API Success", JSON.stringify(data));
-            resolve(data);
-        })
-        .catch(err => {
-            console.log("Unregistere Device API Error", JSON.stringify(err));
-            reject(err);
-        });
+            .then(data => {
+                console.log("Unregister Device API Success", JSON.stringify(data));
+                resolve(data);
+            })
+            .catch(err => {
+                console.log("Unregistere Device API Error", JSON.stringify(err));
+                reject(err);
+            });
     });
 }
 
-function search(token, query){
+function search(token, query) {
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/search?query=' + query, {
             method: 'GET',
@@ -144,16 +146,24 @@ function search(token, query){
                 'token': token
             }
         })
-        .then((res) => res.json())
-        .then(data => {
-            console.log("Search Results API Success", data);
-            resolve(data);
-        })
-        .catch(err => {
-            console.log("Search Results Error Error", err);
-            reject(err);
-        })
+            .then((res) => res.json())
+            .then(data => {
+                console.log("Search Results API Success", data);
+                resolve(data);
+            })
+            .catch(err => {
+                console.log("Search Results Error Error", err);
+                reject(err);
+            })
     });
+}
+
+async function getFriendsSuggestions(token: string) {
+    const friendsIds = await FacebookSDK.getFriendsIds();
+    const friends = await api.post(token, '/profile/facebook-friends', friendsIds);
+    if (friends.status === 200) {
+        return await friends.json();
+    }
 }
 
 module.exports = {
@@ -163,5 +173,6 @@ module.exports = {
     getInvites,
     registerDevice,
     unregisterDevice,
-    search
+    search,
+    getFriendsSuggestions
 }
