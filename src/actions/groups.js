@@ -178,6 +178,31 @@ function getGroupDetails(token, id){
     });
 }
 
+function getGroupRequiredFields(token, id){
+    return new Promise((resolve, reject) => {
+        const url = API_URL + '/v2/groups/' + id + '/fields'
+        console.log('API_URL', url)
+        console.log('API_URL', token)
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'token': token
+            }
+        })
+        .then((res) => res.json())
+        .then(data => {
+            console.log("Get Group fields Success", data);
+            resolve(data);
+        })
+        .catch(err => {
+            console.log("Get Group fields API Error", err);
+            reject(err);
+        });
+    });
+}
+
+
 function getGroupMembers(token, id){
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2/groups/' + id + '/users', {
@@ -387,4 +412,5 @@ module.exports = {
     getGroupPermissions,
     getUsersByGroup,
     inviteUpvotersToGroup,
+    getGroupRequiredFields
 }

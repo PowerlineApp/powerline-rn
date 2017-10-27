@@ -186,8 +186,19 @@ class GroupProfile extends Component{
         );        
     }
 
+    doJoin() {
+        console.log('confirmed')
+    }
+
     join(){
-        var { id } = this.props;             
+        if(this.state.data.fill_fields_required || this.state.data.membership_control === 'passcode') {
+            Actions.groupJoin({data: this.state.data})
+        } else {
+            Alert.alert('Confirmation', 'Are you Sure?', [
+                {text: "Ok", onPress: () => this.doJoin()},
+                {text: "Cancel", onPress: () => console.log('Cancel pressed'), style: 'cancel'}
+            ])
+        }
     }
 
     render(){
