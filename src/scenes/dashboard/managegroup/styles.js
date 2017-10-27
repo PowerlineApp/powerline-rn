@@ -1,4 +1,5 @@
 import PLColors from 'PLColors';
+import { StyleSheet, PixelRatio } from 'react-native';
 
 export default {
   container: {
@@ -31,6 +32,22 @@ export default {
   listItem: {
       backgroundColor: 'white', 
       marginLeft: 0,
-      borderBottomWidth: 1
+  },
+
+  contentItem: {
+      backgroundColor: 'white',
+      paddingLeft: 8,
+      paddingRight: 8,
+      paddingBottom: 8,
+      borderBottomWidth: (1 / PixelRatio.getPixelSizeForLayoutSize(1)),
+      borderColor: '#c9c9c9',
+  },
+
+  dashLine: {
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: '#c9c9c9',
+    borderStyle: 'dashed',
+    marginBottom: 8
   }
+
 };
