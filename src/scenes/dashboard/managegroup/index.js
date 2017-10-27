@@ -21,9 +21,9 @@ import {
 import { TextInput } from 'react-native';
 import PLColors from 'PLColors';
 
-import AccordionItem from './components/AccordionItem';
-import styles from './styles';
+import { AccordionItem } from './components';
 import * as Options from './options';
+import styles from './styles';
 
 class ManageGroup extends Component {
   static propTypes = {
@@ -31,7 +31,8 @@ class ManageGroup extends Component {
   };
 
   render() {
-    // WARN(JSON.stringify(this.props.group, null, 2));
+    const { group } = this.props;
+    WARN(JSON.stringify(this.props.group, null, 2));
     return (
       <Container style={styles.container}>
         <Header style={styles.header}>
@@ -64,7 +65,7 @@ class ManageGroup extends Component {
             </ListItem>
             <ListItem style={{ height: 30 }} />
             <AccordionItem title="Profile Setup">
-              <Options.ProfileSetup />
+              <Options.ProfileSetup group={group} />
             </AccordionItem>
             <AccordionItem title="Subscription Level">
               <Text>NEXTONE</Text>

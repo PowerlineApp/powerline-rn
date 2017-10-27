@@ -47,7 +47,12 @@ export default {
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: '#c9c9c9',
     borderStyle: 'dashed',
-    marginBottom: 8
+  },
+
+  inputText: {
+    color: PLColors.darkGreyText,
+    fontSize: 17,
+    fontWeight: '400'
   }
 
 };
