@@ -58,7 +58,8 @@ class NewPetition extends Component {
             petition_remaining: null,
             mentionEntry: null,
             suggestionSearch: '',
-            groupUsers: []
+            groupUsers: [],
+            share: false
         };
 
         this.placeholderTitle = randomPlaceholder('petition');
@@ -127,7 +128,7 @@ class NewPetition extends Component {
         createPetition(token, this.state.grouplist[this.state.selectedGroupIndex].id, this.state.title, this.state.content)
         .then(data => {
             showToast('Petition Successful!', data);
-            Actions.itemDetail({ entityId: data.id, entityType: 'petition', backTo: 'home', share: this.state.social });
+            Actions.itemDetail({ entityId: data.id, entityType: 'petition', backTo: 'home', share: this.state.share });
         })
         .catch(err => {
         });
@@ -206,13 +207,15 @@ class NewPetition extends Component {
         });
     }
 
+    // tells us if user will share or not
     isSelected(social){
-        return this.state.social === social
+        return this.state.share
         // return false;
     }
 
-    setSelected(name){
-        this.setState({social : name})
+    // changes the selection if user will share or not
+    setSelected(bool){
+        this.setState({share : bool})
     }
 
     render () {
@@ -268,8 +271,8 @@ class NewPetition extends Component {
                         </ScrollView>
 
                         <ShareFloatingAction 
-                            cb={(social) => this.setSelected(social)}
-                            isSelected={(social) => this.isSelected(social)}
+                            cb={() => this.setSelected(!this.state.share)}
+                            isSelected={() => this.isSelected()}
                         />
 
 

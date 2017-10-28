@@ -8,28 +8,23 @@ class SharefloatingAction extends Component {
                 actions={
                     [
                         {
-                            text: 'Facebook',
-                            icon: require('../assets/facebook_logo.png'),
-                            name: 'facebook',
-                            position: 2,
-                            color: this.props.isSelected('facebook') ? '#3b5998' : '#ccc'
-                        }, {
-                            text: 'Twitter',
-                            icon: require('../assets/twitter_logo.png'),
-                            name: 'twitter',
+                            text: '',
+                            icon: require('../assets/share_icon.png'),
+                            name: '',
                             position: 1,
-                            color: this.props.isSelected('twitter') ? '#55acee' : '#ccc'
+                            color: this.props.isSelected() ? '#71c9f1' : '#ccc'
                         }
                     ]
                 }
                 onPressItem={
-                    (name) => {
-                        this.props.cb(name)
+                    () => {
+                        this.props.cb()
                     }
                 }
-                buttonColor='#71c9f1'
+                buttonColor={this.props.isSelected() ? '#71c9f1' : '#ccc'}
                 overlayColor='rgba(0,0,0,0)'
                 floatingIcon={require('../assets/share_icon.png')}
+                overrideWithAction
                 >
             </FloatingAction>
         )

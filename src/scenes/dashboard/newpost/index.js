@@ -56,7 +56,8 @@ class NewPost extends Component {
             posts_remaining: null,
             displaySuggestionBox: false,
             suggestionSearch: '',
-            groupUsers: []
+            groupUsers: [],
+            share: false
         };
 
         this.placeholderTitle = randomPlaceholder('post');
@@ -126,7 +127,7 @@ class NewPost extends Component {
         createPostToGroup(token, groupId, this.state.content)
         .then(data => {
             showToast('Post Successful!', data);
-            Actions.itemDetail({ entityId: data.id, entityType: 'post', backTo: 'home', share: this.state.social });
+            Actions.itemDetail({ entityId: data.id, entityType: 'post', backTo: 'home', share: this.state.share });
         
         })
         .catch(err => {
@@ -155,13 +156,15 @@ class NewPost extends Component {
         this.setState({content: finalString, displaySuggestionBox: false, lockSuggestionPosition: end});
     }
 
+    // tells us if user will share or not
     isSelected(social){
-        return this.state.social === social
+        return this.state.share
         // return false;
     }
 
-    setSelected(name){
-        this.setState({social : name})
+    // changes the selection if user will share or not
+    setSelected(bool){
+        this.setState({share : bool})
     }
 
     onSelectionChange (event) {
@@ -267,8 +270,8 @@ class NewPost extends Component {
                         />
                     </ScrollView>
                     <ShareFloatingAction 
-                        cb={(social) => this.setSelected(social)}
-                        isSelected={(social) => this.isSelected(social)}
+                        cb={() => this.setSelected(!this.state.share)}
+                        isSelected={() => this.isSelected()}
                     />
 
                         {/* <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />

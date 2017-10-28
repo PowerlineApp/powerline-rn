@@ -179,6 +179,10 @@ class Newsfeed extends Component {
 
     render() {
         const { isRefreshing, isLoading, isLoadingTail } = this.state;
+
+        console.log(isRefreshing, isLoading, isLoadingTail)
+
+
         // test if we should show conversationFeed or ActivityFeed
         let conversationView = this.props.group != 'all' && this.props.payload.length <= this.props.groupLimit;
         let dataSouce = this.state.dataSource;
@@ -186,7 +190,7 @@ class Newsfeed extends Component {
             dataSouce = dataSouce.reverse();
         }
         // this is hardcode for testing purposes -- I will remove once ConversationFeed is 100% working /Felipe
-        conversationView = true;
+        conversationView = false;
         // console.log({token, savedGroup} = this.props)
         return (
             // The default view of the newsfeed is the All feed.
