@@ -17,7 +17,7 @@ import {
     Body,
     View,
 } from 'native-base';
-import { joinGroup } from 'PLActions';
+import { joinGroup, unJoinGroup } from 'PLActions';
 const PLColors = require('PLColors');
 import styles from './styles';
 
@@ -29,7 +29,7 @@ class SearchGroups extends Component{
 
     join(group){
         console.log(group)
-        if(group.fill_fields_required || group.membership_control === 'passcode' || group.membership_control === 'approval') {
+        if(group.fill_fields_required || group.membership_control === 'passcode' || group.membership_control === 'approval' && !group.joined && !group.user_role) {
             Actions.groupJoin({data: group})
         } else {
             Alert.alert('Confirmation', 'Are you Sure?', [
@@ -49,6 +49,34 @@ class SearchGroups extends Component{
         .catch(err => {
     
         })
+    }
+
+    unjoin(group){        
+        Alert.alert(
+            'Are you Sure',
+            '',
+            [
+                {
+                    text: 'Cancel',
+                    onPress: () => {
+
+                    }
+                },
+                {
+                    text: 'OK',
+                    onPress: () => {
+                        var { token } = this.props;
+                        unJoinGroup(token, group.id).then(data => {
+                            this.forceUpdate()
+                        })
+                        .catch(err => {
+
+                        });
+                    }
+                }
+            ],
+            {cancelable: false}
+        );        
     }
     
     render(){
@@ -70,7 +98,10 @@ class SearchGroups extends Component{
                                         </Body>
                                         <Right>
                                             <Button transparent>
-                                                <Icon active name="add-circle" style={{color: '#11c1f3'}} onPress={() => this.join(group)}/>
+                                                {   group.joined 
+                                                    ? <Icon active name="add-circle" style={{color: '#802000'}} onPress={() => this.unjoin(group)}/>
+                                                    : <Icon active name="add-circle" style={{color: '#11c1f3'}} onPress={() => this.join(group)}/>
+                                                }
                                             </Button>
                                         </Right>
                                     </ListItem>

@@ -218,7 +218,7 @@ class GroupJoin extends Component {
         if(data.membership_control !== 'passcode' && !data.fill_fields_required) {
             joinGroup(token, id)    
                 .then(response => {
-                    if(response.join_status !== 'active') {
+                    if(response.code >= 400) {
                         this.setState({
                             error: 'Something went wrong, please try again'
                         })

@@ -205,6 +205,30 @@ class GroupProfile extends Component{
         }
     }
 
+    renderActionButtons() {
+        if(!this.state.data.joined && this.state.data.user_role === 'member') {
+            return (
+                <Button block style={styles.unjoinBtn} onPress={() => this.unjoin()}>
+                    <Label style={{color: 'white'}}>Pending Approval</Label>
+                </Button>
+            )
+        } 
+        if(this.state.data.joined && this.state.data.user_role) {
+            return (
+                <Button block style={styles.unjoinBtn} onPress={() => this.unjoin()}>
+                    <Label style={{color: 'white'}}>Unjoin</Label>
+                </Button>
+            )
+        }
+        if(!this.state.data.joined && !this.state.data.user_role) {
+            return (
+                <Button block style={styles.joinBtn} onPress={() => this.join()}>
+                    <Label style={{color: 'white'}}>Join</Label>
+                </Button>  
+            )
+        }
+        
+    }
     render(){
         return (
             <Container style={styles.container}>
@@ -241,14 +265,7 @@ class GroupProfile extends Component{
                             }
                             <Body>
                                 <Text style={{color: PLColors.main}}>{this.state.data.official_name}</Text>
-                                {this.state.data.joined?
-                                <Button block style={styles.unjoinBtn} onPress={() => this.unjoin()}>
-                                    <Label style={{color: 'white'}}>Unjoin</Label>
-                                </Button>:
-                                <Button block style={styles.joinBtn} onPress={() => this.join()}>
-                                    <Label style={{color: 'white'}}>Join</Label>
-                                </Button>                                
-                                }                                
+                                {this.renderActionButtons()}                                
                             </Body>
                         </ListItem>
                         {this.state.data.official_description?
