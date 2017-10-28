@@ -187,8 +187,8 @@ class ItemDetail extends Component {
             type = 'user_petition'
         }
 
-        let imgURL =  'https://powerline-dev.imgix.net/avatars/592c3ebb3d5ca924524637.36440655?ixlib=php-1.1.0'; // this is a test
-        // imgURL = entity[type].facebook_thumbnail; // 404 ??? why? backend problem, maybe?
+        let imgURL; // = 'https://powerline-dev.imgix.net/avatars/592c3ebb3d5ca924524637.36440655?ixlib=php-1.1.0'; // this is a test
+        imgURL = entity[type].facebook_thumbnail; // 404 ??? why? backend problem, maybe?
 
         console.log(imgURL);
 
