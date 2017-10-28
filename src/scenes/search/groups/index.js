@@ -33,7 +33,7 @@ class SearchGroups extends Component{
             Actions.groupJoin({data: group})
         } else {
             Alert.alert('Confirmation', 'Are you Sure?', [
-                {text: "Ok", onPress: () => this.doJoin(group.id)},
+                {text: "Ok", onPress: () => this.doJoin(group.id)}, 
                 {text: "Cancel", onPress: () => console.log('Cancel pressed'), style: 'cancel'}
             ])
         }
