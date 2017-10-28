@@ -13,7 +13,7 @@ import RNFetchBlob from 'react-native-fetch-blob'
 const fs = RNFetchBlob.fs
 
 
-import {ScrollView, PermissionsAndroid} from 'react-native';
+import {ScrollView} from 'react-native';
 import { Spinner, Container, Header, Title, Textarea, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, List, ListItem, Item, Input } from 'native-base';
 import { Image, View, StyleSheet, TouchableOpacity, Platform, KeyboardAvoidingView, Keyboard, TextInput, ListView } from 'react-native';
 import { Actions } from 'react-native-router-flux';
@@ -187,8 +187,8 @@ class ItemDetail extends Component {
             type = 'user_petition'
         }
 
-        let imgURL; // = 'https://powerline-dev.imgix.net/avatars/592c3ebb3d5ca924524637.36440655?ixlib=php-1.1.0'; // this is a test
-        imgURL = entity[type].facebook_thumbnail; // 404 ??? why? backend problem, maybe?
+        let imgURL =  'https://powerline-dev.imgix.net/avatars/592c3ebb3d5ca924524637.36440655?ixlib=php-1.1.0'; // this is a test
+        // imgURL = entity[type].facebook_thumbnail; // 404 ??? why? backend problem, maybe?
 
         console.log(imgURL);
 
@@ -213,7 +213,7 @@ class ItemDetail extends Component {
                 
             }).catch(err => {
                 console.log('err', err)
-                alert('Failed to share');
+                // alert('Failed to share');
                 this.setState({sharing: false})
             });
             
