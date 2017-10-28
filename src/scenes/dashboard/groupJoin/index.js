@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 const PLColors = require('PLColors');
-import {TextInput} from 'react-native'
+import {TextInput, Alert} from 'react-native'
 import styles  from './styles';
 import update from 'immutability-helper'
-import { getGroupRequiredFields } from '../../../actions/groups'
+import { getGroupRequiredFields, joinGroup } from '../../../actions/groups'
 import {
     Content,
     Container,
@@ -32,13 +32,16 @@ class GroupJoin extends Component {
         this.state = {
             fields: null,
             passcode: null,
-            input: {}
+            input: {},
+            passcodeError: null
         }
         this.renderPasscodeInput = this.renderPasscodeInput.bind(this)
     }
     componentDidMount() {
         console.log('mounted')
-        this.loadFields() 
+        if(this.props.data.fill_fields_required) {
+            this.loadFields() 
+        }
     }
 
     loadFields() {
@@ -58,20 +61,29 @@ class GroupJoin extends Component {
             })
     }
 
+
     renderPasscodeInput() {
         if(this.props.data.membership_control === 'passcode') {
             return (
-                <View style={{flex: 1, minWidth: '100%'}}>
-                    <Text style={{alignSelf: 'flex-start', color: PLColors.inactiveText, fontSize: 13}}>Group Password</Text>
-                    <TextInput
-                        placeholder="Group password"
-                        style={styles.inputText}
-                        autoCorrect={false}
-                        underlineColorAndroid={'transparent'}
-                        value={this.state.passcode}
-                        onChange={(event) => this.setState({passcode: event.nativeEvent.text})}
-                    />
-                </View>
+                <ListItem style={styles.listItem}>
+                    <View>
+                    <View style={{flex: 1, minWidth: '100%'}}>
+                        <Text style={{alignSelf: 'flex-start', color: PLColors.inactiveText, fontSize: 13}}>Group Password *</Text>
+                        <TextInput
+                            placeholder="Group password"
+                            style={styles.inputText}
+                            autoCorrect={false}
+                            underlineColorAndroid={'transparent'}
+                            value={this.state.passcode}
+                            onChange={(event) => this.setState({passcode: event.nativeEvent.text, passcodeError: null})}
+                        />
+                        {this.state.passcodeError ?
+                            <Text style={{fontSize: 12, color: 'red', alignSelf:'flex-start'}}>{this.state.passcodeError}</Text>:
+                            null
+                        }
+                    </View>
+                    </View>
+                </ListItem>
             )
         }
     }
@@ -86,27 +98,140 @@ class GroupJoin extends Component {
     renderFields() {
         if(this.state.fields) {
             const { fields } = this.state
-            return fields.map((field, index) => {
-                return (
-                    <View style={{flex: 1, minWidth: '100%'}}>
-                        <Text style={{alignSelf: 'flex-start', color: PLColors.inactiveText, fontSize: 13}}>{field.field_name}</Text>
-                        <TextInput
-                            key={index}
-                            placeholder="required field"
-                            style={styles.inputText}
-                            autoCorrect={false}
-                            underlineColorAndroid={'transparent'}
-                            onChange={(event) => this.onTextChange(field.field_name, {id: field.id, answer: event.nativeEvent.text})}
-                        />
+            return (
+                <ListItem style={styles.listItem}>
+                    <View>
+                        {
+                            fields.map((field, index) => {
+                                return (
+                                    <View style={{flex: 1, minWidth: '100%'}}>
+                                        <Text style={{alignSelf: 'flex-start', color: PLColors.inactiveText, fontSize: 13}}>{field.field_name}</Text>
+                                        <TextInput
+                                            autoCapitalize='none'
+                                            key={index}
+                                            placeholder="required field"
+                                            style={styles.inputText}
+                                            autoCorrect={false}
+                                            underlineColorAndroid={'transparent'}
+                                            onChange={(event) => this.onTextChange(field.field_name, {id: field.id, answer: event.nativeEvent.text})}
+                                        />
+                                    </View>
+                                )
+                            })
+                        }
                     </View>
-                )
-            })
+                </ListItem>
+            )
+            
         }
         return;
     }
 
     validateFields () {
+        if(this.buildArrayOfAnsweredFields(this.state.input).length < this.state.fields.length) {
+            return true;
+        }
+        return false;
+    }
+
+    buildArrayOfAnsweredFields(obj) {
+        let arr = []
+        for(key in obj) {
+            if(obj.hasOwnProperty(key)) {
+                if(obj[key].answer !== null && obj[key].answer.length > 0) {
+                    arr.push(obj[key]) 
+                }
+            }
+        }
+        return arr
+    }
+
+    doJoin() {
+        const { id } = this.props.data
+        const { token, data } = this.props
+        var answeredFields;
+        if(data.membership_control === 'passcode') {
+            if(!this.state.passcode) {
+                this.setState({passcodeError: true})
+                return;
+            }
+        }
+        if(data.fill_fields_required) {
+            if(this.validateFields()) {
+                Alert.alert('You should fill in the required Fields')
+                return;
+            }
+        }
+        if(data.membership_control === 'passcode' && !data.fill_fields_required) {
+            joinGroup(token, id, this.state.passcode)
+                .then(response => {
+                    if(response.join_status !== 'active') {
+                        this.setState({
+                            passcodeError: 'Wrong Password'
+                        })
+                        return;
+                    }
+                    Actions.pop({refresh: {
+                        shouldRefresh: true
+                    }})
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        }
+        if(data.membership_control !== 'passcode' && data.fill_fields_required) {
+            joinGroup(token, id, null, this.buildArrayOfAnsweredFields(this.state.input))    
+                .then(response => {
+                    if(response.join_status !== 'active') {
+                        this.setState({
+                            validationError: 'Something Went Wrong, please try again'
+                        })
+                        return;
+                    }
+                    Actions.pop({refresh: {
+                        shouldRefresh: true
+                    }})
+                }) 
+                .catch(err => {
+                    console.log(err)
+                })
+        }
         
+        if(data.membership_control === 'passcode' && data.fill_fields_required) {
+            joinGroup(token, id, this.state.passcode, this.buildArrayOfAnsweredFields(this.state.input))    
+                .then(response => {
+                    console.log('response', response)
+                    if(response.join_status !== 'active') {
+                        this.setState({
+                            passcodeError: 'Wrong Password'
+                        })
+                        return;
+                    }
+                    Actions.pop({refresh: {
+                        shouldRefresh: true
+                    }})
+                }) 
+                .catch(err => {
+                    console.log(err)
+            })
+        }
+        if(data.membership_control !== 'passcode' && !data.fill_fields_required) {
+            joinGroup(token, id)    
+                .then(response => {
+                    if(response.join_status !== 'active') {
+                        this.setState({
+                            error: 'Something went wrong, please try again'
+                        })
+                        return;
+                    }
+                    Actions.pop({refresh: {
+                        shouldRefresh: true
+                    }})
+                }) 
+                .catch(err => {
+                    console.log(err)
+                })
+        }
     }
 
     render() {
@@ -123,8 +248,8 @@ class GroupJoin extends Component {
                         <Title style={{color: 'white'}}>Group Join</Title>
                     </Body>
                     <Right>
-                        <Button transparent onPress={() => {}}>
-                            <Label style={{color: 'white'}}>Invite</Label>
+                        <Button transparent onPress={() => this.doJoin()}>
+                            <Label style={{color: 'white'}}>Join</Label>
                         </Button>
                     </Right>
                 </Header>
@@ -139,16 +264,9 @@ class GroupJoin extends Component {
                                 <Text style={{color: PLColors.main}}>{this.props.data.official_name}</Text>                             
                             </Body>
                         </ListItem>
-                        <ListItem style={styles.listItem}>
-                            <View>
-                              {this.renderPasscodeInput()}
-                            </View>
-                        </ListItem>
-                        <ListItem style={styles.listItem}>
-                            <View>
-                              {this.renderFields()}
-                            </View>
-                        </ListItem>
+                        
+                        {this.renderPasscodeInput()}
+                        {this.renderFields()}
                      </List>
                 </Content> 
             </Container>

@@ -66,7 +66,11 @@ class GroupProfile extends Component{
     componentWillMount(){
         this._onRefresh();
     }
-
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.shouldRefresh) {
+            this.loadGroup()
+        }
+    }
     loadGroup(){
         if(this.props.required_permissions){
             this.props.required_permissions.map((value, index) => {
@@ -191,7 +195,7 @@ class GroupProfile extends Component{
     }
 
     join(){
-        if(this.state.data.fill_fields_required || this.state.data.membership_control === 'passcode') {
+        if(this.state.data.fill_fields_required || this.state.data.membership_control === 'passcode' || this.state.data.membership_control === 'approval') {
             Actions.groupJoin({data: this.state.data})
         } else {
             Alert.alert('Confirmation', 'Are you Sure?', [

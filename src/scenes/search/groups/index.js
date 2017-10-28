@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Alert } from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import {
@@ -14,7 +15,7 @@ import {
     List,
     ListItem,
     Body,
-    View
+    View,
 } from 'native-base';
 import { joinGroup } from 'PLActions';
 const PLColors = require('PLColors');
@@ -26,20 +27,30 @@ class SearchGroups extends Component{
         Actions.groupprofile(group);
     }
 
-    join(id){
+    join(group){
+        console.log(group)
+        if(group.fill_fields_required || group.membership_control === 'passcode' || group.membership_control === 'approval') {
+            Actions.groupJoin({data: group})
+        } else {
+            Alert.alert('Confirmation', 'Are you Sure?', [
+                {text: "Ok", onPress: () => this.doJoin(group.id)},
+                {text: "Cancel", onPress: () => console.log('Cancel pressed'), style: 'cancel'}
+            ])
+        }
+    }
+    
+    doJoin(id){
         var { token } = this.props;
         joinGroup(token, id).then(data => {
             if(data.join_status == 'active'){
                 Actions.myGroups();
-            }else{
-                Actions.myGroups();
             }
         })
         .catch(err => {
-
+    
         })
     }
-
+    
     render(){
         return (
             <Container style={styles.container}>
@@ -59,7 +70,7 @@ class SearchGroups extends Component{
                                         </Body>
                                         <Right>
                                             <Button transparent>
-                                                <Icon active name="add-circle" style={{color: '#11c1f3'}} onPress={() => this.join(group.id)}/>
+                                                <Icon active name="add-circle" style={{color: '#11c1f3'}} onPress={() => this.join(group)}/>
                                             </Button>
                                         </Right>
                                     </ListItem>

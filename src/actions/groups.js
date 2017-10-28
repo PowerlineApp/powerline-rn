@@ -291,6 +291,11 @@ function unJoinGroup(token, id){
 }
 
 function joinGroup(token, id, passcode, answeredFields){
+    console.log('joinGroup')
+    console.log(token)
+    console.log(id)
+    console.log(passcode)
+    console.log(answeredFields)
     var payload = {};
     //user must provide correct passcode if required
     if(passcode){
@@ -298,10 +303,10 @@ function joinGroup(token, id, passcode, answeredFields){
     }
     //user must provide info in required fields if requested
     if(answeredFields){
-        payload['answered_fields'] = answeredFields.map(function(f){
+        payload['answered_fields'] = answeredFields.map(item => {
             return {
-                'id': f.field.id,
-                'value': f.field_value
+                id: item.id,
+                value: item.answer
             }
         })
     }
