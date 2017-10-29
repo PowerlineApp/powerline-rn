@@ -35,7 +35,7 @@ const initialState = {
 const payloadStack: Array<Object> = [];
 
 function activities(state: State = initialState, action: Action): State {
-    console.log(action);
+    console.log('action(activities):', action);
     if (action.type === 'LOADED_ACTIVITIES') {
         payloadStack = payloadStack.concat(action.data.payload);
         return {
@@ -142,6 +142,50 @@ function activities(state: State = initialState, action: Action): State {
                         follow_status,
                     }
                 }
+            } else {
+                return activity;
+            }
+        });
+        return {
+            ...state,
+            payload: payloadStack,
+        }
+    }
+
+    if (action.type === 'ACTIVITY_NOTIFICATION_SUBSCRIBE') {
+        const { type, id } = action.data;
+
+        payloadStack = state.payload.map(activity => {
+            if (activity.id === id) {
+                return {
+                    ...activity,
+                    [type]: {
+                        ...activity[type],
+                        is_subscribed: true,
+                    }
+                };
+            } else {
+                return activity;
+            }
+        });
+        return {
+            ...state,
+            payload: payloadStack,
+        }
+    }
+
+    if (action.type === 'ACTIVITY_NOTIFICATION_UNSUBSCRIBE') {
+        const { type, id } = action.data;
+
+        payloadStack = state.payload.map(activity => {
+            if (activity.id === id) {
+                return {
+                    ...activity,
+                    [type]: {
+                        ...activity[type],
+                        is_subscribed: false,
+                    }
+                };
             } else {
                 return activity;
             }

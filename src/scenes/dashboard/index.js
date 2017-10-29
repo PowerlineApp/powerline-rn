@@ -544,12 +544,12 @@ class Home extends Component {
     });
   
     if (text.length >= 2) {
-      Keyboard.dismiss();
+        this.onSearch(text);
     }
   }
 
-  onSearch() {
-    Actions.search({ search: this.state.search });
+  onSearch(search) {
+    Actions.search({ search });
   }
 
   render() {
@@ -565,8 +565,8 @@ class Home extends Component {
             {this.state.tab2!=true && this.state.tab4!=true?
             //We need to make this placeholder text a little brighter/whiter
             <Item style={styles.searchBar}>
-              <Input style={styles.searchInput} placeholder="Search groups, people, topics" onEndEditing={() => this.onSearch()} onChangeText={(text) => this.onChangeText(text)}/>
-              <Icon active name="search" />
+              <Input style={styles.searchInput} placeholder="Search groups, people, topics" autoCorrect={false} spellCheck={false} /*onEndEditing={() => this.onSearch()}*/ onChangeText={(text) => this.onChangeText(text)}/>
+              <Icon active name="search" onPress={() => this.onSearch(this.state.search)} />
             </Item>:
             null}
           </Header>
@@ -577,37 +577,37 @@ class Home extends Component {
             <Grid>
               <Row>
                 <Col style={styles.col}>
-                  <Button style={this.state.group == 'all' ? styles.iconActiveButton : styles.iconButton} onPress={() => this.selectGroup('all')}>
+                  <Button style={this.state.group == 'all' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('all'); }}>
                     <Image
                       style={styles.iconP}
                       source={require("img/p_logo.png")}
                     />
                   </Button>
-                  <Text style={styles.iconText} onPress={() => this.selectGroup('all')}>All</Text>
+                  <Text style={styles.iconText} onPress={() => { Keyboard.dismiss(); this.selectGroup('all'); }}>All</Text>
                 </Col>
                 <Col style={styles.col}>
-                  <Button style={this.state.group == 'town' ? styles.iconActiveButton : styles.iconButton} onPress={() => this.selectGroup('town')}>
+                  <Button style={this.state.group == 'town' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('town'); }}>
                     <Icon active name="pin" style={styles.icon} />
                   </Button>
-                  <Text style={styles.iconText} numberOfLines={1} onPress={() => this.selectGroup('town')}>{this.props.town}</Text>
+                  <Text style={styles.iconText} numberOfLines={1} onPress={() => { Keyboard.dismiss(); this.selectGroup('town'); }}>{this.props.town}</Text>
                 </Col>
                 <Col style={styles.col}>
-                  <Button style={this.state.group == 'state' ? styles.iconActiveButton : styles.iconButton} onPress={() => this.selectGroup('state')}>
+                  <Button style={this.state.group == 'state' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('state'); }}>
                     <Icon active name="pin" style={styles.icon} />
                   </Button>
-                  <Text style={styles.iconText} numberOfLines={1} onPress={() => this.selectGroup('state')}>{this.props.state}</Text>
+                  <Text style={styles.iconText} numberOfLines={1} onPress={() => { Keyboard.dismiss(); this.selectGroup('state'); }}>{this.props.state}</Text>
                 </Col>
                 <Col style={styles.col}>
-                  <Button style={this.state.group == 'country' ? styles.iconActiveButton : styles.iconButton} onPress={() => this.selectGroup('country')}>
+                  <Button style={this.state.group == 'country' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('country'); }}>
                     <Icon active name="pin" style={styles.icon} />
                   </Button>
-                  <Text style={styles.iconText} numberOfLines={1} onPress={() => this.selectGroup('country')}>{this.props.country}</Text>
+                  <Text style={styles.iconText} numberOfLines={1} onPress={() => { Keyboard.dismiss(); this.selectGroup('country'); }}>{this.props.country}</Text>
                 </Col>
                 <Col style={styles.col}>
-                  <Button style={this.state.group == 'more' ? styles.iconActiveButton : styles.iconButton} onPress={() => this.goToGroupSelector()}>
+                  <Button style={this.state.group == 'more' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.goToGroupSelector(); }}>
                     <Icon active name="more" style={styles.icon} />
                   </Button>
-                  <Text style={styles.iconText} onPress={() => this.goToGroupSelector()}>More</Text>
+                  <Text style={styles.iconText} onPress={() => { Keyboard.dismiss(); this.goToGroupSelector(); }}>More</Text>
                 </Col>
               </Row>
             </Grid>
@@ -616,19 +616,19 @@ class Home extends Component {
 
           <Footer style={styles.footer}>
             <FooterTab style={{ backgroundColor: 'transparent' }}>
-              <FooterTabButton
-                badge={this.showBadgeForActivities()}
-                active={this.state.tab1}
-                onPress={() => this.toggleTab1()}
-                name="ios-flash"
-                title="NEWSFEED"
-              />
-                            <FooterTabButton
-                                active={this.state.tab2}
-                                onPress={() => this.toggleTab2()}
-                                name='md-people'
-                                title='FRIENDS'
-              />
+                <FooterTabButton
+                    badge={this.showBadgeForActivities()}
+                    active={this.state.tab1}
+                    onPress={() => { Keyboard.dismiss(); this.toggleTab1(); }}
+                    name="ios-flash"
+                    title="NEWSFEED"
+                />
+                <FooterTabButton
+                    active={this.state.tab2}
+                    onPress={() => this.toggleTab2()}
+                    name='md-people'
+                    title='FRIENDS'
+                />
             {/* This is the New Item Menu GH8. Only New Post and New Petition are expected to work at this time */}
               <Button style={isIOS ? {} : { height: 75 }}>
                 { !isIOS && <View style={[styles.fillButton, styles.borderTop]}/> }
@@ -725,7 +725,7 @@ const menuContextStyles = {
 
 function bindAction(dispatch) {
   return {
-    openDrawer: () => dispatch(openDrawer()),
+    openDrawer: () => { Keyboard.dismiss(); dispatch(openDrawer()); },
     loadUserGroups: (token) => dispatch(loadUserGroups(token)),
   };
 }

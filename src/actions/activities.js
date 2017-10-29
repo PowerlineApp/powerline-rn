@@ -2,6 +2,7 @@
 import api from '../utils/api';
 var { API_URL, PER_PAGE } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
+import { showToast } from 'PLToast';
 
 //Newsfeed activities can be loaded by All, by Group (town/state/country/group), by Friends, by Specific user, or by Favorites
 async function loadActivities(token: string, page: ?number = 0, perPage: ?number = PER_PAGE, group: ?string = 'all', user: ?string = 'all', followed = 'all'): Promise<Action> {
@@ -157,11 +158,43 @@ function putSocialActivity(token, id, ignore){
     });
 }
 
+async function subscribeNotification(token: string, id: number, activityId: number, type: string): Promise<Action> {
+    LOG('Subscribe to notification API', id, type);
+    const response = await api.put(token, `/v2/user/${type}s/${id}`);
+    if (response.status === 204) {
+        showToast('Subscribed to post');
+        return {
+            type: 'ACTIVITY_NOTIFICATION_SUBSCRIBE',
+            data: { id: activityId, type }
+        }
+    }
+}
+
+async function unsubscribeNotification(token: string, id: number, activityId: number, type: string): Promise<Action> {
+    LOG('Unsubscribe to notification API', id, type);
+    const response = await api.delete(token, `/v2/user/${type}s/${id}`);
+    if (response.status === 204) {
+        showToast('Unsubscribed');
+        return {
+            type: 'ACTIVITY_NOTIFICATION_UNSUBSCRIBE',
+            data: { id: activityId, type }
+        }
+    }
+}
+
+async function markAsSpam(token: string, id: number, type: string): Promise<Action> {
+    LOG('Mark as spam API', id);
+    const response = await api.post(token, `/v2/${type}s/${id}/spam`);
+}
+
 module.exports = {
     loadActivities,
     resetActivities,
     loadActivitiesByUserId,
     loadActivityByEntityId,
     putSocialActivity,
-    loadFriendsActivities
+    loadFriendsActivities,
+    subscribeNotification,
+    unsubscribeNotification,
+    markAsSpam
 }
