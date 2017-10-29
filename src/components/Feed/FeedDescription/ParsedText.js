@@ -59,7 +59,7 @@ class ParsedText extends React.Component {
     if (!this.props.parse) { return this.props.children; }
 
     const textExtraction = new TextExtraction(this.props.children, this.getPatterns());
-    console.log('extraction', textExtraction)
+    // console.log('extraction', textExtraction)
     return textExtraction.parse().map((props, index) => {
       return (
         <ReactNative.Text

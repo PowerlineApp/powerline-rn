@@ -32,9 +32,7 @@ class FeedCommentPreview extends Component {
         let {item} = this.props;
         let previewData = null;
         // console.log(item);
-        if (item.entity.type === 'question') {
-            console.log(item);
-        }
+
         if (item.poll) {
             previewData = item.poll;
         } else if (item.post) {
@@ -44,7 +42,7 @@ class FeedCommentPreview extends Component {
         }
         let comment = previewData.comments[0];
         if (!comment) { return  null; }
-        console.log('comment preview:', comment.user.full_name,' - ', comment.comment_body,' - ', item.title, item.description)
+        // console.log('comment preview:', comment.user.full_name,' - ', comment.comment_body,' - ', item.title, item.description)
         return (
             <TouchableOpacity onPress={() => this.redirect(item)} >
                 <CardItem style={styles.commentPreviewContainer} >

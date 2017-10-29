@@ -5,6 +5,9 @@
 
 import React, { Component } from 'react';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
+
+import {KeyboardAvoidingView} from 'react-native';
+
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { ActionSheet, Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, ListItem, Thumbnail, List, Card, CardItem, Label, Footer } from 'native-base';
@@ -76,6 +79,8 @@ class Newsfeed extends Component {
     // }
 
 
+    // these two functions :loadInitialActivities: and :loadNextActivities: are almost identical...
+    // TODO:  how to make them only one function, with different behaviors based on parameters ?
     async loadInitialActivities() {
         this.setState({ isRefreshing: true });
         const { props: { token, dispatch, page, group } } = this;
@@ -211,10 +216,12 @@ class Newsfeed extends Component {
         }
     }
 
+    // the two Header rendering functions. only diff on the size of the icon and it's position
+
     renderFullHeader(){
         return (
             <View style={styles.groupFullHeaderContainer}>
-                <Thumbnail square source={{ uri: this.props.savedGroup.groupAvatar + '&w=200&h=200&auto=compress,format,q=95' }} style={styles.groupAvatar} />
+                <Thumbnail square source={{ uri: this.props.savedGroup.groupAvatar + '&w=200&h=200&auto=compress,format,q=95' }} style={styles.groupAvatarFull} />
                 <Text style={styles.groupName}>{this.props.savedGroup.groupName}</Text>
             </View>);
     }
@@ -222,7 +229,7 @@ class Newsfeed extends Component {
     renderSmallHeader(){
         return (
             <View style={styles.groupSmallHeaderContainer}>
-                <Thumbnail square small source={{ uri: this.props.savedGroup.groupAvatar + '&w=100&h=100&auto=compress,format,q=95' }} style={styles.groupAvatar} />
+                <Thumbnail round small source={{ uri: this.props.savedGroup.groupAvatar + '&w=100&h=100&auto=compress,format,q=95' }} style={styles.groupAvatarSmall} />
                 <Text style={styles.groupName}>{this.props.savedGroup.groupName}</Text>
             </View>);
     }
@@ -232,17 +239,26 @@ class Newsfeed extends Component {
     render() {
         const { isRefreshing, isLoading, isLoadingTail } = this.state;
 
-        // test if we should show conversationFeed or ActivityFeed
-        let conversationView = this.props.group != 'all' && this.props.payload.length <= this.props.groupLimit;
-        // console.log('this.props.group != all && this.props.payload.length', this.props.savedGroup, this.props.savedGroup.group != 'all', this.props.savedGroup && this.props.savedGroup.group != 'all')
+        // test if we should show conversationFeed or FeedView
+
+        // code above is from Thiago, leaving it commented, for now conversationView is decided on hardcode
+        // let conversationView = this.props.group != 'all' && this.props.payload.length <= this.props.groupLimit;
+
+        console.log('selected group', this.props.group)
 
 
         let dataArray = this.state.dataArray;
-        // this is hardcode for testing purposes -- I will remove once ConversationFeed is 100% working /Felipe
-        conversationView = false;
+
+        /**
+         * this is hardcode for testing purposes -- I will remove once ConversationFeed is 100% working 
+         * I still need to be 100% shure on how to decide to display conversationView or FeedView - is the owner of the group
+         * allowed to change it manually yet?
+         * // Felipe
+         */
+        let conversationView = true;
 
         return (
-                <View style={{flex: 1}}>
+            <View style={{flex: 1}}>
                     {    this.props.savedGroup && this.props.savedGroup.group != 'all' &&
                         <TouchableOpacity onPress={() => Actions.groupprofile({ id: this.props.savedGroup.group })}>
                             {
@@ -255,6 +271,11 @@ class Newsfeed extends Component {
                     <ContentPlaceholder
                         empty={!this.state.isRefreshing && !this.state.isLoading && this.state.dataArray.length === 0}
                         title="The world belongs to those who speak up! Be the first to create a post!" />
+
+                    {/**
+                     * using FlatList here to test performance -- can easily be changed to ListView again, but I think we might gain
+                     * some performance using FlatList (as recommended on the docs)
+                     */}
                     <FlatList 
                         bounces
                         data={dataArray}
@@ -285,24 +306,29 @@ class Newsfeed extends Component {
                             )
                         }} />
                     <PLOverlayLoader visible={isLoading || isLoadingTail || isRefreshing} logo />
-                {
-                    /**
-                     * if we are in conversation view, we have a textinput on the bottom, that creates posts
-                     */
-                    conversationView
-                    ? <Footer style={styles.CFooter}>
-                            <Item style={styles.CFooterItem}>
-                                <Thumbnail small source={{ uri: this.props.profile.avatar_file_name + '&w=200&h=200&auto=compress,format,q=95' }} />
-                                <Input style={styles.CFooterItemInput} value={this.state.text} onChangeText={(text) => !this.state.postingOnGroup ? this.onChangeText(text) : {}} />
-                                <Button transparent style={styles.sendBtn} onPress={() => this.onCreatePost()}>
-                                    <Text color={'#ccc'} >SEND</Text>
-                                    <Icon name="md-send" color={'#ccc'} />
-                                </Button>
-                            </Item>
-                            <KeyboardSpacer />
-                        </Footer>
-                        : null
-                    }
+                    <KeyboardAvoidingView>
+                        {
+                        /**
+                         * if we are in conversation view, we have a textinput on the bottom, that creates posts
+                         * right now works good on android, but on iOS the keyboard goes over the input 
+                         * the <KeyboardAvoidingView> above should make it work, but for some reason it doesnt --to be fixed
+                         * // Felipe
+                         */
+                        conversationView
+                        ?
+                        <Footer style={styles.CFooter}>
+                                <Item style={styles.CFooterItem}>
+                                    <Thumbnail small source={{ uri: this.props.profile.avatar_file_name + '&w=200&h=200&auto=compress,format,q=95' }} />
+                                    <Input style={styles.CFooterItemInput} value={this.state.text} onChangeText={(text) => !this.state.postingOnGroup ? this.onChangeText(text) : {}} />
+                                    <Button transparent style={styles.sendBtn} onPress={() => this.onCreatePost()}>
+                                        <Text style={{color: this.state.postingOnGroup ? '#ccc' : '#3F51b5'}} >SEND</Text>
+                                        <Icon name="md-send" />
+                                    </Button>
+                                </Item>
+                            </Footer>
+                            : null
+                        }
+                    </KeyboardAvoidingView> 
             </View>
         );
     }
