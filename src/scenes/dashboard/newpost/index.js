@@ -147,7 +147,7 @@ class NewPost extends Component {
         let firstPart = newContent.substr(0, init);
         let finalPart = newContent.substr(end, initialLength);
 
-        let finalString = firstPart + mention + finalPart;
+        let finalString = firstPart + mention  + finalPart;
 
         this.setState({content: finalString, displaySuggestionBox: false, lockSuggestionPosition: end});
     }
@@ -217,7 +217,6 @@ class NewPost extends Component {
                         </Button>
                     </Right>
                 </Header>
-
                 <ScrollView>
                     <View style={styles.main_content}>
                     <List>
@@ -238,7 +237,14 @@ class NewPost extends Component {
                             </Right>
                         </ListItem>
                     </List>
-                        <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
+                    {
+                        this.state.displaySuggestionBox && this.state.suggestionList.length > 0
+                        ? <ScrollView style={{position: 'absolute', top: 20, zIndex: 3}}>
+                            <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
+                        </ScrollView>
+                        : <ScrollView />
+                    }
+                        <ScrollView>
                         <Textarea
                             maxLength={POST_MAX_LENGTH}
                             autoFocus
@@ -256,6 +262,7 @@ class NewPost extends Component {
                                 onPress={this.selectGroupList.bind(this)}
                             />
                         }
+                        </ScrollView>
                     </View>
                 </ScrollView>
                 <Footer style={{alignItems: 'center', justifyContent: 'space-between', backgroundColor: PLColors.main, paddingLeft: 10, paddingRight: 10}}>
