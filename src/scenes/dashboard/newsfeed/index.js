@@ -8,7 +8,7 @@ import KeyboardSpacer from 'react-native-keyboard-spacer';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { ActionSheet, Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, ListItem, Thumbnail, List, Card, CardItem, Label, Footer } from 'native-base';
-import { ListView, View, RefreshControl, TouchableOpacity, Image, WebView, Platform, Share } from 'react-native';
+import { ScrollView, FlatList, View, RefreshControl, TouchableOpacity, Image, WebView, Platform, Share } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 import { loadActivities, resetActivities, votePost, editFollowers, loadActivityByEntityId, createPostToGroup, deletePost, deletePetition } from 'PLActions';
 import styles, { sliderWidth, itemWidth } from './styles';
@@ -42,19 +42,16 @@ class Newsfeed extends Component {
 
     constructor(props) {
         super(props);
-        var ds = new ListView.DataSource({
-            rowHasChanged: (r1, r2) => r1 !== r2,
-        });
         this.state = {
             isRefreshing: false,
             isLoadingTail: false,
             isLoading: false,
             dataArray: [],
-            dataSource: ds,
             text: "",
             showAvatar: true,
-            lastOffset: 0
+            lastOffset: 0,
         };
+        lastScrollPosition: null
     }
 
     componentWillMount() {
@@ -65,17 +62,18 @@ class Newsfeed extends Component {
     componentWillReceiveProps(nextProps) {
         this.setState({
             dataArray: nextProps.payload,
-            dataSource: this.state.dataSource.cloneWithRows(nextProps.payload),
         });
     }
 
     //JC I'm unclear on what this actually is 
-    subscribe(item) {
-        Share.share({
-            message: item.description,
-            title: ""
-        });
-    }
+    // Felipe - me too. will leave this commented! 
+
+    // subscribe(item) {
+    //     Share.share({
+    //         message: item.description,
+    //         title: ""
+    //     });
+    // }
 
 
     async loadInitialActivities() {
@@ -92,15 +90,13 @@ class Newsfeed extends Component {
                 alert(message);
             }
             else {
+                // should we handle errors differently? 
                 alert('Timed out. Please check internet connection');
             }
             return;
         } finally {
             this.setState({ isRefreshing: false });
         }
-        this.setState({
-            dataSource: this.state.dataSource.cloneWithRows(this.state.dataArray),
-        });
     }
 
     async loadNextActivities() {
@@ -123,9 +119,6 @@ class Newsfeed extends Component {
         } finally {
             this.setState({ isLoadingTail: false });
         }
-        this.setState({
-            dataSource: this.state.dataSource.cloneWithRows(this.state.dataArray),
-        });
     }
 
     _onRefresh() {
@@ -134,17 +127,19 @@ class Newsfeed extends Component {
     }
 
     _onEndReached() {
+        console.log('end reached')
         const { props: { page, count } } = this;
         if (this.state.isLoadingTail === false && count > 0) {
             this.loadNextActivities();
         }
     }
 
-    _onBeginReached() {
-        this.props.dispatch(resetActivities());
+    // Felipe - unnused method. commenting...
+    // _onBeginReached() {
+    //     this.props.dispatch(resetActivities());
 
-        this.loadInitialActivities();
-    }
+    //     this.loadInitialActivities();
+    // }
 
     onChangeText(text) {
         this.setState({
@@ -152,6 +147,9 @@ class Newsfeed extends Component {
         });
     }
 
+    /**
+     * method to create post from input (only in conversationView mode)
+     */
     onCreatePost() {
         if (this.state.postingOnGroup) {
             return;
@@ -175,87 +173,124 @@ class Newsfeed extends Component {
         }
     }
 
+    /**
+     * 
+     * method that handles the scroll, to change the header display 
+     * 
+     * @param {object} event - scroll event
+     * @param {boolean} conversation - tell us if we are in conversation or feed view
+     */
+    onScroll(event, conversation) {
+        let {showAvatar} = this.state.showAvatar;
+        let lastScrollPosition = this.lastScrollPosition;
+        const scrollPosition = event && event.nativeEvent && event.nativeEvent.contentOffset && event.nativeEvent.contentOffset.y;
+        if (!lastScrollPosition) this.lastScrollPosition= scrollPosition
+
+        // only update header changes on a 20pixel step
+        if (Math.abs(scrollPosition - this.lastScrollPosition) > 20 ){
+
+
+            // since conversationView is literally the feedview backwards, we need to treat the scroll differently
+            if (conversation){
+                if (scrollPosition > this.lastScrollPosition){
+                    if (!this.state.showAvatar) this.setState({showAvatar: true})
+                }
+                if (scrollPosition < this.lastScrollPosition){
+                    if (this.state.showAvatar) this.setState({showAvatar: false})
+                }
+                
+            } else {
+                if (scrollPosition < this.lastScrollPosition){
+                    if (!this.state.showAvatar) this.setState({showAvatar: true})
+                }
+                if (scrollPosition > this.lastScrollPosition){
+                    if (this.state.showAvatar) this.setState({showAvatar: false})
+                }
+            }
+            this.lastScrollPosition = scrollPosition;
+        }
+    }
+
+    renderFullHeader(){
+        return (
+            <View style={styles.groupFullHeaderContainer}>
+                <Thumbnail square source={{ uri: this.props.savedGroup.groupAvatar + '&w=200&h=200&auto=compress,format,q=95' }} style={styles.groupAvatar} />
+                <Text style={styles.groupName}>{this.props.savedGroup.groupName}</Text>
+            </View>);
+    }
+    
+    renderSmallHeader(){
+        return (
+            <View style={styles.groupSmallHeaderContainer}>
+                <Thumbnail square small source={{ uri: this.props.savedGroup.groupAvatar + '&w=100&h=100&auto=compress,format,q=95' }} style={styles.groupAvatar} />
+                <Text style={styles.groupName}>{this.props.savedGroup.groupName}</Text>
+            </View>);
+    }
+
 
 
     render() {
         const { isRefreshing, isLoading, isLoadingTail } = this.state;
+
         // test if we should show conversationFeed or ActivityFeed
         let conversationView = this.props.group != 'all' && this.props.payload.length <= this.props.groupLimit;
-        let dataSouce = this.state.dataSource;
-        if (dataSouce[0] && conversationView) {
-            dataSouce = dataSouce.reverse();
-        }
+        // console.log('this.props.group != all && this.props.payload.length', this.props.savedGroup, this.props.savedGroup.group != 'all', this.props.savedGroup && this.props.savedGroup.group != 'all')
+
+
+        let dataArray = this.state.dataArray;
         // this is hardcode for testing purposes -- I will remove once ConversationFeed is 100% working /Felipe
         conversationView = false;
-        // console.log({token, savedGroup} = this.props)
+
         return (
-            // The default view of the newsfeed is the All feed.
-            <Container style={styles.container}>
-                {
-                    this.props.savedGroup && this.props.savedGroup.group != 'all' &&
-                    <TouchableOpacity onPress={() => Actions.groupprofile({ id: this.props.savedGroup.group })}>
-                        <View style={styles.groupHeaderContainer}>
-                            {this.state.showAvatar && this.props.savedGroup.groupAvatar != '' && this.props.savedGroup.groupAvatar != null ?
-                                <Thumbnail square source={{ uri: this.props.savedGroup.groupAvatar + '&w=200&h=200&auto=compress,format,q=95' }} style={styles.groupAvatar} /> : null}
-                            <Text style={styles.groupName}>{this.props.savedGroup.groupName}</Text>
-                        </View>
-                    </TouchableOpacity>
-                }
-                <ContentPlaceholder
-                    empty={!this.state.isRefreshing && !this.state.isLoading && this.state.dataArray.length === 0}
-                    title="The world belongs to those who speak up! Be the first to create a post!"
-                    refreshControl={
-                        Platform.OS === 'android' && !conversationView &&
-                        <RefreshControl
-                            refreshing={false}
-                            onRefresh={this._onRefresh.bind(this)}
-                        />
+                <View style={{flex: 1}}>
+                    {    this.props.savedGroup && this.props.savedGroup.group != 'all' &&
+                        <TouchableOpacity onPress={() => Actions.groupprofile({ id: this.props.savedGroup.group })}>
+                            {
+                                this.state.showAvatar
+                                ? this.renderFullHeader()
+                                : this.renderSmallHeader()
+                            }
+                        </TouchableOpacity>
                     }
-                    onScroll={(e) => {
-                        var height = e.nativeEvent.contentSize.height;
-                        var offset = e.nativeEvent.contentOffset.y;
-                        if (offset > 30 && this.state.showAvatar) {
-                            this.setState({ showAvatar: false })
-                        } else if (offset < 20 && !this.state.showAvatar) {
-                            this.setState({ showAvatar: true })
-                        }
+                    <ContentPlaceholder
+                        empty={!this.state.isRefreshing && !this.state.isLoading && this.state.dataArray.length === 0}
+                        title="The world belongs to those who speak up! Be the first to create a post!" />
+                    <FlatList 
+                        bounces
+                        data={dataArray}
+                        extraData={dataArray}
+                        scrollEventThrottle={16}
+                        refreshing={false}
+                        onRefresh={() => this._onRefresh()}
+                        onEndReachedThreshold={0.8}
 
-                        LOG(offset, height)
+                        /*
+                            inverts the list when in conversationView - this is necessary to make the refresh work on the bottom with the builtin listview onRefresh
+                            which is impossible to make on android without any native code
+                        */
+                        style={{  transform: [{ scaleY: conversationView ? -1 : 1 }] }}
+                        
 
-                        if (offset < -3) {
-                            if (conversationView) {
-                                console.log('_onEndReached')
-                                this._onEndReached();
-                            } else {
-                                console.log('refresh')
-                                this._onRefresh();
-                            }
-                        }
-                        if ((WINDOW_HEIGHT + offset) >= height && offset > 0) {
-                            if (conversationView) {
-                                console.log('refresh')
-                                this._onRefresh();
-                            } else {
-                                console.log('_onEndReached')
-                                this._onEndReached();
-                            }
-                        }
-                    }}
-                >
-                    <ListView dataSource={dataSouce} renderRow={item => {
-                        return (conversationView
-                            ? <ConversationActivity item={item} token={this.props.token} profile={this.props.profile} />
-                            : <FeedActivity item={item} token={this.props.token} profile={this.props.profile} />
-                        )
-                    }} />
+                        onScroll={(event) => this.onScroll(event, conversationView)}
+                        onEndReached={() => this._onEndReached()}
+
+                        renderItem={item => {
+                            return (
+                                conversationView 
+                                ? <View style={{  transform: [{ scaleY: -1 }] }}>
+                                    {/** the transform: scale Y = -1 is necessary to make each item appear correctly*/}
+                                    <ConversationActivity key={item.id} item={item.item} token={this.props.token} profile={this.props.profile} />
+                                </View>
+                                : <FeedActivity key={item.id} item={item.item} token={this.props.token} profile={this.props.profile} />
+                            )
+                        }} />
                     <PLOverlayLoader visible={isLoading || isLoadingTail || isRefreshing} logo />
-                </ContentPlaceholder>
                 {
                     /**
-                     * if we are in conversation view, we have a textinput
+                     * if we are in conversation view, we have a textinput on the bottom, that creates posts
                      */
                     conversationView
-                        ? <Footer style={styles.CFooter}>
+                    ? <Footer style={styles.CFooter}>
                             <Item style={styles.CFooterItem}>
                                 <Thumbnail small source={{ uri: this.props.profile.avatar_file_name + '&w=200&h=200&auto=compress,format,q=95' }} />
                                 <Input style={styles.CFooterItemInput} value={this.state.text} onChangeText={(text) => !this.state.postingOnGroup ? this.onChangeText(text) : {}} />
@@ -267,19 +302,11 @@ class Newsfeed extends Component {
                             <KeyboardSpacer />
                         </Footer>
                         : null
-                }
-            </Container>
+                    }
+            </View>
         );
     }
 }
-
-const optionsStyles = {
-    optionsContainer: {
-        backgroundColor: '#fafafa',
-        paddingLeft: 5,
-        width: WINDOW_WIDTH,
-    },
-};
 
 async function timeout(ms: number): Promise {
     return new Promise((resolve, reject) => {
