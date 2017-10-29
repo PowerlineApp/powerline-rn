@@ -484,13 +484,51 @@ class Home extends Component {
   // This is the menu to create new content (GH8)
     selectNewItem (value) {
         this.bottomMenu.close();
-        if (value == 'post') {
-            Actions.newpost();
-        } else if (value == 'petition') {
-            Actions.newpetition();
-    // The ability to create new "leader" content has not yet been added, but it will go here (GH118)
+        switch(value){
+            case 'post':
+                // ok
+                Actions.newpost();
+                break;
+            case 'petition':
+                // ok
+                Actions.newpetition();
+                break;
+                // dicussion???
+            case 'group_announcement':
+                Actions.newgroupannouncement();
+                break;
+            case 'group_petition':
+                Actions.newgrouppetition();
+                break;
+            case 'group_poll':
+                // first one!
+                Actions.newgrouppoll();
+                break;
+            case 'group_event':
+                Actions.newgroupevent();
+                break;
+            case 'group_fundraiser':
+                Actions.newgroupfundraiser();
+                break;
+                // New Discussion
+                // New Announcement
+                // New Petition
+                // New Poll
+                // New Event
+                // Fundraiser/Crowdfunder
+            default:
         }
     }
+
+
+
+
+
+
+
+
+
+
 
   onRef = r => {
     this.bottomMenu = r;

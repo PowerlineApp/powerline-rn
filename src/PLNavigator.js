@@ -37,6 +37,7 @@ import GroupMembers from './scenes/dashboard/groupmembers/';
 import GroupInvite from './scenes/dashboard/groupinvite/';
 import NewPost from './scenes/dashboard/newpost/';
 import NewPetition from './scenes/dashboard/newpetition';
+import NewGroupPoll from './scenes/dashboard/newgrouppoll';
 import Search from './scenes/search/';
 
 var RouterWithRedux = connect()(Router);
@@ -138,6 +139,7 @@ class PLNavigator extends React.Component {
               <Scene key="groupmembers" component={GroupMembers} />
               <Scene key="newpost" component={NewPost} />
               <Scene key="newpetition" component={NewPetition} />
+              <Scene key="newgrouppoll" component={NewGroupPoll} />
               <Scene key="search" component={Search}/>
               <Scene key="groupInvite" component={GroupInvite} />
             </Scene>
