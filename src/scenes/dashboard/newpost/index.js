@@ -295,7 +295,7 @@ class NewPost extends Component {
                         : <ScrollView />
                     }
 
-                    <ScrollView>
+                    <ScrollView style={{marginTop: 0}}>
                         <TextInput
                             maxLength={POST_MAX_LENGTH}
                             
@@ -332,7 +332,6 @@ class NewPost extends Component {
                                 onPress={this.selectGroupList.bind(this)}
                             />
                         }
-                        </ScrollView>
                     </View>
                 </ScrollView>
                 <Button transparent style={{ marginBottom: 8, height: 60 }} onPress={this.attachImage}>

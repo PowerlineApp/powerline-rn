@@ -550,7 +550,6 @@ class Home extends Component {
             search: text
         });
 
-<<<<<<< HEAD
         if (text.length >= 2) {
             this.onSearch(text);
         }
@@ -612,7 +611,7 @@ class Home extends Component {
                                         <Text style={styles.iconText} onPress={() => { Keyboard.dismiss(); this.selectGroup('all'); }}>All</Text>
                                     </Col>
                                     <Col style={styles.col}>
-                                        <Button style={this.state.group == 'town' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('town'); }}>
+                                        <Button style={this.state.group == 'local' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('local'); }}>
                                             <Icon active name="pin" style={styles.icon} />
                                         </Button>
                                         <Text style={styles.iconText} numberOfLines={1} onPress={() => { Keyboard.dismiss(); this.selectGroup('town'); }}>{this.props.town}</Text>
@@ -722,152 +721,6 @@ class Home extends Component {
                                 name="md-mail"
                                 title="MESSAGES"
                             />
-=======
-  render() {
-    return (
-      <MenuContext customStyles={menuContextStyles}>
-        <Container>
-          <Header searchBar rounded style={styles.header}>
-            <Left style={{ flex: 0.1 }}>
-              <Button transparent onPress={this.props.openDrawer}>
-                <Icon active name="menu" style={{ color: 'white' }} />
-              </Button>
-            </Left>
-            {this.state.tab2!=true && this.state.tab4!=true?
-            //We need to make this placeholder text a little brighter/whiter
-            <Item style={styles.searchBar}>
-              <Input style={styles.searchInput} placeholder="Search groups, people, topics" autoCorrect={false} spellCheck={false} /*onEndEditing={() => this.onSearch()}*/ onChangeText={(text) => this.onChangeText(text)}/>
-              <Icon active name="search" onPress={() => this.onSearch(this.state.search)} />
-            </Item>:
-            null}
-          </Header>
-          {this.state.tab2 != true && this.state.tab4 != true ?
-          //This is the Group Selector and provides All, Town, State, Country, and More options. Each button loads appropriate selected feed into Newsfeed tab.
-          //GH153
-          <View style={styles.groupSelector}>
-            <Grid>
-              <Row>
-                <Col style={styles.col}>
-                  <Button style={this.state.group == 'all' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('all'); }}>
-                    <Image
-                      style={styles.iconP}
-                      source={require("img/p_logo.png")}
-                    />
-                  </Button>
-                  <Text style={styles.iconText} onPress={() => { Keyboard.dismiss(); this.selectGroup('all'); }}>All</Text>
-                </Col>
-                <Col style={styles.col}>
-                  <Button style={this.state.group == 'local' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('local'); }}>
-                    <Icon active name="pin" style={styles.icon} />
-                  </Button>
-                  <Text style={styles.iconText} numberOfLines={1} onPress={() => { Keyboard.dismiss(); this.selectGroup('town'); }}>{this.props.town}</Text>
-                </Col>
-                <Col style={styles.col}>
-                  <Button style={this.state.group == 'state' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('state'); }}>
-                    <Icon active name="pin" style={styles.icon} />
-                  </Button>
-                  <Text style={styles.iconText} numberOfLines={1} onPress={() => { Keyboard.dismiss(); this.selectGroup('state'); }}>{this.props.state}</Text>
-                </Col>
-                <Col style={styles.col}>
-                  <Button style={this.state.group == 'country' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('country'); }}>
-                    <Icon active name="pin" style={styles.icon} />
-                  </Button>
-                  <Text style={styles.iconText} numberOfLines={1} onPress={() => { Keyboard.dismiss(); this.selectGroup('country'); }}>{this.props.country}</Text>
-                </Col>
-                <Col style={styles.col}>
-                  <Button style={this.state.group == 'more' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.goToGroupSelector(); }}>
-                    <Icon active name="more" style={styles.icon} />
-                  </Button>
-                  <Text style={styles.iconText} onPress={() => { Keyboard.dismiss(); this.goToGroupSelector(); }}>More</Text>
-                </Col>
-              </Row>
-            </Grid>
-          </View>:null}
-          {this.renderSelectedTab()}
-
-          <Footer style={styles.footer}>
-            <FooterTab style={{ backgroundColor: 'transparent' }}>
-                <FooterTabButton
-                    badge={this.showBadgeForActivities()}
-                    active={this.state.tab1}
-                    onPress={() => { Keyboard.dismiss(); this.toggleTab1(); }}
-                    name="ios-flash"
-                    title="NEWSFEED"
-                />
-                <FooterTabButton
-                    active={this.state.tab2}
-                    onPress={() => this.toggleTab2()}
-                    name='md-people'
-                    title='FRIENDS'
-                />
-            {/* This is the New Item Menu GH8. Only New Post and New Petition are expected to work at this time */}
-              <Button style={isIOS ? {} : { height: 75 }}>
-                { !isIOS && <View style={[styles.fillButton, styles.borderTop]}/> }
-                { !isIOS && <View style={styles.fillCircle} /> }
-                <Menu name="create_item" renderer={SlideInMenu} onSelect={value => this.selectNewItem(value)} ref={this.onRef}>
-                  <MenuTrigger>
-                    <Icon name="ios-add-circle" style={styles.iconPlus} />
-                  </MenuTrigger>
-                  <MenuOptions customStyles={optionsStyles} renderOptionsContainer={optionsRenderer}>
-                    <MenuOption value={'group_announcement'}>
-                      <Button iconLeft transparent dark onPress={() => this.selectNewItem('group_announcement')}>
-                        <Icon name="volume-up" style={styles.menuIcon} />
-                        <Text style={styles.menuText}>New Group Announcement</Text>
-                      </Button>
-                    </MenuOption>
-                    <MenuOption value={'group_fundraiser'}>
-                      <Button iconLeft transparent dark onPress={() => this.selectNewItem('group_fundraiser')}>
-                        <Icon name="ios-cash" style={styles.menuIcon} />
-                        <Text style={styles.menuText}>New Group Fundraiser</Text>
-                      </Button>
-                    </MenuOption>
-                    <MenuOption value={'group_event'}>
-                      <Button iconLeft transparent dark onPress={() => this.selectNewItem('group_event')}>
-                        <Icon name="ios-calendar" style={styles.menuIcon} />
-                        <Text style={styles.menuText}>New Group Event</Text>
-                      </Button>
-                    </MenuOption>
-                    <MenuOption value={'group_petition'}>
-                      <Button iconLeft transparent dark onPress={() => this.selectNewItem('group_petition')}>
-                        <Icon name="ios-clipboard" style={styles.menuIcon} />
-                        <Text style={styles.menuText}>New Group Petition</Text>
-                      </Button>
-                    </MenuOption>
-                    <MenuOption value={'group_discussion'}>
-                      <Button iconLeft transparent dark onPress={() => this.selectNewItem('group_discussion')}>
-                        <Icon name="ios-chatbubbles" style={styles.menuIcon} />
-                        <Text style={styles.menuText}>New Group Discussion</Text>
-                      </Button>
-                    </MenuOption>
-                    <MenuOption value={'group_poll'}>
-                      <Button iconLeft transparent dark onPress={() => this.selectNewItem('group_poll')}>
-                        <Icon name="ios-stats" style={styles.menuIcon} />
-                        <Text style={styles.menuText}>New Group Poll</Text>
-                      </Button>
-                    </MenuOption>
-                    <MenuOption value={'petition'}>
-                      <Button iconLeft transparent dark onPress={() => this.selectNewItem('petition')}>
-                        <Icon name="ios-clipboard" style={styles.menuIcon} />
-                        <Text style={styles.menuText}>New Petition</Text>
-                      </Button>
-                    </MenuOption>
-                    <MenuOption value={'post'}>
-                      <Button iconLeft transparent dark onPress={() => this.selectNewItem('post')}>
-                        <Icon name="ios-flag" style={styles.menuIcon} />
-                        <Text style={styles.menuText}>New Post</Text>
-                      </Button>
-                    </MenuOption>
-                  </MenuOptions>
-                </Menu>
-              </Button>
-              {/* This is the Messages/Announcements tab. It is not working yet */}
-              <FooterTabButton
-                active={this.state.tab3}
-                onPress={() => this.toggleTab3()}
-                name="md-mail"
-                title="MESSAGES"
-              />
->>>>>>> issue-155
                             {/* This is the Notifications Feed tab. It should be working. */}
                             <FooterTabButton
                                 active={this.state.tab4}

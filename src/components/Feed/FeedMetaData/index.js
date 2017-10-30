@@ -23,7 +23,7 @@ class FeedMetaData extends Component {
                                 <View style={styles.imageContainer}>
                                     <ImageLoad
                                         placeholderSource={require('img/empty_image.png')}
-                                        source={{ uri: item.metadata.image + '&w=50&h=50&auto=compress,format,q=95' }}
+                                        source={{ uri: item.metadata.image + '&w=400&h=400&auto=compress,format,q=95' }}
                                         style={styles.image}
                                     />
                                 </View>

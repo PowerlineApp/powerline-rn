@@ -7,15 +7,17 @@ import ParsedText from './ParsedText';
 import styles from '../styles';
 
 class FeedDescription extends Component {
-    redirect (item, options) {
-        let type = 'poll';
-        if (item.entity.type === 'post') {
-            type = 'post'
-          } else if (item.entity.type === 'user-petition'){
-            type = 'user-petition' 
-          }
-        Actions.itemDetail({entityType: type, entityId: item.entity.id, ...options});
-    }
+  redirect(item, options, scene = 'itemDetail') {
+      let type;
+      if (item.poll) {
+          type = 'poll';
+      } else if (item.post) {
+          type = 'post';
+      } else if (item.user_petition) {
+          type = 'user-petition';
+      }
+      Actions[scene]({ entityType: type, entityId: item.entity.id, ...options });
+  }
 
     _renderTitle (item) {
         if (item.title) {
@@ -39,20 +41,20 @@ class FeedDescription extends Component {
     let blur;
     if (item.post){
         imgURL = item.post.image;
-    } else {
+    } else if (item.user_petition) {
         imgURL = item.user_petition.image;
     }
     if (!imgURL) return;
 
     if (item.user.follow_status === 'active'){
       blur = '0';
-    } else {
+    } else if (item.user.id !== this.props.profile.id){
       blur = '1000';
     }
     return (
       <View>
         <Thumbnail medium square
-          source={{uri: imgURL +`&w=100&h=100&blur=${blur}&auto=compress,format,q=95`}}
+          source={{uri: imgURL +`&w=400&h=400&blur=${blur}&auto=compress,format,q=95`}}
           />
       </View>);
     }

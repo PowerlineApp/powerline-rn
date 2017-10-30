@@ -15,15 +15,16 @@ class FeedFooter extends Component {
         };
     }
 
-    redirect (item, options) {
-        let type = 'poll';
-        if (item.entity.type === 'post') {
-            type = 'post'
-          } else if (item.entity.type === 'user-petition'){
-            type = 'user-petition' 
-          }
-        // console.log(options);
-        Actions.itemDetail({entityType: type, entityId: item.entity.id, ...options});
+    redirect(item, options, scene = 'itemDetail') {
+        let type;
+        if (item.poll) {
+            type = 'poll';
+        } else if (item.post) {
+            type = 'post';
+        } else if (item.user_petition) {
+            type = 'user-petition';
+        }
+        Actions[scene]({ entityType: type, entityId: item.entity.id, ...options });
     }
 
     // changes the upvote/downvote color to indicate selection, sets the upvote/downvote number before the response comes. if the requisition fails, undo all
@@ -97,6 +98,7 @@ class FeedFooter extends Component {
             if (undo) {
                 // deletes the option
                 response = await undoVotePost(this.props.token, item.entity.id);
+                return;
             } else {
                 // sets the option
                 response = await votePost(this.props.token, item.entity.id, option);

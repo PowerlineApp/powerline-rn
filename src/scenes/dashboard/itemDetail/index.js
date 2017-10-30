@@ -243,7 +243,7 @@ class ItemDetail extends Component {
         if (entityType === 'post') type = 'post'
 
 
-        loadActivityByEntityId(token, entityType, entityId).then(data => {
+        loadActivityByEntityId(token, type, entityId).then(data => {
             console.log('data', data)
             if (data.payload && data.payload[0]) {
                 this.item = data.payload[0];

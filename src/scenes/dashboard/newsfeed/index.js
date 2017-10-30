@@ -250,7 +250,7 @@ class Newsfeed extends Component {
          * allowed to change it manually yet?
          * // Felipe
          */
-        let conversationView = true;
+        let conversationView = false;
 
         return (
             <View style={{flex: 1}}>
