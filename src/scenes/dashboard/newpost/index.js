@@ -4,6 +4,7 @@
 // https://api-dev.powerli.ne/api-doc#post--api-v2.2-groups-{group}-posts
 
 import React, { Component } from 'react';
+import {TextInput} from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import {
@@ -29,6 +30,7 @@ import {
 } from 'native-base';
 const PLColors = require('PLColors');
 import SuggestionBox from '../../../common/suggestionBox';
+import ShareFloatingAction from '../../../components/ShareFloatingAction';
 import styles from './styles';
 import {
     Dimensions,
@@ -58,7 +60,8 @@ class NewPost extends Component {
             displaySuggestionBox: false,
             suggestionSearch: '',
             groupUsers: [],
-            image: null
+            image: null,
+            share: false
         };
 
         this.placeholderTitle = randomPlaceholder('post');
@@ -128,7 +131,7 @@ class NewPost extends Component {
         createPostToGroup(token, groupId, this.state.content, this.state.image)
             .then(data => {
                 showToast('Post Successful!');
-                Actions.itemDetail({ entityId: data.id, entityType: 'post', backTo: 'home' });
+                Actions.itemDetail({ entityId: data.id, entityType: 'post', backTo: 'home', share: this.state.share });
             })
             .catch(err => {
 
@@ -156,8 +159,19 @@ class NewPost extends Component {
         this.setState({ content: finalString, displaySuggestionBox: false, lockSuggestionPosition: end });
     }
 
-    onSelectionChange(event) {
-        let { start, end } = event.nativeEvent.selection;
+    // tells us if user will share or not
+    isSelected(social){
+        return this.state.share
+        // return false;
+    }
+
+    // changes the selection if user will share or not
+    setSelected(bool){
+        this.setState({share : bool})
+    }
+
+    onSelectionChange (event) {
+        let {start, end} = event.nativeEvent.selection;
         let userRole = this.state.grouplist[this.state.selectedGroupIndex].user_role;
         setTimeout(() => {
             if (start !== end) return;
@@ -272,6 +286,7 @@ class NewPost extends Component {
                             </Right>
                         </ListItem>
                     </List>
+
                     {
                         this.state.displaySuggestionBox && this.state.suggestionList.length > 0
                         ? <ScrollView style={{position: 'absolute', top: 20, zIndex: 3}}>
@@ -279,7 +294,26 @@ class NewPost extends Component {
                         </ScrollView>
                         : <ScrollView />
                     }
-                        <ScrollView>
+
+                    <ScrollView>
+                        <TextInput
+                            maxLength={POST_MAX_LENGTH}
+                            
+                            onSelectionChange={this.onSelectionChange}
+                            placeholderTextColor='rgba(0,0,0,0.1)'
+                            style={styles.textarea}
+                            multiline
+                            placeholder={this.placeholderTitle}
+                            value={this.state.content}
+                            onChangeText={(text) => this.changeContent(text)}
+                        />
+                    </ScrollView>
+                    <ShareFloatingAction 
+                        cb={() => this.setSelected(!this.state.share)}
+                        isSelected={() => this.isSelected()}
+                    />
+
+                        {/* <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
                         <Textarea
                             maxLength={POST_MAX_LENGTH}
                             autoFocus
@@ -289,7 +323,8 @@ class NewPost extends Component {
                             placeholder={this.placeholderTitle}
                             value={this.state.content}
                             onChangeText={(text) => this.changeContent(text)}
-                        />
+                        /> */}
+
                         {
                             this.state.showCommunity &&
                             <CommunityView

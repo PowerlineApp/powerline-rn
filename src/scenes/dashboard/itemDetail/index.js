@@ -5,8 +5,14 @@
 
 
 import React, { Component } from 'react';
+
 import { connect } from 'react-redux';
-import { ScrollView } from 'react-native';
+import Share from 'react-native-share';
+
+import RNFetchBlob from 'react-native-fetch-blob'
+const fs = RNFetchBlob.fs
+
+import {ScrollView} from 'react-native';
 import { Spinner, Container, Header, Title, Textarea, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, List, ListItem, Item, Input } from 'native-base';
 import { Image, View, StyleSheet, TouchableOpacity, Platform, KeyboardAvoidingView, Keyboard, TextInput, ListView } from 'react-native';
 import { Actions } from 'react-native-router-flux';
@@ -27,6 +33,7 @@ import Menu, {
 import { getComments, votePost, getUsersByGroup, addComment, editComment, deleteComment, rateComment, loadActivityByEntityId, deletePost, deletePetition, changePost, changePetition } from 'PLActions';
 import PLOverlayLoader from 'PLOverlayLoader';
 import randomPlaceholder from '../../../utils/placeholder';
+import { FloatingAction } from 'react-native-floating-action';
 import _ from 'lodash';
 
 
@@ -42,14 +49,12 @@ import FeedActivity from '../../../components/Feed/FeedActivity';
 
 import SuggestionBox from '../../../common/suggestionBox';
 
-
 const { youTubeAPIKey } = require('PLEnv');
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
 const { SlideInMenu } = renderers;
 const numberPerPage = 5;
 
 class ItemDetail extends Component {
-
     commentToReply: Object;
     isLoadedAll: boolean;
     item: Object;
@@ -73,6 +78,7 @@ class ItemDetail extends Component {
             dataSource: ds,
             inputDescription: '',
             placeholderTitle: '',
+            sharing: false
         };
         this.commentToReply = null;
         this.isLoadedAll = false;
@@ -163,17 +169,87 @@ class ItemDetail extends Component {
         Actions.commentDetail({ comment: comment, entityType: entityType, entityId: entityId });
     }
 
+    async onShare(share, entity){
+        if (!share) return
+
+        // to avoid double clicks, etc
+        console.log(this.state.sharing);
+        // console.log('sharing... 1');
+        if (this.state.sharing) return;
+        // console.log('sharing... 2');
+        this.setState({sharing: true});
+
+        let type = 'poll';
+        if (entity.post) {
+            type = 'post';
+        }
+        if (entity.user_petition){
+            type = 'user_petition'
+        }
+
+        let imgURL; // = 'https://powerline-dev.imgix.net/avatars/592c3ebb3d5ca924524637.36440655?ixlib=php-1.1.0'; // this is a test
+        imgURL = entity[type].facebook_thumbnail; // 404 ??? why? backend problem, maybe?
+
+        console.log(imgURL);
+
+        let imagePath = null
+        
+        RNFetchBlob.config({ fileCache : true }).fetch('GET', imgURL).then((resp) => {
+            // the image is now dowloaded to device's storage
+            imagePath = resp.path()
+            return resp.readFile('base64')
+        }).then((base64Data) => {
+            // here's base64 encoded image
+            
+            // will set only the base64 image, will not set title or message
+            let options = {
+                url: `data:image/png;base64,` + base64Data,
+                // default type is png
+                type: 'image/png',
+                message: '',
+                title: ''
+            };
+            Share.open(options).then(response => {
+                
+            }).catch(err => {
+                console.log('err', err)
+                // alert('Failed to share');
+                this.setState({sharing: false})
+            });
+            
+            // allow user to hit share again
+            this.setState({sharing: false})
+            
+            // remove the file from storage
+            return fs.unlink(imagePath)
+        }).catch(e => {
+            alert('Failed to load image');
+            // allow user to hit share again
+            this.setState({sharing: false}) 
+        })
+    }
+
+
+
     // API Calls
     async loadEntity() {
         // console.log(this.props.entityId, this.props.entityType);
         const { props: { token, entityId, entityType, dispatch } } = this;
         // console.log(entityId, entityType)
         this.setState({ isLoading: true });
+
+        let type = 'poll';
+        if (entityType === 'user-petition') type = 'petition';
+        if (entityType === 'post') type = 'post'
+
+
         loadActivityByEntityId(token, entityType, entityId).then(data => {
+            console.log('data', data)
             if (data.payload && data.payload[0]) {
                 this.item = data.payload[0];
                 this.setState({ isLoading: false, inputDescription: this.item.description });
                 this.loadComments();
+                this.onShare(this.props.share, data.payload[0]);
             }
         }).catch(e => {
             this.setState({ isLoading: false });
@@ -840,7 +916,7 @@ class ItemDetail extends Component {
     }
 
     render() {
-        // console.log(this.item);
+        console.log(this.state.sharing);
         // console.log(this.refs);
         if (this.item === null) {
             return (
@@ -910,6 +986,29 @@ class ItemDetail extends Component {
                         <PLOverlayLoader visible={this.state.isLoading} logo />
                     </HeaderImageScrollView>
                 </Container>
+                <FloatingAction
+                        actions={
+                            [
+                                {
+                                    text: 'Facebook',
+                                    icon: require('../../../assets/share_icon.png'),
+                                    name: 'facebook',
+                                    position: 2,
+                                    color: '#71c9f1'
+                                }
+                            ]
+                        }
+                        onPressItem={
+                            (name) => {
+                                this.onShare(true, item)
+                            }
+                        }
+                        buttonColor='#71c9f1'
+                        overlayColor='rgba(0,0,0,0)'
+                        floatingIcon={require('../../../assets/share_icon.png')}
+                        overrideWithAction
+                        >
+                        </FloatingAction>
             </MenuContext>
         );
     }
