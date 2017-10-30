@@ -30,6 +30,7 @@ import randomPlaceholder from '../../../utils/placeholder';
 import _ from 'lodash';
 
 
+
 // custom components import
 import FeedFooter from '../../../components/Feed/FeedFooter';
 import FeedHeader from '../../../components/Feed/FeedHeader';
@@ -747,17 +748,60 @@ class ItemDetail extends Component {
         );
     }
 
+    renderAttachedImage(item){
+        let imgURL; // 'https://powerline-dev.imgix.net/avatars/594be2d75ce8f479888664.jpeg?ixlib=php-1.1.0';
+        if (item.post){
+            imgURL = item.post.image;
+        } else {
+            imgURL = item.user_petition.image;
+        }
+        if (!imgURL) return;
+        
+        return (
+                <CardItem>
+                    <Left>
+                        <Body>
+                            <TouchableOpacity
+                                activeOpacity={0.7}
+                                style={styles.attachedImage}
+                                onPress={() => { }}>
+                                <View style={styles.imageContainer}>
+                                    <ImageLoad
+                                        placeholderSource={require('img/empty_image.png')}
+                                        source={{ uri: imgURL + '&w=400&h=400&auto=compress,format,q=95' }}
+                                        style={styles.image}
+                                    />
+                                </View>
+                            </TouchableOpacity>
+                        </Body>
+                    </Left>
+                </CardItem>
+
+
+
+            // <CardItem>
+            //     <View style={{flex: 1}}>
+            //         <ImageLoad
+            //         source={{ uri: imgURL }}
+            //         style={styles.image}
+            //         />
+            //     </View>
+            // </CardItem>
+            );
+    }
+
     _renderPostOrUserPetitionCard(item, state) {
         return (
             <View>
                 {this._renderDescription(item, state)}
                 <FeedMetaData item={item} />
                 <View style={styles.borderContainer} />
+                {this.renderAttachedImage(item)}
                 <FeedFooter item={item} profile={this.props.profile} token={this.props.token} />
             </View>
         );
     }
-
+    
     _renderGroupCard(item) {
         return (
             <Card>
@@ -770,6 +814,7 @@ class ItemDetail extends Component {
     }
 
     _renderActivity(item, state) {
+        console.log('type', item.entity.type)
         switch (item.entity.type) {
             case 'post':
             case 'user-petition':

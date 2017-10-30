@@ -232,5 +232,10 @@ export default {
         fontSize: 26,
         marginRight: 10,
         color: PLColors.main
+    },
+    attachedImage: {
+        height: WINDOW_HEIGHT*0.35,
+        borderWidth: 1,
+        borderColor: PLColors.cellBorder,
     }
 }
