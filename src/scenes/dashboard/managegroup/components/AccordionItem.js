@@ -31,7 +31,7 @@ class AccordionItem extends PureComponent {
         onPress={() => this.accordion._toggleSection(0)}
       >
         <Body>
-          <Text>{section}</Text>
+          <Text style={styles.sectionText}>{section}</Text>
         </Body>
         <Right>
           <Icon name={isActive ? 'ios-arrow-up' : 'ios-arrow-down'} />

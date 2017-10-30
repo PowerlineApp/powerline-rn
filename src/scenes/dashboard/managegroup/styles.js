@@ -1,5 +1,9 @@
 import PLColors from 'PLColors';
-import { StyleSheet, PixelRatio } from 'react-native';
+import { StyleSheet, PixelRatio, Dimensions } from 'react-native';
+
+import variables from '../../../../native-base-theme/variables/platform';
+
+const { width } = Dimensions.get('window');
 
 export default {
   container: {
@@ -7,14 +11,30 @@ export default {
     flex: 1,
   },
 
+  menuContextStyles: {
+    menuContextWrapper: {
+      backgroundColor: '#e2e7ea',
+      flex: 1,
+    },
+    backdrop: {
+      backgroundColor: 'black',
+      opacity: 0.5,
+    }
+  },
+
+  optionContainter: {
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: PLColors.lightText,
+  },
+
   header: {
     backgroundColor: PLColors.main,
   },
 
   groupHeaderContainer: {
-      backgroundColor: 'white', 
-      marginLeft: 0,
-      paddingLeft: 17
+    backgroundColor: 'white',
+    marginLeft: 0,
+    paddingLeft: 17
   },
 
   avatar: {
@@ -23,24 +43,34 @@ export default {
   },
 
   list: {
-      marginLeft: 17, 
-      marginTop: 17, 
-      marginRight: 17,
-      marginBottom: 17
+    marginLeft: 17,
+    marginTop: 17,
+    marginRight: 17,
+    marginBottom: 17,
+  },
+
+  borderList: {
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: PLColors.lightText,
   },
 
   listItem: {
-      backgroundColor: 'white', 
-      marginLeft: 0,
+    backgroundColor: 'white',
+    marginLeft: 0,
+  },
+
+  sectionText: {
+    fontSize: 18,
+    color: PLColors.darkGreyText,
   },
 
   contentItem: {
-      backgroundColor: 'white',
-      paddingLeft: 8,
-      paddingRight: 8,
-      paddingBottom: 8,
-      borderBottomWidth: (1 / PixelRatio.getPixelSizeForLayoutSize(1)),
-      borderColor: '#c9c9c9',
+    backgroundColor: 'white',
+    paddingLeft: 8,
+    paddingRight: 8,
+    paddingBottom: 8,
+    borderBottomWidth: (1 / PixelRatio.getPixelSizeForLayoutSize(1)),
+    borderColor: '#c9c9c9',
   },
 
   dashLine: {
@@ -51,8 +81,46 @@ export default {
 
   inputText: {
     color: PLColors.darkGreyText,
-    fontSize: 17,
-    fontWeight: '400'
-  }
+    fontSize: 18,
+    fontWeight: '300'
+  },
 
+  inputContainer: {
+    height: variables.inputHeightBase,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: PLColors.darkGreyText,
+    borderStyle: 'dashed',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+
+  popupText: {
+    color: PLColors.darkGreyText,
+    fontSize: 18,
+    marginHorizontal: 6,
+    fontWeight: '300',
+  },
+
+  popupIcon: {
+    color: PLColors.main,
+    marginRight: 6,
+  },
+
+  optionsContainer: {
+    optionsContainer: {
+      backgroundColor: '#fafafa',
+      width
+    }
+  },
+
+  menuText: { color: '#293f53' },
+
+  submitButtonContainer: {
+    backgroundColor: PLColors.main,
+    marginTop: 20,
+    marginBottom: 12
+  },
+
+  submitButtonText: { color: 'white' }
 };
