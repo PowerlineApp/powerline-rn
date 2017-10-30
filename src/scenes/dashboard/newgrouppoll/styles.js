@@ -93,6 +93,21 @@ export default {
         right: 0,
         backgroundColor: 'black',
         opacity: 0.4
+    },
+
+    questionInput: {
+        height: 40,
+        backgroundColor: '#fff',
+        padding: 8
+    },
+    answerInput: {
+        height: 40,
+        marginTop: 20,
+        backgroundColor: '#fff',
+        padding: 8
     }
+
+
+
 
 }

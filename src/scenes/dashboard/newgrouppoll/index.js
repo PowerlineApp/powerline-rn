@@ -5,7 +5,7 @@ import { Container, Content, Header, Left, Right, Label, Text, Button, Icon, Tit
 
 const PLColors = require('PLColors');
 import styles from './styles';
-import { Dimensions, ScrollView, TextInput } from 'react-native';
+import { Dimensions, ScrollView, TextInput, FlatList } from 'react-native';
 import { showToast } from 'PLToast';
 
 const { width, height } = Dimensions.get('window');
@@ -76,7 +76,7 @@ class NewGroupPoll extends Component{
 
     setAnswer(text, index){
         let {answers} = this.state;
-        answers[i] = text;
+        answers[index] = text;
         this.setState({answers});
     }
 
@@ -86,19 +86,26 @@ class NewGroupPoll extends Component{
      * @param {Number (integer)} qtt 
      */
     renderAnswers(qtt){
-        console.log('rendering: ', qtt);
+        // console.log('rendering: ', qtt);
+        let arr = [...Array(qtt).keys()]        
+        console.log(arr);
         return (
-            new Array(qtt).map(i =>
-                <View>
-                    <View style={{flexDirection: 'row'}}>
-                    <TextInput
-                        style={{height: 40, borderColor: 'gray', borderWidth: 1}}
-                        onChangeText={(text) => this.setAnswer(text, i)}
-                        value={this.state.answers[i]}
-                    />
-                    <Text>x</Text> {/* will be an icon to delete answer */}
-                    </View>
-                </View>));
+            <View>
+                {
+                    arr.map(index =>
+                        <View key={index} style={{minHeight: 40, minWidth: 40}}>
+                                <TextInput
+                                    style={styles.answerInput}
+                                    onChangeText={(text) => this.setAnswer(text, index)}
+                                    value={this.state.answers[index]}
+                                    placeholder="Answer"
+                                    placeHolderStyle={{fontWeight: 'bold'}}
+                                />
+                                <Text style={{flex: 1}}>x</Text>
+
+                        </View>)
+                }
+            </View>);
     }
 
 
@@ -154,7 +161,7 @@ class NewGroupPoll extends Component{
                         <View style={{padding: 20, flexDirection: 'column'}}>
                             <View>
                                 <TextInput
-                                    style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+                                    style={styles.questionInput}
                                     onChangeText={(text) => this.setState({text})}
                                     value={this.state.text}
                                     placeholder='Type your question here'
