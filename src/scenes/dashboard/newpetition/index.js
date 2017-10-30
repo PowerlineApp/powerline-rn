@@ -152,7 +152,7 @@ class NewPetition extends Component {
         let firstPart = newContent.substr(0, init);
         let finalPart = newContent.substr(end, initialLength);
 
-        let finalString = firstPart + mention + ' ' + finalPart;
+        let finalString = firstPart + mention + finalPart;
 
         this.setState({ content: finalString, displaySuggestionBox: false, lockSuggestionPosition: end });
     }

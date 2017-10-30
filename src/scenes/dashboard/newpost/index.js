@@ -151,7 +151,7 @@ class NewPost extends Component {
         let firstPart = newContent.substr(0, init);
         let finalPart = newContent.substr(end, initialLength);
 
-        let finalString = firstPart + mention + finalPart;
+        let finalString = firstPart + mention  + finalPart;
 
         this.setState({ content: finalString, displaySuggestionBox: false, lockSuggestionPosition: end });
     }
@@ -251,7 +251,6 @@ class NewPost extends Component {
                         </Button>
                     </Right>
                 </Header>
-
                 <ScrollView>
                     <View style={styles.main_content}>
                         <List>
@@ -262,17 +261,25 @@ class NewPost extends Component {
                                     </View>
                                     <View style={styles.avatar_subfix} />
                                 </View>
-                                <Body style={styles.community_text_container}>
-                                    <Text style={{ color: 'white' }}>
-                                        {this.state.selectedGroupIndex == -1 ? 'Select a community' : this.state.grouplist[this.state.selectedGroupIndex].official_name}
-                                    </Text>
-                                </Body>
-                                <Right style={styles.communicty_icon_container}>
-                                    <Icon name='md-create' style={{ color: 'white' }} />
-                                </Right>
-                            </ListItem>
-                        </List>
-                        <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
+                                <View style={styles.avatar_subfix} />
+                            <Body style={styles.community_text_container}>
+                                <Text style={{color: 'white'}}>
+                                    {this.state.selectedGroupIndex == -1 ? 'Select a community' : this.state.grouplist[this.state.selectedGroupIndex].official_name}
+                                </Text>
+                            </Body>
+                            <Right style={styles.communicty_icon_container}>
+                                <Icon name='md-create' style={{color: 'white'}} />
+                            </Right>
+                        </ListItem>
+                    </List>
+                    {
+                        this.state.displaySuggestionBox && this.state.suggestionList.length > 0
+                        ? <ScrollView style={{position: 'absolute', top: 20, zIndex: 3}}>
+                            <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
+                        </ScrollView>
+                        : <ScrollView />
+                    }
+                        <ScrollView>
                         <Textarea
                             maxLength={POST_MAX_LENGTH}
                             autoFocus
@@ -290,6 +297,7 @@ class NewPost extends Component {
                                 onPress={this.selectGroupList.bind(this)}
                             />
                         }
+                        </ScrollView>
                     </View>
                 </ScrollView>
                 <Button transparent style={{ marginBottom: 8, height: 60 }} onPress={this.attachImage}>
