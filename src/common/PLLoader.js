@@ -24,6 +24,10 @@ export default class PLLoader extends React.Component {
     this.setCircleInterval();
   }
 
+  componentWillUnmount() {
+    clearInterval(this.setInterval)
+  }
+
   setCircleInterval() {
     this.setInterval = setInterval(this.addCircle.bind(this), this.props.interval);
     this.addCircle();
@@ -32,22 +36,6 @@ export default class PLLoader extends React.Component {
   addCircle() {
     this.setState({ circles: [...this.state.circles, this.counter] });
     this.counter++;
-  }
-
-  onPressIn() {
-    Animated.timing(this.anim, {
-      toValue: this.props.pressInValue,
-      duration: this.props.pressDuration,
-      easing: this.props.pressInEasing,
-    }).start(() => clearInterval(this.setInterval));
-  }
-
-  onPressOut() {
-    Animated.timing(this.anim, {
-      toValue: 1,
-      duration: this.props.pressDuration,
-      easing: this.props.pressOutEasing,
-    }).start(this.setCircleInterval.bind(this));
   }
 
   render() {

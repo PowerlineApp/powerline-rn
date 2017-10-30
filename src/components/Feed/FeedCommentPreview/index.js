@@ -17,13 +17,11 @@ class FeedCommentPreview extends Component {
     }
 
     redirect (item, options) {
-        let type;
-        if (item.poll) {
-            type = 'poll';
-        } else if (item.post) {
+        let type = 'poll';
+        if (item.post) {
             type = 'post';
-        } else if (item.petition) {
-            type = 'petition';
+        } else if (item.user_petition) {
+            type = 'user-petition';
         }
         Actions.itemDetail({entityType: type, entityId: item.entity.id, ...options});
     }

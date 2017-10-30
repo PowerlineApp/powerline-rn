@@ -7,4 +7,6 @@ target 'Powerline' do
   pod 'FBSDKCoreKit'
   pod 'FBSDKLoginKit'
   pod 'FBSDKShareKit'
+  pod 'RSKImageCropper'
+  pod 'QBImagePickerController'
 end

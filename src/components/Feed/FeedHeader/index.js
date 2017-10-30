@@ -37,7 +37,7 @@ class FeedHeader extends Component {
         } else if (item.post) {
             type = 'post';
         } else if (item.petition) {
-            type = 'petition';
+            type = 'user-petition';
         }
         Actions[scene]({ entityType: type, entityId: item.entity.id, ...options });
     }
