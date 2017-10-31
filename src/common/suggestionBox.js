@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Modal, Text, FlatList, TouchableHighlight} from 'react-native';
+import {ScrollView, View, Modal, Text, FlatList, TouchableHighlight} from 'react-native';
 
 class SuggestionBox extends Component {
     render () {
@@ -8,17 +8,46 @@ class SuggestionBox extends Component {
         }
         console.log(this.props.displaySuggestionBox, this.props.userList ? this.props.userList.length : '');
         return (
-            <View>
+            <View style={styles.boxStyle}>
                 <FlatList
                     data={this.props.userList}
-                    renderItem={({item}) =>
-                        <TouchableHighlight style={{height: 44, backgroundColor: '#ccc' }} key={item.id} onPress={() => this.props.substitute('@' + item.username)}>
-                            <Text>{'@' + item.username + ' ' + item.first_name + ' ' + item.last_name}</Text>
+                    renderItem={({item, index}) =>
+                        {
+                            console.log(item, index, this.props.userList.length)
+                            return <TouchableHighlight key={item.id} onPress={() => this.props.substitute('@' + item.username + ' ')}>
+                            <View style={styles.itemStyle} >
+                                <Text style={styles.textStyle} >{'@' + item.username + ' ' + item.first_name + ' ' + item.last_name}</Text>
+                                {index !== this.props.userList.length -1 ? <View style={styles.divider} /> : null}
+                            </View>
                         </TouchableHighlight>}
+                    }
                     />
             </View>
         );
     }
 }
+
+const styles = {
+    boxStyle: {
+        backgroundColor: '#fff',
+        flexDirection: 'column',
+        padding: 8
+    },
+    divider: {
+        height: 1,
+        backgroundColor: '#ccc',
+        width: '100%'
+    },
+    itemStyle: {
+        backgroundColor: '#fff',
+        height: 40,
+        justifyContent: 'space-around'
+    },
+    textStyle: {
+        color: '#030747',
+        justifySelf: 'center'
+    }
+}
+
 
 export default SuggestionBox;

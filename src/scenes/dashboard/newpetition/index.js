@@ -32,6 +32,8 @@ import ImagePicker from 'react-native-image-crop-picker';
 
 import styles from './styles';
 import SuggestionBox from '../../../common/suggestionBox';
+import ShareFloatingAction from '../../../components/ShareFloatingAction';
+
 import {
     Dimensions,
     ScrollView,
@@ -61,7 +63,8 @@ class NewPetition extends Component {
             mentionEntry: null,
             suggestionSearch: '',
             groupUsers: [],
-            image: null
+            image: null,
+            share: false
         };
 
         this.placeholderTitle = randomPlaceholder('petition');
@@ -130,7 +133,7 @@ class NewPetition extends Component {
         createPetition(token, this.state.grouplist[this.state.selectedGroupIndex].id, this.state.title, this.state.content, this.state.image)
             .then(data => {
                 showToast('Petition Successful!');
-                Actions.itemDetail({ entityId: data.id, entityType: 'user-petition', backTo: 'home' });
+                Actions.itemDetail({ entityId: data.id, entityType: 'user-petition', backTo: 'home', share: this.state.share });
             })
             .catch(err => {
             });
@@ -152,7 +155,7 @@ class NewPetition extends Component {
         let firstPart = newContent.substr(0, init);
         let finalPart = newContent.substr(end, initialLength);
 
-        let finalString = firstPart + mention + ' ' + finalPart;
+        let finalString = firstPart + mention + finalPart;
 
         this.setState({ content: finalString, displaySuggestionBox: false, lockSuggestionPosition: end });
     }
@@ -238,6 +241,16 @@ class NewPetition extends Component {
         }
     }
 
+    isSelected(social) {
+        return this.state.share
+        // return false;
+    }
+
+    // changes the selection if user will share or not
+    setSelected(bool) {
+        this.setState({ share: bool })
+    }
+
     render() {
         console.log(this.state.displaySuggestionBox, this.state.displayMention);
         return (
@@ -257,27 +270,35 @@ class NewPetition extends Component {
                         </Button>
                     </Right>
                 </Header>
-                <ScrollView>
-                    <List>
-                        <ListItem style={styles.community_container} onPress={() => this.toggleCommunity()}>
-                            <View style={styles.avatar_container}>
-                                <View style={styles.avatar_wrapper}>
-                                    <Thumbnail square style={styles.avatar_img} source={{ uri: this.state.profile.avatar_file_name + '&w=50&h=50&auto=compress,format,q=95' }} />
-                                </View>
-                                <View style={styles.avatar_subfix} />
-                            </View>
-                            <Body style={styles.community_text_container}>
-                                <Text style={{ color: 'white' }}>
-                                    {this.state.selectedGroupIndex == -1 ? 'Select a community' : this.state.grouplist[this.state.selectedGroupIndex].official_name}
-                                </Text>
-                            </Body>
-                            <Right style={styles.community_icon_container}>
-                                <Icon name='md-create' style={{ color: 'white' }} />
-                            </Right>
-                        </ListItem>
-                    </List>
+                <ScrollView scrollEnabled={!this.state.showCommunity}>
                     <View style={styles.main_content}>
-                        <View style={{ padding: 10 }}>
+                        <List>
+                            <ListItem style={styles.community_container} onPress={() => this.toggleCommunity()}>
+                                <View style={styles.avatar_container}>
+                                    <View style={styles.avatar_wrapper}>
+                                        <Thumbnail square style={styles.avatar_img} source={{ uri: this.state.profile.avatar_file_name + '&w=50&h=50&auto=compress,format,q=95' }} />
+                                    </View>
+                                    <View style={styles.avatar_subfix} />
+                                </View>
+                                <Body style={styles.community_text_container}>
+                                    <Text style={{ color: 'white' }}>
+                                        {this.state.selectedGroupIndex == -1 ? 'Select a community' : this.state.grouplist[this.state.selectedGroupIndex].official_name}
+                                    </Text>
+                                </Body>
+                                <Right style={styles.community_icon_container}>
+                                    <Icon name='md-create' style={{ color: 'white' }} />
+                                </Right>
+                            </ListItem>
+                        </List>
+                        {
+                            this.state.displaySuggestionBox && this.state.suggestionList.length > 0
+                                ? <ScrollView style={{ position: 'absolute', top: 20, zIndex: 3 }}>
+                                    <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
+                                </ScrollView>
+                                : <ScrollView />
+                        }
+
+                        <ScrollView style={{ marginTop: 0 }}>
                             <TextInput
                                 placeholder='Type Title here'
                                 style={styles.input_text}
@@ -286,9 +307,35 @@ class NewPetition extends Component {
                                 onChangeText={(text) => this.changeTitle(text)}
                                 underlineColorAndroid={'transparent'}
                             />
-                            <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
-                            <Textarea placeholderTextColor='rgba(0,0,0,0.1)' style={styles.textarea} onSelectionChange={this.onSelectionChange} placeholder={this.placeholderTitle} value={this.state.content} onChangeText={(text) => this.changeContent(text)} />
-                        </View>
+                            <Textarea
+                                maxLength={PETITION_MAX_LENGTH}
+
+                                onSelectionChange={this.onSelectionChange}
+                                placeholderTextColor='rgba(0,0,0,0.1)'
+                                style={styles.textarea}
+                                multiline
+                                placeholder={this.placeholderTitle}
+                                value={this.state.content}
+                                onChangeText={(text) => this.changeContent(text)}
+                            />
+                        </ScrollView>
+                        <Button transparent style={{ marginBottom: 8, height: 60 }} onPress={this.attachImage}>
+                            {
+                                this.state.image ?
+                                    <View style={{ flexDirection: 'row', width: 100, height: 60, alignItems: 'center', justifyContent: 'center' }}>
+                                        <Image source={{ uri: `data:image/png;base64,${this.state.image}` }} resizeMode="cover" style={{ width: 90, height: 50 }} />
+                                        <View style={styles.deleteIconContainer}>
+                                            <Icon name="md-close-circle" style={styles.deleteIcon} />
+                                        </View>
+                                    </View>
+                                    :
+                                    <Image source={require("img/upload_image.png")} resizeMode="contain" style={{ width: 100, height: 60, tintColor: 'gray' }} />
+                            }
+                        </Button>
+                        <ShareFloatingAction
+                            onPress={() => this.setSelected(!this.state.share)}
+                            isSelected={() => this.isSelected()}
+                        />
                         {
                             this.state.showCommunity &&
                             <CommunityView
@@ -298,19 +345,6 @@ class NewPetition extends Component {
                         }
                     </View>
                 </ScrollView>
-                <Button transparent style={{ marginBottom: 8, height: 60 }} onPress={this.attachImage}>
-                    {
-                        this.state.image ?
-                            <View style={{ flexDirection: 'row', width: 100, height: 60, alignItems: 'center', justifyContent: 'center' }}>
-                                <Image source={{ uri: `data:image/png;base64,${this.state.image}` }} resizeMode="cover" style={{ width: 90, height: 50 }} />
-                                <View style={styles.deleteIconContainer}>
-                                    <Icon name="md-close-circle" style={styles.deleteIcon} />
-                                </View>
-                            </View>
-                            :
-                            <Image source={require("img/upload_image.png")} resizeMode="contain" style={{ width: 100, height: 60, tintColor: 'gray' }} />
-                    }
-                </Button>
                 <Footer style={{ alignItems: 'center', justifyContent: 'space-between', backgroundColor: PLColors.main, paddingLeft: 10, paddingRight: 10 }}>
                     {this.state.petition_remaining
                         ? <Label style={{ color: 'white', fontSize: 10 }}>

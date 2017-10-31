@@ -19,10 +19,12 @@ class ConversationActivity extends Component {
                 </Body>
                 <Right style={{borderBottomWidth: 0}}>
                     <Text style={styles.itemTime}><TimeAgo time={item.sent_at}/></Text>
+                    {/* 
+                        // it seems that for now, conversationView wont have any buttons... 
                     <Button transparent small>
                         <Icon name="md-arrow-dropup" style={item.upvotes_count!=0? styles.footerIconBlue : styles.footerIcon}/>
                         <Label style={item.upvotes_count!=0? styles.footerTextBlue : styles.footerText}>{item.upvotes_count ? item.upvotes_count : 0}</Label>
-                    </Button>
+                    </Button> */}
                 </Right>
             </ListItem>
         );

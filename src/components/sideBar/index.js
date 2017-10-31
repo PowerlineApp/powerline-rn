@@ -5,7 +5,7 @@ import { Container, Content, Text, ListItem, List, Left, Icon, Right } from 'nat
 import { Actions } from 'react-native-router-flux';
 
 import { closeDrawer } from '../../actions/drawer';
-import { logOut, logOutWithPrompt, unregisterDevice } from 'PLActions';
+import { logOut, logOutWithPrompt } from 'PLActions';
 
 import styles from './style';
 import OneSignal from 'react-native-onesignal';
@@ -112,18 +112,9 @@ class SideBar extends Component {
 
   onSelectItem(route: string) {
     if (route == 'logout') {
-      var { token, pushId } = this.props;
-
-      OneSignal.setSubscription(false);
-      AsyncStorage.getItem('pushId', (err, pushId) => {        
-        unregisterDevice(token, pushId)
-        .then(data => {
-          this.props.logOut();
-        })
-        .catch(err => {
-            
-        });
-      });               
+      var { token } = this.props;
+      this.props.logOut(token);
+             
     } else if(route == 'takeTour'){
       Actions['takeTour']();
     }else if(route == 'myInfluences'){
@@ -174,7 +165,7 @@ class SideBar extends Component {
 function bindAction(dispatch) {
   return {
     closeDrawer: () => dispatch(closeDrawer()),
-    logOut: () => dispatch(logOutWithPrompt()),
+    logOut: (token) => dispatch(logOutWithPrompt(token)),
   };
 }
 

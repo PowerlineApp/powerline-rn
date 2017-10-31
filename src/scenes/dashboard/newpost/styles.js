@@ -5,6 +5,8 @@ import {
 } from 'react-native';
 const { width, height } = Dimensions.get('window');
 
+import variables from '../../../../native-base-theme/variables/platform';
+
 const platform = Platform.OS;
 
 export default {
@@ -63,37 +65,16 @@ export default {
 
     main_content: {
         width: width, 
-        height: (height - 185), 
-        // height: height, 
+        height: height - 55 - variables.toolbarHeight,
         position: 'relative',
     },
 
     textarea: {
         width: width, 
-        height: (height - 185), 
+        height: height - 185,
         fontSize: 18, 
-        color: 'rgba(0,0,0,0.6)', 
-        zIndex: 5
-    },
-
-    community_list_container: {
-        position: 'absolute',
-        left: 0,
-        top: 0,
-        width: width,
-        height: (height  - 185),
-        zIndex: 10,
-        paddingLeft: (width - 250)/ 2
-    },
-
-    community_list_back: {
-        position: 'absolute',
-        left: 0,
-        top: 0,
-        bottom: 0,
-        right: 0,
-        backgroundColor: 'black',
-        opacity: 0.4
+        color: 'rgba(0,0,0,0.6)',
+        zIndex: 5,
     },
 
     deleteIconContainer: {

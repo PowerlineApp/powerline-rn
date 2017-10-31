@@ -480,6 +480,13 @@ class Home extends Component {
         if (group == 'all') {
             dispatch({ type: 'RESET_ACTIVITIES' });
             dispatch(loadActivities(token, 0, 20, 'all'));
+        } else {
+            let groupObj = this.props.groupList.find(groupObj => groupObj.group_type_label === group);
+            if (!groupObj) return;
+
+            let {id, official_name, avatar_file_path, conversation_view_limit} = groupObj;
+            dispatch({type: 'SET_GROUP', data: {id: id, name: official_name, avatar: avatar_file_path, limit: conversation_view_limit}});
+            dispatch(loadActivities(token, 0, 20, id));
         }
         this.setState({ group: group });
     }
@@ -608,7 +615,7 @@ class Home extends Component {
                                         <Text style={styles.iconText} onPress={() => { Keyboard.dismiss(); this.selectGroup('all'); }}>All</Text>
                                     </Col>
                                     <Col style={styles.col}>
-                                        <Button style={this.state.group == 'town' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('town'); }}>
+                                        <Button style={this.state.group == 'local' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('local'); }}>
                                             <Icon active name="pin" style={styles.icon} />
                                         </Button>
                                         <Text style={styles.iconText} numberOfLines={1} onPress={() => { Keyboard.dismiss(); this.selectGroup('town'); }}>{this.props.town}</Text>
@@ -767,6 +774,7 @@ const mapStateToProps = state => ({
     state: state.groups.state,
     country: state.groups.country,
     newsfeedUnreadCount: state.activities.newsfeedUnreadCount,
+    groupList: state.groups.payload
 });
 
 export default connect(mapStateToProps, bindAction)(Home);

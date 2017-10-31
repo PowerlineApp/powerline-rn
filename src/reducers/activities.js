@@ -35,7 +35,7 @@ const initialState = {
 const payloadStack: Array<Object> = [];
 
 function activities(state: State = initialState, action: Action): State {
-    console.log('action(activities):', action);
+    // console.log('action(activities):', action);
     if (action.type === 'LOADED_ACTIVITIES') {
         payloadStack = payloadStack.concat(action.data.payload);
         return {
@@ -47,13 +47,13 @@ function activities(state: State = initialState, action: Action): State {
             count: action.data.payload.length,
         };
     }
-    
+
     if (action.type === 'RESET_ACTIVITIES') {
         payloadStack = [];
         return {
             ...initialState,
-            savedGroup: state.savedGroup,
-            newsfeedUnreadCount: state.newsfeedUnreadCount,
+            // savedGroup: state.savedGroup,
+            // newsfeedUnreadCount: state.newsfeedUnreadCount,
         };
     }
 
@@ -69,7 +69,7 @@ function activities(state: State = initialState, action: Action): State {
         return initialState;
     }
 
-    if(action.type === 'SET_GROUP'){
+    if (action.type === 'SET_GROUP') {
         payloadStack = [];
         return {
             ...state,
@@ -86,7 +86,7 @@ function activities(state: State = initialState, action: Action): State {
         }
     }
 
-    if(action.type === 'DELETE_ACTIVITIES'){
+    if (action.type === 'DELETE_ACTIVITIES') {
         payloadStack = [];
         return {
             ...state,
@@ -159,8 +159,10 @@ function activities(state: State = initialState, action: Action): State {
     }
 
     if (action.type === 'ACTIVITY_NOTIFICATION_SUBSCRIBE') {
-        const { type, id } = action.data;
-
+        let { type, id } = action.data;
+        if (type === 'user-petition') {
+            type = 'user_petition';
+        }
         payloadStack = state.payload.map(activity => {
             if (activity.id === id) {
                 return {
@@ -181,8 +183,10 @@ function activities(state: State = initialState, action: Action): State {
     }
 
     if (action.type === 'ACTIVITY_NOTIFICATION_UNSUBSCRIBE') {
-        const { type, id } = action.data;
-
+        let { type, id } = action.data;
+        if (type === 'user-petition') {
+            type = 'user_petition';
+        }
         payloadStack = state.payload.map(activity => {
             if (activity.id === id) {
                 return {

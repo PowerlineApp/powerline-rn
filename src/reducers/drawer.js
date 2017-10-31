@@ -9,7 +9,7 @@ export type State = {
 
 const initialState = {
   drawerState: 'closed',
-  drawerDisabled: true,
+  drawerDisabled: false,
 };
 
 export default function (state:State = initialState, action:Action): State {
@@ -17,13 +17,15 @@ export default function (state:State = initialState, action:Action): State {
     return {
       ...state,
       drawerState: 'opened',
+      drawerDisabled: false
     };
   }
-
+  
   if (action.type === CLOSE_DRAWER) {
     return {
       ...state,
       drawerState: 'closed',
+      drawerDisabled: false
     };
   }
 

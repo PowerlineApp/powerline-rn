@@ -3,6 +3,8 @@ var { Platform } = require('react-native');
 import {
     Dimensions
 } from 'react-native';
+import variables from '../../../../native-base-theme/variables/platform';
+
 const { width, height } = Dimensions.get('window');
 
 const platform = Platform.OS;
@@ -63,7 +65,7 @@ export default {
 
     main_content: {
         width: width, 
-        height: (height - 185), 
+        height: height - 55 - variables.toolbarHeight,
         position: 'relative'
     },
 
@@ -72,7 +74,8 @@ export default {
         height: (height - 185), 
         fontSize: 14, 
         color: 'rgba(0,0,0,0.6)', 
-        zIndex: 5
+        zIndex: 5,
+        marginTop: 0
     },
 
     community_list_container: {
@@ -104,7 +107,8 @@ export default {
         backgroundColor: 'white',
         fontSize: 14,
         paddingLeft: 12,
-        paddingRight: 5
+        paddingRight: 5,
+        marginTop: 0
     },
 
     main_wrapper: {
