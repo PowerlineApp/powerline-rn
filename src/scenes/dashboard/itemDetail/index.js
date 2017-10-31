@@ -983,7 +983,6 @@ class ItemDetail extends Component {
                         {this._renderLoadMore()}
                         {this._renderCommentsLoading()}
                         <View style={{ height: 50 }} />
-                        <PLOverlayLoader visible={this.state.isLoading} logo />
                     </HeaderImageScrollView>
                 </Container>
                 <FloatingAction
