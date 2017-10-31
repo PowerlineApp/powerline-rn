@@ -235,7 +235,7 @@ class FeedHeader extends Component {
                                     <MenuOption onSelect={() => this.unsubscribe(item)}>
                                         <Button iconLeft transparent dark onPress={() => this.unsubscribe(item)}>
                                             <Icon name='md-notifications-off' style={styles.menuIcon} />
-                                            <Text style={styles.menuText}>Unsubscribe</Text>
+                                            <Text style={styles.menuText}>Unsubscribe to Notifications</Text>
                                         </Button>
                                     </MenuOption>
                                 }
