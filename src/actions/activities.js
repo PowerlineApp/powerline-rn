@@ -46,7 +46,7 @@ async function loadActivities(token: string, page: ?number = 0, perPage: ?number
 }
 async function loadFriendsActivities(token: string, page: ?number = 0, perPage: ?number = PER_PAGE): Promise<Action> {
     try {
-        var response = await fetch(`${API_URL}/v2/activities?_format=json&followed=true&page=${page + 1}&per_page=${perPage}`, {
+        var response = await fetch(`${API_URL}/v2/activities?_format=json&followed=1&page=${page + 1}&per_page=${perPage}`, {
             method: 'GET',
             headers: {
                 'token': token,
