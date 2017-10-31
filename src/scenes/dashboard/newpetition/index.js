@@ -320,7 +320,7 @@ class NewPetition extends Component {
                             />
                         </ScrollView>
                         <ShareFloatingAction 
-                            cb={() => this.setSelected(!this.state.share)}
+                            onPress={() => this.setSelected(!this.state.share)}
                             isSelected={() => this.isSelected()}
                         />
 
