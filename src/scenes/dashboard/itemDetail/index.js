@@ -174,8 +174,43 @@ class ItemDetail extends Component {
 
         // to avoid double clicks, etc
         console.log(this.state.sharing);
+        WARN('aigmentity', entity);
         // console.log('sharing... 1');
         if (this.state.sharing) return;
+
+        let isUpvoted = false;
+        if (entity.upvotes_count > 0 || entity.responses_count > 0) {
+            let type = entity.entity.type;
+            if (type === 'user-petition') {
+                type = 'user_petition';
+            }
+
+            let option = 'votes';
+            let id = 'option';
+            if (entity.poll) {
+                option = 'answers';
+            }
+
+            if (entity.user_petition) {
+                option = 'signatures';
+                id = 'option_id';
+            }
+
+            if (
+                entity[type] &&
+                entity[type][option] &&
+                entity[type][option].length > 0 &&
+                entity[type][option][0][id] === 1
+            ) {
+                isUpvoted = true;
+            }
+            
+        }
+        
+        if (!isUpvoted) {
+            alert('User can share only a post he has upvoted.');
+            return;
+        }
         // console.log('sharing... 2');
         this.setState({sharing: true});
 
