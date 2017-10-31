@@ -27,7 +27,8 @@ export type Action =
   | { type: 'BOOST_ACTIVITY', id: number }
   | { type: 'CHANGE_FOLLOW_STATUS', data: { id: number, follow_status: 'pending' | 'active' | null }}
   | { type: 'ACTIVITY_NOTIFICATION_SUBSCRIBE', data: { id: number, type: string }}
-  | { type: 'ACTIVITY_NOTIFICATION_UNSUBSCRIBE', data: { id: number, type: string }};
+  | { type: 'ACTIVITY_NOTIFICATION_UNSUBSCRIBE', data: { id: number, type: string }}
+  | { type: 'SET_NEWSFEED_COUNT', count: number };
 
 export type Dispatch = (action: Action | ThunkAction | PromiseAction | Array<Action>) => any;
 export type GetState = () => Object;

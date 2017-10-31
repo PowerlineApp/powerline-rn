@@ -45,7 +45,6 @@ function activities(state: State = initialState, action: Action): State {
             totalItems: action.data.totalItems,
             payload: payloadStack,
             count: action.data.payload.length,
-            newsfeedUnreadCount: action.data.newsfeedUnreadCount,
         };
     }
     
@@ -56,6 +55,13 @@ function activities(state: State = initialState, action: Action): State {
             savedGroup: state.savedGroup,
             newsfeedUnreadCount: state.newsfeedUnreadCount,
         };
+    }
+
+    if (action.type === 'SET_NEWSFEED_COUNT') {
+        return {
+            ...state,
+            newsfeedUnreadCount: action.count,
+        }
     }
 
     if (action.type === 'LOGGED_OUT') {
