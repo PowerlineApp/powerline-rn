@@ -165,8 +165,12 @@ class FeedHeader extends Component {
     }
 
     isSubscribed(item) {
-        if (item[item.entity.type] !== undefined) {
-            return item[item.entity.type].is_subscribed;
+        let type = item.entity.type;
+        if (type === 'user-petition') {
+            type = 'user_petition';
+        }
+        if (item[type] !== undefined) {
+            return item[type].is_subscribed;
         }
 
         return false;
@@ -244,18 +248,6 @@ class FeedHeader extends Component {
                                         </Button>
                                     </MenuOption>
                                 }
-                                <MenuOption>
-                                    <Button iconLeft transparent dark>
-                                        <Icon name='ios-heart' style={styles.menuIcon} />
-                                        <Text style={styles.menuText}>Add to Favorites</Text>
-                                    </Button>
-                                </MenuOption>
-                                <MenuOption>
-                                    <Button iconLeft transparent dark>
-                                        <Icon name='md-person-add' style={styles.menuIcon} />
-                                        <Text style={styles.menuText}>Add to Contact</Text>
-                                    </Button>
-                                </MenuOption>
                                 <MenuOption onSelect={() => this.notify(item)}>
                                     <Button iconLeft transparent dark onPress={() => this.notify(item)}>
                                         <Icon name='md-megaphone' style={styles.menuIcon} />
