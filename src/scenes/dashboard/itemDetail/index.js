@@ -915,8 +915,44 @@ class ItemDetail extends Component {
         }
     }
 
+    renderFloatingActionButton(item){
+        console.log(item)
+        if (item.group.group_type_label !== "local"
+            && item.group.group_type_label !== "state"
+            && item.group.group_type_label !== "country")
+            {
+                return null;
+            }
+
+        return (
+            <FloatingAction
+                actions={
+                    [
+                        {
+                            text: 'this will be overridden',
+                            icon: require('../../../assets/share_icon.png'),
+                            name: 'facebook',
+                            position: 2,
+                            color: '#71c9f1'
+                        }
+                    ]
+                }
+                onPressItem={
+                    (name) => {
+                        this.onShare(true, item)
+                    }
+                }
+                buttonColor='#71c9f1'
+                overlayColor='rgba(0,0,0,0)'
+                floatingIcon={require('../../../assets/share_icon.png')}
+                overrideWithAction
+                >
+            </FloatingAction>
+        )
+    }
+
     render() {
-        console.log(this.state.sharing);
+        // console.log(this.state.sharing);
         // console.log(this.refs);
         if (this.item === null) {
             return (
@@ -986,29 +1022,9 @@ class ItemDetail extends Component {
                         <PLOverlayLoader visible={this.state.isLoading} logo />
                     </HeaderImageScrollView>
                 </Container>
-                <FloatingAction
-                        actions={
-                            [
-                                {
-                                    text: 'Facebook',
-                                    icon: require('../../../assets/share_icon.png'),
-                                    name: 'facebook',
-                                    position: 2,
-                                    color: '#71c9f1'
-                                }
-                            ]
-                        }
-                        onPressItem={
-                            (name) => {
-                                this.onShare(true, item)
-                            }
-                        }
-                        buttonColor='#71c9f1'
-                        overlayColor='rgba(0,0,0,0)'
-                        floatingIcon={require('../../../assets/share_icon.png')}
-                        overrideWithAction
-                        >
-                        </FloatingAction>
+                {
+                    this.renderFloatingActionButton(item)
+                }
             </MenuContext>
         );
     }
