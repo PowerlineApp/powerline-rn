@@ -4,10 +4,10 @@
  */
 import { API_URL } from 'PLEnv';
 
-type Method = 'GET' | 'POST' | 'DELETE' | 'PUT';
+type Method = 'GET' | 'POST' | 'DELETE' | 'PUT' | 'PATCH';
 
 const api = {
-    _request: (method: Method, token: string, endpoint: string, data: ?object): Promise => {
+    _request: (method: Method, token: string, endpoint: string, data: ?object): Promise<any> => {
         let body = null;
         if (data) {
             body = JSON.stringify(data);
@@ -25,19 +25,19 @@ const api = {
             .catch(err => reject(err));
         });
     },
-    get: (token: string, url: string): Promise => {
+    get: (token: string, url: string): Promise<any> => {
         return api._request('GET', token, url);
     },
-    post: (token: string, url: string, data: object): Promise => {
+    post: (token: string, url: string, data: object): Promise<any> => {
         return api._request('POST', token, url, data);
     },
-    delete: (token: string, url: string): Promise => {
+    delete: (token: string, url: string): Promise<any> => {
         return api._request('DELETE', token, url);
     },
-    put: (token: string, url: string, data: object): Promise => {
+    put: (token: string, url: string, data: object): Promise<any> => {
         return api._request('PUT', token, url, data);
     },
-    patch: (token: string, url: string): Promise => {
+    patch: (token: string, url: string): Promise<any> => {
         return api._request('PATCH', token, url);
     },
 };

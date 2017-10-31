@@ -1,0 +1,126 @@
+import React, { Component, PropTypes } from 'react';
+
+import {
+  Container,
+  Content,
+  Header,
+  Body,
+  Title,
+  Left,
+  Right,
+  Thumbnail,
+  List,
+  ListItem,
+  Button,
+  Icon,
+  Label as NSLabel
+} from 'native-base';
+import { View, Text } from 'react-native';
+import { updateProfileSetup } from 'PLActions';
+
+import { Label, Input, PopupLabel } from '../components';
+import styles from '../styles';
+
+class ProfileSetup extends Component {
+  static propTypes = {
+    group: PropTypes.shape({
+      owner: PropTypes.string,
+      official_name: PropTypes.string,
+      official_description: PropTypes.string,
+      official_address: PropTypes.string,
+      official_city: PropTypes.string,
+      official_state: PropTypes.string,
+      official_type: PropTypes.string,
+      acronym: PropTypes.string,
+    }),
+  };
+
+  state = {
+    official_name: this.props.group.official_name,
+    official_description: this.props.group.official_description,
+    official_address: this.props.group.official_address,
+    official_city: this.props.group.official_city,
+    official_state: this.props.group.official_state,
+    official_type: this.props.group.official_type,
+    acronym: this.props.group.acronym
+  };
+
+  saveProfile = () => {
+    const { token, dispatch, group: { id } } = this.props;
+
+    dispatch(updateProfileSetup(token, id, this.state));
+  }
+
+  render() {
+    const {
+      owner,
+    } = this.props.group;
+    const {
+      official_name,
+      official_description,
+      official_address,
+      official_city,
+      official_state,
+      official_type,
+      acronym
+    } = this.state;
+
+    return (
+      <View>
+        <Label>Group Owner:</Label>
+        <Text style={styles.inputText}>{owner.full_name}</Text>
+
+        <Label>Group Name</Label>
+        <Input
+          value={official_name}
+          onChangeText={official_name => this.setState({ official_name })}
+        />
+
+        <Label>Group Description (optional)</Label>
+        <Input
+          value={official_description}
+          onChangeText={official_description => this.setState({ official_description })}
+        />
+
+        <Label>Group Acronym (optional)</Label>
+        <Input
+          value={acronym}
+          onChangeText={acronym => this.setState({ acronym })}
+        />
+
+        <Label>Group Type</Label>
+        <PopupLabel
+          options={["Educational", "Non-Profit(Not Campaign)", "Non-Profit(Campaign)", "Business", "Cooperative/Union", "Other"]}
+          onPress={(official_type) => this.setState({ official_type })}
+        >{official_type}</PopupLabel>
+
+        <Label>Group Address (optional)</Label>
+        <Input
+          value={official_address}
+          placeholder="Address (optional)"
+          onChangeText={official_address => this.setState({ official_address })}
+        />
+
+        <Label>City (optional)</Label>
+        <Input
+          value={official_city}
+          placeholder="City (optional)"
+          onChangeText={official_city => this.setState({ official_city })}
+        />
+
+        <Label>State (optional)</Label>
+        <Input
+          value={official_state}
+          placeholder="State (optional)"
+          onChangeText={official_state => this.setState({ official_state })}
+        />
+
+        <Button block style={styles.submitButtonContainer} onPress={this.saveProfile}>
+          <NSLabel style={styles.submitButtonText}>Save</NSLabel>
+        </Button>
+      </View>
+    );
+  }
+}
+
+export default ProfileSetup;

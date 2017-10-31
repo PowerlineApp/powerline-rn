@@ -142,7 +142,7 @@ function logInWithFacebook() {
             reject(err);
         });        
       }
-    }, {scope: 'public_profile,email'});
+    }, {scope: 'public_profile,email,user_friends'});
   });
 }
 

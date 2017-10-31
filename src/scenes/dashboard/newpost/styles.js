@@ -64,7 +64,8 @@ export default {
     main_content: {
         width: width, 
         height: (height - 185), 
-        position: 'relative'
+        // height: height, 
+        position: 'relative',
     },
 
     textarea: {
@@ -93,6 +94,32 @@ export default {
         right: 0,
         backgroundColor: 'black',
         opacity: 0.4
+    },
+
+    deleteIconContainer: {
+        position: 'absolute',
+        ...Platform.select({
+            ios: {
+                right: -4,
+                top: -4,
+                height: 22,    
+            },
+            android: {
+                right: -1,
+                top: -2,
+                height: 24,
+            }
+        }),
+        width: 22,
+        borderRadius: 12,
+        overflow: 'hidden',
+        
+    },
+    deleteIcon: {
+        fontSize: 25,
+        ...Platform.select({
+            ios: {  backgroundColor: '#e2e7ea' }
+        }),
     }
 
 }

@@ -58,6 +58,7 @@ class FriendActivity extends Component {
     componentWillReceiveProps(nextProps) {
         this.setState({
             dataArray: nextProps.payload,
+            dataSource: this.state.dataSource.cloneWithRows(nextProps.payload),            
         });
     }
 
@@ -77,20 +78,15 @@ class FriendActivity extends Component {
                 timeout(15000),
             ]);
         } catch (e) {
+            this.setState({ isRefreshing: false });
+            
             const message = e.message || e;
-            if (message !== 'Timed out') {
-                alert(message);
-            }
-            else {
+            if (typeof message === 'string') {
                 alert('Timed out. Please check internet connection');
             }
-            return;
         } finally {
             this.setState({ isRefreshing: false });
         }
-        this.setState({
-            dataSource: this.state.dataSource.cloneWithRows(this.state.dataArray),
-        });
     }
 
     async loadNextActivities() {
@@ -102,20 +98,15 @@ class FriendActivity extends Component {
                 timeout(15000),
             ]);
         } catch (e) {
+            this.setState({ isLoadingTail: false });
+            
             const message = e.message || e;
-            if (message !== 'Timed out') {
-                alert(message);
-            }
-            else {
+            if (typeof message === 'string') {
                 alert('Timed out. Please check internet connection');
             }
-            return;
         } finally {
             this.setState({ isLoadingTail: false });
         }
-        this.setState({
-            dataSource: this.state.dataSource.cloneWithRows(this.state.dataArray),
-        });
     }
 
     _onRefresh() {
