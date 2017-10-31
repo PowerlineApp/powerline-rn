@@ -1,21 +1,23 @@
 import React, { Component } from 'react';
 import { Actions } from 'react-native-router-flux';
 import { View, TouchableOpacity, Linking } from 'react-native';
-import { Text, Left, Body, CardItem, Label, Icon } from 'native-base';
+import { Text, Left, Right, Body, CardItem, Label, Icon, Thumbnail } from 'native-base';
 import { parseString } from 'react-native-xml2js';
 import ParsedText from './ParsedText';
 import styles from '../styles';
 
 class FeedDescription extends Component {
-    redirect (item, options) {
-        let type = 'poll';
-        if (item.entity.type === 'post') {
-            type = 'post'
-          } else if (item.entity.type === 'user-petition'){
-            type = 'user-petition' 
-          }
-        Actions.itemDetail({entityType: type, entityId: item.entity.id, ...options});
-    }
+  redirect(item, options, scene = 'itemDetail') {
+      let type;
+      if (item.poll) {
+          type = 'poll';
+      } else if (item.post) {
+          type = 'post';
+      } else if (item.user_petition) {
+          type = 'user-petition';
+      }
+      Actions[scene]({ entityType: type, entityId: item.entity.id, ...options });
+  }
 
     _renderTitle (item) {
         if (item.title) {
@@ -32,6 +34,31 @@ class FeedDescription extends Component {
       return null;
     }
   }
+
+  _renderAttachedImage(item){
+    // console.log(item);
+    let imgURL;
+    let blur;
+    if (item.post){
+        imgURL = item.post.image;
+    } else if (item.user_petition) {
+        imgURL = item.user_petition.image;
+    }
+    if (!imgURL) return;
+
+    if (item.user.follow_status === 'active'){
+      blur = '0';
+    } else if (item.user.id !== this.props.profile.id){
+      blur = '1000';
+    }
+    return (
+      <View>
+        <Thumbnail medium square
+          source={{uri: imgURL +`&w=400&h=400&blur=${blur}&auto=compress,format,q=95`}}
+          />
+      </View>);
+    }
+  
 
   handleUrlPress = url => {
     Linking.openURL(url);
@@ -86,6 +113,9 @@ class FeedDescription extends Component {
               </ParsedText>
             </TouchableOpacity>
           </Body>
+          <View style={{width: 80, marginRight: 0, justifyContent: 'flex-end', alignItems: 'center', alignSelf: 'flex-end'}} >
+            {this._renderAttachedImage(item)}
+          </View>
         </Left>
       </CardItem>
     );

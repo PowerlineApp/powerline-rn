@@ -72,7 +72,8 @@ export default {
         height: (height - 185), 
         fontSize: 14, 
         color: 'rgba(0,0,0,0.6)', 
-        zIndex: 5
+        zIndex: 5,
+        marginTop: 0
     },
 
     community_list_container: {
@@ -104,7 +105,8 @@ export default {
         backgroundColor: 'white',
         fontSize: 14,
         paddingLeft: 12,
-        paddingRight: 5
+        paddingRight: 5,
+        marginTop: 0
     },
 
     main_wrapper: {

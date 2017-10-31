@@ -32,6 +32,8 @@ import ImagePicker from 'react-native-image-crop-picker';
 
 import styles from './styles';
 import SuggestionBox from '../../../common/suggestionBox';
+import ShareFloatingAction from '../../../components/ShareFloatingAction';
+
 import {
     Dimensions,
     ScrollView,
@@ -61,7 +63,8 @@ class NewPetition extends Component {
             mentionEntry: null,
             suggestionSearch: '',
             groupUsers: [],
-            image: null
+            image: null,
+            share: false
         };
 
         this.placeholderTitle = randomPlaceholder('petition');
@@ -130,7 +133,7 @@ class NewPetition extends Component {
         createPetition(token, this.state.grouplist[this.state.selectedGroupIndex].id, this.state.title, this.state.content, this.state.image)
             .then(data => {
                 showToast('Petition Successful!');
-                Actions.itemDetail({ entityId: data.id, entityType: 'user-petition', backTo: 'home' });
+                Actions.itemDetail({ entityId: data.id, entityType: 'user-petition', backTo: 'home', share: this.state.share });
             })
             .catch(err => {
             });
@@ -152,7 +155,7 @@ class NewPetition extends Component {
         let firstPart = newContent.substr(0, init);
         let finalPart = newContent.substr(end, initialLength);
 
-        let finalString = firstPart + mention + ' ' + finalPart;
+        let finalString = firstPart + mention + finalPart;
 
         this.setState({ content: finalString, displaySuggestionBox: false, lockSuggestionPosition: end });
     }
@@ -238,7 +241,17 @@ class NewPetition extends Component {
         }
     }
 
-    render() {
+    isSelected(social){
+        return this.state.share
+        // return false;
+    }
+
+    // changes the selection if user will share or not
+    setSelected(bool){
+        this.setState({share : bool})
+    }
+
+    render () {
         console.log(this.state.displaySuggestionBox, this.state.displayMention);
         return (
             <Container style={styles.container}>
@@ -258,6 +271,7 @@ class NewPetition extends Component {
                     </Right>
                 </Header>
                 <ScrollView>
+                    <View style={styles.main_content}>
                     <List>
                         <ListItem style={styles.community_container} onPress={() => this.toggleCommunity()}>
                             <View style={styles.avatar_container}>
@@ -276,8 +290,15 @@ class NewPetition extends Component {
                             </Right>
                         </ListItem>
                     </List>
-                    <View style={styles.main_content}>
-                        <View style={{ padding: 10 }}>
+                        {
+                            this.state.displaySuggestionBox && this.state.suggestionList.length > 0
+                            ? <ScrollView style={{position: 'absolute', top: 20, zIndex: 3}}>
+                                <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
+                            </ScrollView>
+                            : <ScrollView />
+                        }
+
+                        <ScrollView style={{marginTop: 0}}>
                             <TextInput
                                 placeholder='Type Title here'
                                 style={styles.input_text}
@@ -286,9 +307,23 @@ class NewPetition extends Component {
                                 onChangeText={(text) => this.changeTitle(text)}
                                 underlineColorAndroid={'transparent'}
                             />
-                            <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
-                            <Textarea placeholderTextColor='rgba(0,0,0,0.1)' style={styles.textarea} onSelectionChange={this.onSelectionChange} placeholder={this.placeholderTitle} value={this.state.content} onChangeText={(text) => this.changeContent(text)} />
-                        </View>
+                            <Textarea
+                                maxLength={PETITION_MAX_LENGTH}
+                                
+                                onSelectionChange={this.onSelectionChange}
+                                placeholderTextColor='rgba(0,0,0,0.1)'
+                                style={styles.textarea}
+                                multiline
+                                placeholder={this.placeholderTitle}
+                                value={this.state.content}
+                                onChangeText={(text) => this.changeContent(text)}
+                            />
+                        </ScrollView>
+                        <ShareFloatingAction 
+                            onPress={() => this.setSelected(!this.state.share)}
+                            isSelected={() => this.isSelected()}
+                        />
+
                         {
                             this.state.showCommunity &&
                             <CommunityView

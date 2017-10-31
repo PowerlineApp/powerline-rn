@@ -36,8 +36,8 @@ class FeedHeader extends Component {
             type = 'poll';
         } else if (item.post) {
             type = 'post';
-        } else if (item.petition) {
-            type = 'user-petition';
+        } else if (item.user_petition) {
+            type = 'petition';
         }
         Actions[scene]({ entityType: type, entityId: item.entity.id, ...options });
     }

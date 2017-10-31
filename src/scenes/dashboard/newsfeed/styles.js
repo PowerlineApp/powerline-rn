@@ -159,8 +159,12 @@ export default {
         color: '#ccc'
     },
 
-    groupAvatar: {
+    groupAvatarFull: {
         paddingBottom: 10
+    },
+    groupAvatarSmall: {
+        paddingBottom: 10,
+        marginRight: 10
     },
 
     groupName: {
@@ -169,8 +173,15 @@ export default {
         fontWeight: '500'
     },
 
-    groupHeaderContainer: {
+    groupFullHeaderContainer: {
         alignItems: 'center',
+        paddingTop: 10,
+        paddingBottom: 10
+    },
+    groupSmallHeaderContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'row',
         paddingTop: 10,
         paddingBottom: 10
     },

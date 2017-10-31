@@ -5,10 +5,13 @@
 
 import React, { Component } from 'react';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
+
+import {KeyboardAvoidingView} from 'react-native';
+
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { ActionSheet, Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, ListItem, Thumbnail, List, Card, CardItem, Label, Footer } from 'native-base';
-import { ListView, View, RefreshControl, TouchableOpacity, Image, WebView, Platform, Share } from 'react-native';
+import { ScrollView, FlatList, View, RefreshControl, TouchableOpacity, Image, WebView, Platform, Share } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 import { loadActivities, resetActivities, votePost, editFollowers, loadActivityByEntityId, createPostToGroup, deletePost, deletePetition } from 'PLActions';
 import styles, { sliderWidth, itemWidth } from './styles';
@@ -42,19 +45,16 @@ class Newsfeed extends Component {
 
     constructor(props) {
         super(props);
-        var ds = new ListView.DataSource({
-            rowHasChanged: (r1, r2) => r1 !== r2,
-        });
         this.state = {
             isRefreshing: false,
             isLoadingTail: false,
             isLoading: false,
             dataArray: [],
-            dataSource: ds,
             text: "",
             showAvatar: true,
-            lastOffset: 0
+            lastOffset: 0,
         };
+        lastScrollPosition: null
     }
 
     componentWillMount() {
@@ -65,19 +65,22 @@ class Newsfeed extends Component {
     componentWillReceiveProps(nextProps) {
         this.setState({
             dataArray: nextProps.payload,
-            dataSource: this.state.dataSource.cloneWithRows(nextProps.payload),
         });
     }
 
     //JC I'm unclear on what this actually is 
-    subscribe(item) {
-        Share.share({
-            message: item.description,
-            title: ""
-        });
-    }
+    // Felipe - me too. will leave this commented! 
+
+    // subscribe(item) {
+    //     Share.share({
+    //         message: item.description,
+    //         title: ""
+    //     });
+    // }
 
 
+    // these two functions :loadInitialActivities: and :loadNextActivities: are almost identical...
+    // TODO:  how to make them only one function, with different behaviors based on parameters ?
     async loadInitialActivities() {
         this.setState({ isRefreshing: true });
         const { props: { token, dispatch, page, group } } = this;
@@ -124,17 +127,19 @@ class Newsfeed extends Component {
     }
 
     _onEndReached() {
+        console.log('end reached')
         const { props: { page, count } } = this;
         if (this.state.isLoadingTail === false && count > 0) {
             this.loadNextActivities();
         }
     }
 
-    _onBeginReached() {
-        this.props.dispatch(resetActivities());
+    // Felipe - unnused method. commenting...
+    // _onBeginReached() {
+    //     this.props.dispatch(resetActivities());
 
-        this.loadInitialActivities();
-    }
+    //     this.loadInitialActivities();
+    // }
 
     onChangeText(text) {
         this.setState({
@@ -142,6 +147,9 @@ class Newsfeed extends Component {
         });
     }
 
+    /**
+     * method to create post from input (only in conversationView mode)
+     */
     onCreatePost() {
         if (this.state.postingOnGroup) {
             return;
@@ -165,111 +173,161 @@ class Newsfeed extends Component {
         }
     }
 
+    /**
+     * 
+     * method that handles the scroll, to change the header display 
+     * 
+     * @param {object} event - scroll event
+     * @param {boolean} conversation - tell us if we are in conversation or feed view
+     */
+    onScroll(event, conversation) {
+        let {showAvatar} = this.state.showAvatar;
+        let lastScrollPosition = this.lastScrollPosition;
+        const scrollPosition = event && event.nativeEvent && event.nativeEvent.contentOffset && event.nativeEvent.contentOffset.y;
+        if (!lastScrollPosition) this.lastScrollPosition= scrollPosition
+
+        // only update header changes on a 20pixel step
+        if (Math.abs(scrollPosition - this.lastScrollPosition) > 20 ){
+
+
+            // since conversationView is literally the feedview backwards, we need to treat the scroll differently
+            if (conversation){
+                if (scrollPosition > this.lastScrollPosition){
+                    if (!this.state.showAvatar) this.setState({showAvatar: true})
+                }
+                if (scrollPosition < this.lastScrollPosition){
+                    if (this.state.showAvatar) this.setState({showAvatar: false})
+                }
+                
+            } else {
+                if (scrollPosition < this.lastScrollPosition){
+                    if (!this.state.showAvatar) this.setState({showAvatar: true})
+                }
+                if (scrollPosition > this.lastScrollPosition){
+                    if (this.state.showAvatar) this.setState({showAvatar: false})
+                }
+            }
+            this.lastScrollPosition = scrollPosition;
+        }
+    }
+
+    // the two Header rendering functions. only diff on the size of the icon and it's position
+
+    renderFullHeader(){
+        return (
+            <View style={styles.groupFullHeaderContainer}>
+                <Thumbnail square source={{ uri: this.props.savedGroup.groupAvatar + '&w=200&h=200&auto=compress,format,q=95' }} style={styles.groupAvatarFull} />
+                <Text style={styles.groupName}>{this.props.savedGroup.groupName}</Text>
+            </View>);
+    }
+    
+    renderSmallHeader(){
+        return (
+            <View style={styles.groupSmallHeaderContainer}>
+                <Thumbnail round small source={{ uri: this.props.savedGroup.groupAvatar + '&w=100&h=100&auto=compress,format,q=95' }} style={styles.groupAvatarSmall} />
+                <Text style={styles.groupName}>{this.props.savedGroup.groupName}</Text>
+            </View>);
+    }
+
 
 
     render() {
         const { isRefreshing, isLoading, isLoadingTail } = this.state;
-        // test if we should show conversationFeed or ActivityFeed
-        let conversationView = this.props.group != 'all' && this.props.payload.length <= this.props.groupLimit;
-        let dataSouce = this.state.dataSource;
-        if (dataSouce[0] && conversationView) {
-            dataSouce = dataSouce.reverse();
-        }
-        // this is hardcode for testing purposes -- I will remove once ConversationFeed is 100% working /Felipe
-        conversationView = false;
-        // console.log({token, savedGroup} = this.props)
+
+        // test if we should show conversationFeed or FeedView
+
+        // code above is from Thiago, leaving it commented, for now conversationView is decided on hardcode
+        // let conversationView = this.props.group != 'all' && this.props.payload.length <= this.props.groupLimit;
+
+        console.log('selected group', this.props.group)
+
+
+        let dataArray = this.state.dataArray;
+
+        /**
+         * this is hardcode for testing purposes -- I will remove once ConversationFeed is 100% working 
+         * I still need to be 100% shure on how to decide to display conversationView or FeedView - is the owner of the group
+         * allowed to change it manually yet?
+         * // Felipe
+         */
+        let conversationView = false;
+
         return (
-            // The default view of the newsfeed is the All feed.
-            <Container style={styles.container}>
-                {
-                    this.props.savedGroup && this.props.savedGroup.group != 'all' &&
-                    <TouchableOpacity onPress={() => Actions.groupprofile({ id: this.props.savedGroup.group })}>
-                        <View style={styles.groupHeaderContainer}>
-                            {this.state.showAvatar && this.props.savedGroup.groupAvatar != '' && this.props.savedGroup.groupAvatar != null ?
-                                <Thumbnail square source={{ uri: this.props.savedGroup.groupAvatar + '&w=200&h=200&auto=compress,format,q=95' }} style={styles.groupAvatar} /> : null}
-                            <Text style={styles.groupName}>{this.props.savedGroup.groupName}</Text>
-                        </View>
-                    </TouchableOpacity>
-                }
-                <ContentPlaceholder
-                    empty={!this.state.isRefreshing && !this.state.isLoading && this.state.dataArray.length === 0}
-                    title="The world belongs to those who speak up! Be the first to create a post!"
-                    refreshControl={
-                        Platform.OS === 'android' && !conversationView &&
-                        <RefreshControl
-                            refreshing={false}
-                            onRefresh={this._onRefresh.bind(this)}
-                        />
+            <View style={{flex: 1}}>
+                    {    this.props.savedGroup && this.props.savedGroup.group != 'all' &&
+                        <TouchableOpacity onPress={() => Actions.groupprofile({ id: this.props.savedGroup.group })}>
+                            {
+                                this.state.showAvatar
+                                ? this.renderFullHeader()
+                                : this.renderSmallHeader()
+                            }
+                        </TouchableOpacity>
                     }
-                    onScroll={(e) => {
-                        var height = e.nativeEvent.contentSize.height;
-                        var offset = e.nativeEvent.contentOffset.y;
-                        if (offset > 30 && this.state.showAvatar) {
-                            this.setState({ showAvatar: false })
-                        } else if (offset < 20 && !this.state.showAvatar) {
-                            this.setState({ showAvatar: true })
-                        }
+                    <ContentPlaceholder
+                        empty={!this.state.isRefreshing && !this.state.isLoading && this.state.dataArray.length === 0}
+                        title="The world belongs to those who speak up! Be the first to create a post!" />
 
-                        LOG(offset, height)
+                    {/**
+                     * using FlatList here to test performance -- can easily be changed to ListView again, but I think we might gain
+                     * some performance using FlatList (as recommended on the docs)
+                     */}
+                    <FlatList 
+                        bounces
+                        data={dataArray}
+                        extraData={dataArray}
+                        scrollEventThrottle={16}
+                        refreshing={false}
+                        onRefresh={() => this._onRefresh()}
+                        onEndReachedThreshold={0.8}
 
-                        if (offset < -3) {
-                            if (conversationView) {
-                                console.log('_onEndReached')
-                                this._onEndReached();
-                            } else {
-                                console.log('refresh')
-                                this._onRefresh();
-                            }
-                        }
-                        if ((WINDOW_HEIGHT + offset) >= height && offset > 0) {
-                            if (conversationView) {
-                                console.log('refresh')
-                                this._onRefresh();
-                            } else {
-                                console.log('_onEndReached')
-                                this._onEndReached();
-                            }
-                        }
-                    }}
-                >
-                    <ListView dataSource={dataSouce} renderRow={item => {
-                        return (conversationView
-                            ? <ConversationActivity item={item} token={this.props.token} profile={this.props.profile} />
-                            : <FeedActivity item={item} token={this.props.token} profile={this.props.profile} />
-                        )
-                    }} />
+                        /*
+                            inverts the list when in conversationView - this is necessary to make the refresh work on the bottom with the builtin listview onRefresh
+                            which is impossible to make on android without any native code
+                        */
+                        style={{  transform: [{ scaleY: conversationView ? -1 : 1 }] }}
+                        
+
+                        onScroll={(event) => this.onScroll(event, conversationView)}
+                        onEndReached={() => this._onEndReached()}
+
+                        renderItem={item => {
+                            return (
+                                conversationView 
+                                ? <View style={{  transform: [{ scaleY: -1 }] }}>
+                                    {/** the transform: scale Y = -1 is necessary to make each item appear correctly*/}
+                                    <ConversationActivity key={item.id} item={item.item} token={this.props.token} profile={this.props.profile} />
+                                </View>
+                                : <FeedActivity key={item.id} item={item.item} token={this.props.token} profile={this.props.profile} />
+                            )
+                        }} />
                     <PLOverlayLoader visible={isLoading || isLoadingTail || isRefreshing} logo />
-                </ContentPlaceholder>
-                {
-                    /**
-                     * if we are in conversation view, we have a textinput
-                     */
-                    conversationView
-                        ? <Footer style={styles.CFooter}>
-                            <Item style={styles.CFooterItem}>
-                                <Thumbnail small source={{ uri: this.props.profile.avatar_file_name + '&w=200&h=200&auto=compress,format,q=95' }} />
-                                <Input style={styles.CFooterItemInput} value={this.state.text} onChangeText={(text) => !this.state.postingOnGroup ? this.onChangeText(text) : {}} />
-                                <Button transparent style={styles.sendBtn} onPress={() => this.onCreatePost()}>
-                                    <Text color={'#ccc'} >SEND</Text>
-                                    <Icon name="md-send" color={'#ccc'} />
-                                </Button>
-                            </Item>
-                            <KeyboardSpacer />
-                        </Footer>
-                        : null
-                }
-            </Container>
+                    <KeyboardAvoidingView>
+                        {
+                        /**
+                         * if we are in conversation view, we have a textinput on the bottom, that creates posts
+                         * right now works good on android, but on iOS the keyboard goes over the input 
+                         * the <KeyboardAvoidingView> above should make it work, but for some reason it doesnt --to be fixed
+                         * // Felipe
+                         */
+                        conversationView
+                        ?
+                        <Footer style={styles.CFooter}>
+                                <Item style={styles.CFooterItem}>
+                                    <Thumbnail small source={{ uri: this.props.profile.avatar_file_name + '&w=200&h=200&auto=compress,format,q=95' }} />
+                                    <Input style={styles.CFooterItemInput} value={this.state.text} onChangeText={(text) => !this.state.postingOnGroup ? this.onChangeText(text) : {}} />
+                                    <Button transparent style={styles.sendBtn} onPress={() => this.onCreatePost()}>
+                                        <Text style={{color: this.state.postingOnGroup ? '#ccc' : '#3F51b5'}} >SEND</Text>
+                                        <Icon name="md-send" />
+                                    </Button>
+                                </Item>
+                            </Footer>
+                            : null
+                        }
+                    </KeyboardAvoidingView> 
+            </View>
         );
     }
 }
-
-const optionsStyles = {
-    optionsContainer: {
-        backgroundColor: '#fafafa',
-        paddingLeft: 5,
-        width: WINDOW_WIDTH,
-    },
-};
 
 async function timeout(ms: number): Promise {
     return new Promise((resolve, reject) => {
