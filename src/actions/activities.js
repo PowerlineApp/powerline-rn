@@ -18,9 +18,9 @@ async function loadActivities(token: string, page: ?number = 0, perPage: ?number
             }
         });
         var json = await response.json();
-        
-        const statistics = await api.get(token, '/v2/user/statistics');
-        const { priority_item_count } = await statistics.json();
+
+        // const statistics = await api.get(token, '/v2/user/statistics');
+        // const { priority_item_count } = await statistics.json();
 
         if (json.totalItems) {
             const action = {
@@ -30,7 +30,7 @@ async function loadActivities(token: string, page: ?number = 0, perPage: ?number
                     totalItems: json.totalItems,
                     items: json.items,
                     payload: json.payload,
-                    newsfeedUnreadCount: priority_item_count,
+                    // newsfeedUnreadCount: priority_item_count,
                 },
             };
             return Promise.resolve(action);
