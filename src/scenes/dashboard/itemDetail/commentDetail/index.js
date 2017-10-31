@@ -219,7 +219,6 @@ class CommentDetail extends Component {
                         {this._renderLoadMore()}
                         {this._renderCommentsLoading()}
                         {this._renderAddComment()}
-                        <PLOverlayLoader visible={this.state.isLoading} logo />
                     </Content>
                 </Container>
             </MenuContext >
