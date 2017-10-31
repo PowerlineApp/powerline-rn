@@ -211,7 +211,6 @@ class NewPost extends Component {
                 title: "Attach image"
             }, buttonIndex => {
                 if (buttonIndex == 0) {
-                    LOG('0', ImagePicker);
                     ImagePicker.openCamera({
                         cropping: true,
                         includeBase64: true
@@ -221,7 +220,6 @@ class NewPost extends Component {
                 }
 
                 if (buttonIndex == 1) {
-                    LOG('1'), ImagePicker;
                     ImagePicker.openPicker({
                         cropping: true,
                         includeBase64: true
