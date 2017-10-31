@@ -90,9 +90,10 @@ export default {
         overflow: 'visible'
       },
       android: {
-        backgroundColor: 'transparent',
+        backgroundColor: 'rgba(0,0,0,0)',
         height: 75,
-        justifyContent: 'flex-end'
+        position: 'absolute',
+        bottom: 0,
       },
     })
   },
