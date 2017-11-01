@@ -253,7 +253,7 @@ class Newsfeed extends Component {
         let conversationView = false;
 
         return (
-            <View style={{flex: 1, marginBottom: -20 }}>
+            <View style={styles.container}>
                     {    this.props.savedGroup && this.props.savedGroup.group != 'all' &&
                         <TouchableOpacity onPress={() => Actions.groupprofile({ id: this.props.savedGroup.group })}>
                             {
