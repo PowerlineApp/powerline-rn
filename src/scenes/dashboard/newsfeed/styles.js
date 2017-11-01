@@ -19,6 +19,7 @@ export const itemWidth = slideWidth + itemHorizontalMargin * 2;
 
 export default {
     container: {
+        flex: 1,
         ...Platform.select({
             android: { marginBottom: -20 }
         })
