@@ -61,8 +61,12 @@ class Newsfeed extends Component {
         this.props.dispatch(resetActivities());
         this.loadInitialActivities();
     }
-
+    
     componentWillReceiveProps(nextProps) {
+        if (this.props.selectedGroup.group !== nextProps.selectedGroup.group){
+            this.props.dispatch(resetActivities());
+            this.loadInitialActivities(nextProps);
+        }
         this.setState({
             dataArray: nextProps.payload,
         });
@@ -81,9 +85,11 @@ class Newsfeed extends Component {
 
     // these two functions :loadInitialActivities: and :loadNextActivities: are almost identical...
     // TODO:  how to make them only one function, with different behaviors based on parameters ?
-    async loadInitialActivities() {
+    async loadInitialActivities(nextProps) {
         this.setState({ isRefreshing: true });
-        const { props: { token, dispatch, page, group } } = this;
+        const { props: { token, dispatch, page } } = this;
+        // console.log('to fetch: ', this.props.selectedGroup)
+        const group = nextProps ? nextProps.selectedGroup.group : this.props.selectedGroup.group;
         try {
             await Promise.race([
                 dispatch(loadActivities(token, 0, 20, group)),
@@ -103,7 +109,8 @@ class Newsfeed extends Component {
 
     async loadNextActivities() {
         this.setState({ isLoadingTail: true });
-        const { props: { token, page, dispatch, group } } = this;
+        const { props: { token, page, dispatch } } = this;
+        const {group} = this.props.selectedGroup;
         try {
             await Promise.race([
                 dispatch(loadActivities(token, page, 20, group)),
@@ -216,16 +223,16 @@ class Newsfeed extends Component {
     renderFullHeader(){
         return (
             <View style={styles.groupFullHeaderContainer}>
-                <Thumbnail square source={{ uri: this.props.savedGroup.groupAvatar + '&w=200&h=200&auto=compress,format,q=95' }} style={styles.groupAvatarFull} />
-                <Text style={styles.groupName}>{this.props.savedGroup.groupName}</Text>
+                <Thumbnail square source={{ uri: this.props.selectedGroup.groupAvatar + '&w=200&h=200&auto=compress,format,q=95' }} style={styles.groupAvatarFull} />
+                <Text style={styles.groupName}>{this.props.selectedGroup.groupName}</Text>
             </View>);
     }
     
     renderSmallHeader(){
         return (
             <View style={styles.groupSmallHeaderContainer}>
-                <Thumbnail round small source={{ uri: this.props.savedGroup.groupAvatar + '&w=100&h=100&auto=compress,format,q=95' }} style={styles.groupAvatarSmall} />
-                <Text style={styles.groupName}>{this.props.savedGroup.groupName}</Text>
+                <Thumbnail round small source={{ uri: this.props.selectedGroup.groupAvatar + '&w=100&h=100&auto=compress,format,q=95' }} style={styles.groupAvatarSmall} />
+                <Text style={styles.groupName}>{this.props.selectedGroup.groupName}</Text>
             </View>);
     }
 
@@ -239,7 +246,7 @@ class Newsfeed extends Component {
         // code above is from Thiago, leaving it commented, for now conversationView is decided on hardcode
         // let conversationView = this.props.group != 'all' && this.props.payload.length <= this.props.groupLimit;
 
-        console.log('selected group', this.props.group, this.props.groupMembers, this.props.conversationView)
+        console.log('selected group', this.props.selectedGroup)
 
 
         let dataArray = this.state.dataArray;
@@ -251,14 +258,14 @@ class Newsfeed extends Component {
          * // Felipe
          */
         let conversationView = false;
-        if (this.props.group !== 'all' && this.props.conversationView){
+        if (this.props.selectedGroup && this.props.selectedGroup.group !== 'all' && this.props.selectedGroup.conversationView){
             conversationView = true;
         }
 
         return (
             <View style={{flex: 1}}>
                     {    this.props.savedGroup && this.props.savedGroup.group != 'all' &&
-                        <TouchableOpacity onPress={() => Actions.groupprofile({ id: this.props.savedGroup.group })}>
+                        <TouchableOpacity onPress={() => Actions.groupprofile({ id: this.props.selectedGroup.group })}>
                             {
                                 this.state.showAvatar
                                 ? this.renderFullHeader()
@@ -346,14 +353,14 @@ const mapStateToProps = state => ({
     count: state.activities.count,
     profile: state.user.profile,
     userId: state.user.id,
-    group: state.activities.group,
-    groupName: state.activities.groupName,
-    groupAvatar: state.activities.groupAvatar,
-    groupLimit: state.activities.groupLimit,
-    groupMembers: state.activities.groupMembers,
-    savedGroup: state.activities.savedGroup,
-    conversationView: state.activities.conversationView,
-    chooseGroup: state.groups.others,
+    selectedGroup: state.activities.selectedGroup
+    // group: state.activities.group,
+    // groupName: state.activities.groupName,
+    // groupAvatar: state.activities.groupAvatar,
+    // groupLimit: state.activities.groupLimit,
+    // groupMembers: state.activities.groupMembers,
+    // conversationView: state.activities.conversationView,
+    // chooseGroup: state.groups.others
 });
 
 export default connect(mapStateToProps)(Newsfeed);

@@ -24,7 +24,7 @@ const initialState = {
     groupName: '',
     groupAvatar: '',
     groupLimit: 10,
-    savedGroup: {
+    selectedGroup: {
         group: 'all',
         groupName: '',
         groupAvatar: '',
@@ -49,10 +49,11 @@ function activities(state: State = initialState, action: Action): State {
     }
 
     if (action.type === 'RESET_ACTIVITIES') {
+        console.log('RESET_ACTIVITIES', action);
         payloadStack = [];
         return {
             ...initialState,
-            // savedGroup: state.savedGroup,
+            selectedGroup: state.selectedGroup,
             // newsfeedUnreadCount: state.newsfeedUnreadCount,
         };
     }
@@ -70,20 +71,18 @@ function activities(state: State = initialState, action: Action): State {
     }
 
     if (action.type === 'SET_GROUP') {
+        console.log('SET_GROUP', action);
         payloadStack = [];
         return {
             ...state,
-            group: action.data.id,
-            groupName: action.data.name,
-            groupAvatar: action.data.avatar,
-            groupLimit: action.data.limit,
-            groupMembers: action.data.totalMembers,
-            conversationView: action.data.conversationView,
             payload: [],
-            savedGroup: {
-                group: action.data.id,
-                groupName: action.data.name,
-                groupAvatar: action.data.avatar,
+            selectedGroup: {
+                group: action.data ? action.data.id : null,
+                groupName: action.data ? action.data.name : null,
+                groupAvatar: action.data ? action.data.avatar : null,
+                conversationView: action.data ? action.data.conversationView : null,
+                groupMembers: action.data ? action.data.totalMembers : null,
+                groupLimit: action.data ? action.data.limit : null,
             },
         }
     }
