@@ -92,7 +92,7 @@ export default {
         bottom: 0
       },
       android: {
-        backgroundColor: 'rgba(255,255,255,1)',
+        backgroundColor: 'rgba(0,0,0,0)',
         height: 75,
         position: 'absolute',
         alignItems: 'flex-end',

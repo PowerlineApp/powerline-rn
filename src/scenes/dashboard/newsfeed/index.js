@@ -256,7 +256,7 @@ class Newsfeed extends Component {
         }
 
         return (
-            <View style={{flex: 1, marginBottom: -20 }}>
+            <View style={{flex: 1}}>
                     {    this.props.savedGroup && this.props.savedGroup.group != 'all' &&
                         <TouchableOpacity onPress={() => Actions.groupprofile({ id: this.props.savedGroup.group })}>
                             {
