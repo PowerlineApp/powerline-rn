@@ -167,10 +167,13 @@ class Home extends Component {
     componentDidMount() {
         getGroups(this.props.token)
             .then(data => {
-                this.props.dispatch({
+                this.props.dispatch([{
                     type: 'LOADED_GROUPS',
                     data: { payload: data.payload }
-                });
+                }, {
+                    type: 'SET_NEWSFEED_COUNT',
+                    count: data.payload.reduce((a, b) => a += b.priority_item_count, 0),
+                }]);
             });
     }
 
@@ -542,6 +545,7 @@ class Home extends Component {
         // }
 
         // return count;
+        WARN('COUNUNTONSODFJSODJF', this.props.newsfeedUnreadCount)
         return this.props.newsfeedUnreadCount;
     }
 
@@ -770,6 +774,7 @@ const mapStateToProps = state => ({
     town: state.groups.town,
     state: state.groups.state,
     country: state.groups.country,
+    newsfeedUnreadCount: state.activities.newsfeedUnreadCount,
     groupList: state.groups.payload
 });
 

@@ -45,10 +45,9 @@ function activities(state: State = initialState, action: Action): State {
             totalItems: action.data.totalItems,
             payload: payloadStack,
             count: action.data.payload.length,
-            newsfeedUnreadCount: action.data.newsfeedUnreadCount,
         };
     }
-    
+
     if (action.type === 'RESET_ACTIVITIES') {
         payloadStack = [];
         return {
@@ -58,12 +57,19 @@ function activities(state: State = initialState, action: Action): State {
         };
     }
 
+    if (action.type === 'SET_NEWSFEED_COUNT') {
+        return {
+            ...state,
+            newsfeedUnreadCount: action.count,
+        }
+    }
+
     if (action.type === 'LOGGED_OUT') {
         payloadStack = [];
         return initialState;
     }
 
-    if(action.type === 'SET_GROUP'){
+    if (action.type === 'SET_GROUP') {
         payloadStack = [];
         return {
             ...state,
@@ -82,7 +88,7 @@ function activities(state: State = initialState, action: Action): State {
         }
     }
 
-    if(action.type === 'DELETE_ACTIVITIES'){
+    if (action.type === 'DELETE_ACTIVITIES') {
         payloadStack = [];
         return {
             ...state,
@@ -155,8 +161,10 @@ function activities(state: State = initialState, action: Action): State {
     }
 
     if (action.type === 'ACTIVITY_NOTIFICATION_SUBSCRIBE') {
-        const { type, id } = action.data;
-
+        let { type, id } = action.data;
+        if (type === 'user-petition') {
+            type = 'user_petition';
+        }
         payloadStack = state.payload.map(activity => {
             if (activity.id === id) {
                 return {
@@ -177,8 +185,10 @@ function activities(state: State = initialState, action: Action): State {
     }
 
     if (action.type === 'ACTIVITY_NOTIFICATION_UNSUBSCRIBE') {
-        const { type, id } = action.data;
-
+        let { type, id } = action.data;
+        if (type === 'user-petition') {
+            type = 'user_petition';
+        }
         payloadStack = state.payload.map(activity => {
             if (activity.id === id) {
                 return {

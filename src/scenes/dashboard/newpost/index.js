@@ -156,7 +156,7 @@ class NewPost extends Component {
         let firstPart = newContent.substr(0, init);
         let finalPart = newContent.substr(end, initialLength);
 
-        let finalString = firstPart + mention  + finalPart;
+        let finalString = firstPart + mention + finalPart;
 
         this.setState({ content: finalString, displaySuggestionBox: false, lockSuggestionPosition: end });
     }
@@ -172,8 +172,8 @@ class NewPost extends Component {
         this.setState({share : bool})
     }
 
-    onSelectionChange (event) {
-        let {start, end} = event.nativeEvent.selection;
+    onSelectionChange(event) {
+        let { start, end } = event.nativeEvent.selection;
         let userRole = this.state.grouplist[this.state.selectedGroupIndex].user_role;
         setTimeout(() => {
             if (start !== end) return;
@@ -265,7 +265,7 @@ class NewPost extends Component {
                         </Button>
                     </Right>
                 </Header>
-                <ScrollView keyboardShouldPersistTaps={'handled'} >
+                <ScrollView scrollEnabled={!this.state.showCommunity} keyboardShouldPersistTaps={'handled'} >
                     <View style={styles.main_content}>
                         <List>
                             <ListItem style={styles.community_container} onPress={() => this.toggleCommunity()}>
@@ -308,23 +308,23 @@ class NewPost extends Component {
                             onChangeText={(text) => this.changeContent(text)}
                         />
                     </ScrollView>
+                    <Button transparent style={{ marginBottom: 8, height: 60 }} onPress={this.attachImage}>
+                            {
+                                this.state.image ?
+                                    <View style={{ flexDirection: 'row', width: 100, height: 60, alignItems: 'center', justifyContent: 'center' }}>
+                                        <Image source={{ uri: `data:image/png;base64,${this.state.image}` }} resizeMode="cover" style={{ width: 90, height: 50 }} />
+                                        <View style={styles.deleteIconContainer}>
+                                            <Icon name="md-close-circle" style={styles.deleteIcon} />
+                                        </View>
+                                    </View>
+                                    :
+                                    <Image source={require("img/upload_image.png")} resizeMode="contain" style={{ width: 100, height: 60, tintColor: 'gray' }} />
+                            }
+                        </Button>
                     <ShareFloatingAction 
                         onPress={() => this.setShareSelected(!this.state.share)}
                         isSelected={() => this.isShareSelected()}
                     />
-
-                        {/* <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
-                        <Textarea
-                            maxLength={POST_MAX_LENGTH}
-                            autoFocus
-                            onSelectionChange={this.onSelectionChange}
-                            placeholderTextColor='rgba(0,0,0,0.1)'
-                            style={styles.textarea}
-                            placeholder={this.placeholderTitle}
-                            value={this.state.content}
-                            onChangeText={(text) => this.changeContent(text)}
-                        /> */}
-
                         {
                             this.state.showCommunity &&
                             <CommunityView
@@ -334,19 +334,6 @@ class NewPost extends Component {
                         }
                     </View>
                 </ScrollView>
-                <Button transparent style={{ marginBottom: 8, height: 60 }} onPress={this.attachImage}>
-                    {
-                        this.state.image ?
-                            <View style={{ flexDirection: 'row', width: 100, height: 60, alignItems: 'center', justifyContent: 'center' }}>
-                                <Image source={{ uri: `data:image/png;base64,${this.state.image}` }} resizeMode="cover" style={{ width: 90, height: 50 }} />
-                                <View style={styles.deleteIconContainer}>
-                                    <Icon name="md-close-circle" style={styles.deleteIcon} />
-                                </View>
-                            </View>
-                            :
-                            <Image source={require("img/upload_image.png")} resizeMode="contain" style={{ width: 100, height: 60, tintColor: 'gray' }} />
-                    }
-                </Button>
                 <Footer style={{ alignItems: 'center', justifyContent: 'space-between', backgroundColor: PLColors.main, paddingLeft: 10, paddingRight: 10 }}>
                     {this.state.posts_remaining
                         ? <Label style={{ color: 'white', fontSize: 10 }}>

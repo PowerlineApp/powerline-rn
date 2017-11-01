@@ -23,11 +23,13 @@ import {
 } from 'native-base';
 import {
     Dimensions,
+    Platform,
     StyleSheet,
     ScrollView
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
+const isIOS = Platform.OS === 'ios';
 
 class CommunityView extends PureComponent {
     render () {
@@ -76,7 +78,7 @@ const styles = {
         left: 0,
         top: 0,
         width: width,
-        height: (height  - 185),
+        height: (height - (isIOS ? 64 : 56) - 55),
         zIndex: 10,
         paddingLeft: (width - 250)/ 2,
     },
