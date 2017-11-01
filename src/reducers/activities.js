@@ -71,6 +71,8 @@ function activities(state: State = initialState, action: Action): State {
             groupName: action.data.name,
             groupAvatar: action.data.avatar,
             groupLimit: action.data.limit,
+            groupMembers: action.data.totalMembers,
+            conversationView: action.data.conversationView,
             payload: [],
             savedGroup: {
                 group: action.data.id,

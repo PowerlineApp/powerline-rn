@@ -19,6 +19,7 @@ class LoginScene extends Component {
 
   render() {
     var { navigate } = this.props.navigation;
+    navigate("dashboard")
     return (
       <View style={styles.container}>
         <Login

@@ -239,7 +239,7 @@ class Newsfeed extends Component {
         // code above is from Thiago, leaving it commented, for now conversationView is decided on hardcode
         // let conversationView = this.props.group != 'all' && this.props.payload.length <= this.props.groupLimit;
 
-        console.log('selected group', this.props.group)
+        console.log('selected group', this.props.group, this.props.groupMembers, this.props.conversationView)
 
 
         let dataArray = this.state.dataArray;
@@ -251,6 +251,9 @@ class Newsfeed extends Component {
          * // Felipe
          */
         let conversationView = false;
+        if (this.props.group !== 'all' && this.props.conversationView){
+            conversationView = true;
+        }
 
         return (
             <View style={{flex: 1}}>
@@ -347,7 +350,9 @@ const mapStateToProps = state => ({
     groupName: state.activities.groupName,
     groupAvatar: state.activities.groupAvatar,
     groupLimit: state.activities.groupLimit,
+    groupMembers: state.activities.groupMembers,
     savedGroup: state.activities.savedGroup,
+    conversationView: state.activities.conversationView,
     chooseGroup: state.groups.others,
 });
 

@@ -133,7 +133,8 @@ export default {
 
     CFooter: {
         backgroundColor: 'transparent',
-        height: 55
+        height: 55,
+        marginBottom: 55
     },
 
     CFooterItem: {
@@ -179,6 +180,8 @@ export default {
         paddingBottom: 10
     },
     groupSmallHeaderContainer: {
+        backgroundColor: '#fff',
+        height: 40,
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'row',

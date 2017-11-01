@@ -472,7 +472,8 @@ class Home extends Component {
     }
 
     // JC: I believe this loads to the group feed when a group is selected from Group Selector More menu
-    selectGroup(group) {
+    selectGroup(group){
+        let {id, official_name, avatar_file_path, conversation_view_limit, total_members} = group;
         var { token, dispatch } = this.props;
         if (group == 'all') {
             dispatch({ type: 'RESET_ACTIVITIES' });
@@ -481,8 +482,8 @@ class Home extends Component {
             let groupObj = this.props.groupList.find(groupObj => groupObj.group_type_label === group);
             if (!groupObj) return;
 
-            let {id, official_name, avatar_file_path, conversation_view_limit} = groupObj;
-            dispatch({type: 'SET_GROUP', data: {id: id, name: official_name, avatar: avatar_file_path, limit: conversation_view_limit}});
+            let {id, official_name, avatar_file_path, conversation_view_limit, total_members} = groupObj;
+            dispatch({type: 'SET_GROUP', data: {id, name: official_name, avatar: avatar_file_path, limit: conversation_view_limit, totalMembers: total_members, conversationView: total_members < conversation_view_limit}});
             dispatch(loadActivities(token, 0, 20, id));
         }
         this.setState({ group: group });
