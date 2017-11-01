@@ -264,7 +264,7 @@ class Newsfeed extends Component {
 
         return (
             <View style={{flex: 1}}>
-                    {    this.props.savedGroup && this.props.savedGroup.group != 'all' &&
+                    {    this.props.selectedGroup && this.props.selectedGroup.group != 'all' &&
                         <TouchableOpacity onPress={() => Actions.groupprofile({ id: this.props.selectedGroup.group })}>
                             {
                                 this.state.showAvatar
