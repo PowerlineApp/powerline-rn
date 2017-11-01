@@ -33,7 +33,7 @@ class ManageGroup extends Component {
 
   render() {
     const { group, dispatch, token } = this.props;
-    // WARN(JSON.stringify(this.props.group, null, 2));
+
     return (
       <MenuContext customStyles={styles.menuContextStyles}>
         <Container style={styles.container}>
@@ -71,17 +71,28 @@ class ManageGroup extends Component {
                 <Options.ProfileSetup dispatch={dispatch} token={token} group={group} />
               </AccordionItem>
               <AccordionItem title="Subscription Level">
-                <Text>In Progress</Text>                
+                <Text>In Progress</Text>
                 {/* <Options.SubscriptionLevel dispatch={dispatch} token={token} group={group} /> */}
               </AccordionItem>
               <AccordionItem title="Funraiser Setup">
                 <Text>In Progress</Text>
               </AccordionItem>
               <AccordionItem title="Membership Control">
-                <Text>In Progress</Text>
+                <Options.MembershipControl
+                  dispatch={dispatch}
+                  token={token}
+                  group={group}
+                  groupId={group.id}
+                  isOwnerManager={group.user_role === 'owner' || group.user_role === 'manager'}
+                />
               </AccordionItem>
               <AccordionItem title="Group Permissions">
-                <Text>In Progress</Text>
+                <Options.GroupPermissions
+                  dispatch={dispatch}
+                  token={token}
+                  groupId={group.id}
+                  isOwnerManager={group.user_role === 'owner' || group.user_role === 'manager'}
+                />
               </AccordionItem>
               <AccordionItem title="Manage Group Members">
                 <Text>In Progress</Text>
@@ -89,11 +100,14 @@ class ManageGroup extends Component {
               <AccordionItem title="Group Sections/Sub-Groups">
                 <Text>In Progress</Text>
               </AccordionItem>
+              <AccordionItem title="User Content Settings">
+                <Options.UserContentSettings dispatch={dispatch} token={token} groupId={group.id} />
+              </AccordionItem>
               <AccordionItem title="Invites">
                 <Options.Invites dispatch={dispatch} token={token} groupId={group.id} />
               </AccordionItem>
               <AccordionItem title="Reports">
-                <Options.Reports dispatch={dispatch} token={token} groupId={group.id} />              
+                <Options.Reports dispatch={dispatch} token={token} groupId={group.id} />
               </AccordionItem>
             </List>
           </Content>

@@ -103,7 +103,7 @@ export default {
   },
 
   popupIcon: {
-    color: PLColors.main,
+    color: PLColors.blueArrow,
     marginRight: 6,
   },
 
