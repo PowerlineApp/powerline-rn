@@ -4,7 +4,7 @@
 // https://api-dev.powerli.ne/api-doc#post--api-v2.2-groups-{group}-posts
 
 import React, { Component } from 'react';
-import {TextInput} from 'react-native';
+import {TextInput, Keyboard} from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import {
@@ -90,6 +90,7 @@ class NewPost extends Component {
     }
 
     toggleCommunity() {
+        Keyboard.dismiss()
         this.setState({
             showCommunity: !this.state.showCommunity
         });
@@ -101,6 +102,7 @@ class NewPost extends Component {
             selectedGroupIndex: index,
             showCommunity: false
         });
+        this.postInputRef.focus()
 
         var { token } = this.props;
 
@@ -154,24 +156,24 @@ class NewPost extends Component {
         let firstPart = newContent.substr(0, init);
         let finalPart = newContent.substr(end, initialLength);
 
-        let finalString = firstPart + mention  + finalPart;
+        let finalString = firstPart + mention + finalPart;
 
         this.setState({ content: finalString, displaySuggestionBox: false, lockSuggestionPosition: end });
     }
 
     // tells us if user will share or not
-    isSelected(social){
+    isShareSelected(social){
         return this.state.share
         // return false;
     }
 
     // changes the selection if user will share or not
-    setSelected(bool){
+    setShareSelected(bool){
         this.setState({share : bool})
     }
 
-    onSelectionChange (event) {
-        let {start, end} = event.nativeEvent.selection;
+    onSelectionChange(event) {
+        let { start, end } = event.nativeEvent.selection;
         let userRole = this.state.grouplist[this.state.selectedGroupIndex].user_role;
         setTimeout(() => {
             if (start !== end) return;
@@ -225,7 +227,6 @@ class NewPost extends Component {
                 title: "Attach image"
             }, buttonIndex => {
                 if (buttonIndex == 0) {
-                    LOG('0', ImagePicker);
                     ImagePicker.openCamera({
                         cropping: true,
                         includeBase64: true
@@ -235,7 +236,6 @@ class NewPost extends Component {
                 }
 
                 if (buttonIndex == 1) {
-                    LOG('1'), ImagePicker;
                     ImagePicker.openPicker({
                         cropping: true,
                         includeBase64: true
@@ -265,7 +265,7 @@ class NewPost extends Component {
                         </Button>
                     </Right>
                 </Header>
-                <ScrollView>
+                <ScrollView scrollEnabled={!this.state.showCommunity} keyboardShouldPersistTaps={'handled'} >
                     <View style={styles.main_content}>
                         <List>
                             <ListItem style={styles.community_container} onPress={() => this.toggleCommunity()}>
@@ -289,16 +289,16 @@ class NewPost extends Component {
 
                     {
                         this.state.displaySuggestionBox && this.state.suggestionList.length > 0
-                        ? <ScrollView style={{position: 'absolute', top: 20, zIndex: 3}}>
+                        ? <ScrollView style={{position: 'absolute', top: 20, zIndex: 3}} keyboardShouldPersistTaps="always"  >
                             <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
                         </ScrollView>
                         : <ScrollView />
                     }
 
-                    <ScrollView style={{marginTop: 0}}>
+                    <ScrollView style={{marginTop: 0}}  >
                         <TextInput
                             maxLength={POST_MAX_LENGTH}
-                            
+                            ref={(r) => this.postInputRef = r}
                             onSelectionChange={this.onSelectionChange}
                             placeholderTextColor='rgba(0,0,0,0.1)'
                             style={styles.textarea}
@@ -308,23 +308,23 @@ class NewPost extends Component {
                             onChangeText={(text) => this.changeContent(text)}
                         />
                     </ScrollView>
+                    <Button transparent style={{ marginBottom: 8, height: 60 }} onPress={this.attachImage}>
+                            {
+                                this.state.image ?
+                                    <View style={{ flexDirection: 'row', width: 100, height: 60, alignItems: 'center', justifyContent: 'center' }}>
+                                        <Image source={{ uri: `data:image/png;base64,${this.state.image}` }} resizeMode="cover" style={{ width: 90, height: 50 }} />
+                                        <View style={styles.deleteIconContainer}>
+                                            <Icon name="md-close-circle" style={styles.deleteIcon} />
+                                        </View>
+                                    </View>
+                                    :
+                                    <Image source={require("img/upload_image.png")} resizeMode="contain" style={{ width: 100, height: 60, tintColor: 'gray' }} />
+                            }
+                        </Button>
                     <ShareFloatingAction 
-                        cb={() => this.setSelected(!this.state.share)}
-                        isSelected={() => this.isSelected()}
+                        onPress={() => this.setShareSelected(!this.state.share)}
+                        isSelected={() => this.isShareSelected()}
                     />
-
-                        {/* <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
-                        <Textarea
-                            maxLength={POST_MAX_LENGTH}
-                            autoFocus
-                            onSelectionChange={this.onSelectionChange}
-                            placeholderTextColor='rgba(0,0,0,0.1)'
-                            style={styles.textarea}
-                            placeholder={this.placeholderTitle}
-                            value={this.state.content}
-                            onChangeText={(text) => this.changeContent(text)}
-                        /> */}
-
                         {
                             this.state.showCommunity &&
                             <CommunityView
@@ -334,19 +334,6 @@ class NewPost extends Component {
                         }
                     </View>
                 </ScrollView>
-                <Button transparent style={{ marginBottom: 8, height: 60 }} onPress={this.attachImage}>
-                    {
-                        this.state.image ?
-                            <View style={{ flexDirection: 'row', width: 100, height: 60, alignItems: 'center', justifyContent: 'center' }}>
-                                <Image source={{ uri: `data:image/png;base64,${this.state.image}` }} resizeMode="cover" style={{ width: 90, height: 50 }} />
-                                <View style={styles.deleteIconContainer}>
-                                    <Icon name="md-close-circle" style={styles.deleteIcon} />
-                                </View>
-                            </View>
-                            :
-                            <Image source={require("img/upload_image.png")} resizeMode="contain" style={{ width: 100, height: 60, tintColor: 'gray' }} />
-                    }
-                </Button>
                 <Footer style={{ alignItems: 'center', justifyContent: 'space-between', backgroundColor: PLColors.main, paddingLeft: 10, paddingRight: 10 }}>
                     {this.state.posts_remaining
                         ? <Label style={{ color: 'white', fontSize: 10 }}>

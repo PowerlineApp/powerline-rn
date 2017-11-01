@@ -18,7 +18,7 @@ class SharefloatingAction extends Component {
                 }
                 onPressItem={
                     () => {
-                        this.props.cb()
+                        this.props.onPress()
                     }
                 }
                 buttonColor={this.props.isSelected() ? '#71c9f1' : '#ccc'}

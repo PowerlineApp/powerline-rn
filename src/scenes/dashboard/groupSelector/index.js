@@ -97,7 +97,7 @@ class GroupSelector extends Component {
             let group = this.props.groupList.find(group => group.official_name === this.props.town)
             console.log('Town', group)
             return (
-            <ListItem icon style={{ paddingVertical: 5 }} onPress={() => this.goToGroupFeed(group.id, group.official_name, group.avatar_file_path, group.conversation_view_limit)} >
+            <ListItem icon style={{ paddingVertical: 5 }} onPress={() => this.goToGroupFeed(group)} >
                     <Left>
                         <Button style={styles.iconButton}>
                             <Icon active name="pin" style={styles.icon} />
@@ -119,7 +119,7 @@ class GroupSelector extends Component {
             let group = this.props.groupList.find(group => group.official_name === this.props.state)
             console.log('State', group)
             return (
-                    <ListItem icon style={{ paddingVertical: 5 }} onPress={() => this.goToGroupFeed(group.id, group.official_name, group.avatar_file_path, group.conversation_view_limit)} >
+                    <ListItem icon style={{ paddingVertical: 5 }} onPress={() => this.goToGroupFeed(group)} >
                     <Left>
                         <Button style={styles.iconButton}>
                             <Icon active name="pin" style={styles.icon} />
@@ -140,7 +140,7 @@ class GroupSelector extends Component {
             let group = this.props.groupList.find(group => group.official_name === this.props.country)
             console.log('Country', group)
             return (
-                <ListItem icon style={{ paddingVertical: 5 }} onPress={() => this.goToGroupFeed(group.id, group.official_name, group.avatar_file_path, group.conversation_view_limit)} >
+                <ListItem icon style={{ paddingVertical: 5 }} onPress={() => this.goToGroupFeed(group)} >
                     <Left>
                         <Button style={styles.iconButton}>
                             <Icon active name="pin" style={styles.icon} />
@@ -158,7 +158,7 @@ class GroupSelector extends Component {
 
     renderGroupItem(group){
         return (
-            <ListItem avatar style={{ paddingVertical: 5 }} onPress={() => this.goToGroupFeed(group.id, group.official_name, group.avatar_file_path, group.conversation_view_limit)} badge>                                
+            <ListItem avatar style={{ paddingVertical: 5 }} onPress={() => this.goToGroupFeed(group)} badge>                                
                 <Left style={{position: 'relative'}}>                                
                     <Thumbnail small source={group.avatar_file_path ? { uri: group.avatar_file_path+'&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} style={styles.thumbnail} />
                     {group.priority_item_count!=0?
@@ -177,12 +177,13 @@ class GroupSelector extends Component {
     //Selecting this should load the appropriate/selected Group Feed into the Newsfeed tab
     //Depending on group, "Newsfeed View" will display or "Conversation View" will display
     //GH45, GH142
-    goToGroupFeed(groupId, groupName, avatar,limit){
-        console.log(groupId, groupName, avatar, limit)     
+    goToGroupFeed(group){
+        let {id, official_name, avatar_file_path, conversation_view_limit, total_members} = group;
+        // console.log(groupId, groupName, avatar, limit)     
         var { dispatch, token } = this.props;
-        dispatch({type: 'SET_GROUP', data: {id: groupId, name: groupName, avatar: avatar, limit: limit}});
+        dispatch({type: 'SET_GROUP', data: {id, name: official_name, avatar: avatar_file_path, limit: conversation_view_limit, totalMembers: total_members, conversationView: total_members < conversation_view_limit}});
         
-        dispatch(loadActivities(token, 0, 20, groupId));
+        dispatch(loadActivities(token, 0, 20, id));
         Actions.pop();        
         
     }
