@@ -38,9 +38,8 @@ async function votePost(token: string, postId: string, option: string) {
                 option: option,
             })
         });
-        // console.log('res ==>', response);
         let responseJson = await response.json();
-        if (responseJson.status === 200) {
+        if (response.status === 200) {
             if (option === 'upvote') {
                 showToast('Upvoted');
             }

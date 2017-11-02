@@ -28,7 +28,7 @@ class FeedFooter extends Component {
     }
 
     // changes the upvote/downvote color to indicate selection, sets the upvote/downvote number before the response comes. if the requisition fails, undo all
-    async vote (item, option) {
+    async vote (item, option, cb) {
         // uses lodash.cloneDeep to avoid keeping references
         let originalItem = _.cloneDeep(this.state.item);
         let newItem = _.cloneDeep(this.state.item);
@@ -108,7 +108,7 @@ class FeedFooter extends Component {
         try {
             let res2 = await loadActivityByEntityId(token, 'post', item.entity.id);
             // console.log('res2', res2)
-            this.setState({item: res2.payload[0], postingVote: false})
+            this.setState({item: res2.payload[0], postingVote: false});
         } catch (error) {
             // console.warn(error)
             this.setState({item: originalItem, postingVote: false})
@@ -144,7 +144,7 @@ class FeedFooter extends Component {
      * @param {*} item the item to be signed/unsigned
      * @param {*} signed tells us if the item is already signed
      */
-    async sign (item, signed) {
+    async sign (item, signed, cb) {
         let {token} = this.props;
 
         // saving original item to change it back if the sign request fails
@@ -185,6 +185,11 @@ class FeedFooter extends Component {
             // // this.setState({signing: false, item: res})
             // // console.log('error on request => ', error);
         }
+
+        if (res.status === 200) {
+            cb && cb();
+        }
+
         try {
             let res2 = await loadActivityByEntityId(token, entity, item.entity.id);
             // console.log('res2', res2.payload[0])

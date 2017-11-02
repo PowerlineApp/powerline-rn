@@ -954,9 +954,7 @@ class ItemDetail extends Component {
         console.log(this.state.sharing);
         // console.log(this.refs);
         if (this.item === null) {
-            return (
-                <PLOverlayLoader visible={this.state.isLoading} logo />
-            );
+            return null;
         }
         let item = this.item;
         return (

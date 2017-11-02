@@ -124,8 +124,8 @@ class FeedHeader extends Component {
         this.menu && this.menu.close();
     }
 
-    notify(item) {
-        sharePost(this.props.token, item.entity.id);
+    notify(item, cb) {
+        sharePost(this.props.token, item.entity.id, cb);
 
         this.menu && this.menu.close();
     }
@@ -340,7 +340,4 @@ const optionsStyles = {
     }
 };
 
-export default connect(state => ({
-    userId: state.user.id,
-    token: state.user.token,
-}))(FeedHeader);
+export default FeedHeader;
