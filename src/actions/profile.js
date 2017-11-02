@@ -7,10 +7,43 @@ import { getGroupPermissions } from './groups';
 import { Action, ThunkAction } from './types';
 import api from '../utils/api';
 
+// PROFILE SETUP
 async function updateProfileSetup(token: string, id: number, data: object): Promise<Action> {
   LOG('Update Profile API', id, data);
   const response = await api.put(token, `/v2/groups/${id}`, data);
   return response;
+}
+
+// MEMBERSHIP CONTROL
+async function updateMembershipControl(token: string, id: number, control: string, passcode: string): Promise<Action> {
+  LOG('Update Memebership Control API', id);
+  const data = { membership_control: control };
+  if (passcode) data.membership_passcode = passcode;
+
+  return await api.put(token, `/v2/groups/${id}/membership`, data);
+}
+
+async function getMembershipFields(token: string, id: number): Promise<Action> {
+  LOG('Get Memebership Fields API', id);
+  const response = await api.get(token, `/v2/groups/${id}/fields`);
+  return await response.json();
+}
+
+async function addMembershipField(token: string, id: number, value: string): Promise<Action> {
+  LOG('Add Memebership Fields API', id);
+  const response = await api.post(token, `/v2/groups/${id}/fields`, { field_name: value });
+  return await response.json();
+}
+
+async function deleteMembershipField(token: string, id: number): Promise<Action> {
+  LOG('Delete Memebership Fields API', id);
+  return await api.delete(token, `/v2/group-fields/${id}`);
+}
+
+async function updateMembershipField(token: string, id: number, value: string): Promise<Action> {
+  LOG('Update Memebership Fields API', id);
+  const response = await api.put(token, `/v2/group-fields/${id}`, { field_name: value });
+  return await response.json();
 }
 
 // GROUP PERMISSIONS
@@ -114,6 +147,11 @@ async function updateUserContentSettings(token: string, id: number, values: obje
 
 module.exports = {
   updateProfileSetup,
+  updateMembershipControl,
+  getMembershipFields,
+  addMembershipField,
+  deleteMembershipField,
+  updateMembershipField,
   loadGroupPermissions,
   updateGroupPermissions,
   getUserContentSettings,
