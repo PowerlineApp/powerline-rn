@@ -4,9 +4,13 @@
 // https://api-dev.powerli.ne/api-doc#post--api-v2.2-groups-{group}-posts
 
 import React, { Component } from 'react';
-import { TextInput } from 'react-native';
+import { TextInput, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
+
+import RNFetchBlob from 'react-native-fetch-blob'
+const fs = RNFetchBlob.fs
+
 import {
     Container,
     Content,
@@ -51,11 +55,11 @@ class NewPost extends Component {
         super(props);
 
         this.state = {
-            showCommunity: true,
+            showCommunity: false,
             profile: {},
             grouplist: [],
             selectedGroupIndex: -1,
-            content: this.props.data ? this.props.data.value : "",
+            content: '',
             posts_remaining: null,
             displaySuggestionBox: false,
             suggestionSearch: '',
@@ -71,6 +75,9 @@ class NewPost extends Component {
     }
 
     componentDidMount() {
+        // console.log('ONLOAD NEWPOST PROPS', this.props);
+        this.loadSharedData(this.props.data);
+
         var { token } = this.props;
         loadUserData(token).then(data => {
             this.setState({
@@ -88,6 +95,116 @@ class NewPost extends Component {
 
         });
     }
+
+
+    /**
+     * // !!jesse
+     * ignore this, this is some testing code XD, all the magic (that isnt fully happening is at android configs) 
+     */
+    async loadSharedData(data){
+        // if (!data) {
+        //     this.setState({showCommunity: true});
+        //     return;
+        // }
+        console.log(data);
+        if (!data){
+            data = {};
+        }
+        // data.value = 'https://photos.app.goo.gl/3fsbP564ocy4PO402';
+        // data.value = 'https://github.com/wkh237/react-native-fetch-blob';
+        data.value = 'https://lh3.googleusercontent.com/qBiKINNbryqaDoURhTgtJTNZE1Xw0Xd2JNriyfVv_uwhldQ-LNc_zTufv-2AwWViks3QL3ggtT7OHSLod9LltmPinB-4qpRcR1xte1SsTT9vWWDDlRgu5NdDnOBuRp3FufP3p3BBs845xor2bWsnvFnRNDxORZUFPXhURFa5LhQnkqD6gaHs3s1fSNKQ7Lin_ul_6wntQv85XlLaQ_9Y4VHswrO5WqSjeWTKkd1uAxqrLa2vHfHrOIawjOjZ95lclccCj5X2-bxuCmWFzFzRFjTDGQnQxvYMFRANI6kdXL9nGe_HifwRLPQh0SK5kKfRH7aMel_1zts3fr3OzTYtcsfbU3Q9VEXtuD097uq8YbAhsMTTMPoesZUjQYit4GBAhsRbpCEaB62oFgKWkd9MNerDwyROOv5BAbk5trRFelWHqxyk5iK35crJAhbZSaHLT1GebIl5u9S_I69KA_K2zWb6xoK6sPwNFAeTBAQcnazYdW4BdEYcbJZpLyIf_a3feRGPzQOhaUOxv8zNZcXQTNGL4SKPbk61w7kB5uAzVyUHKQhQsgWb_7HsbaPuY81Ozg4MhVjig4LS_NZdX0EjdjOoaZYCsf44l5z2VXO62cyBjBEje_d2SX97ziusUJ9bmz0uAGJMPUGBo2iAk2ihMrZeTIog9sxOvn0=s250-no';
+        let dirs = RNFetchBlob.fs.dirs
+        console.log(dirs);
+        
+        let path2 = '/powerline/shared/' + new Date();
+        let res = await RNFetchBlob.fetch('GET', data.value);
+        console.log(res);
+
+        return;
+
+
+
+        let blob = await res.blob();
+        let path = await res.path()
+        console.log('path', path, 'blob', blob);
+        
+        let r = await fs.readFile(path, "base64");
+        // await fs.writeFile('/oi', r, )
+        try {
+            
+            let img = await ImagePicker.openCropper({
+                path: Platform.OS === 'android' ? 'file://' + res.path() : '' + res.path()
+                // width: 300,
+                // height: 300
+            })
+            console.log(img);
+            console.log('file readen: ', r);
+        } catch (error) {
+            
+            console.log('error', error)
+        }        
+            // console.log(mime)
+
+            // let path = resp.path();
+            // fs.scanFile([{path: resp.path(), mime: 'image/png'}])
+            
+            
+            
+            // .then((r) => {
+            //     console.log('scanned', r);
+            // }).catch(e => {
+            //     console.log('hehe. faio');
+            //     this.setState({content: data ? data.value : ''});
+            //     this.setState({showCommunity: true})
+            // })
+
+            // fs.readFile('file://' + path, "base64").then(r => {
+            //     console.log('r', r);
+            // })
+
+            // the image is now dowloaded to device's storage
+            // console.log(resp.rawResp());
+            // console.log('resp content type => ', resp.respInfo.headers['content-type'])
+            // console.log(resp.info())
+            // imagePath = resp.path()
+            // console.log(imagePath)
+            // // resp.readFile('base64').then(b64 => {
+
+            // //     // if ()
+            // //     console.log('b64 data', b64)
+            // // })
+
+            // // return fs.unlink(imagePath)
+            // return ImagePicker.openCropper({
+            //     path: Platform.OS === 'android' ? 'file://' + resp.path() : resp.path()
+            // }).then(image => {
+            //     console.log(image);
+            //     // return resp.readFile('base64')
+            //     // }).then((base64Data) => {
+            //         // console.log('seems to have loaded the b64... ', base64Data);
+                    
+            //         // here's base64 encoded image
+            //         // let b64 = `data:image/png;base64,` + base64Data;
+            //         // type = 'image/png'; 
+            //         this.setState({showCommunity: true})
+                    
+            //         // return fs.unlink(imagePath)
+
+            // }).catch(e => {
+            //     console.log(e)
+            // });
+        // }).catch(e => {
+        //     // alert('Failed to load image');
+        //     console.log('Failed to load image... maybe it isnt a image? ');
+        //     this.setState({content: data ? data.value : ''});
+        //     this.setState({showCommunity: true})
+            
+        //     console.log(e);
+        //     // this.setState({sharing: false}) 
+        // })
+
+    }
+
 
     toggleCommunity() {
         this.setState({
@@ -238,6 +355,8 @@ class NewPost extends Component {
                         cropping: true,
                         includeBase64: true
                     }).then(image => {
+                        console.log(image);
+                        
                         this.setState({ image: image.data });
                     });
                 }

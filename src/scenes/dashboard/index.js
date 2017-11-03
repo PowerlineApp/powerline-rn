@@ -157,7 +157,9 @@ class Home extends Component {
             this.loadCurrentUserProfile();
         }
 
+        // !!jesse -> this is where the share data arrives
         ShareExtension.data().then((data) => {
+            console.log('SHARE EXTENSION DATA: ', data); // here we can see what's coming. for fotos, we want something like file://....
             if (data.type != "" && data.value != "") {
                 Actions.newpost({ data: data });
             }
