@@ -76,73 +76,80 @@ class NewPost extends Component {
 
     componentDidMount() {
         // console.log('ONLOAD NEWPOST PROPS', this.props);
-        this.loadSharedData(this.props.data);
-
+        
         var { token } = this.props;
         loadUserData(token).then(data => {
             this.setState({
                 profile: data
             });
         }).catch(err => {
-
+            
         });
-
+        
         getGroups(token).then(ret => {
             this.setState({
                 grouplist: ret.payload
             });
         }).catch(err => {
-
+            
         });
+        // this.attachImage();
+        this.loadSharedData(this.props.data);
     }
 
 
-    /**
-     * // !!jesse
-     * ignore this, this is some testing code XD, all the magic (that isnt fully happening is at android configs) 
-     */
+
     async loadSharedData(data){
+        // return this.attachImage();
+        // if (!data) return;
         // if (!data) {
         //     this.setState({showCommunity: true});
         //     return;
         // }
-        console.log(data);
-        if (!data){
-            data = {};
-        }
-        // data.value = 'https://photos.app.goo.gl/3fsbP564ocy4PO402';
-        // data.value = 'https://github.com/wkh237/react-native-fetch-blob';
-        data.value = 'https://lh3.googleusercontent.com/qBiKINNbryqaDoURhTgtJTNZE1Xw0Xd2JNriyfVv_uwhldQ-LNc_zTufv-2AwWViks3QL3ggtT7OHSLod9LltmPinB-4qpRcR1xte1SsTT9vWWDDlRgu5NdDnOBuRp3FufP3p3BBs845xor2bWsnvFnRNDxORZUFPXhURFa5LhQnkqD6gaHs3s1fSNKQ7Lin_ul_6wntQv85XlLaQ_9Y4VHswrO5WqSjeWTKkd1uAxqrLa2vHfHrOIawjOjZ95lclccCj5X2-bxuCmWFzFzRFjTDGQnQxvYMFRANI6kdXL9nGe_HifwRLPQh0SK5kKfRH7aMel_1zts3fr3OzTYtcsfbU3Q9VEXtuD097uq8YbAhsMTTMPoesZUjQYit4GBAhsRbpCEaB62oFgKWkd9MNerDwyROOv5BAbk5trRFelWHqxyk5iK35crJAhbZSaHLT1GebIl5u9S_I69KA_K2zWb6xoK6sPwNFAeTBAQcnazYdW4BdEYcbJZpLyIf_a3feRGPzQOhaUOxv8zNZcXQTNGL4SKPbk61w7kB5uAzVyUHKQhQsgWb_7HsbaPuY81Ozg4MhVjig4LS_NZdX0EjdjOoaZYCsf44l5z2VXO62cyBjBEje_d2SX97ziusUJ9bmz0uAGJMPUGBo2iAk2ihMrZeTIog9sxOvn0=s250-no';
-        let dirs = RNFetchBlob.fs.dirs
-        console.log(dirs);
-        
-        let path2 = '/powerline/shared/' + new Date();
-        let res = await RNFetchBlob.fetch('GET', data.value);
-        console.log(res);
-
-        return;
+        // if (data.type.split('/')[0] !== 'image') {
+        //     this.setState({content: data.value})
+        //     this.setState({showCommunity: true})
+        //     return;
+        // }
+        // this.setState({image : data})
+        // console.log('111111')
+        let r = await fs.readFile(data.value, "base64");
+        console.log(r);
+        this.setState({image: r});
 
 
 
-        let blob = await res.blob();
-        let path = await res.path()
-        console.log('path', path, 'blob', blob);
-        
-        let r = await fs.readFile(path, "base64");
-        // await fs.writeFile('/oi', r, )
-        try {
+        // ImagePicker.openCropper({path: data ? data.value : 'file:///storage/emulated/0/Download/unnamed.png', includeBase64: true, width: 300, height: 300}).then(img => {
+        //     console.log('IMAGEM', img)
+        //     console.log('222')
+        //     this.setState({image: img.data})    
+        // })
+        //     console.log('img loaded', img)
+        //     // this.setState({showCommunity: true})
+        //     this.setState({image: img.data})
+        //     console.log('loaded image')
+        // }).catch(e => {
+        //     console.log('error', e)
+        //     // this.setState({showCommunity: true})
+        //     console.log(e);
+        // })
+
+
+// let r = await fs.readFile(path, "base64");
+        // // await fs.writeFile('/oi', r, )
+        // try {
             
-            let img = await ImagePicker.openCropper({
-                path: Platform.OS === 'android' ? 'file://' + res.path() : '' + res.path()
-                // width: 300,
-                // height: 300
-            })
-            console.log(img);
-            console.log('file readen: ', r);
-        } catch (error) {
+        //     let img = await ImagePicker.openCropper({
+        //         path: 
+        //         // width: 300,
+        //         // height: 300
+        //     })
+        //     console.log(img);
+        //     console.log('file readen: ', r);
+        // } catch (error) {
             
-            console.log('error', error)
-        }        
+        //     console.log('error', error)
+        // }        
             // console.log(mime)
 
             // let path = resp.path();
@@ -202,6 +209,9 @@ class NewPost extends Component {
         //     console.log(e);
         //     // this.setState({sharing: false}) 
         // })
+
+
+
 
     }
 
@@ -423,7 +433,7 @@ class NewPost extends Component {
                                 onChangeText={(text) => this.changeContent(text)}
                             />
                         </ScrollView>
-                        <Button transparent style={{ marginBottom: 8, height: 60 }} onPress={this.attachImage}>
+                        <Button transparent style={{ marginBottom: 8, height: 60 }} onPress={() => this.loadSharedData(this.props.data)}>
                             {
                                 this.state.image ?
                                     <View style={{ flexDirection: 'row', width: 100, height: 60, alignItems: 'center', justifyContent: 'center' }}>

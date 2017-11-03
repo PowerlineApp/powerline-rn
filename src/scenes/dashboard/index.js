@@ -138,32 +138,25 @@ class Home extends Component {
 
     componentWillMount() {
         const { props: { profile, token, dispatch } } = this;
-
+        
         OneSignal.configure();
-
+        
         // When user logs in, the device subscription is set to True to allow for notifications. If false, device cannot receive notifications
         OneSignal.setSubscription(true);
         OneSignal.enableSound(true);
         OneSignal.enableVibrate(true);
-
+        
         OneSignal.addEventListener('ids', this.onIds);
-
+        
         OneSignal.addEventListener('opened', this.onOpened);
 
         OneSignal.addEventListener('received', this.onReceived);
         OneSignal.addEventListener('registered', this.onRegistered);
-
+        
         if (!profile) {
             this.loadCurrentUserProfile();
         }
 
-        // !!jesse -> this is where the share data arrives
-        ShareExtension.data().then((data) => {
-            console.log('SHARE EXTENSION DATA: ', data); // here we can see what's coming. for fotos, we want something like file://....
-            if (data.type != "" && data.value != "") {
-                Actions.newpost({ data: data });
-            }
-        });
     }
 
     componentDidMount() {
@@ -176,6 +169,13 @@ class Home extends Component {
                     type: 'SET_NEWSFEED_COUNT',
                     count: data.payload.reduce((a, b) => a += b.priority_item_count, 0),
                 }]);
+            });
+
+            ShareExtension.data().then((data) => {
+                console.log('SHARE EXTENSION DATA: ', data);
+                if (data.type != "" && data.value != "") {
+                        Actions.newpost({ data: data });
+                }
             });
     }
 

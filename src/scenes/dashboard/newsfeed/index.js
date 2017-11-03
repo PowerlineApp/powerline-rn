@@ -252,6 +252,8 @@ class Newsfeed extends Component {
          */
         let conversationView = false;
 
+        console.log('newsfeed render')
+
         return (
             <View style={styles.container}>
                     {    this.props.savedGroup && this.props.savedGroup.group != 'all' &&
