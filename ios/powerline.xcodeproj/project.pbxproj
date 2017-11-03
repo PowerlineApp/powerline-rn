@@ -39,6 +39,14 @@
 		2DCD954D1E0B4F2C00145EB5 /* PowerlineTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* PowerlineTests.m */; };
 		4E2A46B8E38C48D19D4DDF20 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 679AC41A5A624C9AAB7A8054 /* FBSDKLoginKit.framework */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
+		6F24D9251FAD1B70002BF413 /* libimageCropPicker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F46832D1FA8AE5400E4F9E9 /* libimageCropPicker.a */; };
+		6F24D94A1FAD1BDA002BF413 /* libBVLinearGradient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EB519C0E1EC94E3E001C8D63 /* libBVLinearGradient.a */; };
+		6F24D94B1FAD1BFC002BF413 /* RSKImageCropper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F24D94C1FAD1BFC002BF413 /* RSKImageCropper.framework */; };
+		6F24D94D1FAD1CEB002BF413 /* libRNFetchBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FCF02531FA54D1300184F4D /* libRNFetchBlob.a */; };
+		6F24D94E1FAD1F41002BF413 /* libRCTYouTube.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D13466E1EE9A97C005FE7BE /* libRCTYouTube.a */; };
+		6F24D94F1FAD2218002BF413 /* libRNShare.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FCF028C1FA54E4800184F4D /* libRNShare.a */; };
+		6F24D9501FAD22A6002BF413 /* libRNDeviceInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C8BC8EAF1F910AB3000589B6 /* libRNDeviceInfo.a */; };
+		6F24D9511FAD22C4002BF413 /* libRCTOneSignal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C8BC8E681F910871000589B6 /* libRCTOneSignal.a */; };
 		6F338CE51FACB6A700010FBC /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6F338CE31FACB6A700010FBC /* MainInterface.storyboard */; };
 		6F338CE91FACB6A700010FBC /* PowerlineShare.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 6F338CDE1FACB6A600010FBC /* PowerlineShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		6F338D131FACB70300010FBC /* PowerlineShare.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F338D121FACB70300010FBC /* PowerlineShare.m */; };
@@ -455,6 +463,7 @@
 		6751D5724208427CBADC9E19 /* Roboto_medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto_medium.ttf; path = "../node_modules/native-base/Fonts/Roboto_medium.ttf"; sourceTree = "<group>"; };
 		679AC41A5A624C9AAB7A8054 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = FBSDKLoginKit.framework; path = ./ios/Frameworks/FBSDKLoginKit.framework; sourceTree = "<group>"; };
 		6E0A7B71CE864263971B3BD0 /* libRNFetchBlob.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNFetchBlob.a; sourceTree = "<group>"; };
+		6F24D94C1FAD1BFC002BF413 /* RSKImageCropper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSKImageCropper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6F338CDE1FACB6A600010FBC /* PowerlineShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = PowerlineShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		6F338CE41FACB6A700010FBC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		6F338CE61FACB6A700010FBC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -616,7 +625,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6FA439D01FACC506003D94E9 /* libReactNativeShareExtension.a in Frameworks */,
+				6F24D9251FAD1B70002BF413 /* libimageCropPicker.a in Frameworks */,
+				6F24D9511FAD22C4002BF413 /* libRCTOneSignal.a in Frameworks */,
+				6F24D9501FAD22A6002BF413 /* libRNDeviceInfo.a in Frameworks */,
+				6F24D94F1FAD2218002BF413 /* libRNShare.a in Frameworks */,
+				6F24D94E1FAD1F41002BF413 /* libRCTYouTube.a in Frameworks */,
+				6F24D94D1FAD1CEB002BF413 /* libRNFetchBlob.a in Frameworks */,
+				6F24D94B1FAD1BFC002BF413 /* RSKImageCropper.framework in Frameworks */,
+				6F24D94A1FAD1BDA002BF413 /* libBVLinearGradient.a in Frameworks */,
 				6FA439C81FACC30A003D94E9 /* libRCTNetwork.a in Frameworks */,
 				6FA439C71FACC2FE003D94E9 /* libReact.a in Frameworks */,
 				6FA439C61FACC2D8003D94E9 /* libRCTVibration.a in Frameworks */,
@@ -627,6 +643,7 @@
 				6FA439C01FACC29F003D94E9 /* libRCTImage.a in Frameworks */,
 				6FA439BF1FACC29C003D94E9 /* libRCTText.a in Frameworks */,
 				6FA439BD1FACC275003D94E9 /* libRCTActionSheet.a in Frameworks */,
+				6FA439D01FACC506003D94E9 /* libReactNativeShareExtension.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -798,6 +815,7 @@
 		67BC7E46E199A3175E28B8B6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6F24D94C1FAD1BFC002BF413 /* RSKImageCropper.framework */,
 				EBAF1A3B1ED288FD00C459BF /* Bolts.framework */,
 				F7120E3C68FB4021A662F9BA /* FBSDKCoreKit.framework */,
 				0DB119BA93734F66BD7BC9C7 /* FBSDKShareKit.framework */,
