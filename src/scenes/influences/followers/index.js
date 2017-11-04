@@ -75,7 +75,7 @@ class Followers extends Component {
   unFollowers(index) {
     var { token } = this.props;
 
-    Alert.alert("Confirm", "Do you want to stop " + this.state.followers[index].username + " from following you ?", [
+    Alert.alert("Confirm", "Do you want to unapprove " + this.state.followers[index].username + " from following you ?", [
       {
         text: 'Cancel'
       },
@@ -132,7 +132,7 @@ class Followers extends Component {
     return (
       <ContentPlaceholder
         empty={followers.length === 0}
-        title="Hmm. Looks like you don't have any followers yet. Create a post!"
+        title="Hmm. Looks like you don't have any followers yet. The best way to gain followers is to create posts!"
         refreshControl={Platform.OS === 'android' &&
           <RefreshControl
             refreshing={false}

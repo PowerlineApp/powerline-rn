@@ -37,8 +37,32 @@
 		2D02E4C81E0B4AEC006451C7 /* libRCTWebSocket-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3E991DF850E9000B6D8A /* libRCTWebSocket-tvOS.a */; };
 		2D02E4C91E0B4AEC006451C7 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3EA31DF850E9000B6D8A /* libReact.a */; };
 		2DCD954D1E0B4F2C00145EB5 /* PowerlineTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* PowerlineTests.m */; };
+		2F4EE3991FADCFC200C15D72 /* libART.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F4EE3741FADCFB400C15D72 /* libART.a */; };
 		4E2A46B8E38C48D19D4DDF20 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 679AC41A5A624C9AAB7A8054 /* FBSDKLoginKit.framework */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
+		6F24D9251FAD1B70002BF413 /* libimageCropPicker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F46832D1FA8AE5400E4F9E9 /* libimageCropPicker.a */; };
+		6F24D94A1FAD1BDA002BF413 /* libBVLinearGradient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EB519C0E1EC94E3E001C8D63 /* libBVLinearGradient.a */; };
+		6F24D94B1FAD1BFC002BF413 /* RSKImageCropper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F24D94C1FAD1BFC002BF413 /* RSKImageCropper.framework */; };
+		6F24D94D1FAD1CEB002BF413 /* libRNFetchBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FCF02531FA54D1300184F4D /* libRNFetchBlob.a */; };
+		6F24D94E1FAD1F41002BF413 /* libRCTYouTube.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D13466E1EE9A97C005FE7BE /* libRCTYouTube.a */; };
+		6F24D94F1FAD2218002BF413 /* libRNShare.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FCF028C1FA54E4800184F4D /* libRNShare.a */; };
+		6F24D9501FAD22A6002BF413 /* libRNDeviceInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C8BC8EAF1F910AB3000589B6 /* libRNDeviceInfo.a */; };
+		6F24D9511FAD22C4002BF413 /* libRCTOneSignal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C8BC8E681F910871000589B6 /* libRCTOneSignal.a */; };
+		6F338CE51FACB6A700010FBC /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6F338CE31FACB6A700010FBC /* MainInterface.storyboard */; };
+		6F338CE91FACB6A700010FBC /* PowerlineShare.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 6F338CDE1FACB6A600010FBC /* PowerlineShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		6F338D131FACB70300010FBC /* PowerlineShare.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F338D121FACB70300010FBC /* PowerlineShare.m */; };
+		6FA439BD1FACC275003D94E9 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
+		6FA439BF1FACC29C003D94E9 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
+		6FA439C01FACC29F003D94E9 /* libRCTImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302C01ABCB91800DB3ED1 /* libRCTImage.a */; };
+		6FA439C11FACC2A4003D94E9 /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C398B91ACF4ADC00677621 /* libRCTLinking.a */; };
+		6FA439C21FACC2A9003D94E9 /* libRCTWebSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139FDEF41B06529B00C62182 /* libRCTWebSocket.a */; };
+		6FA439C31FACC2B3003D94E9 /* libRCTSettings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139105C11AF99BAD00B5F7CC /* libRCTSettings.a */; };
+		6FA439C41FACC2B7003D94E9 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
+		6FA439C61FACC2D8003D94E9 /* libRCTVibration.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302E41ABCB9EE00DB3ED1 /* libRCTVibration.a */; };
+		6FA439C71FACC2FE003D94E9 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
+		6FA439C81FACC30A003D94E9 /* libRCTNetwork.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302DC1ABCB9D200DB3ED1 /* libRCTNetwork.a */; };
+		6FA439D01FACC506003D94E9 /* libReactNativeShareExtension.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FA439CF1FACC418003D94E9 /* libReactNativeShareExtension.a */; };
+		6FC665EC1FACFF5800F9CD94 /* PowerlineShare.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F338D121FACB70300010FBC /* PowerlineShare.m */; };
 		71372995EEB04499BA59BDDE /* libRCTOneSignal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CAB65C18DC1B45A085EAC564 /* libRCTOneSignal.a */; };
 		73A59C0A33CD482D8617E106 /* libRCTYouTube.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E7E0F15DE5634FBB954F3EB1 /* libRCTYouTube.a */; };
 		77F87CA900094F68B746B824 /* libRNShare.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 14BD01AC7C4D4ADEAF743355 /* libRNShare.a */; };
@@ -167,6 +191,13 @@
 			remoteGlobalIDString = 2D02E47A1E0B4A5D006451C7;
 			remoteInfo = "Powerline-tvOS";
 		};
+		2F4EE3731FADCFB400C15D72 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2F4EE36F1FADCFB300C15D72 /* ART.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 0CF68AC11AF0540F00FF9E5C;
+			remoteInfo = ART;
+		};
 		3DAD3E831DF850E9000B6D8A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 00C302BB1ABCB91800DB3ED1 /* RCTImage.xcodeproj */;
@@ -272,6 +303,20 @@
 			remoteGlobalIDString = 2D2A28201D9B03D100D4039D;
 			remoteInfo = "RCTAnimation-tvOS";
 		};
+		6F338CE71FACB6A700010FBC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6F338CDD1FACB6A600010FBC;
+			remoteInfo = PowerlineShare;
+		};
+		6FA439CE1FACC418003D94E9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6FA439CA1FACC418003D94E9 /* ReactNativeShareExtension.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 41B5DE301D0B505800949BD5;
+			remoteInfo = ReactNativeShareExtension;
+		};
 		6FCF02521FA54D1300184F4D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = A1A53D4629C3483EAAD3542B /* RNFetchBlob.xcodeproj */;
@@ -356,16 +401,20 @@
 			remoteGlobalIDString = 3D7682761D8E76B80014119E;
 			remoteInfo = SplashScreen;
 		};
-		EBFAF1731F56579500836CE4 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 39FEE013CE874BB3A034293F /* ReactNativeShareExtension.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 41B5DE301D0B505800949BD5;
-			remoteInfo = ReactNativeShareExtension;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		6F338D111FACB6A700010FBC /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				6F338CE91FACB6A700010FBC /* PowerlineShare.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9F4682D41FA858A600E4F9E9 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -409,10 +458,10 @@
 		2B171889E03B4150B31438CD /* SanFranciscoBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SanFranciscoBold.ttf; path = "../node_modules/native-base/Fonts/SanFranciscoBold.ttf"; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* Powerline-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Powerline-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* Powerline-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Powerline-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2F4EE36F1FADCFB300C15D72 /* ART.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ART.xcodeproj; path = "../node_modules/react-native/Libraries/ART/ART.xcodeproj"; sourceTree = "<group>"; };
 		3297D09A9EE14590BDFEB74B /* Rubik-BlackItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-BlackItalic.ttf"; path = "../node_modules/native-base/Fonts/Rubik-BlackItalic.ttf"; sourceTree = "<group>"; };
 		3445B1FE90D24E6D9425CA20 /* RCTYouTube.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTYouTube.xcodeproj; path = "../node_modules/react-native-youtube/RCTYouTube.xcodeproj"; sourceTree = "<group>"; };
 		361B5099EC7F4E15A8579736 /* Arial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Arial.ttf; path = "../node_modules/native-base/Fonts/Arial.ttf"; sourceTree = "<group>"; };
-		39FEE013CE874BB3A034293F /* ReactNativeShareExtension.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = ReactNativeShareExtension.xcodeproj; path = "../node_modules/react-native-share-extension/ios/ReactNativeShareExtension.xcodeproj"; sourceTree = "<group>"; };
 		3BFAE64593DA4173AC40F3D9 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/native-base/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		3C65379C714A4642A9B50A5D /* SplashScreen.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = SplashScreen.xcodeproj; path = "../node_modules/react-native-splash-screen/ios/SplashScreen.xcodeproj"; sourceTree = "<group>"; };
 		3E8FF5EF6B814A73BBD49BC6 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/native-base/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
@@ -423,6 +472,12 @@
 		6751D5724208427CBADC9E19 /* Roboto_medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto_medium.ttf; path = "../node_modules/native-base/Fonts/Roboto_medium.ttf"; sourceTree = "<group>"; };
 		679AC41A5A624C9AAB7A8054 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = FBSDKLoginKit.framework; path = ./ios/Frameworks/FBSDKLoginKit.framework; sourceTree = "<group>"; };
 		6E0A7B71CE864263971B3BD0 /* libRNFetchBlob.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNFetchBlob.a; sourceTree = "<group>"; };
+		6F24D94C1FAD1BFC002BF413 /* RSKImageCropper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSKImageCropper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6F338CDE1FACB6A600010FBC /* PowerlineShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = PowerlineShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		6F338CE41FACB6A700010FBC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
+		6F338CE61FACB6A700010FBC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6F338D121FACB70300010FBC /* PowerlineShare.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PowerlineShare.m; sourceTree = "<group>"; };
+		6FA439CA1FACC418003D94E9 /* ReactNativeShareExtension.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReactNativeShareExtension.xcodeproj; path = "../node_modules/react-native-share-extension/ios/ReactNativeShareExtension.xcodeproj"; sourceTree = "<group>"; };
 		71629848DDD64885A3F61DB8 /* libSplashScreen.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libSplashScreen.a; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		79E1D35731174EEAAA148565 /* Roboto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto.ttf; path = "../node_modules/native-base/Fonts/Roboto.ttf"; sourceTree = "<group>"; };
@@ -520,6 +575,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2F4EE3991FADCFC200C15D72 /* libART.a in Frameworks */,
 				9F46832E1FA8AE5D00E4F9E9 /* libimageCropPicker.a in Frameworks */,
 				C820D6AA1F86442B00F68FFA /* libRCTFBSDK.a in Frameworks */,
 				EB519C281EC94E57001C8D63 /* libBVLinearGradient.a in Frameworks */,
@@ -572,6 +628,32 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6F338CDB1FACB6A600010FBC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6F24D9251FAD1B70002BF413 /* libimageCropPicker.a in Frameworks */,
+				6F24D9511FAD22C4002BF413 /* libRCTOneSignal.a in Frameworks */,
+				6F24D9501FAD22A6002BF413 /* libRNDeviceInfo.a in Frameworks */,
+				6F24D94F1FAD2218002BF413 /* libRNShare.a in Frameworks */,
+				6F24D94E1FAD1F41002BF413 /* libRCTYouTube.a in Frameworks */,
+				6F24D94D1FAD1CEB002BF413 /* libRNFetchBlob.a in Frameworks */,
+				6F24D94B1FAD1BFC002BF413 /* RSKImageCropper.framework in Frameworks */,
+				6F24D94A1FAD1BDA002BF413 /* libBVLinearGradient.a in Frameworks */,
+				6FA439C81FACC30A003D94E9 /* libRCTNetwork.a in Frameworks */,
+				6FA439C71FACC2FE003D94E9 /* libReact.a in Frameworks */,
+				6FA439C61FACC2D8003D94E9 /* libRCTVibration.a in Frameworks */,
+				6FA439C41FACC2B7003D94E9 /* libRCTGeolocation.a in Frameworks */,
+				6FA439C31FACC2B3003D94E9 /* libRCTSettings.a in Frameworks */,
+				6FA439C21FACC2A9003D94E9 /* libRCTWebSocket.a in Frameworks */,
+				6FA439C11FACC2A4003D94E9 /* libRCTLinking.a in Frameworks */,
+				6FA439C01FACC29F003D94E9 /* libRCTImage.a in Frameworks */,
+				6FA439BF1FACC29C003D94E9 /* libRCTText.a in Frameworks */,
+				6FA439BD1FACC275003D94E9 /* libRCTActionSheet.a in Frameworks */,
+				6FA439D01FACC506003D94E9 /* libReactNativeShareExtension.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -687,6 +769,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		2F4EE3701FADCFB300C15D72 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2F4EE3741FADCFB400C15D72 /* libART.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		5DFBB4D655204255A07169DD /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -743,6 +833,7 @@
 		67BC7E46E199A3175E28B8B6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6F24D94C1FAD1BFC002BF413 /* RSKImageCropper.framework */,
 				EBAF1A3B1ED288FD00C459BF /* Bolts.framework */,
 				F7120E3C68FB4021A662F9BA /* FBSDKCoreKit.framework */,
 				0DB119BA93734F66BD7BC9C7 /* FBSDKShareKit.framework */,
@@ -750,6 +841,24 @@
 				C55EED0F61C980FA94C233F5 /* Pods_Powerline.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		6F338CDF1FACB6A700010FBC /* PowerlineShare */ = {
+			isa = PBXGroup;
+			children = (
+				6F338CE31FACB6A700010FBC /* MainInterface.storyboard */,
+				6F338CE61FACB6A700010FBC /* Info.plist */,
+				6F338D121FACB70300010FBC /* PowerlineShare.m */,
+			);
+			path = PowerlineShare;
+			sourceTree = "<group>";
+		};
+		6FA439CB1FACC418003D94E9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6FA439CF1FACC418003D94E9 /* libReactNativeShareExtension.a */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		6FBEFC0E1F96C48C005E5B8A /* Recovered References */ = {
@@ -803,6 +912,8 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				2F4EE36F1FADCFB300C15D72 /* ART.xcodeproj */,
+				6FA439CA1FACC418003D94E9 /* ReactNativeShareExtension.xcodeproj */,
 				9F4683281FA8AE5300E4F9E9 /* imageCropPicker.xcodeproj */,
 				C820D6A41F86441D00F68FFA /* RCTFBSDK.xcodeproj */,
 				EB519C091EC94E3E001C8D63 /* BVLinearGradient.xcodeproj */,
@@ -819,7 +930,6 @@
 				139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */,
 				3C65379C714A4642A9B50A5D /* SplashScreen.xcodeproj */,
 				3445B1FE90D24E6D9425CA20 /* RCTYouTube.xcodeproj */,
-				39FEE013CE874BB3A034293F /* ReactNativeShareExtension.xcodeproj */,
 				F7817EB8592E46089B65803C /* RCTOneSignal.xcodeproj */,
 				A6E47F93A2264E2EABD255E6 /* RNDeviceInfo.xcodeproj */,
 				A1A53D4629C3483EAAD3542B /* RNFetchBlob.xcodeproj */,
@@ -843,6 +953,7 @@
 				13B07FAE1A68108700A75B9A /* Powerline */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* PowerlineTests */,
+				6F338CDF1FACB6A700010FBC /* PowerlineShare */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				81FB7AC7A826CA81EDF6F494 /* Pods */,
 				67BC7E46E199A3175E28B8B6 /* Frameworks */,
@@ -860,6 +971,7 @@
 				00E356EE1AD99517003FC87E /* PowerlineTests.xctest */,
 				2D02E47B1E0B4A5D006451C7 /* Powerline-tvOS.app */,
 				2D02E4901E0B4A5D006451C7 /* Powerline-tvOSTests.xctest */,
+				6F338CDE1FACB6A600010FBC /* PowerlineShare.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -980,14 +1092,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		EBFAF1541F56579400836CE4 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				EBFAF1741F56579500836CE4 /* libReactNativeShareExtension.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1022,10 +1126,13 @@
 				68F8BA36B91146E359977637 /* [CP] Copy Pods Resources */,
 				EB519AF11EC62479001C8D63 /* ShellScript */,
 				9F4682D41FA858A600E4F9E9 /* Embed Frameworks */,
+				6F338D111FACB6A700010FBC /* Embed App Extensions */,
+				6FC666111FAD000000F9CD94 /* ShellScript */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				6F338CE81FACB6A700010FBC /* PBXTargetDependency */,
 			);
 			name = Powerline;
 			productName = "Hello World";
@@ -1068,6 +1175,24 @@
 			productReference = 2D02E4901E0B4A5D006451C7 /* Powerline-tvOSTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		6F338CDD1FACB6A600010FBC /* PowerlineShare */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6F338D101FACB6A700010FBC /* Build configuration list for PBXNativeTarget "PowerlineShare" */;
+			buildPhases = (
+				6F338CDA1FACB6A600010FBC /* Sources */,
+				6F338CDB1FACB6A600010FBC /* Frameworks */,
+				6F338CDC1FACB6A600010FBC /* Resources */,
+				6FC666131FAD016C00F9CD94 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PowerlineShare;
+			productName = PowerlineShare;
+			productReference = 6F338CDE1FACB6A600010FBC /* PowerlineShare.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1100,9 +1225,14 @@
 						ProvisioningStyle = Automatic;
 						TestTargetID = 2D02E47A1E0B4A5D006451C7;
 					};
+					6F338CDD1FACB6A600010FBC = {
+						CreatedOnToolsVersion = 9.0;
+						DevelopmentTeam = 4875SW8HHW;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Powerline" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "powerline" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -1114,6 +1244,10 @@
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
+				{
+					ProductGroup = 2F4EE3701FADCFB300C15D72 /* Products */;
+					ProjectRef = 2F4EE36F1FADCFB300C15D72 /* ART.xcodeproj */;
+				},
 				{
 					ProductGroup = EB519C0A1EC94E3E001C8D63 /* Products */;
 					ProjectRef = EB519C091EC94E3E001C8D63 /* BVLinearGradient.xcodeproj */;
@@ -1183,8 +1317,8 @@
 					ProjectRef = 146833FF1AC3E56700842450 /* React.xcodeproj */;
 				},
 				{
-					ProductGroup = EBFAF1541F56579400836CE4 /* Products */;
-					ProjectRef = 39FEE013CE874BB3A034293F /* ReactNativeShareExtension.xcodeproj */;
+					ProductGroup = 6FA439CB1FACC418003D94E9 /* Products */;
+					ProjectRef = 6FA439CA1FACC418003D94E9 /* ReactNativeShareExtension.xcodeproj */;
 				},
 				{
 					ProductGroup = C8BC8E8D1F910AB3000589B6 /* Products */;
@@ -1209,6 +1343,7 @@
 				00E356ED1AD99517003FC87E /* PowerlineTests */,
 				2D02E47A1E0B4A5D006451C7 /* Powerline-tvOS */,
 				2D02E48F1E0B4A5D006451C7 /* Powerline-tvOSTests */,
+				6F338CDD1FACB6A600010FBC /* PowerlineShare */,
 			);
 		};
 /* End PBXProject section */
@@ -1268,6 +1403,13 @@
 			fileType = archive.ar;
 			path = libReact.a;
 			remoteRef = 146834031AC3E56700842450 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		2F4EE3741FADCFB400C15D72 /* libART.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libART.a;
+			remoteRef = 2F4EE3731FADCFB400C15D72 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		3DAD3E841DF850E9000B6D8A /* libRCTImage-tvOS.a */ = {
@@ -1375,6 +1517,13 @@
 			remoteRef = 5E9157341DD0AC6500FF2AA8 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		6FA439CF1FACC418003D94E9 /* libReactNativeShareExtension.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libReactNativeShareExtension.a;
+			remoteRef = 6FA439CE1FACC418003D94E9 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		6FCF02531FA54D1300184F4D /* libRNFetchBlob.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1459,13 +1608,6 @@
 			remoteRef = EB7D4A4B1ED279180072EE02 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		EBFAF1741F56579500836CE4 /* libReactNativeShareExtension.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libReactNativeShareExtension.a;
-			remoteRef = EBFAF1731F56579500836CE4 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -1534,6 +1676,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6F338CDC1FACB6A600010FBC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6F338CE51FACB6A700010FBC /* MainInterface.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1607,6 +1757,32 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Powerline/Pods-Powerline-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		6FC666111FAD000000F9CD94 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/packager/react-native-xcode.sh";
+		};
+		6FC666131FAD016C00F9CD94 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/packager/react-native-xcode.sh";
+		};
 		75DA74112BD0CB022953BC2B /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1653,6 +1829,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6FC665EC1FACFF5800F9CD94 /* PowerlineShare.m in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
@@ -1675,6 +1852,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		6F338CDA1FACB6A600010FBC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6F338D131FACB70300010FBC /* PowerlineShare.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -1688,6 +1873,11 @@
 			target = 2D02E47A1E0B4A5D006451C7 /* Powerline-tvOS */;
 			targetProxy = 2D02E4911E0B4A5D006451C7 /* PBXContainerItemProxy */;
 		};
+		6F338CE81FACB6A700010FBC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6F338CDD1FACB6A600010FBC /* PowerlineShare */;
+			targetProxy = 6F338CE71FACB6A700010FBC /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -1698,6 +1888,14 @@
 			);
 			name = LaunchScreen.xib;
 			path = Powerline;
+			sourceTree = "<group>";
+		};
+		6F338CE31FACB6A700010FBC /* MainInterface.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6F338CE41FACB6A700010FBC /* Base */,
+			);
+			name = MainInterface.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -1797,6 +1995,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = Powerline/Powerline.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
@@ -1812,7 +2011,7 @@
 					"$(SRCROOT)/../node_modules/react-native-fbsdk/ios/RCTFBSDK/**",
 					"$(SRCROOT)/../node_modules/react-native-splash-screen/ios",
 					"$(SRCROOT)/../node_modules/react-native-youtube/**",
-					"$(SRCROOT)/../node_modules/react-native-share-extension/ios",
+					"$(SRCROOT)/../node_modules/react-native-share-extension/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-onesignal/ios/RCTOneSignal/**",
 					"$(SRCROOT)/../node_modules/react-native-onesignal/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-device-info/RNDeviceInfo",
@@ -1821,10 +2020,12 @@
 					"$(SRCROOT)/../node_modules/react-native-share/ios",
 				);
 				INFOPLIST_FILE = Powerline/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-lc++",
+					"-ObjC",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.Powerline;
 				PRODUCT_NAME = Powerline;
@@ -1841,6 +2042,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = Powerline/Powerline.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
@@ -1855,7 +2057,7 @@
 					"$(SRCROOT)/../node_modules/react-native-fbsdk/ios/RCTFBSDK/**",
 					"$(SRCROOT)/../node_modules/react-native-splash-screen/ios",
 					"$(SRCROOT)/../node_modules/react-native-youtube/**",
-					"$(SRCROOT)/../node_modules/react-native-share-extension/ios",
+					"$(SRCROOT)/../node_modules/react-native-share-extension/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-onesignal/ios/RCTOneSignal/**",
 					"$(SRCROOT)/../node_modules/react-native-onesignal/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-device-info/RNDeviceInfo",
@@ -1864,10 +2066,12 @@
 					"$(SRCROOT)/../node_modules/react-native-share/ios",
 				);
 				INFOPLIST_FILE = Powerline/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-lc++",
+					"-ObjC",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.Powerline;
 				PRODUCT_NAME = Powerline;
@@ -2043,6 +2247,90 @@
 			};
 			name = Release;
 		};
+		6F338CEA1FACB6A700010FBC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 4875SW8HHW;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../node_modules/react-native/React/**",
+					"$(SRCROOT)/../node_modules/react-native-share-extension/ios/**",
+				);
+				INFOPLIST_FILE = PowerlineShare/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.Powerline.PowerlineShare;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		6F338CEB1FACB6A700010FBC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 4875SW8HHW;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../node_modules/react-native/React/**",
+					"$(SRCROOT)/../node_modules/react-native-share-extension/ios/**",
+				);
+				INFOPLIST_FILE = PowerlineShare/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.Powerline.PowerlineShare;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		83CBBA201A601CBA00E9B192 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2156,6 +2444,15 @@
 			buildConfigurations = (
 				2D02E4991E0B4A5E006451C7 /* Debug */,
 				2D02E49A1E0B4A5E006451C7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6F338D101FACB6A700010FBC /* Build configuration list for PBXNativeTarget "PowerlineShare" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6F338CEA1FACB6A700010FBC /* Debug */,
+				6F338CEB1FACB6A700010FBC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
