@@ -403,7 +403,7 @@ class FeedFooter extends Component {
 
     render () {
         let {item} = this.state;
-        let {showAnalytics} = this.props;
+        let {showAnalytics} = false;
         // console.log('item in state => ', item)
         let footer = null
         switch (item.entity.type) {

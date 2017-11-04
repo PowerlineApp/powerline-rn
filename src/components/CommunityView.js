@@ -78,7 +78,7 @@ const styles = {
         left: 0,
         top: 0,
         width: width,
-        height: (height - (isIOS ? 64 : 56) - 55),
+        height: '100%',
         zIndex: 10,
         paddingLeft: (width - 250)/ 2,
     },
