@@ -125,6 +125,11 @@ class NewPetition extends Component {
     }
 
     createPetition() {
+        if (this.state.petition_remaining <= 0){
+            alert('You do not have any petition left in this group');
+            return;
+        }
+
         if (this.state.selectedGroupIndex == -1) {
             alert('Where do you want to post this? Select a group');
             return;

@@ -52,6 +52,8 @@ class CommentDetail extends Component {
         this.isLoadedAll = false;
         this.nextCursor = null;
         this.rootComment = null;
+        //Jesse adds to bring random placeholder to Reply screen
+        this.placeholderTitle = randomPlaceholder('replie');
     }
 
     componentWillMount() {
@@ -410,7 +412,7 @@ class CommentDetail extends Component {
                                     autoFocus
                                     style={styles.commentInput}
                                     ref={this.onCommentInputRef}
-                                    placeholder="Comment..." 
+                                    placeholder={this.placeholderTitle}
                                     onChangeText={commentText => this.setState({ commentText })}
                                     onSelectionChange={(e) => this.onSelectionChange(e)}
                                 />

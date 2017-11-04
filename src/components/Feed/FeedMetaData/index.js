@@ -8,7 +8,6 @@ class FeedMetaData extends Component {
     render () {
         let {item} = this.props;
         // console.log('================ metadata', item);
-        // This isn't working currently. It is designed to give user preview of any embedded URL in the item.
         // GH13
         if (item.metadata && item.metadata.image) {
             return (
