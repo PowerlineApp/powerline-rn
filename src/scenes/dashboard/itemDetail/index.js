@@ -877,7 +877,7 @@ class ItemDetail extends Component {
                 <FeedMetaData item={item} />
                 <View style={styles.borderContainer} />
                 {this.renderAttachedImage(item)}
-                <FeedFooter item={item} profile={this.props.profile} token={this.props.token} />
+                <FeedFooter item={item} profile={this.props.profile} token={this.props.token} showAnalytics />
             </View>
         );
     }
@@ -888,7 +888,7 @@ class ItemDetail extends Component {
                 <FeedDescription item={item} />
                 <FeedCarousel item={item} />
                 <View style={styles.borderContainer} />
-                <FeedFooter item={item} profile={this.props.profile} token={this.props.token} />
+                <FeedFooter item={item} profile={this.props.profile} token={this.props.token} showAnalytics />
             </Card>
         );
     }

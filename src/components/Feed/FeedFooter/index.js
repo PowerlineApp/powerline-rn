@@ -24,7 +24,7 @@ class FeedFooter extends Component {
         } else if (item.user_petition) {
             type = 'user-petition';
         }
-        Actions[scene]({ entityType: type, entityId: item.entity.id, ...options });
+        Actions[scene]({ entityType: type, entityId: item.entity.id, ...options, postId: item.id });
     }
 
     // changes the upvote/downvote color to indicate selection, sets the upvote/downvote number before the response comes. if the requisition fails, undo all
@@ -158,8 +158,7 @@ class FeedFooter extends Component {
     }
 
     // on this one we need this to control upvote / downvote before a response comes from the API
-    _renderPostFooter () {
-        let {item} = this.state;
+    _renderPostFooter (item, showAnalytics) {
         // console.log(item);
         if (item.zone === 'expired') {
             return (
@@ -203,6 +202,16 @@ class FeedFooter extends Component {
                             <Icon active name='md-arrow-dropdown' style={isVotedDown ? styles.footerIconBlue : styles.footerIcon} />
                             <Label style={isVotedDown ? styles.footerTextBlue : styles.footerText}>Downvote {item.downvotes_count ? item.downvotes_count : 0}</Label>
                         </Button>
+                        {
+                            showAnalytics
+                            ? <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, null, 'analyticsView')} >
+                                <Icon active name='pulse' style={styles.footerIcon} />
+                                <Label style={styles.footerText} >
+                                    {'Analytics '}
+                                </Label>
+                            </Button>
+                            : null
+                        }
                         <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, {commenting: true})} >
                             <Icon active name='ios-undo' style={styles.footerIcon} />
                             <Label style={styles.footerText} >
@@ -216,7 +225,7 @@ class FeedFooter extends Component {
         }
     }
 
-    _renderUserPetitionFooter (item) {
+    _renderUserPetitionFooter (item, showAnalytics) {
         // console.log(item.entity.type ? item.entity.type : '==================');
         // console.log(item);
         // console.log(item.entity.type, item.description)
@@ -244,6 +253,16 @@ class FeedFooter extends Component {
                         <Icon name='md-arrow-dropdown' style={styles.footerIcon} />
                         <Label style={styles.footerText} > { isSigned ? 'Unsign' : 'Sign'}</Label>
                     </Button>
+                    {
+                        showAnalytics
+                        ?<Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, null, 'analyticsView')} >
+                            <Icon active name='pulse' style={styles.footerIcon} />
+                            <Label style={styles.footerText} >
+                                {'Analytics '}
+                            </Label>
+                        </Button>
+                        : null
+                    }
                     <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, {commenting: true})} >
                         <Icon active name='ios-undo' style={styles.footerIcon} />
                         <Label style={styles.footerText} >
@@ -379,53 +398,35 @@ class FeedFooter extends Component {
     }
 
     _renderDefaultFooter (item) {
-        // console.log(item.entity.type ? item.entity.type : '==================');
         return null;
-        // return (
-        //     <CardItem footer style={{ height: 35 }}>
-        //         {/* <Left style={{ justifyContent: 'flex-end' }}>
-        //             <Button iconLeft transparent style={styles.footerButton}>
-        //                 <Icon name='md-arrow-dropup' style={styles.footerIcon} />
-        //                 <Label style={styles.footerText}>Upvote {item.rate_up ? item.rate_up : 0}</Label>
-        //             </Button>
-        //             <Button iconLeft transparent style={styles.footerButton}>
-        //                 <Icon active name='md-arrow-dropdown' style={styles.footerIcon} />
-        //                 <Label style={styles.footerText}>Downvote {item.rate_up ? item.rate_down : 0}</Label>
-        //             </Button>
-        //             <Button iconLeft transparent style={styles.footerButton}>
-        //                 <Icon active name='ios-undo' style={styles.footerIcon} />
-        //                 {this._renderReplyIcon(item, 'post')}
-        //             </Button> */}
-        //         {/* </Left> */}
-        //     </CardItem>
-        // );
     }
 
     render () {
         let {item} = this.state;
+        let {showAnalytics} = this.props;
         // console.log('item in state => ', item)
         let footer = null
         switch (item.entity.type) {
         case 'post':
-            footer =  this._renderPostFooter(item);
+            footer =  this._renderPostFooter(item, showAnalytics);
             break;
         case 'user-petition':
-            footer =  this._renderUserPetitionFooter(item);
+            footer =  this._renderUserPetitionFooter(item, showAnalytics);
             break;
         case 'petition':
-            footer =  this._renderLeaderPetitionFooter(item);
+            footer =  this._renderLeaderPetitionFooter(item, showAnalytics);
             break;
         case 'question':
-            footer =  this._renderQuestionFooter(item);
+            footer =  this._renderQuestionFooter(item, showAnalytics);
             break;
         case 'payment-request':
             footer = null;
             break;
         case 'leader-event':
-            footer =  this._renderLeaderEventFooter(item);
+            footer =  this._renderLeaderEventFooter(item, showAnalytics);
             break;
         case 'leader-news':
-            footer =  this._renderLeadNewsFooter(item);
+            footer =  this._renderLeadNewsFooter(item, showAnalytics);
             break;
         default:
             footer =  null;

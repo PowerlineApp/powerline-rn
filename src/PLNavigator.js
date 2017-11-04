@@ -26,6 +26,7 @@ import { StyleProvider, variables } from 'native-base';
 import TourScene from './scenes/auth/TourScene';
 import Influences from './scenes/influences/';
 import SearchFollowing from './scenes/influences/search/';
+import AnalyticsView from './scenes/dashboard/analyticsView'
 import Representatives from './scenes/representatives/';
 import RepresentatyProfile from './scenes/representatives/profile/';
 import Profile from './scenes/profile/';
@@ -123,6 +124,7 @@ class PLNavigator extends React.Component {
         >
           <RouterWithRedux>
             <Scene key="root">
+              <Scene key="analyticsView" component={AnalyticsView} hideNavBar/>
               <Scene key="home" component={Home} hideNavBar initial />
               <Scene key="groupSelector" component={GroupSelector} />
               <Scene key="takeTour" component={TourScene} />

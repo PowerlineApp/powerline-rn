@@ -134,7 +134,7 @@ class Newsfeed extends Component {
     }
 
     _onEndReached() {
-        console.log('end reached')
+        // console.log('end reached')
         const { props: { page, count } } = this;
         if (this.state.isLoadingTail === false && count > 0) {
             this.loadNextActivities();
@@ -163,7 +163,7 @@ class Newsfeed extends Component {
         }
         var { token, selectedGroup, dispatch } = this.props;
         this.setState({ postingOnGroup: true })
-        console.log(token, selectedGroup, this.state.text)
+        // console.log(token, selectedGroup, this.state.text)
         if (this.state.text != "" || this.state.text.trim() != "") {
             createPostToGroup(token, selectedGroup.group, this.state.text)
                 .then(data => {
@@ -246,7 +246,7 @@ class Newsfeed extends Component {
         // code above is from Thiago, leaving it commented, for now conversationView is decided on hardcode
         // let conversationView = this.props.group != 'all' && this.props.payload.length <= this.props.groupLimit;
 
-        console.log('selected group', this.props.selectedGroup)
+        // console.log('selected group', this.props.selectedGroup)
 
 
         let dataArray = this.state.dataArray;
@@ -262,7 +262,7 @@ class Newsfeed extends Component {
             conversationView = true;
         }
 
-        console.log('newsfeed render')
+        // console.log('newsfeed render')
 
         return (
             <View style={{flex: 1}}>

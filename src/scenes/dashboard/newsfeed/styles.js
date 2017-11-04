@@ -147,8 +147,8 @@ export default {
     },
 
     sendBtn: {
-        height: 56,
-        color: '#ccc'
+        height: 56
+        // color: '#ccc'
     },
 
     CFooterItemInput: {
