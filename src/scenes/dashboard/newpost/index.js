@@ -4,9 +4,13 @@
 // https://api-dev.powerli.ne/api-doc#post--api-v2.2-groups-{group}-posts
 
 import React, { Component } from 'react';
-import {TextInput, Keyboard} from 'react-native';
+import {TextInput, Keyboard, Platform} from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
+
+import RNFetchBlob from 'react-native-fetch-blob'
+const fs = RNFetchBlob.fs
+
 import {
     Container,
     Content,
@@ -51,17 +55,18 @@ class NewPost extends Component {
         super(props);
 
         this.state = {
-            showCommunity: true,
+            showCommunity: false,
             profile: {},
             grouplist: [],
             selectedGroupIndex: -1,
-            content: this.props.data ? this.props.data.value : "",
+            content: '',
             posts_remaining: null,
             displaySuggestionBox: false,
             suggestionSearch: '',
             groupUsers: [],
             image: null,
-            share: false
+            share: false,
+            sharing: !!props.data
         };
 
         this.placeholderTitle = randomPlaceholder('post');
@@ -71,23 +76,47 @@ class NewPost extends Component {
     }
 
     componentDidMount() {
+        // console.log('ONLOAD NEWPOST PROPS', this.props);
+        
         var { token } = this.props;
         loadUserData(token).then(data => {
             this.setState({
                 profile: data
             });
         }).catch(err => {
-
+            
         });
-
+        
         getGroups(token).then(ret => {
             this.setState({
                 grouplist: ret.payload
             });
         }).catch(err => {
-
+            
         });
+        this.loadSharedData(this.props.data);
     }
+
+
+
+    async loadSharedData(data){
+        if (!data) {
+            this.setState({showCommunity: true});
+            return;
+        }
+        if (data.type.split('/')[0] !== 'image' && data.type !== 'jpeg' && data.type !== 'png' && data.type !== 'jpg') {
+            this.setState({showCommunity: true, content: data.value})
+            return;
+        }
+        this.setState({content : JSON.stringify(data)})
+        fs.readFile(data.value, "base64").then(r => {
+            this.setState({image: r, content: '', showCommunity: true});
+        }).catch(e => {
+            showToast('Error ocurred reading file.');
+            this.setState({showCommunity: true})
+        })
+    }
+
 
     toggleCommunity() {
         Keyboard.dismiss()
@@ -121,10 +150,12 @@ class NewPost extends Component {
         var { token } = this.props;
         var groupId = null;
         if (this.state.selectedGroupIndex == -1) {
-            alert('Please select Group.');
+            this.state.sharing ? showToast('Please select Group.')
+            : alert('Please select Group.');
             return;
         } else if (this.state.content == "" || this.state.content.trim() == '') {
-            alert("Please type post content");
+            this.state.sharing ? showToast('Please type post content.')
+            : alert("Please type post content");
             return;
         }
 
@@ -133,10 +164,10 @@ class NewPost extends Component {
         createPostToGroup(token, groupId, this.state.content, this.state.image)
             .then(data => {
                 showToast('Post Successful!');
-                Actions.itemDetail({ entityId: data.id, entityType: 'post', backTo: 'home', share: this.state.share });
+                if (this.state.sharing) this.props.onPost();
+                else Actions.itemDetail({ entityId: data.id, entityType: 'post', backTo: 'home', share: this.state.share });
             })
             .catch(err => {
-
             });
     }
 
@@ -240,6 +271,8 @@ class NewPost extends Component {
                         cropping: true,
                         includeBase64: true
                     }).then(image => {
+                        console.log(image);
+                        
                         this.setState({ image: image.data });
                     });
                 }
@@ -252,9 +285,13 @@ class NewPost extends Component {
             <Container style={styles.container}>
                 <Header style={styles.header}>
                     <Left>
-                        <Button transparent onPress={() => Actions.pop()} style={{ width: 50, height: 50 }}  >
-                            <Icon active name='arrow-back' style={{ color: 'white' }} />
-                        </Button>
+                        {
+                            this.state.sharing
+                            ? null
+                            : <Button transparent onPress={() => Actions.pop()} style={{ width: 50, height: 50 }}  >
+                                <Icon active name='arrow-back' style={{ color: 'white' }} />
+                            </Button>
+                        }
                     </Left>
                     <Body>
                         <Title style={{ color: 'white' }}>New Post</Title>
@@ -282,8 +319,12 @@ class NewPost extends Component {
                                 </Text>
                             </Body>
                             <Right style={styles.communicty_icon_container}>
-                                <Icon name='md-create' style={{color: 'white'}} />
-                            </Right>
+                            {
+                                this.state.sharing 
+                                ? <Text style={{color: '#fff'}}>{'[+]'}</Text>
+                                : <Icon name='md-create' style={{ color: 'white' }} />
+                            }
+                        </Right>
                         </ListItem>
                     </List>
 
