@@ -4,8 +4,13 @@
 // https://api-dev.powerli.ne/api-doc#post--api-v2.2-groups-{group}-posts
 
 import React, { Component } from 'react';
+import {TextInput, Keyboard, Platform} from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
+
+import RNFetchBlob from 'react-native-fetch-blob'
+const fs = RNFetchBlob.fs
+
 import {
     Container,
     Content,
@@ -24,15 +29,19 @@ import {
     List,
     ListItem,
     Thumbnail,
+    ActionSheet,
     Toast
 } from 'native-base';
 const PLColors = require('PLColors');
 import SuggestionBox from '../../../common/suggestionBox';
+import ShareFloatingAction from '../../../components/ShareFloatingAction';
 import styles from './styles';
 import {
     Dimensions,
-    ScrollView
+    ScrollView,
+    Image
 } from 'react-native';
+import ImagePicker from 'react-native-image-crop-picker';
 import { showToast } from 'PLToast';
 
 const { width, height } = Dimensions.get('window');
@@ -42,19 +51,22 @@ import CommunityView from '../../../components/CommunityView';
 const POST_MAX_LENGTH = 5000;
 
 class NewPost extends Component {
-    constructor (props) {
+    constructor(props) {
         super(props);
 
         this.state = {
-            showCommunity: true,
+            showCommunity: false,
             profile: {},
             grouplist: [],
             selectedGroupIndex: -1,
-            content: this.props.data ? this.props.data.value : "",
+            content: '',
             posts_remaining: null,
             displaySuggestionBox: false,
             suggestionSearch: '',
-            groupUsers: []
+            groupUsers: [],
+            image: null,
+            share: false,
+            sharing: !!props.data
         };
 
         this.placeholderTitle = randomPlaceholder('post');
@@ -63,75 +75,103 @@ class NewPost extends Component {
         this.onSelectionChange = this.onSelectionChange.bind(this);
     }
 
-    componentDidMount () {
+    componentDidMount() {
+        // console.log('ONLOAD NEWPOST PROPS', this.props);
+        
         var { token } = this.props;
         loadUserData(token).then(data => {
             this.setState({
                 profile: data
             });
         }).catch(err => {
-
+            
         });
-
+        
         getGroups(token).then(ret => {
             this.setState({
                 grouplist: ret.payload
             });
         }).catch(err => {
-
+            
         });
+        this.loadSharedData(this.props.data);
     }
 
-    toggleCommunity () {
+
+
+    async loadSharedData(data){
+        if (!data) {
+            this.setState({showCommunity: true});
+            return;
+        }
+        if (data.type.split('/')[0] !== 'image' && data.type !== 'jpeg' && data.type !== 'png' && data.type !== 'jpg') {
+            this.setState({showCommunity: true, content: data.value})
+            return;
+        }
+        this.setState({content : JSON.stringify(data)})
+        fs.readFile(data.value, "base64").then(r => {
+            this.setState({image: r, content: '', showCommunity: true});
+        }).catch(e => {
+            showToast('Error ocurred reading file.');
+            this.setState({showCommunity: true})
+        })
+    }
+
+
+    toggleCommunity() {
+        Keyboard.dismiss()
         this.setState({
             showCommunity: !this.state.showCommunity
         });
     }
 
     // If user is looking at "all" newsfeed, then user will be prompted to select group to post to.
-    selectGroupList (index) {
+    selectGroupList(index) {
         this.setState({
             selectedGroupIndex: index,
             showCommunity: false
         });
+        this.postInputRef.focus()
 
         var { token } = this.props;
 
         getPetitionConfig(token, this.state.grouplist[index].id)
-        .then(data => {
-            this.setState({
-                posts_remaining: data.posts_remaining
-            });
-        })
-        .catch(err => {
+            .then(data => {
+                this.setState({
+                    posts_remaining: data.posts_remaining
+                });
+            })
+            .catch(err => {
 
-        });
+            });
     }
 
-    createPost () {
+    createPost() {
         var { token } = this.props;
         var groupId = null;
         if (this.state.selectedGroupIndex == -1) {
-            alert('Please select Group.');
+            this.state.sharing ? showToast('Please select Group.')
+            : alert('Please select Group.');
             return;
         } else if (this.state.content == "" || this.state.content.trim() == '') {
-            alert("Please type post content");
+            this.state.sharing ? showToast('Please type post content.')
+            : alert("Please type post content");
             return;
         }
 
         groupId = this.state.grouplist[this.state.selectedGroupIndex].id;
 
-        createPostToGroup(token, groupId, this.state.content)
-        .then(data => {
-            showToast('Post Successful!');
-            Actions.itemDetail({ entityId: data.id, entityType: 'post', backTo: 'home' });
-        })
-        .catch(err => {
-
-        });
+        createPostToGroup(token, groupId, this.state.content, this.state.image)
+            .then(data => {
+                showToast('Post Successful!');
+                if (this.state.sharing) this.props.onPost();
+                else Actions.itemDetail({ entityId: data.id, entityType: 'post', backTo: 'home', share: this.state.share });
+            })
+            .catch(err => {
+            });
     }
 
-    changeContent (text) {
+    changeContent(text) {
         if (text.length <= POST_MAX_LENGTH) {
             this.setState({
                 content: text
@@ -139,8 +179,8 @@ class NewPost extends Component {
         }
     }
 
-    substitute (mention) {
-        let {init, end} = this.state;
+    substitute(mention) {
+        let { init, end } = this.state;
         let newContent = this.state.content;
         let initialLength = newContent.length;
 
@@ -149,11 +189,22 @@ class NewPost extends Component {
 
         let finalString = firstPart + mention + finalPart;
 
-        this.setState({content: finalString, displaySuggestionBox: false, lockSuggestionPosition: end});
+        this.setState({ content: finalString, displaySuggestionBox: false, lockSuggestionPosition: end });
     }
 
-    onSelectionChange (event) {
-        let {start, end} = event.nativeEvent.selection;
+    // tells us if user will share or not
+    isShareSelected(social){
+        return this.state.share
+        // return false;
+    }
+
+    // changes the selection if user will share or not
+    setShareSelected(bool){
+        this.setState({share : bool})
+    }
+
+    onSelectionChange(event) {
+        let { start, end } = event.nativeEvent.selection;
         let userRole = this.state.grouplist[this.state.selectedGroupIndex].user_role;
         setTimeout(() => {
             if (start !== end) return;
@@ -182,73 +233,139 @@ class NewPost extends Component {
             if (displayMention) {
                 let suggestionSearch = text.slice(i + 1, end);
                 this.updateSuggestionList(this.props.token, suggestionSearch);
-                this.setState({displaySuggestionBox: displayMention, init: i, end: end});
+                this.setState({ displaySuggestionBox: displayMention, init: i, end: end });
             } else {
-                this.setState({suggestionList: [], displaySuggestionBox: false});
+                this.setState({ suggestionList: [], displaySuggestionBox: false });
             }
         }, 100);
     }
 
-    updateSuggestionList (token, suggestionSearch) {
-        this.setState({suggestionList: []});
+    updateSuggestionList(token, suggestionSearch) {
+        this.setState({ suggestionList: [] });
         getUsersByGroup(token, this.state.grouplist[this.state.selectedGroupIndex].id, suggestionSearch).then(data => {
-            this.setState({suggestionList: data.payload});
+            this.setState({ suggestionList: data.payload });
         }).catch(err => {
 
         });
     }
 
-    render () {
-        return (
+    attachImage = () => {
+        if (this.state.image) {
+            this.setState({ image: null });
+        } else {
+            ActionSheet.show({
+                options: ["Take photo", "Choose from gallery"],
+                title: "Attach image"
+            }, buttonIndex => {
+                if (buttonIndex == 0) {
+                    ImagePicker.openCamera({
+                        cropping: true,
+                        includeBase64: true
+                    }).then(image => {
+                        this.setState({ image: image.data });
+                    }).catch(v => alert(JSON.stringify(v)));
+                }
 
+                if (buttonIndex == 1) {
+                    ImagePicker.openPicker({
+                        cropping: true,
+                        includeBase64: true
+                    }).then(image => {
+                        console.log(image);
+                        
+                        this.setState({ image: image.data });
+                    });
+                }
+            });
+        }
+    }
+
+    render() {
+        return (
             <Container style={styles.container}>
                 <Header style={styles.header}>
                     <Left>
-                        <Button transparent onPress={() => Actions.pop()} style={{width: 50, height: 50 }}  >
-                            <Icon active name='arrow-back' style={{color: 'white'}} />
-                        </Button>
+                        {
+                            this.state.sharing
+                            ? null
+                            : <Button transparent onPress={() => Actions.pop()} style={{ width: 50, height: 50 }}  >
+                                <Icon active name='arrow-back' style={{ color: 'white' }} />
+                            </Button>
+                        }
                     </Left>
                     <Body>
-                        <Title>New Post</Title>
+                        <Title style={{ color: 'white' }}>New Post</Title>
                     </Body>
                     <Right>
                         <Button transparent onPress={() => this.createPost()}>
-                            <Label style={{color: 'white'}}>Send</Label>
+                            <Label style={{ color: 'white' }}>Send</Label>
                         </Button>
                     </Right>
                 </Header>
-
-                <ScrollView>
+                <ScrollView scrollEnabled={!this.state.showCommunity} keyboardShouldPersistTaps={'handled'} >
                     <View style={styles.main_content}>
-                    <List>
-                        <ListItem style={styles.community_container} onPress={() => this.toggleCommunity()}>
-                            <View style={styles.avatar_container}>
-                                <View style={styles.avatar_wrapper}>
-                                    <Thumbnail square style={styles.avatar_img} source={{uri: this.state.profile.avatar_file_name + '&w=50&h=50&auto=compress,format,q=95'}} />
+                        <List>
+                            <ListItem style={styles.community_container} onPress={() => this.toggleCommunity()}>
+                                <View style={styles.avatar_container}>
+                                    <View style={styles.avatar_wrapper}>
+                                        <Thumbnail square style={styles.avatar_img} source={{ uri: this.state.profile.avatar_file_name + '&w=50&h=50&auto=compress,format,q=95' }} />
+                                    </View>
+                                    <View style={styles.avatar_subfix} />
                                 </View>
                                 <View style={styles.avatar_subfix} />
-                            </View>
                             <Body style={styles.community_text_container}>
                                 <Text style={{color: 'white'}}>
                                     {this.state.selectedGroupIndex == -1 ? 'Select a community' : this.state.grouplist[this.state.selectedGroupIndex].official_name}
                                 </Text>
                             </Body>
                             <Right style={styles.communicty_icon_container}>
-                                <Icon name='md-create' style={{color: 'white'}} />
-                            </Right>
+                            {
+                                this.state.sharing 
+                                ? <Text style={{color: '#fff'}}>{'[+]'}</Text>
+                                : <Icon name='md-create' style={{ color: 'white' }} />
+                            }
+                        </Right>
                         </ListItem>
                     </List>
-                        <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
-                        <Textarea
+
+                    {
+                        this.state.displaySuggestionBox && this.state.suggestionList.length > 0
+                        ? <ScrollView style={{position: 'absolute', top: 20, zIndex: 3}} keyboardShouldPersistTaps="always"  >
+                            <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
+                        </ScrollView>
+                        : <ScrollView />
+                    }
+
+                    <ScrollView style={{marginTop: 0}}  >
+                        <TextInput
                             maxLength={POST_MAX_LENGTH}
-                            autoFocus
+                            ref={(r) => this.postInputRef = r}
                             onSelectionChange={this.onSelectionChange}
                             placeholderTextColor='rgba(0,0,0,0.1)'
                             style={styles.textarea}
+                            multiline
                             placeholder={this.placeholderTitle}
                             value={this.state.content}
                             onChangeText={(text) => this.changeContent(text)}
                         />
+                    </ScrollView>
+                    <Button transparent style={{ marginBottom: 8, height: 60 }} onPress={this.attachImage}>
+                            {
+                                this.state.image ?
+                                    <View style={{ flexDirection: 'row', width: 100, height: 60, alignItems: 'center', justifyContent: 'center' }}>
+                                        <Image source={{ uri: `data:image/png;base64,${this.state.image}` }} resizeMode="cover" style={{ width: 90, height: 50 }} />
+                                        <View style={styles.deleteIconContainer}>
+                                            <Icon name="md-close-circle" style={styles.deleteIcon} />
+                                        </View>
+                                    </View>
+                                    :
+                                    <Image source={require("img/upload_image.png")} resizeMode="contain" style={{ width: 100, height: 60, tintColor: 'gray' }} />
+                            }
+                        </Button>
+                    <ShareFloatingAction 
+                        onPress={() => this.setShareSelected(!this.state.share)}
+                        isSelected={() => this.isShareSelected()}
+                    />
                         {
                             this.state.showCommunity &&
                             <CommunityView
@@ -258,15 +375,15 @@ class NewPost extends Component {
                         }
                     </View>
                 </ScrollView>
-                <Footer style={{alignItems: 'center', justifyContent: 'space-between', backgroundColor: PLColors.main, paddingLeft: 10, paddingRight: 10}}>
+                <Footer style={{ alignItems: 'center', justifyContent: 'space-between', backgroundColor: PLColors.main, paddingLeft: 10, paddingRight: 10 }}>
                     {this.state.posts_remaining
-                        ? <Label style={{color: 'white', fontSize: 10}}>
-                        You have <Label style={{fontWeight: 'bold'}}>{this.state.posts_remaining}</Label> posts left in this group
+                        ? <Label style={{ color: 'white', fontSize: 10 }}>
+                            You have <Label style={{ fontWeight: 'bold' }}>{this.state.posts_remaining}</Label> posts left in this group
                     </Label>
-                    : <Label />
-                }
+                        : <Label />
+                    }
                     {/* Related: GH 151 */}
-                    <Label style={{color: 'white'}}>
+                    <Label style={{ color: 'white' }}>
                         {
                             (POST_MAX_LENGTH - this.state.content.length)
                         }

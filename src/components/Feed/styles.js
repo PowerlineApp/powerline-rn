@@ -101,7 +101,7 @@ export default {
         alignSelf: 'flex-start'
     },
     descBodyContainer: {
-        alignSelf: 'flex-start'
+        alignSelf: 'flex-start',
     },
     metaContainer: {
         height: metaHeight,

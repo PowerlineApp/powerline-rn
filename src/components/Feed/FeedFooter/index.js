@@ -15,15 +15,16 @@ class FeedFooter extends Component {
         };
     }
 
-    redirect (item, options) {
-        let type = 'poll';
-        if (item.entity.type === 'post') {
-            type = 'post'
-          } else if (item.entity.type === 'user-petition'){
-            type = 'petition' 
-          }
-        // console.log(options);
-        Actions.itemDetail({entityType: type, entityId: item.entity.id, ...options});
+    redirect(item, options, scene = 'itemDetail') {
+        let type;
+        if (item.poll) {
+            type = 'poll';
+        } else if (item.post) {
+            type = 'post';
+        } else if (item.user_petition) {
+            type = 'user-petition';
+        }
+        Actions[scene]({ entityType: type, entityId: item.entity.id, ...options });
     }
 
     // changes the upvote/downvote color to indicate selection, sets the upvote/downvote number before the response comes. if the requisition fails, undo all
@@ -40,7 +41,7 @@ class FeedFooter extends Component {
             return;
         }
         if (this.state.postingVote) {
-            console.log('posting already!')
+            // console.log('posting already!')
             return;
         }
         // uses this state to avoid double clicking, the user is allowed to vote again only when the last request is done
@@ -97,6 +98,7 @@ class FeedFooter extends Component {
             if (undo) {
                 // deletes the option
                 response = await undoVotePost(this.props.token, item.entity.id);
+                return;
             } else {
                 // sets the option
                 response = await votePost(this.props.token, item.entity.id, option);
@@ -105,10 +107,10 @@ class FeedFooter extends Component {
 
         try {
             let res2 = await loadActivityByEntityId(token, 'post', item.entity.id);
-            console.log('res2', res2)
+            // console.log('res2', res2)
             this.setState({item: res2.payload[0], postingVote: false})
         } catch (error) {
-            console.warn(error)
+            // console.warn(error)
             this.setState({item: originalItem, postingVote: false})
         }
 
@@ -151,7 +153,7 @@ class FeedFooter extends Component {
         
         // avoid double tapping until the response comes
         if (this.state.signing) {
-            console.log('signing already')
+            // console.log('signing already')
             return;
         }
         
@@ -169,12 +171,12 @@ class FeedFooter extends Component {
             } else {
                 res = await signUserPetition(token, item.entity.id);
             }
-            console.log('res - peition - trying to sign ?', !signed, res)
+            // console.log('res - peition - trying to sign ?', !signed, res)
         } else {
             // console.log('poll');
 
             res = await signLeaderPetition(token, item.entity.id, signed ? 2 : 1);
-            console.log('res - poll - trying to sign ?', !signed,  res);
+            // console.log('res - poll - trying to sign ?', !signed,  res);
             // if (res) {
             //     // this.setState({signing: false});
             // } else {
@@ -185,17 +187,17 @@ class FeedFooter extends Component {
         }
         try {
             let res2 = await loadActivityByEntityId(token, entity, item.entity.id);
-            console.log('res2', res2.payload[0])
+            // console.log('res2', res2.payload[0])
             this.setState({item: res2.payload[0], signing: false})
         } catch (error) {
-            console.warn(error)
+            // console.warn(error)
             this.setState({item: originalItem, signing: false})
         }
 
 
 
         // loadActivityByEntityId(token, entity, item.entity.id).then(data => {
-        //     console.log(data);
+            // console.log(data);
         //     if (data.payload && data.payload[0]) {
         //         this.setState({signing: false, item: data.payload[0]});
         //     }
@@ -243,7 +245,7 @@ class FeedFooter extends Component {
                     isVotedDown = true;
                 }
             }
-            console.log(item.description, isVotedUp)
+            // console.log(item.description, isVotedUp)
             return (
                 <CardItem footer style={{ height: 35 }}>
                     <Left style={{ justifyContent: 'space-between' }}>
@@ -271,14 +273,14 @@ class FeedFooter extends Component {
     _renderUserPetitionFooter (item) {
         // console.log(item.entity.type ? item.entity.type : '==================');
         // console.log(item);
-        console.log(item.entity.type, item.description)
+        // console.log(item.entity.type, item.description)
         let isSigned = false;     // (item.user_petition.signatures[0] ? item.user_petition.signatures[0].option_id : 2) === 1;
         if (
             item && item.user_petition &&
             item.user_petition.signatures && item.user_petition.signatures[0]
         ) {
             let vote = item.user_petition.signatures[0];
-            console.log('vote', vote);
+            // console.log('vote', vote);
             if (vote.option_id === 1) {
                 isSigned = true;
             }
@@ -288,7 +290,7 @@ class FeedFooter extends Component {
         if (this.state.signing){
             isSigned = !isSigned;
         }
-        console.log('got here, signed ? ', isSigned);
+        // console.log('got here, signed ? ', isSigned);
         return (
             <CardItem footer style={{ height: 35 }}>
                 <Left style={{ justifyContent: 'space-between' }}>
@@ -322,7 +324,7 @@ class FeedFooter extends Component {
             isSigned = !isSigned;
         }
 
-        console.log(item.description, isSigned)
+        // console.log(item.description, isSigned)
         return (
             <CardItem footer style={{ height: 35 }}>
                 <Left style={{ justifyContent: 'space-between' }}>
@@ -431,7 +433,7 @@ class FeedFooter extends Component {
     }
 
     _renderDefaultFooter (item) {
-        console.log(item.entity.type ? item.entity.type : '==================');
+        // console.log(item.entity.type ? item.entity.type : '==================');
         return null;
         // return (
         //     <CardItem footer style={{ height: 35 }}>

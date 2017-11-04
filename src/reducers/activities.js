@@ -24,7 +24,7 @@ const initialState = {
     groupName: '',
     groupAvatar: '',
     groupLimit: 10,
-    savedGroup: {
+    selectedGroup: {
         group: 'all',
         groupName: '',
         groupAvatar: '',
@@ -35,7 +35,7 @@ const initialState = {
 const payloadStack: Array<Object> = [];
 
 function activities(state: State = initialState, action: Action): State {
-    console.log('action(activities):', action);
+    // console.log('action(activities):', action);
     if (action.type === 'LOADED_ACTIVITIES') {
         payloadStack = payloadStack.concat(action.data.payload);
         return {
@@ -45,17 +45,24 @@ function activities(state: State = initialState, action: Action): State {
             totalItems: action.data.totalItems,
             payload: payloadStack,
             count: action.data.payload.length,
-            newsfeedUnreadCount: action.data.newsfeedUnreadCount,
         };
     }
-    
+
     if (action.type === 'RESET_ACTIVITIES') {
+        console.log('RESET_ACTIVITIES', action);
         payloadStack = [];
         return {
             ...initialState,
-            savedGroup: state.savedGroup,
-            newsfeedUnreadCount: state.newsfeedUnreadCount,
+            selectedGroup: state.selectedGroup,
+            // newsfeedUnreadCount: state.newsfeedUnreadCount,
         };
+    }
+
+    if (action.type === 'SET_NEWSFEED_COUNT') {
+        return {
+            ...state,
+            newsfeedUnreadCount: action.count,
+        }
     }
 
     if (action.type === 'LOGGED_OUT') {
@@ -63,24 +70,24 @@ function activities(state: State = initialState, action: Action): State {
         return initialState;
     }
 
-    if(action.type === 'SET_GROUP'){
+    if (action.type === 'SET_GROUP') {
+        console.log('SET_GROUP', action);
         payloadStack = [];
         return {
             ...state,
-            group: action.data.id,
-            groupName: action.data.name,
-            groupAvatar: action.data.avatar,
-            groupLimit: action.data.limit,
             payload: [],
-            savedGroup: {
-                group: action.data.id,
-                groupName: action.data.name,
-                groupAvatar: action.data.avatar,
+            selectedGroup: {
+                group: action.data ? action.data.id : null,
+                groupName: action.data ? action.data.name : null,
+                groupAvatar: action.data ? action.data.avatar : null,
+                conversationView: action.data ? action.data.conversationView : null,
+                groupMembers: action.data ? action.data.totalMembers : null,
+                groupLimit: action.data ? action.data.limit : null,
             },
         }
     }
 
-    if(action.type === 'DELETE_ACTIVITIES'){
+    if (action.type === 'DELETE_ACTIVITIES') {
         payloadStack = [];
         return {
             ...state,
@@ -153,8 +160,10 @@ function activities(state: State = initialState, action: Action): State {
     }
 
     if (action.type === 'ACTIVITY_NOTIFICATION_SUBSCRIBE') {
-        const { type, id } = action.data;
-
+        let { type, id } = action.data;
+        if (type === 'user-petition') {
+            type = 'user_petition';
+        }
         payloadStack = state.payload.map(activity => {
             if (activity.id === id) {
                 return {
@@ -175,8 +184,10 @@ function activities(state: State = initialState, action: Action): State {
     }
 
     if (action.type === 'ACTIVITY_NOTIFICATION_UNSUBSCRIBE') {
-        const { type, id } = action.data;
-
+        let { type, id } = action.data;
+        if (type === 'user-petition') {
+            type = 'user_petition';
+        }
         payloadStack = state.payload.map(activity => {
             if (activity.id === id) {
                 return {

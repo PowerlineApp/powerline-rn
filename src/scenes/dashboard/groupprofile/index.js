@@ -229,6 +229,10 @@ class GroupProfile extends Component{
         }
         
     }
+    goToManage() {
+        Actions.managegroup({ group: this.state.data });
+    }
+
     render(){
         return (
             <Container style={styles.container}>
@@ -275,7 +279,7 @@ class GroupProfile extends Component{
                         {this.state.data.joined?
                         <ListItem style={{borderBottomWidth: 0}}>
                             <Body>
-                                <Button block style={{backgroundColor: PLColors.main}}>
+                                <Button block style={{backgroundColor: PLColors.main}} onPress={() => this.goToManage()}>
                                     <Label style={{color: 'white'}}>Manage</Label>
                                 </Button>
                             </Body>

@@ -36,7 +36,7 @@ var styles = StyleSheet.create({
         bottom: 0,
         width: width,
         height: height,
-        resizeMode: 'stretch'
+        resizeMode: 'cover'
     },
     bottomContainer: {
         marginBottom: 5,
@@ -127,14 +127,16 @@ class TourScene extends Component{
 
     render(){
         var {pos} = this.state;
+        let imgs = [<Image source={require('../../assets/1.png')} style={styles.img}/>,
+        <Image source={require('../../assets/2.png')} style={styles.img}/>,
+        <Image source={require('../../assets/3.png')} style={styles.img}/>,
+        <Image source={require('../../assets/4.png')} style={styles.img}/>,
+        <Image source={require('../../assets/5.png')} style={styles.img}/>,
+        <Image source={require('../../assets/6.png')} style={styles.img}/>]
+
         return (
-            <View style={styles.container}>                
-                {pos==0?<Image source={require('../../assets/1.png')} style={styles.img}/>: null}  
-                {pos==1?<Image source={require('../../assets/2.png')} style={styles.img}/>: null}
-                {pos==2?<Image source={require('../../assets/3.png')} style={styles.img}/>: null}
-                {pos==3?<Image source={require('../../assets/4.png')} style={styles.img}/>: null}
-                {pos==4?<Image source={require('../../assets/5.png')} style={styles.img}/>: null}
-                {pos==5?<Image source={require('../../assets/6.png')} style={styles.img}/>: null}
+            <View style={styles.container}>     
+                {imgs[pos]}
                 <View style={styles.bottomContainer}>
                     {
                     pos < 5? 

@@ -36,6 +36,7 @@ import GroupJoin from './scenes/dashboard/groupJoin/';
 import GroupSearch from './scenes/dashboard/grouplist/search/';
 import GroupMembers from './scenes/dashboard/groupmembers/';
 import GroupInvite from './scenes/dashboard/groupinvite/';
+import ManageGroup from './scenes/dashboard/managegroup/';
 import NewPost from './scenes/dashboard/newpost/';
 import NewPetition from './scenes/dashboard/newpetition';
 import Search from './scenes/search/';
@@ -141,7 +142,8 @@ class PLNavigator extends React.Component {
               <Scene key="newpetition" component={NewPetition} />
               <Scene key="search" component={Search}/>
               <Scene key="groupInvite" component={GroupInvite} />
-              {<Scene key="groupJoin" component={GroupJoin} />}
+              <Scene key="groupJoin" component={GroupJoin} />
+              <Scene key="managegroup" component={ManageGroup}/>
             </Scene>
           </RouterWithRedux>
         </Drawer>
