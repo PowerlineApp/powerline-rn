@@ -65,7 +65,8 @@ class NewPost extends Component {
             suggestionSearch: '',
             groupUsers: [],
             image: null,
-            share: false
+            share: false,
+            sharing: !!props.data
         };
 
         this.placeholderTitle = randomPlaceholder('post');
@@ -93,126 +94,27 @@ class NewPost extends Component {
         }).catch(err => {
             
         });
-        // this.attachImage();
         this.loadSharedData(this.props.data);
     }
 
 
 
     async loadSharedData(data){
-        // return this.attachImage();
-        // if (!data) return;
-        // if (!data) {
-        //     this.setState({showCommunity: true});
-        //     return;
-        // }
-        // if (data.type.split('/')[0] !== 'image') {
-        //     this.setState({content: data.value})
-        //     this.setState({showCommunity: true})
-        //     return;
-        // }
-        // this.setState({image : data})
-        // console.log('111111')
-        let r = await fs.readFile(data.value, "base64");
-        console.log(r);
-        this.setState({image: r});
-
-
-
-        // ImagePicker.openCropper({path: data ? data.value : 'file:///storage/emulated/0/Download/unnamed.png', includeBase64: true, width: 300, height: 300}).then(img => {
-        //     console.log('IMAGEM', img)
-        //     console.log('222')
-        //     this.setState({image: img.data})    
-        // })
-        //     console.log('img loaded', img)
-        //     // this.setState({showCommunity: true})
-        //     this.setState({image: img.data})
-        //     console.log('loaded image')
-        // }).catch(e => {
-        //     console.log('error', e)
-        //     // this.setState({showCommunity: true})
-        //     console.log(e);
-        // })
-
-
-// let r = await fs.readFile(path, "base64");
-        // // await fs.writeFile('/oi', r, )
-        // try {
-            
-        //     let img = await ImagePicker.openCropper({
-        //         path: 
-        //         // width: 300,
-        //         // height: 300
-        //     })
-        //     console.log(img);
-        //     console.log('file readen: ', r);
-        // } catch (error) {
-            
-        //     console.log('error', error)
-        // }        
-            // console.log(mime)
-
-            // let path = resp.path();
-            // fs.scanFile([{path: resp.path(), mime: 'image/png'}])
-            
-            
-            
-            // .then((r) => {
-            //     console.log('scanned', r);
-            // }).catch(e => {
-            //     console.log('hehe. faio');
-            //     this.setState({content: data ? data.value : ''});
-            //     this.setState({showCommunity: true})
-            // })
-
-            // fs.readFile('file://' + path, "base64").then(r => {
-            //     console.log('r', r);
-            // })
-
-            // the image is now dowloaded to device's storage
-            // console.log(resp.rawResp());
-            // console.log('resp content type => ', resp.respInfo.headers['content-type'])
-            // console.log(resp.info())
-            // imagePath = resp.path()
-            // console.log(imagePath)
-            // // resp.readFile('base64').then(b64 => {
-
-            // //     // if ()
-            // //     console.log('b64 data', b64)
-            // // })
-
-            // // return fs.unlink(imagePath)
-            // return ImagePicker.openCropper({
-            //     path: Platform.OS === 'android' ? 'file://' + resp.path() : resp.path()
-            // }).then(image => {
-            //     console.log(image);
-            //     // return resp.readFile('base64')
-            //     // }).then((base64Data) => {
-            //         // console.log('seems to have loaded the b64... ', base64Data);
-                    
-            //         // here's base64 encoded image
-            //         // let b64 = `data:image/png;base64,` + base64Data;
-            //         // type = 'image/png'; 
-            //         this.setState({showCommunity: true})
-                    
-            //         // return fs.unlink(imagePath)
-
-            // }).catch(e => {
-            //     console.log(e)
-            // });
-        // }).catch(e => {
-        //     // alert('Failed to load image');
-        //     console.log('Failed to load image... maybe it isnt a image? ');
-        //     this.setState({content: data ? data.value : ''});
-        //     this.setState({showCommunity: true})
-            
-        //     console.log(e);
-        //     // this.setState({sharing: false}) 
-        // })
-
-
-
-
+        if (!data) {
+            this.setState({showCommunity: true});
+            return;
+        }
+        if (data.type.split('/')[0] !== 'image' && data.type !== 'jpeg' && data.type !== 'png' && data.type !== 'jpg') {
+            this.setState({showCommunity: true, content: data.value})
+            return;
+        }
+        this.setState({content : JSON.stringify(data)})
+        fs.readFile(data.value, "base64").then(r => {
+            this.setState({image: r, content: '', showCommunity: true});
+        }).catch(e => {
+            showToast('Error ocurred reading file.');
+            this.setState({showCommunity: true})
+        })
     }
 
 
@@ -246,10 +148,12 @@ class NewPost extends Component {
         var { token } = this.props;
         var groupId = null;
         if (this.state.selectedGroupIndex == -1) {
-            alert('Please select Group.');
+            this.state.sharing ? showToast('Please select Group.')
+            : alert('Please select Group.');
             return;
         } else if (this.state.content == "" || this.state.content.trim() == '') {
-            alert("Please type post content");
+            this.state.sharing ? showToast('Please type post content.')
+            : alert("Please type post content");
             return;
         }
 
@@ -258,10 +162,10 @@ class NewPost extends Component {
         createPostToGroup(token, groupId, this.state.content, this.state.image)
             .then(data => {
                 showToast('Post Successful!');
-                Actions.itemDetail({ entityId: data.id, entityType: 'post', backTo: 'home', share: this.state.share });
+                if (this.state.sharing) this.props.onPost();
+                else Actions.itemDetail({ entityId: data.id, entityType: 'post', backTo: 'home', share: this.state.share });
             })
             .catch(err => {
-
             });
     }
 
@@ -379,9 +283,13 @@ class NewPost extends Component {
             <Container style={styles.container}>
                 <Header style={styles.header}>
                     <Left>
-                        <Button transparent onPress={() => Actions.pop()} style={{ width: 50, height: 50 }}  >
-                            <Icon active name='arrow-back' style={{ color: 'white' }} />
-                        </Button>
+                        {
+                            this.state.sharing
+                            ? null
+                            : <Button transparent onPress={() => Actions.pop()} style={{ width: 50, height: 50 }}  >
+                                <Icon active name='arrow-back' style={{ color: 'white' }} />
+                            </Button>
+                        }
                     </Left>
                     <Body>
                         <Title style={{ color: 'white' }}>New Post</Title>
@@ -408,7 +316,11 @@ class NewPost extends Component {
                                     </Text>
                                 </Body>
                                 <Right style={styles.communicty_icon_container}>
-                                    <Icon name='md-create' style={{ color: 'white' }} />
+                                    {
+                                        this.state.sharing 
+                                        ? <Text style={{color: '#fff'}}>{'[+]'}</Text>
+                                        : <Icon name='md-create' style={{ color: 'white' }} />
+                                    }
                                 </Right>
                             </ListItem>
                         </List>
@@ -433,7 +345,7 @@ class NewPost extends Component {
                                 onChangeText={(text) => this.changeContent(text)}
                             />
                         </ScrollView>
-                        <Button transparent style={{ marginBottom: 8, height: 60 }} onPress={() => this.loadSharedData(this.props.data)}>
+                        <Button transparent style={{ marginBottom: 8, height: 60 }} onPress={() => this.attachImage()}>
                             {
                                 this.state.image ?
                                     <View style={{ flexDirection: 'row', width: 100, height: 60, alignItems: 'center', justifyContent: 'center' }}>

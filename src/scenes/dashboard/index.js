@@ -174,7 +174,7 @@ class Home extends Component {
             ShareExtension.data().then((data) => {
                 console.log('SHARE EXTENSION DATA: ', data);
                 if (data.type != "" && data.value != "") {
-                        Actions.newpost({ data: data });
+                        Actions.newpost({ data: data, sharing: true, onPost: () => ShareExtension.close()});
                 }
             });
     }
