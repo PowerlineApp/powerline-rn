@@ -44,7 +44,7 @@ class FeedDescription extends Component {
     } else if (item.user_petition) {
         imgURL = item.user_petition.image;
     }
-    if (!imgURL) return;
+    if (!imgURL) return null;
 
     if (item.user.follow_status === 'active'){
       blur = '0';
@@ -52,10 +52,10 @@ class FeedDescription extends Component {
       blur = '1000';
     }
     return (
-      <View>
+      <View style={{width: 80, marginRight: 0, justifyContent: 'flex-end', alignItems: 'center', alignSelf: 'flex-end'}} >
         <Thumbnail medium square
-          source={{uri: imgURL +`&w=400&h=400&blur=${blur}&auto=compress,format,q=95`}}
-          />
+            source={{uri: imgURL +`&w=400&h=400&blur=${blur}&auto=compress,format,q=95`}}
+            />
       </View>);
     }
   
@@ -113,9 +113,7 @@ class FeedDescription extends Component {
               </ParsedText>
             </TouchableOpacity>
           </Body>
-          <View style={{width: 80, marginRight: 0, justifyContent: 'flex-end', alignItems: 'center', alignSelf: 'flex-end'}} >
             {this._renderAttachedImage(item)}
-          </View>
         </Left>
       </CardItem>
     );

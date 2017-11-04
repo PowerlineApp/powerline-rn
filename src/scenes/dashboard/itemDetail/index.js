@@ -174,43 +174,10 @@ class ItemDetail extends Component {
 
         // to avoid double clicks, etc
         console.log(this.state.sharing);
-        WARN('aigmentity', entity);
+        // WARN('aigmentity', entity);
         // console.log('sharing... 1');
         if (this.state.sharing) return;
 
-        let isUpvoted = false;
-        if (entity.upvotes_count > 0 || entity.responses_count > 0) {
-            let type = entity.entity.type;
-            if (type === 'user-petition') {
-                type = 'user_petition';
-            }
-
-            let option = 'votes';
-            let id = 'option';
-            if (entity.poll) {
-                option = 'answers';
-            }
-
-            if (entity.user_petition) {
-                option = 'signatures';
-                id = 'option_id';
-            }
-
-            if (
-                entity[type] &&
-                entity[type][option] &&
-                entity[type][option].length > 0 &&
-                entity[type][option][0][id] === 1
-            ) {
-                isUpvoted = true;
-            }
-            
-        }
-        
-        if (!isUpvoted) {
-            alert('User can share only a post he has upvoted.');
-            return;
-        }
         // console.log('sharing... 2');
         this.setState({sharing: true});
 
@@ -222,10 +189,9 @@ class ItemDetail extends Component {
             type = 'user_petition'
         }
 
-        let imgURL; // = 'https://powerline-dev.imgix.net/avatars/592c3ebb3d5ca924524637.36440655?ixlib=php-1.1.0'; // this is a test
-        imgURL = entity[type].facebook_thumbnail; // 404 ??? why? backend problem, maybe?
+        let imgURL = entity[type].facebook_thumbnail;
 
-        console.log(imgURL);
+        // console.log(imgURL);
 
         let imagePath = null
         
@@ -911,7 +877,7 @@ class ItemDetail extends Component {
                 <FeedMetaData item={item} />
                 <View style={styles.borderContainer} />
                 {this.renderAttachedImage(item)}
-                <FeedFooter item={item} profile={this.props.profile} token={this.props.token} />
+                <FeedFooter item={item} profile={this.props.profile} token={this.props.token} showAnalytics />
             </View>
         );
     }
@@ -922,7 +888,7 @@ class ItemDetail extends Component {
                 <FeedDescription item={item} />
                 <FeedCarousel item={item} />
                 <View style={styles.borderContainer} />
-                <FeedFooter item={item} profile={this.props.profile} token={this.props.token} />
+                <FeedFooter item={item} profile={this.props.profile} token={this.props.token} showAnalytics />
             </Card>
         );
     }
@@ -950,8 +916,44 @@ class ItemDetail extends Component {
         }
     }
 
+    renderFloatingActionButton(item){
+        console.log(item)
+        if (item.group.group_type_label !== "local"
+            && item.group.group_type_label !== "state"
+            && item.group.group_type_label !== "country")
+            {
+                return null;
+            }
+
+        return (
+            <FloatingAction
+                actions={
+                    [
+                        {
+                            text: 'this will be overridden',
+                            icon: require('../../../assets/share_icon.png'),
+                            name: 'facebook',
+                            position: 2,
+                            color: '#71c9f1'
+                        }
+                    ]
+                }
+                onPressItem={
+                    (name) => {
+                        this.onShare(true, item)
+                    }
+                }
+                buttonColor='#71c9f1'
+                overlayColor='rgba(0,0,0,0)'
+                floatingIcon={require('../../../assets/share_icon.png')}
+                overrideWithAction
+                >
+            </FloatingAction>
+        )
+    }
+
     render() {
-        console.log(this.state.sharing);
+        // console.log(this.state.sharing);
         // console.log(this.refs);
         if (this.item === null) {
             return (
@@ -997,8 +999,10 @@ class ItemDetail extends Component {
                                     <Icon active name="md-arrow-back" style={{ color: 'white' }} />
                                 </Button>
                                 <Body style={{ marginTop: -12 }}>
-                                    <Thumbnail size={50} source={item.group.avatar_file_path ? { uri: item.group.avatar_file_path + '&w=200&h=200&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
-                                    <Text style={styles.imageTitle}>{item.group.official_name}</Text>
+                                    <TouchableOpacity onPress={() => Actions.groupprofile({id: item.group.id})} style={{alignContent: 'center', alignItems: 'center'}} >
+                                        <Thumbnail size={50} source={item.group.avatar_file_path ? { uri: item.group.avatar_file_path + '&w=200&h=200&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                                        <Text style={styles.imageTitle} >{item.group.official_name}</Text>
+                                    </TouchableOpacity>
                                 </Body>
                             </Left>
                         )}>
@@ -1020,29 +1024,9 @@ class ItemDetail extends Component {
                         <View style={{ height: 50 }} />
                     </HeaderImageScrollView>
                 </Container>
-                <FloatingAction
-                        actions={
-                            [
-                                {
-                                    text: 'Facebook',
-                                    icon: require('../../../assets/share_icon.png'),
-                                    name: 'facebook',
-                                    position: 2,
-                                    color: '#71c9f1'
-                                }
-                            ]
-                        }
-                        onPressItem={
-                            (name) => {
-                                this.onShare(true, item)
-                            }
-                        }
-                        buttonColor='#71c9f1'
-                        overlayColor='rgba(0,0,0,0)'
-                        floatingIcon={require('../../../assets/share_icon.png')}
-                        overrideWithAction
-                        >
-                        </FloatingAction>
+                {
+                    this.renderFloatingActionButton(item)
+                }
             </MenuContext>
         );
     }

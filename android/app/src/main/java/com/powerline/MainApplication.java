@@ -2,6 +2,8 @@ package com.powerline;
 
 import android.app.Application;
 
+import com.facebook.react.ReactInstanceManager;
+
 import com.crashlytics.android.Crashlytics;
 import com.facebook.react.ReactApplication;
 import com.reactnative.ivpusic.imagepicker.PickerPackage;

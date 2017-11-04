@@ -66,7 +66,11 @@ class GroupProfile extends Component{
     componentWillMount(){
         this._onRefresh();
     }
-
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.shouldRefresh) {
+            this.loadGroup()
+        }
+    }
     loadGroup(){
         if(this.props.required_permissions){
             this.props.required_permissions.map((value, index) => {
@@ -186,10 +190,45 @@ class GroupProfile extends Component{
         );        
     }
 
-    join(){
-        var { id } = this.props;             
+    doJoin() {
+        console.log('confirmed')
     }
 
+    join(){
+        if(this.state.data.fill_fields_required || this.state.data.membership_control === 'passcode' || this.state.data.membership_control === 'approval') {
+            Actions.groupJoin({data: this.state.data})
+        } else {
+            Alert.alert('Confirmation', 'Are you Sure?', [
+                {text: "Ok", onPress: () => this.doJoin()},
+                {text: "Cancel", onPress: () => console.log('Cancel pressed'), style: 'cancel'}
+            ])
+        }
+    }
+
+    renderActionButtons() {
+        if(!this.state.data.joined && this.state.data.user_role === 'member') {
+            return (
+                <Button block style={styles.unjoinBtn} onPress={() => this.unjoin()}>
+                    <Label style={{color: 'white'}}>Pending Approval</Label>
+                </Button>
+            )
+        } 
+        if(this.state.data.joined && this.state.data.user_role) {
+            return (
+                <Button block style={styles.unjoinBtn} onPress={() => this.unjoin()}>
+                    <Label style={{color: 'white'}}>Unjoin</Label>
+                </Button>
+            )
+        }
+        if(!this.state.data.joined && !this.state.data.user_role) {
+            return (
+                <Button block style={styles.joinBtn} onPress={() => this.join()}>
+                    <Label style={{color: 'white'}}>Join</Label>
+                </Button>  
+            )
+        }
+        
+    }
     goToManage() {
         Actions.managegroup({ group: this.state.data });
     }
@@ -230,14 +269,7 @@ class GroupProfile extends Component{
                             }
                             <Body>
                                 <Text style={{color: PLColors.main}}>{this.state.data.official_name}</Text>
-                                {this.state.data.joined?
-                                <Button block style={styles.unjoinBtn} onPress={() => this.unjoin()}>
-                                    <Label style={{color: 'white'}}>Unjoin</Label>
-                                </Button>:
-                                <Button block style={styles.joinBtn} onPress={() => this.join()}>
-                                    <Label style={{color: 'white'}}>Join</Label>
-                                </Button>                                
-                                }                                
+                                {this.renderActionButtons()}                                
                             </Body>
                         </ListItem>
                         {this.state.data.official_description?

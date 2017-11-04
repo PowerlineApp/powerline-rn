@@ -134,7 +134,8 @@ export default {
 
     CFooter: {
         backgroundColor: 'transparent',
-        height: 55
+        height: 55,
+        marginBottom: 55
     },
 
     CFooterItem: {
@@ -146,8 +147,8 @@ export default {
     },
 
     sendBtn: {
-        height: 56,
-        color: '#ccc'
+        height: 56
+        // color: '#ccc'
     },
 
     CFooterItemInput: {
@@ -175,16 +176,23 @@ export default {
     },
 
     groupFullHeaderContainer: {
+        backgroundColor: '#fff',
         alignItems: 'center',
-        paddingTop: 10,
-        paddingBottom: 10
+        paddingTop: 3,
+        paddingBottom: 8,
+        borderBottomWidth: 2,
+        borderBottomColor: '#d8dddf',        
     },
     groupSmallHeaderContainer: {
+        backgroundColor: '#fff',
+        height: 40,
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'row',
-        paddingTop: 10,
-        paddingBottom: 10
+        paddingTop: 5,
+        paddingBottom: 5,
+        borderBottomWidth: 2,
+        borderBottomColor: '#d8dddf',  
     },
 
     activityTime: {

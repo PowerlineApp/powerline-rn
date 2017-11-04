@@ -6,23 +6,21 @@ class SuggestionBox extends Component {
         if (!this.props.displaySuggestionBox) {
             return null;
         }
-        console.log(this.props.displaySuggestionBox, this.props.userList ? this.props.userList.length : '');
+        // console.log(this.props.displaySuggestionBox, this.props.userList ? this.props.userList.length : '');
         return (
-            <View style={styles.boxStyle}>
                 <FlatList
+                    keyboardShouldPersistTaps="always"
                     data={this.props.userList}
+                    style={styles.boxStyle}
                     renderItem={({item, index}) =>
-                        {
-                            console.log(item, index, this.props.userList.length)
-                            return <TouchableHighlight key={item.id} onPress={() => this.props.substitute('@' + item.username + ' ')}>
+                        <TouchableHighlight key={item.id} onPress={() => this.props.substitute('@' + item.username + ' ')}>
                             <View style={styles.itemStyle} >
                                 <Text style={styles.textStyle} >{'@' + item.username + ' ' + item.first_name + ' ' + item.last_name}</Text>
                                 {index !== this.props.userList.length -1 ? <View style={styles.divider} /> : null}
                             </View>
-                        </TouchableHighlight>}
+                        </TouchableHighlight>
                     }
                     />
-            </View>
         );
     }
 }
