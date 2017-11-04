@@ -161,11 +161,11 @@ class Newsfeed extends Component {
         if (this.state.postingOnGroup) {
             return;
         }
-        var { token, savedGroup, dispatch } = this.props;
+        var { token, selectedGroup, dispatch } = this.props;
         this.setState({ postingOnGroup: true })
-        console.log(token, savedGroup, this.state.text)
+        console.log(token, selectedGroup, this.state.text)
         if (this.state.text != "" || this.state.text.trim() != "") {
-            createPostToGroup(token, savedGroup.group, this.state.text)
+            createPostToGroup(token, selectedGroup.group, this.state.text)
                 .then(data => {
                     this.setState({
                         text: ""
