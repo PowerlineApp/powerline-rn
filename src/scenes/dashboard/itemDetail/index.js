@@ -950,8 +950,44 @@ class ItemDetail extends Component {
         }
     }
 
+    renderFloatingActionButton(item){
+        console.log(item)
+        if (item.group.group_type_label !== "local"
+            && item.group.group_type_label !== "state"
+            && item.group.group_type_label !== "country")
+            {
+                return null;
+            }
+
+        return (
+            <FloatingAction
+                actions={
+                    [
+                        {
+                            text: 'this will be overridden',
+                            icon: require('../../../assets/share_icon.png'),
+                            name: 'facebook',
+                            position: 2,
+                            color: '#71c9f1'
+                        }
+                    ]
+                }
+                onPressItem={
+                    (name) => {
+                        this.onShare(true, item)
+                    }
+                }
+                buttonColor='#71c9f1'
+                overlayColor='rgba(0,0,0,0)'
+                floatingIcon={require('../../../assets/share_icon.png')}
+                overrideWithAction
+                >
+            </FloatingAction>
+        )
+    }
+
     render() {
-        console.log(this.state.sharing);
+        // console.log(this.state.sharing);
         // console.log(this.refs);
         if (this.item === null) {
             return (
@@ -997,8 +1033,10 @@ class ItemDetail extends Component {
                                     <Icon active name="md-arrow-back" style={{ color: 'white' }} />
                                 </Button>
                                 <Body style={{ marginTop: -12 }}>
-                                    <Thumbnail size={50} source={item.group.avatar_file_path ? { uri: item.group.avatar_file_path + '&w=200&h=200&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
-                                    <Text style={styles.imageTitle}>{item.group.official_name}</Text>
+                                    <TouchableOpacity onPress={() => Actions.groupprofile({id: item.group.id})} style={{alignContent: 'center', alignItems: 'center'}} >
+                                        <Thumbnail size={50} source={item.group.avatar_file_path ? { uri: item.group.avatar_file_path + '&w=200&h=200&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                                        <Text style={styles.imageTitle} >{item.group.official_name}</Text>
+                                    </TouchableOpacity>
                                 </Body>
                             </Left>
                         )}>
@@ -1020,29 +1058,9 @@ class ItemDetail extends Component {
                         <View style={{ height: 50 }} />
                     </HeaderImageScrollView>
                 </Container>
-                <FloatingAction
-                        actions={
-                            [
-                                {
-                                    text: 'Facebook',
-                                    icon: require('../../../assets/share_icon.png'),
-                                    name: 'facebook',
-                                    position: 2,
-                                    color: '#71c9f1'
-                                }
-                            ]
-                        }
-                        onPressItem={
-                            (name) => {
-                                this.onShare(true, item)
-                            }
-                        }
-                        buttonColor='#71c9f1'
-                        overlayColor='rgba(0,0,0,0)'
-                        floatingIcon={require('../../../assets/share_icon.png')}
-                        overrideWithAction
-                        >
-                        </FloatingAction>
+                {
+                    this.renderFloatingActionButton(item)
+                }
             </MenuContext>
         );
     }

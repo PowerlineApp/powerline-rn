@@ -38,7 +38,8 @@ import {
     Dimensions,
     ScrollView,
     Image,
-    TextInput
+    TextInput,
+    Keyboard
 } from 'react-native';
 const { width, height } = Dimensions.get('window');
 import { loadUserData, getGroups, getUsersByGroup, createPetition, getPetitionConfig } from 'PLActions';
@@ -93,9 +94,14 @@ class NewPetition extends Component {
     }
 
     toggleCommunity() {
+        Keyboard.dismiss()        
         this.setState({
             showCommunity: !this.state.showCommunity
         });
+    }
+
+    onPetitionTitleRef = r => {
+        this.petitionTitleRef = r;
     }
 
     selectGroupList(index) {
@@ -111,6 +117,7 @@ class NewPetition extends Component {
                 this.setState({
                     petition_remaining: data.petitions_remaining
                 });
+                this.petitionTitleRef.focus()                
             })
             .catch(err => {
 
@@ -251,7 +258,8 @@ class NewPetition extends Component {
         this.setState({ share: bool })
     }
 
-    render() {
+
+    render () {
         console.log(this.state.displaySuggestionBox, this.state.displayMention);
         return (
             <Container style={styles.container}>
@@ -270,13 +278,13 @@ class NewPetition extends Component {
                         </Button>
                     </Right>
                 </Header>
-                <ScrollView scrollEnabled={!this.state.showCommunity}>
-                    <View style={styles.main_content}>
-                        <List>
-                            <ListItem style={styles.community_container} onPress={() => this.toggleCommunity()}>
-                                <View style={styles.avatar_container}>
-                                    <View style={styles.avatar_wrapper}>
-                                        <Thumbnail square style={styles.avatar_img} source={{ uri: this.state.profile.avatar_file_name + '&w=50&h=50&auto=compress,format,q=95' }} />
+                <ScrollView scrollEnabled={!this.state.showCommunity} keyboardShouldPersistTaps={'handled'} >
+                <View style={styles.main_content}>
+                    <List>
+                        <ListItem style={styles.community_container} onPress={() => this.toggleCommunity()}>
+                            <View style={styles.avatar_container}>
+                                <View style={styles.avatar_wrapper}>
+                                    <Thumbnail square style={styles.avatar_img} source={{ uri: this.state.profile.avatar_file_name + '&w=50&h=50&auto=compress,format,q=95' }} />
                                     </View>
                                     <View style={styles.avatar_subfix} />
                                 </View>
@@ -292,15 +300,16 @@ class NewPetition extends Component {
                         </List>
                         {
                             this.state.displaySuggestionBox && this.state.suggestionList.length > 0
-                                ? <ScrollView style={{ position: 'absolute', top: 20, zIndex: 3 }}>
-                                    <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
-                                </ScrollView>
-                                : <ScrollView />
+                            ? <ScrollView style={{position: 'absolute', top: 20, zIndex: 3}} keyboardShouldPersistTaps="always"  >
+                                <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
+                            </ScrollView>
+                            : <ScrollView />
                         }
 
                         <ScrollView style={{ marginTop: 0 }}>
                             <TextInput
                                 placeholder='Type Title here'
+                                ref={this.onPetitionTitleRef}
                                 style={styles.input_text}
                                 autoCorrect={false}
                                 value={this.state.title}
@@ -309,7 +318,6 @@ class NewPetition extends Component {
                             />
                             <Textarea
                                 maxLength={PETITION_MAX_LENGTH}
-
                                 onSelectionChange={this.onSelectionChange}
                                 placeholderTextColor='rgba(0,0,0,0.1)'
                                 style={styles.textarea}

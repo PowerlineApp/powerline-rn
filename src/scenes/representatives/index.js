@@ -126,6 +126,7 @@ class Representatives extends Component {
                                             </ListItem>
                                             {
                                                 group.representatives.map((user, index1) => {
+                                                    console.log(user);
                                                     return (
                                                         <ListItem onPress={() => this.goToProfile(user.storage_id)} key={index1}>
                                                             <Thumbnail square size={80} source={{ uri: user.avatar_file_path+'&w=50&h=50&auto=compress,format,q=95' }} />

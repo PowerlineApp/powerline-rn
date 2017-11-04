@@ -4,7 +4,7 @@
 // https://api-dev.powerli.ne/api-doc#post--api-v2.2-groups-{group}-posts
 
 import React, { Component } from 'react';
-import { TextInput } from 'react-native';
+import {TextInput, Keyboard} from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import {
@@ -90,6 +90,7 @@ class NewPost extends Component {
     }
 
     toggleCommunity() {
+        Keyboard.dismiss()
         this.setState({
             showCommunity: !this.state.showCommunity
         });
@@ -101,6 +102,7 @@ class NewPost extends Component {
             selectedGroupIndex: index,
             showCommunity: false
         });
+        this.postInputRef.focus()
 
         var { token } = this.props;
 
@@ -160,14 +162,14 @@ class NewPost extends Component {
     }
 
     // tells us if user will share or not
-    isSelected(social) {
+    isShareSelected(social){
         return this.state.share
         // return false;
     }
 
     // changes the selection if user will share or not
-    setSelected(bool) {
-        this.setState({ share: bool })
+    setShareSelected(bool){
+        this.setState({share : bool})
     }
 
     onSelectionChange(event) {
@@ -263,7 +265,7 @@ class NewPost extends Component {
                         </Button>
                     </Right>
                 </Header>
-                <ScrollView scrollEnabled={!this.state.showCommunity}>
+                <ScrollView scrollEnabled={!this.state.showCommunity} keyboardShouldPersistTaps={'handled'} >
                     <View style={styles.main_content}>
                         <List>
                             <ListItem style={styles.community_container} onPress={() => this.toggleCommunity()}>
@@ -273,38 +275,40 @@ class NewPost extends Component {
                                     </View>
                                     <View style={styles.avatar_subfix} />
                                 </View>
-                                <Body style={styles.community_text_container}>
-                                    <Text style={{ color: 'white' }}>
-                                        {this.state.selectedGroupIndex == -1 ? 'Select a community' : this.state.grouplist[this.state.selectedGroupIndex].official_name}
-                                    </Text>
-                                </Body>
-                                <Right style={styles.communicty_icon_container}>
-                                    <Icon name='md-create' style={{ color: 'white' }} />
-                                </Right>
-                            </ListItem>
-                        </List>
+                                <View style={styles.avatar_subfix} />
+                            <Body style={styles.community_text_container}>
+                                <Text style={{color: 'white'}}>
+                                    {this.state.selectedGroupIndex == -1 ? 'Select a community' : this.state.grouplist[this.state.selectedGroupIndex].official_name}
+                                </Text>
+                            </Body>
+                            <Right style={styles.communicty_icon_container}>
+                                <Icon name='md-create' style={{color: 'white'}} />
+                            </Right>
+                        </ListItem>
+                    </List>
 
-                        {
-                            this.state.displaySuggestionBox && this.state.suggestionList.length > 0
-                                ? <ScrollView style={{ position: 'absolute', top: 20, zIndex: 3 }}>
-                                    <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
-                                </ScrollView>
-                                : <ScrollView />
-                        }
-
-                        <ScrollView style={{ marginTop: 0 }}>
-                            <TextInput
-                                maxLength={POST_MAX_LENGTH}
-                                onSelectionChange={this.onSelectionChange}
-                                placeholderTextColor='rgba(0,0,0,0.1)'
-                                style={styles.textarea}
-                                multiline
-                                placeholder={this.placeholderTitle}
-                                value={this.state.content}
-                                onChangeText={(text) => this.changeContent(text)}
-                            />
+                    {
+                        this.state.displaySuggestionBox && this.state.suggestionList.length > 0
+                        ? <ScrollView style={{position: 'absolute', top: 20, zIndex: 3}} keyboardShouldPersistTaps="always"  >
+                            <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
                         </ScrollView>
-                        <Button transparent style={{ marginBottom: 8, height: 60 }} onPress={this.attachImage}>
+                        : <ScrollView />
+                    }
+
+                    <ScrollView style={{marginTop: 0}}  >
+                        <TextInput
+                            maxLength={POST_MAX_LENGTH}
+                            ref={(r) => this.postInputRef = r}
+                            onSelectionChange={this.onSelectionChange}
+                            placeholderTextColor='rgba(0,0,0,0.1)'
+                            style={styles.textarea}
+                            multiline
+                            placeholder={this.placeholderTitle}
+                            value={this.state.content}
+                            onChangeText={(text) => this.changeContent(text)}
+                        />
+                    </ScrollView>
+                    <Button transparent style={{ marginBottom: 8, height: 60 }} onPress={this.attachImage}>
                             {
                                 this.state.image ?
                                     <View style={{ flexDirection: 'row', width: 100, height: 60, alignItems: 'center', justifyContent: 'center' }}>
@@ -317,23 +321,10 @@ class NewPost extends Component {
                                     <Image source={require("img/upload_image.png")} resizeMode="contain" style={{ width: 100, height: 60, tintColor: 'gray' }} />
                             }
                         </Button>
-                        <ShareFloatingAction
-                            onPress={() => this.setSelected(!this.state.share)}
-                            isSelected={() => this.isSelected()}
-                        />
-
-                        {/* <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
-                        <Textarea
-                            maxLength={POST_MAX_LENGTH}
-                            autoFocus
-                            onSelectionChange={this.onSelectionChange}
-                            placeholderTextColor='rgba(0,0,0,0.1)'
-                            style={styles.textarea}
-                            placeholder={this.placeholderTitle}
-                            value={this.state.content}
-                            onChangeText={(text) => this.changeContent(text)}
-                        /> */}
-
+                    <ShareFloatingAction 
+                        onPress={() => this.setShareSelected(!this.state.share)}
+                        isSelected={() => this.isShareSelected()}
+                    />
                         {
                             this.state.showCommunity &&
                             <CommunityView

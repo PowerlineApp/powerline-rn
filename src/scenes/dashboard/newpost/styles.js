@@ -70,6 +70,9 @@ export default {
     },
 
     textarea: {
+        paddingTop: 0,
+        marginTop: 0,
+        textAlignVertical: 'top',
         width: width, 
         height: height - 185,
         fontSize: 18, 
