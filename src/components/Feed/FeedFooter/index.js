@@ -24,7 +24,7 @@ class FeedFooter extends Component {
         } else if (item.user_petition) {
             type = 'user-petition';
         }
-        Actions[scene]({ entityType: type, entityId: item.entity.id, ...options });
+        Actions[scene]({ entityType: type, entityId: item.entity.id, ...options, postId: item.id });
     }
 
     // changes the upvote/downvote color to indicate selection, sets the upvote/downvote number before the response comes. if the requisition fails, undo all
@@ -264,6 +264,13 @@ class FeedFooter extends Component {
                                 {item.comments_count ? item.comments_count : 0}
                             </Label>
                         </Button>
+                        <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, null, 'analyticsView')} >
+                            <Icon active name='pulse' style={styles.footerIcon} />
+                            <Label style={styles.footerText} >
+                                {'Analytics '}
+                                {item.comments_count ? item.comments_count : 0}
+                            </Label>
+                        </Button>
                     </Left>
                 </CardItem>
             );
@@ -303,6 +310,12 @@ class FeedFooter extends Component {
                         <Label style={styles.footerText} >
                             {'Reply '}
                             {item.comments_count ? item.comments_count : 0}
+                        </Label>
+                    </Button>
+                    <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, null, 'analyticsView')} >
+                        <Icon active name='pulse' style={styles.footerIcon} />
+                        <Label style={styles.footerText} >
+                            {'Analytics '}
                         </Label>
                     </Button>
                 </Left>
@@ -493,3 +506,11 @@ class FeedFooter extends Component {
 }
 
 export default FeedFooter;
+
+// <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, null, 'analyticsView')} >
+//                         <Icon active name='pulse' style={styles.footerIcon} />
+//                         <Label style={styles.footerText} >
+//                             {'Analytics '}
+//                             {item.comments_count ? item.comments_count : 0}
+//                         </Label>
+//                     </Button>

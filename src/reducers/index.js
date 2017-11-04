@@ -13,10 +13,12 @@ import bookmarks from './bookmarks';
 import activities from './activities';
 import notifications from './notifications';
 import followers from './followers';
+import analytics from './analytics';
 
 module.exports = combineReducers({
   user,
   drawer,
+  analytics,
   groups,
   bookmarks,
   activities,

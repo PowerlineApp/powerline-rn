@@ -37,6 +37,7 @@
 		2D02E4C81E0B4AEC006451C7 /* libRCTWebSocket-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3E991DF850E9000B6D8A /* libRCTWebSocket-tvOS.a */; };
 		2D02E4C91E0B4AEC006451C7 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3EA31DF850E9000B6D8A /* libReact.a */; };
 		2DCD954D1E0B4F2C00145EB5 /* PowerlineTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* PowerlineTests.m */; };
+		2F4EE3991FADCFC200C15D72 /* libART.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F4EE3741FADCFB400C15D72 /* libART.a */; };
 		4E2A46B8E38C48D19D4DDF20 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 679AC41A5A624C9AAB7A8054 /* FBSDKLoginKit.framework */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		71372995EEB04499BA59BDDE /* libRCTOneSignal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CAB65C18DC1B45A085EAC564 /* libRCTOneSignal.a */; };
@@ -166,6 +167,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 2D02E47A1E0B4A5D006451C7;
 			remoteInfo = "Powerline-tvOS";
+		};
+		2F4EE3731FADCFB400C15D72 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2F4EE36F1FADCFB300C15D72 /* ART.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 0CF68AC11AF0540F00FF9E5C;
+			remoteInfo = ART;
 		};
 		3DAD3E831DF850E9000B6D8A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -409,6 +417,7 @@
 		2B171889E03B4150B31438CD /* SanFranciscoBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SanFranciscoBold.ttf; path = "../node_modules/native-base/Fonts/SanFranciscoBold.ttf"; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* Powerline-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Powerline-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* Powerline-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Powerline-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2F4EE36F1FADCFB300C15D72 /* ART.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ART.xcodeproj; path = "../node_modules/react-native/Libraries/ART/ART.xcodeproj"; sourceTree = "<group>"; };
 		3297D09A9EE14590BDFEB74B /* Rubik-BlackItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-BlackItalic.ttf"; path = "../node_modules/native-base/Fonts/Rubik-BlackItalic.ttf"; sourceTree = "<group>"; };
 		3445B1FE90D24E6D9425CA20 /* RCTYouTube.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTYouTube.xcodeproj; path = "../node_modules/react-native-youtube/RCTYouTube.xcodeproj"; sourceTree = "<group>"; };
 		361B5099EC7F4E15A8579736 /* Arial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Arial.ttf; path = "../node_modules/native-base/Fonts/Arial.ttf"; sourceTree = "<group>"; };
@@ -520,6 +529,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2F4EE3991FADCFC200C15D72 /* libART.a in Frameworks */,
 				9F46832E1FA8AE5D00E4F9E9 /* libimageCropPicker.a in Frameworks */,
 				C820D6AA1F86442B00F68FFA /* libRCTFBSDK.a in Frameworks */,
 				EB519C281EC94E57001C8D63 /* libBVLinearGradient.a in Frameworks */,
@@ -687,6 +697,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		2F4EE3701FADCFB300C15D72 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2F4EE3741FADCFB400C15D72 /* libART.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		5DFBB4D655204255A07169DD /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -803,6 +821,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				2F4EE36F1FADCFB300C15D72 /* ART.xcodeproj */,
 				9F4683281FA8AE5300E4F9E9 /* imageCropPicker.xcodeproj */,
 				C820D6A41F86441D00F68FFA /* RCTFBSDK.xcodeproj */,
 				EB519C091EC94E3E001C8D63 /* BVLinearGradient.xcodeproj */,
@@ -1102,7 +1121,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Powerline" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "powerline" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -1114,6 +1133,10 @@
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
+				{
+					ProductGroup = 2F4EE3701FADCFB300C15D72 /* Products */;
+					ProjectRef = 2F4EE36F1FADCFB300C15D72 /* ART.xcodeproj */;
+				},
 				{
 					ProductGroup = EB519C0A1EC94E3E001C8D63 /* Products */;
 					ProjectRef = EB519C091EC94E3E001C8D63 /* BVLinearGradient.xcodeproj */;
@@ -1268,6 +1291,13 @@
 			fileType = archive.ar;
 			path = libReact.a;
 			remoteRef = 146834031AC3E56700842450 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		2F4EE3741FADCFB400C15D72 /* libART.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libART.a;
+			remoteRef = 2F4EE3731FADCFB400C15D72 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		3DAD3E841DF850E9000B6D8A /* libRCTImage-tvOS.a */ = {
@@ -2160,7 +2190,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Powerline" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "powerline" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
