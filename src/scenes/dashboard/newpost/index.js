@@ -149,6 +149,12 @@ class NewPost extends Component {
     createPost() {
         var { token } = this.props;
         var groupId = null;
+        if (this.state.posts_remaining <= 0){
+            alert('You do not have any posts left in this group');
+            return;
+        }
+
+
         if (this.state.selectedGroupIndex == -1) {
             this.state.sharing ? showToast('Please select Group.')
             : alert('Please select Group.');

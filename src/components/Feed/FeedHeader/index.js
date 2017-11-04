@@ -125,6 +125,40 @@ class FeedHeader extends Component {
     }
 
     notify(item) {
+        let isUpvoted = false;
+        if (entity.upvotes_count > 0 || entity.responses_count > 0) {
+            let type = entity.entity.type;
+            if (type === 'user-petition') {
+                type = 'user_petition';
+            }
+
+            let option = 'votes';
+            let id = 'option';
+            if (entity.poll) {
+                option = 'answers';
+            }
+
+            if (entity.user_petition) {
+                option = 'signatures';
+                id = 'option_id';
+            }
+
+            if (
+                entity[type] &&
+                entity[type][option] &&
+                entity[type][option].length > 0 &&
+                entity[type][option][0][id] === 1
+            ) {
+                isUpvoted = true;
+            }
+            
+        }
+        
+        if (!isUpvoted) {
+            alert('User can share only a post he has upvoted.');
+            return;
+        }
+
         sharePost(this.props.token, item.entity.id);
 
         this.menu && this.menu.close();
