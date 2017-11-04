@@ -31,7 +31,7 @@ class FeedActivity extends Component {
                 <FeedDescription item={item} profile={this.props.profile} />
                 <FeedCarousel item={item} />
                 <View style={styles.borderContainer} />
-                <FeedFooter item={item} profile={this.props.profile} token={this.props.token} showAnalytics={this.props.showAnalytics}  />
+                <FeedFooter item={item} profile={this.props.profile} token={this.props.token} showAnalytics={this.props.showAnalytics} />
                 <FeedCommentPreview item={item} />
             </Card>
         );

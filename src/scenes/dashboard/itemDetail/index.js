@@ -36,8 +36,6 @@ import randomPlaceholder from '../../../utils/placeholder';
 import { FloatingAction } from 'react-native-floating-action';
 import _ from 'lodash';
 
-
-
 // custom components import
 import FeedFooter from '../../../components/Feed/FeedFooter';
 import FeedHeader from '../../../components/Feed/FeedHeader';
@@ -588,8 +586,6 @@ class ItemDetail extends Component {
                                 <MenuOptions optionsContainerStyle={{
                                     backgroundColor: 'white',
                                     width: WINDOW_WIDTH,
-                                    // height: this.state.visibleHeight,
-                                    // this needs adjustment for android / ios - doesnt work well for android with the suggestionbox
                                     minHeight: Platform.OS === 'android' ? 50 : WINDOW_HEIGHT / 2 + 50
                                 }}>
                                     <ScrollView keyboardShoulPersisTaps>
