@@ -477,6 +477,7 @@
 		6F338CE41FACB6A700010FBC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		6F338CE61FACB6A700010FBC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6F338D121FACB70300010FBC /* PowerlineShare.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PowerlineShare.m; sourceTree = "<group>"; };
+		6F481B9C1FAE6811002A8F06 /* ios_development (8).cer */ = {isa = PBXFileReference; lastKnownFileType = file; name = "ios_development (8).cer"; path = "../../../../Downloads/ios_development (8).cer"; sourceTree = "<group>"; };
 		6FA439CA1FACC418003D94E9 /* ReactNativeShareExtension.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReactNativeShareExtension.xcodeproj; path = "../node_modules/react-native-share-extension/ios/ReactNativeShareExtension.xcodeproj"; sourceTree = "<group>"; };
 		71629848DDD64885A3F61DB8 /* libSplashScreen.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libSplashScreen.a; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
@@ -833,6 +834,7 @@
 		67BC7E46E199A3175E28B8B6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6F481B9C1FAE6811002A8F06 /* ios_development (8).cer */,
 				6F24D94C1FAD1BFC002BF413 /* RSKImageCropper.framework */,
 				EBAF1A3B1ED288FD00C459BF /* Bolts.framework */,
 				F7120E3C68FB4021A662F9BA /* FBSDKCoreKit.framework */,
@@ -1209,7 +1211,7 @@
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = 4875SW8HHW;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.Push = {
 								enabled = 1;
@@ -1232,7 +1234,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "powerline" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Powerline" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -1996,11 +1998,11 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = Powerline/Powerline.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = 4875SW8HHW;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/Frameworks/",
@@ -2029,8 +2031,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.Powerline;
 				PRODUCT_NAME = Powerline;
-				PROVISIONING_PROFILE = "a2bd39d4-84ed-4c70-9173-f18432e4e0b4";
-				PROVISIONING_PROFILE_SPECIFIER = PowerAdHocGL;
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -2043,10 +2045,10 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = Powerline/Powerline.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 4875SW8HHW;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/Frameworks/",
@@ -2075,8 +2077,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.Powerline;
 				PRODUCT_NAME = Powerline;
-				PROVISIONING_PROFILE = "a2bd39d4-84ed-4c70-9173-f18432e4e0b4";
-				PROVISIONING_PROFILE_SPECIFIER = PowerAdHocGL;
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
