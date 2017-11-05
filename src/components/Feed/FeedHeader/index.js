@@ -164,6 +164,7 @@ class FeedHeader extends Component {
         this.menu && this.menu.close();
     }
 
+    //BUG: This should be inviting the upvoters from the post. groupInvite not correct.
     inviteUpvoters(item) {
         showAlertOkCancel('Are you sure you want to invite all of the upvoters of your post to this group? You can only do this once per boosted post!', () => {
             this.redirect(item, null, 'groupInvite');
@@ -234,9 +235,9 @@ class FeedHeader extends Component {
                 title = item.user.full_name;
                 break;
         }
-
+//Header
         return (
-            <CardItem style={{ paddingBottom: 0 }}>
+            <CardItem style={{ paddingBottom: 0, paddingLeft:5}}>
                 <Left>
                     <TouchableHighlight onPress={() => this.onPressThumbnail(item)} underlayColor={'#fff'}>
                         <View>
@@ -250,10 +251,10 @@ class FeedHeader extends Component {
                         <Text style={styles.title} onPress={() => this.onPressAuthor(item)}>{title}</Text>
                         <Text note style={styles.subtitle} onPress={() => this.onPressGroup(item)}>{item.group.official_name} • <TimeAgo time={item.sent_at} hideAgo /></Text>
                     </Body>
-                    <Right style={{ flex: 0.2 }}>
+                    <Right style={{ flex: 0.1 }}>
                         <Menu ref={(ref) => { this.menu = ref; }}>
                             <MenuTrigger>
-                                <Icon name='ios-arrow-down' style={styles.dropDownIcon} />
+                                <Icon name='md-more' style={styles.dropDownIcon} />
                             </MenuTrigger>
                             <MenuOptions customStyles={optionsStyles}>
                                 {
@@ -284,8 +285,8 @@ class FeedHeader extends Component {
                                 }
                                 <MenuOption onSelect={() => this.notify(item)}>
                                     <Button iconLeft transparent dark onPress={() => this.notify(item)}>
-                                        <Icon name='md-megaphone' style={styles.menuIcon} />
-                                        <Text style={styles.menuText}>Share this post to followers</Text>
+                                        <Icon name='md-share' style={styles.menuIcon} />
+                                        <Text style={styles.menuText}>Share this post directly to followers</Text>
                                     </Button>
                                 </MenuOption>
                                 {
@@ -305,7 +306,7 @@ class FeedHeader extends Component {
                                                 <Icon name="ios-person" style={styles.activeIconLarge} />
                                                 <Icon name="ios-add-circle-outline" style={styles.activeIconSmall} />
                                             </View>
-                                            <Text style={styles.menuText}>Follow this item's author</Text>
+                                            <Text style={styles.menuText}>Follow this person</Text>
                                         </Button>
                                     </MenuOption>
                                 }
@@ -353,7 +354,7 @@ class FeedHeader extends Component {
                                     <MenuOption onSelect={() => this.spam(item)}>
                                         <Button iconLeft transparent dark onPress={() => this.spam(item)}>
                                             <Image source={require("img/spam.png")} style={[styles.menuIcon, { marginLeft: -2, marginRight: 12 }]} />
-                                            <Text style={styles.menuText}>Mark As Spam</Text>
+                                            <Text style={styles.menuText}>Report As Spam</Text>
                                         </Button>
                                     </MenuOption>
                                 }
@@ -368,7 +369,7 @@ class FeedHeader extends Component {
 
 const optionsStyles = {
     optionsContainer: {
-        backgroundColor: '#fafafa',
+        backgroundColor: '#55c5ff',
         paddingLeft: 5,
         width: WINDOW_WIDTH
     }
