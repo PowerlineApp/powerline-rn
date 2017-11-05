@@ -241,6 +241,7 @@ class Home extends Component {
     }
     _openComment(token, data) {
         let { target } = data.notification.payload.additionalData.entity;
+        // What is this Felipe?
         // this is to be changed!!! the commentDetail component doesnt accept an id, but the comment object, so I must do this!
         let comment = getComments(token, target.type, target.id).then(
             res => {
@@ -290,7 +291,8 @@ class Home extends Component {
         votePost(token, target.id, 'downvote');
     }
     _sharePost(token, data) {
-        // TODO
+        //What is this Felipe? Why is this todo?
+        // TODO 
     }
     _viewPost(data) {
         this.redirect(data);
@@ -746,7 +748,7 @@ class Home extends Component {
 
 const optionsStyles = {
     optionsContainer: {
-        backgroundColor: '#fafafa',
+        backgroundColor: 'white',
         paddingLeft: 5
     }
 };
