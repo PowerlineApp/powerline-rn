@@ -959,7 +959,9 @@ class ItemDetail extends Component {
         // console.log(this.refs);
         if (this.item === null) {
             return (
+            {/* Turning of Pulse Loader until we can stabilize its performance
                 <PLOverlayLoader visible={this.state.isLoading} logo />
+            */}
             );
         }
         let item = this.item;
