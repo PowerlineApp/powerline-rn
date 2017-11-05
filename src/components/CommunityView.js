@@ -81,6 +81,7 @@ const styles = {
         height: (height - (isIOS ? 64 : 56) - 55),
         zIndex: 10,
         paddingLeft: (width - 250)/ 2,
+        paddingTop: 40,
     },
 
     community_list_back: {

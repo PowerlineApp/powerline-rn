@@ -11,7 +11,7 @@ const platform = Platform.OS;
 
 export default {
     container: {
-        backgroundColor: '#e2e7ea',
+        backgroundColor: 'white',
         flex: 1
     },
     
@@ -86,7 +86,8 @@ export default {
         width: width,
         height: (height  - 185),
         zIndex: 10,
-        paddingLeft: (width - 250)/ 2
+        paddingLeft: (width - 250)/ 2,
+        paddingTop: 40,
     },
 
     community_list_back: {
@@ -104,7 +105,7 @@ export default {
         width: (width - 20),
         color: 'black',
         margin: 0,
-        backgroundColor: 'white',
+        backgroundColor: '#e2e7ea',
         fontSize: 14,
         paddingLeft: 12,
         paddingRight: 5,

@@ -238,8 +238,8 @@ class CommentDetail extends Component {
                 <Left>
                     <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail+'&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                     <Body style={{ alignSelf: 'flex-start' }}>
-                        <Text style={styles.title}>{title}</Text>
-                        <Text style={styles.description} numberOfLines={5}>{comment.comment_body}</Text>
+                        <Text style={styles.rootTitle}>{title}</Text>
+                        <Text style={styles.rootDescription} numberOfLines={5}>{comment.comment_body}</Text>
                         <Text note style={styles.subtitle}><TimeAgo time={comment.created_at} /></Text>
                         <View style={styles.commentFooterContainer}>
                             <Button iconLeft small transparent onPress={() => this._onRate(comment, 'up')}>
@@ -272,13 +272,13 @@ class CommentDetail extends Component {
         var rateDown: number = (comment.rate_count || 0) / 2 - comment.rate_sum / 2;
 
         return (
-            <CardItem style={{ paddingBottom: 0, marginLeft: 40, marginTop: 5 }}>
+            <CardItem style={styles.childCommentContainer}>
                 <Left>
                     <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail+'&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                     <Body style={{ alignSelf: 'flex-start' }}>
                         <TouchableOpacity onPress={() => this._onCommentBody(comment)}>
-                            <Text style={styles.title}>{title}</Text>
-                            <Text style={styles.description} numberOfLines={5}>{comment.comment_body}</Text>
+                            <Text style={styles.childTitle}>{title}</Text>
+                            <Text style={styles.childDescription} numberOfLines={5}>{comment.comment_body}</Text>
                             <Text note style={styles.subtitle}><TimeAgo time={comment.created_at} /></Text>
                         </TouchableOpacity>
                         <View style={styles.commentFooterContainer}>

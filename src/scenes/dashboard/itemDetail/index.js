@@ -574,11 +574,11 @@ class ItemDetail extends Component {
 
         return (
             <TouchableOpacity onPress={() => this._onAddComment()}>
-                <CardItem>
+                <CardItem style={styles.commentAddField}>
                     <Left>
                         <Thumbnail small source={thumbnail ? { uri: thumbnail + '&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                         <Body>
-                            <Text style={styles.addCommentTitle}>Add Comment...</Text>
+                            <Text style={styles.addCommentTitle}>Add your thoughts...</Text>
                             <Menu
                                 renderer={SlideInMenu}
                                 ref={this.onRef}
@@ -682,13 +682,13 @@ class ItemDetail extends Component {
         }
 
         return (
-            <CardItem style={style}>
+            <CardItem style={styles.commentRootContainer}>
                 <Left>
                     <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail + '&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                     <Body style={{ alignSelf: 'flex-start' }}>
                         <TouchableOpacity onPress={() => this._onCommentBody(comment)}>
-                            <Text style={styles.title}>{title}</Text>
-                            <Text style={styles.description} numberOfLines={5}>{comment.comment_body}</Text>
+                            <Text style={styles.rootTitle}>{title}</Text>
+                            <Text style={styles.rootDescription} numberOfLines={5}>{comment.comment_body}</Text>
                             <Text note style={styles.subtitle}><TimeAgo time={comment.created_at} /></Text>
                         </TouchableOpacity>
                         <View style={styles.commentFooterContainer}>
@@ -873,7 +873,7 @@ class ItemDetail extends Component {
     _renderPostOrUserPetitionCard(item, state) {
         return (
             <View>
-                {this._renderDescription(item, state)}
+                <FeedDescription item={item} />
                 <FeedMetaData item={item} />
                 <View style={styles.borderContainer} />
                 {this.renderAttachedImage(item)}
@@ -918,6 +918,8 @@ class ItemDetail extends Component {
 
     renderFloatingActionButton(item){
         console.log(item)
+        //Felipe - Need to add: OR if the user is author of this item
+        //User can share anyone's post from a public (local/state/country) group, but can only share his own items from private groups
         if (item.group.group_type_label !== "local"
             && item.group.group_type_label !== "state"
             && item.group.group_type_label !== "country")
@@ -934,7 +936,7 @@ class ItemDetail extends Component {
                             icon: require('../../../assets/share_icon.png'),
                             name: 'facebook',
                             position: 2,
-                            color: '#71c9f1'
+                            color: '#55c5ff'
                         }
                     ]
                 }
@@ -943,7 +945,7 @@ class ItemDetail extends Component {
                         this.onShare(true, item)
                     }
                 }
-                buttonColor='#71c9f1'
+                buttonColor='#55c5ff'
                 overlayColor='rgba(0,0,0,0)'
                 floatingIcon={require('../../../assets/share_icon.png')}
                 overrideWithAction

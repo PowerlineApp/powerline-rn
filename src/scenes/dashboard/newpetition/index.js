@@ -313,7 +313,7 @@ class NewPetition extends Component {
 
                         <ScrollView style={{ marginTop: 0 }}>
                             <TextInput
-                                placeholder='Type Title here'
+                                placeholder='Give a title to your petition here'
                                 ref={this.onPetitionTitleRef}
                                 style={styles.input_text}
                                 autoCorrect={false}
@@ -324,7 +324,7 @@ class NewPetition extends Component {
                             <Textarea
                                 maxLength={PETITION_MAX_LENGTH}
                                 onSelectionChange={this.onSelectionChange}
-                                placeholderTextColor='rgba(0,0,0,0.1)'
+                                placeholderTextColor='rgba(0,0,0,0.3)'
                                 style={styles.textarea}
                                 multiline
                                 placeholder={this.placeholderTitle}
