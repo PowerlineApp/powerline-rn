@@ -184,7 +184,9 @@ class GroupList extends Component{
                             }                           
                         </List>
                     </Content>
+                        {/* Turning off Pulse Loader until we can stabilize its performance
                     <PLOverlayLoader visible={this.state.refreshing} logo />
+                        */}
                 </Container>
             </MenuContext>
         )

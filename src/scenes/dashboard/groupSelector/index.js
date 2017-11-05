@@ -242,7 +242,10 @@ class GroupSelector extends Component {
                         dataArray={this.props.others} renderRow={(group) => this.renderGroupItem(group)}>
                     </List>
                 </Content>
+                {/* Turning of Pulse Loader until we can stabilize its performance
                 <PLOverlayLoader visible={isLoading || isRefreshing} logo />
+                */}
+
             </Container>
         );
     }
