@@ -12,7 +12,7 @@ class SharefloatingAction extends Component {
                             icon: require('../assets/share_icon.png'),
                             name: '',
                             position: 1,
-                            color: this.props.isSelected() ? '#71c9f1' : '#ccc'
+                            color: this.props.isSelected() ? '#55c5ff' : '#ccc'
                         }
                     ]
                 }
@@ -21,7 +21,7 @@ class SharefloatingAction extends Component {
                         this.props.onPress()
                     }
                 }
-                buttonColor={this.props.isSelected() ? '#71c9f1' : '#ccc'}
+                buttonColor={this.props.isSelected() ? '##55c5ff' : '#ccc'}
                 overlayColor='rgba(0,0,0,0)'
                 floatingIcon={require('../assets/share_icon.png')}
                 overrideWithAction
