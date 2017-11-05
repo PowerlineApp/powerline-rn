@@ -2,8 +2,13 @@ package com.powerline;
 
 import android.app.Application;
 
+import com.facebook.react.ReactInstanceManager;
+
 import com.crashlytics.android.Crashlytics;
 import com.facebook.react.ReactApplication;
+import com.reactnative.ivpusic.imagepicker.PickerPackage;
+import cl.json.RNSharePackage;
+import com.RNFetchBlob.RNFetchBlobPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.geektime.rnonesignalandroid.ReactNativeOneSignalPackage;
 import com.alinz.parkerdan.shareextension.SharePackage;
@@ -42,6 +47,9 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
         new MainReactPackage(),
+            new PickerPackage(),
+            new RNSharePackage(),
+            new RNFetchBlobPackage(),
         new RNDeviceInfo(),
         new ReactNativeOneSignalPackage(),
         new SharePackage(),

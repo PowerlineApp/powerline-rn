@@ -36,7 +36,7 @@ class FeedHeader extends Component {
             type = 'poll';
         } else if (item.post) {
             type = 'post';
-        } else if (item.petition) {
+        } else if (item.user_petition) {
             type = 'petition';
         }
         Actions[scene]({ entityType: type, entityId: item.entity.id, ...options });
@@ -125,6 +125,40 @@ class FeedHeader extends Component {
     }
 
     notify(item) {
+        let isUpvoted = false;
+        if (entity.upvotes_count > 0 || entity.responses_count > 0) {
+            let type = entity.entity.type;
+            if (type === 'user-petition') {
+                type = 'user_petition';
+            }
+
+            let option = 'votes';
+            let id = 'option';
+            if (entity.poll) {
+                option = 'answers';
+            }
+
+            if (entity.user_petition) {
+                option = 'signatures';
+                id = 'option_id';
+            }
+
+            if (
+                entity[type] &&
+                entity[type][option] &&
+                entity[type][option].length > 0 &&
+                entity[type][option][0][id] === 1
+            ) {
+                isUpvoted = true;
+            }
+            
+        }
+        
+        if (!isUpvoted) {
+            alert('User can share only a post he has upvoted.');
+            return;
+        }
+
         sharePost(this.props.token, item.entity.id);
 
         this.menu && this.menu.close();
@@ -165,8 +199,12 @@ class FeedHeader extends Component {
     }
 
     isSubscribed(item) {
-        if (item[item.entity.type] !== undefined) {
-            return item[item.entity.type].is_subscribed;
+        let type = item.entity.type;
+        if (type === 'user-petition') {
+            type = 'user_petition';
+        }
+        if (item[type] !== undefined) {
+            return item[type].is_subscribed;
         }
 
         return false;
@@ -231,7 +269,7 @@ class FeedHeader extends Component {
                                     <MenuOption onSelect={() => this.unsubscribe(item)}>
                                         <Button iconLeft transparent dark onPress={() => this.unsubscribe(item)}>
                                             <Icon name='md-notifications-off' style={styles.menuIcon} />
-                                            <Text style={styles.menuText}>Unsubscribe</Text>
+                                            <Text style={styles.menuText}>Unsubscribe to Notifications</Text>
                                         </Button>
                                     </MenuOption>
                                 }
@@ -244,18 +282,6 @@ class FeedHeader extends Component {
                                         </Button>
                                     </MenuOption>
                                 }
-                                <MenuOption>
-                                    <Button iconLeft transparent dark>
-                                        <Icon name='ios-heart' style={styles.menuIcon} />
-                                        <Text style={styles.menuText}>Add to Favorites</Text>
-                                    </Button>
-                                </MenuOption>
-                                <MenuOption>
-                                    <Button iconLeft transparent dark>
-                                        <Icon name='md-person-add' style={styles.menuIcon} />
-                                        <Text style={styles.menuText}>Add to Contact</Text>
-                                    </Button>
-                                </MenuOption>
                                 <MenuOption onSelect={() => this.notify(item)}>
                                     <Button iconLeft transparent dark onPress={() => this.notify(item)}>
                                         <Icon name='md-megaphone' style={styles.menuIcon} />

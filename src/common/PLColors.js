@@ -9,6 +9,7 @@ module.exports = {
   actionText: '#006',
   inactiveText: '#9B9B9B',
   darkText: '#032250',
+  darkGreyText: '#3d3d3d',
   lightText: '#798ca6',
   cellBorder: '#EEEEEE',
   cellText: '#002845',

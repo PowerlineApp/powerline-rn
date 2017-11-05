@@ -15,10 +15,10 @@ class FeedActivity extends Component {
         return (
             <Card>
                 <FeedHeader item={item} />
-                <FeedDescription item={item} />
+                <FeedDescription item={item} profile={this.props.profile} />
                 <FeedMetaData item={item} />
                 <View style={styles.borderContainer} />
-                <FeedFooter item={item} profile={this.props.profile} token={this.props.token} />
+                <FeedFooter item={item} profile={this.props.profile} token={this.props.token} showAnalytics={this.props.showAnalytics} />
                 <FeedCommentPreview item={item} />
             </Card>
         );
@@ -28,10 +28,10 @@ class FeedActivity extends Component {
         return (
             <Card>
                 <FeedHeader item={item} />
-                <FeedDescription item={item} />
+                <FeedDescription item={item} profile={this.props.profile} />
                 <FeedCarousel item={item} />
                 <View style={styles.borderContainer} />
-                <FeedFooter item={item} profile={this.props.profile} token={this.props.token} />
+                <FeedFooter item={item} profile={this.props.profile} token={this.props.token} showAnalytics={this.props.showAnalytics} />
                 <FeedCommentPreview item={item} />
             </Card>
         );
