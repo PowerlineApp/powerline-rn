@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Modal, TouchableOpacity, TouchableWithoutFeedback, StyleSheet } from 'react-native';
+import { View, Modal, TouchableOpacity, TouchableWithoutFeedback, StyleSheet, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux'
 import { fetchAnalytics, fetchUserRepresentatives } from '../../../actions/analytics'
@@ -26,9 +26,8 @@ import {
 import FilterAnalytics from './filter'
 import styles from './styles'
 import { Circle } from 'react-native-progress';
-import RepresentativesView from './representatives';
 const filterOptions = ['Count of Total Upvotes', '% of Total Upvotes', 'Count of Total Downvotes', '% of Total Downvotes', 'Count of All Votes']
-const dataTypeOptions = ['My Elected Leaders', "Author's Elected Leaders", 'Top 10 Elected Leaders', 'Top 10 Towns', 'Plot on Map', 'Custom Lookup']
+const dataTypeOptions = ['My Elected Leaders', 'Top 10 Elected Leaders']
 
 class AnalyticsView extends Component {
     constructor(props) {
@@ -43,11 +42,21 @@ class AnalyticsView extends Component {
     }
 
     componentDidMount() {
-        const { fetchAnalytics, postId } = this.props;
+        const { fetchAnalytics, entityId } = this.props;
         
-        fetchAnalytics(256)
+        fetchAnalytics(entityId)
     }
 
+    componentWillReceiveProps (nextProps) {
+        console.log('componentWillReceiveProps', nextProps)
+        if(nextProps.error) {
+            Alert.alert('Error',
+                'Could not fetch analytics for this post', [
+                    {text: 'Dismiss', onPress: () => Actions.pop()}
+                ] 
+            )
+        }
+    }
     renderTotalCountOfVotes(representative, prop) {
         return (
             <View>
@@ -128,11 +137,12 @@ class AnalyticsView extends Component {
             return this.renderMyElectedLeaders(this.props.analytics.representatives)
         }
         if(this.state.viewData === "Top 10 Elected Leaders") {
-            // return this.renderMyElectedLeaders()
+            return this.renderMyElectedLeaders(this.props.analytics.most_popular)
         }
     }
 
     render() {
+        console.log(this.props)
         return (
             <Container style={styles.container}>
                 <Header style={styles.header}>
@@ -142,7 +152,7 @@ class AnalyticsView extends Component {
                         </Button>
                     </Left>
                     <Body>
-                        <Title style={{alignSelf: 'flex-start', color: 'white'}}>Analytics: {this.state.type ? this.state.type : 'My Elected Leaders'}</Title>
+                        <Title style={{alignSelf: 'flex-start', color: 'white'}}>Analytics: {this.state.viewData ? this.state.viewData : 'My Elected Leaders'}</Title>
                     </Body>
                     <Right>
                         <Button transparent onPress={() => this.setState({dataTypeModal: true})}>
@@ -184,7 +194,8 @@ class AnalyticsView extends Component {
 
 const mapStateToProps = (state) => ({
     loading: state.analytics.loading,
-    analytics: state.analytics.analytics
+    analytics: state.analytics.analytics,
+    error: state.analytics.error
 })
 
 const mapActionsToProps = (dispatch) => ({
