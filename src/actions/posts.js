@@ -65,14 +65,6 @@ async function undoVotePost(token: string, postId: string) {
             body: JSON.stringify({})
         });
         console.log('res ==>', response);
-        if (response.status === 200) {
-            if (option === 'upvote') {
-                showToast('Upvoted');
-            }
-            if (option === 'downvote') {
-                showToast('Downvoted');
-            }
-        }
         return response;
     } catch (error) {
         handleError(error);
