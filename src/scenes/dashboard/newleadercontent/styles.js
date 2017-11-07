@@ -131,8 +131,8 @@ export default {
         zIndex: 5,
     },
     wrappedTextarea: {
-        paddingTop: 0,
         marginTop: 8,
+        padding: 8,
         textAlignVertical: 'top',
         width: width, 
         height: 150,

@@ -7,6 +7,7 @@ import React, { Component } from 'react';
 import {TextInput, Keyboard, Platform, KeyboardAvoidingView, Modal, Alert} from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
+import moment from 'moment';
 
 import RNFetchBlob from 'react-native-fetch-blob'
 const fs = RNFetchBlob.fs
@@ -50,7 +51,7 @@ const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
 
 
 const { width, height } = Dimensions.get('window');
-import { loadUserData, getGroups, getUsersByGroup, createPostToGroup, getPetitionConfig } from 'PLActions';
+import { loadUserData, getGroups, getUsersByGroup, createPostToGroup, getPetitionConfig, createPoll, createAnnouncement } from 'PLActions';
 import randomPlaceholder from '../../../utils/placeholder';
 import CommunityView from '../../../components/CommunityView';
 
@@ -70,13 +71,21 @@ class NewPost extends Component {
             image: null,
             videoModal: false,
             videoURL: '',
-            attachments: []
+            attachments: [],
+            options: [],
+            init: {
+                date: null,
+                time: null
+            },
+            end: {
+                date: null,
+                time: null
+            },
         };
 
         this.placeholderTitle = randomPlaceholder('post');
 
         this.toggleCommunity = this.toggleCommunity.bind(this);
-        this.onSelectionChange = this.onSelectionChange.bind(this);
     }
 
     componentDidMount() {
@@ -105,9 +114,6 @@ class NewPost extends Component {
         }).catch(err => {
             
         });
-
-
-
     }
 
     toggleCommunity() {
@@ -143,20 +149,11 @@ class NewPost extends Component {
     }
 
     preCreateContent() {
-        var { token } = this.props;
-        var groupId = null;
-        if (this.state.posts_remaining <= 0){
-            alert('You do not have any posts left in this group');
-            return;
-        }
+        let groupId = null;
 
         if (this.state.selectedGroupIndex == -1) {
             this.state.sharing ? showToast('Please select Group.')
             : alert('Please select Group.');
-            return;
-        } else if (this.state.content == "" || this.state.content.trim() == '') {
-            this.state.sharing ? showToast('Please type post content.')
-            : alert("Please type post content");
             return;
         }
 
@@ -170,138 +167,146 @@ class NewPost extends Component {
             ],
             { cancelable: false }
           )
-    
+    }
+
+    prepareGroupAnnouncementToServer(){
+        let {state} = this;
+        let {content} = state;
+
     }
     prepareGroupDiscussionToServer(){
         let {state} = this;
-        
-        
-    }
-    prepareGroupAnnouncementToServer(){
-        let {state} = this;
-    
+        let type = 'news';
+        let subject = '?'
+        let subject = state.content;
     }
     prepareGroupPetitionToServer(){
         let {state} = this;
-    
+        let type = 'petition';
+        let petition_title = state.title;
+        let petition_body = state.content;
+
+        if (type && petition_title && petition_body)
+            return {type, petition_title, petition_body};
+
+        if (!petition_title){
+            alert("Please create a title for your petition");
+            return false;
+        }
+        if (!petition_body){
+            alert("Whoops! Looks like you forgot to write your petition down!");
+            return false;
+        }
     }
+
     prepareGroupPollToServer(){
         let {state} = this;
-    
+        let type = 'group';
+        let question; // ??? title ?
+        let options = state.options.map(option => {value: option})
     }
+
     prepareGroupEventToServer(){
         let {state} = this;
-    
+        let type = 'event';
+        let title = state.title;
+        let options = state.options.map(option => {value: option})
+
+        let initDate = state.init.date;
+        let initTime = state.init.time;
+        let endDate = state.end.date;
+        let endTime = state.end.time
+        console.log(initDate, initTime, endDate, endTime)
+
+        let started_at = moment(initDate).startOf('day').add(moment(initTime).hour(), 'hour').add(moment(initTime).minutes(), 'minutes').format('YYYY-MM-DD HH:mm:ssZZ').split(' ').join('T');
+        let finished_at = moment(endDate).startOf('day').add(moment(endTime).hour(), 'hour').add(moment(endTime).minutes(), 'minutes').format('YYYY-MM-DD HH:mm:ssZZ').split(' ').join('T');
+
+        console.log(title !== '' && options.length > 0 && initDate !== null && initTime !== null && endDate !== null && endTime !== null)
+        if (title !== '' && options.length > 0 && initDate !== null && initTime !== null && endDate !== null && endTime !== null)
+            return {title, started_at, finished_at, type, options};
+        
+        if (!title){
+            alert("Please create a title for your event");            
+            return false;
+        }
+        if (options.length < 1){
+            alert('Please insert at least one RSPV answer');
+            return false;
+        }
+        if (!initDate){
+            alert('Please select a day for the start of event')
+            return false;
+        }
+        if (!initTime){
+            alert('Please select an hour for the start of event')
+            return false;
+        }
+        if (!endDate){
+            alert('Please select a day for the end of event')
+            return false;
+        }
+        if (!endTime){
+            alert('Please select an hour for the end of event')
+            return false;
+        }
+
+
     }
     prepareGroupFundraiserToServer(){
         let {state} = this;
-    
+        let type = 'payment_request';
+        let title = state.title;
     }
     createContent(){
         let {token, type} = this.props;
+        let groupId = this.state.grouplist[this.state.selectedGroupIndex].id;
         let body;
         switch(type){
             case 'group_discussion':
                 body = this.prepareGroupDiscussionToServer(); // title, content
+                break;
             case 'group_announcement':
                 body = this.prepareGroupAnnouncementToServer();// content
+                break;
             case 'group_petition':
                 body = this.prepareGroupPetitionToServer(); // title, content
+                break;
             case 'group_poll':
                 body = this.prepareGroupPollToServer(); // title (question subject), options
+                break;
             case 'group_event':
                 body = this.prepareGroupEventToServer(); // title, content, date, options
+                break;
             case 'group_fundraiser':
                 body = this.prepareGroupFundraiserToServer(); // not treted yet
-        
+                break;
         }
+        console.log(body);
+        if (body){
+            body.subject = 'x';
+            let req;
+            console.log('going to post! :D');
+            if (type === 'group_announcement'){
+                req = createAnnouncement(token, groupId, body);
+            } else {
+                req = createPoll(token, groupId, body);
+            }
 
+            req.then(resp => {
+                console.log(resp);
+            }).catch(e => {
+                alert(e);
+            })
 
-
-        // createPostToGroup(token, groupId, this.state.content, this.state.image)
-        //     .then(data => {
-        //         showToast('Post Successful!');
-        //         if (this.state.sharing) this.props.onPost();
-        //         else Actions.itemDetail({ entityId: data.id, entityType: 'post', backTo: 'home', share: this.state.share });
-        //     })
-        //     .catch(err => {
-        //     });
+        }
     }
 
     changeTitle(text) {
-        this.setState({
-            title: text
-        });
+        this.setState({ title: text });
     }
+
     changeContent(text) {
-        this.setState({
-            content: text
-        });
-    }
-
-    substitute(mention) {
-        let { init, end } = this.state;
-        let newContent = this.state.content;
-        let initialLength = newContent.length;
-
-        let firstPart = newContent.substr(0, init);
-        let finalPart = newContent.substr(end, initialLength);
-
-        let finalString = firstPart + mention + finalPart;
-
-        this.setState({ content: finalString, displaySuggestionBox: false, lockSuggestionPosition: end });
-    }
-
-    // tells us if user will share or not
-    isShareSelected(social){
-        return this.state.share
-        // return false;
-    }
-
-    onSelectionChange(event) {
-        let { start, end } = event.nativeEvent.selection;
-        let userRole = this.state.grouplist[this.state.selectedGroupIndex].user_role;
-        setTimeout(() => {
-            if (start !== end) return;
-            if (start === this.state.lockSuggestionPosition) return;
-            let text = this.state.content;
-            // for loop to find the first @ sign as a valid mention (without a space before, with at least two digits)
-            let displayMention = false;
-            let i;
-
-            for (i = start - 1; i >= 0; i--) {
-                if (text.charAt(i) === ' ') break;
-                if (text.charAt(i) === '@' && (i === 0 || text.charAt(i - 1) === ' ')) {
-                    if (text.slice(i, i + 9) === "@everyone" && userRole === 'owner' && userRole === 'manager') {
-                        alert("Are you sure you want to alert everyone in the group?");
-                        break;
-                    }
-                    if (text.charAt(i + 1) && text.charAt(i + 1) !== ' ' && text.charAt(i + 2) && text.charAt(i + 2) !== ' ') {
-                        displayMention = true;
-                        for (let j = start - 1; text.charAt(j) && text.charAt(j) !== ' '; j++) end = j + 1;
-                    } else {
-                        displayMention = false;
-                    }
-                    break;
-                }
-            }
-            if (displayMention) {
-                let suggestionSearch = text.slice(i + 1, end);
-                this.updateSuggestionList(this.props.token, suggestionSearch);
-                this.setState({ displaySuggestionBox: displayMention, init: i, end: end });
-            } else {
-                this.setState({ suggestionList: [], displaySuggestionBox: false });
-            }
-        }, 100);
-    }
-
-    updateSuggestionList(token, suggestionSearch) {
-        this.setState({ suggestionList: [] });
-        getUsersByGroup(token, this.state.grouplist[this.state.selectedGroupIndex].id, suggestionSearch).then(data => {
-            this.setState({ suggestionList: data.payload });
-        }).catch(err => {
-
-        });
+        this.setState({ content: text });
     }
 
     openVideoAttachment() {
@@ -318,7 +323,6 @@ class NewPost extends Component {
         this.setState({attachments, videoModal: false, videoURL: ''})
     }
 
-
     attachImage = () => {
         if (this.state.attachments.length >= 3) {
             showToast('Max number of attachments is 3');
@@ -326,10 +330,10 @@ class NewPost extends Component {
         }
 
         ActionSheet.show({
-            options: ["Take photo", "Choose from gallery"],
+            options: ["Take photo", "Choose from gallery", "Cancel"],
             title: "Attach image"
         }, buttonIndex => {
-            if (buttonIndex == 0) {
+            if (buttonIndex === 0) {
                 ImagePicker.openCamera({
                     cropping: true,
                     includeBase64: true
@@ -340,7 +344,7 @@ class NewPost extends Component {
                 }).catch(v => alert(JSON.stringify(v)));
             }
 
-            if (buttonIndex == 1) {
+            if (buttonIndex === 1) {
                 ImagePicker.openPicker({
                     cropping: true,
                     includeBase64: true
@@ -351,6 +355,10 @@ class NewPost extends Component {
                     this.setState({attachments})
                 });
             }
+
+            if (buttonIndex === 2){
+                // do nothing
+            }
         });
     }
 
@@ -359,7 +367,6 @@ class NewPost extends Component {
         attachments = attachments.filter((item, index) => index !== key)
         this.setState({attachments})
     }
-    
 
     getYoutubeURL (url) {
         let {imgLoaded} = this.state;
@@ -383,7 +390,7 @@ class NewPost extends Component {
     }
 
     setEventDate(init, end){
-        this.setState({eventInit: init, eventEnd: end});
+        this.setState({init, end});
     }
 
     renderAttachments(){
@@ -397,7 +404,6 @@ class NewPost extends Component {
         let width = 50;
 
         let {attachments} = this.state;
-        console.log('ohaio')
         return (
             <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
             {
@@ -423,8 +429,7 @@ class NewPost extends Component {
                                             <Icon name="md-close-circle" style={styles.deleteIcon} />
                                         </View>
                                     </Button>
-                                </View>
-                    )
+                                </View>)
                 })
             }
             <Button transparent style={{ margin: 8, height: height }} onPress={this.attachImage}>  
@@ -437,20 +442,20 @@ class NewPost extends Component {
     }
 
     render() {
-        let {
-            headerTitle,
-            hasTitle,
-            titlePlaceholder,
-            hasDescription,
-            wrapDescription,
-            event,
-            hasAnswers,
-            addAnswersButton,
-            answersPlaceholder,
-            attachments,
-            descriptionPlaceHolder
-        } = this.props.options;
-        console.log('props', this.props);
+        let { 
+            options: {
+                headerTitle,
+                hasTitle,
+                titlePlaceholder,
+                hasDescription,
+                wrapDescription,
+                event,
+                hasAnswers,
+                addAnswersButton,
+                answersPlaceholder,
+                attachments,
+                descriptionPlaceHolder}
+            } = this.props;
         return (
             <Container style={styles.container}>
                 <Modal visible={this.state.videoModal} transparent>
@@ -513,13 +518,6 @@ class NewPost extends Component {
                         </ListItem>
                     </List>
                 <ScrollView keyboardShouldPersistTaps={'handled'} style={styles.main_content} >
-                    {
-                        this.state.displaySuggestionBox && this.state.suggestionList.length > 0
-                        ? <ScrollView style={{position: 'absolute', top: 20, zIndex: 3}} keyboardShouldPersistTaps="always"  >
-                            <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
-                        </ScrollView>
-                        : <ScrollView />
-                    }
                     <ScrollView style={{margin: 16}}  >
                         {
                             hasTitle &&
@@ -556,7 +554,7 @@ class NewPost extends Component {
                         {
                             hasAnswers &&
                             <Answers
-                                setAnswer={(answers) => this.setState({answers: answers})}
+                                setAnswer={(options) => this.setState({options})}
                                 addAnswersButton={addAnswersButton}
                                 answersPlaceholder={answersPlaceholder}
                             />

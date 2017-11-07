@@ -59,7 +59,7 @@ class Event extends Component {
                 <DateTimePicker
                     isVisible={this.state.pickervisible}
                     onConfirm={(data) => this.handlePicker(data)}
-                    onCancel={() => {}}
+                    onCancel={() => this.setState({pickervisible: false})}
                     mode={this.state.mode}
                 />
                 <TouchableOpacity onPress={() => this.openDateModal('init')}>
@@ -74,7 +74,7 @@ class Event extends Component {
                     <View style={styles.dateContainer}>
                         <Text style={styles.dateTitle}>Start of event (hour)</Text>
                         <Text style={styles.date}>
-                            {this.formatHour(this.state.init.hour)}
+                            {this.formatHour(this.state.init.time)}
                         </Text>
                     </View>
                 </TouchableOpacity>
@@ -90,7 +90,7 @@ class Event extends Component {
                 <View style={styles.dateContainer}>
                         <Text style={styles.dateTitle}>End of event (hour)</Text>
                         <Text style={styles.date}>
-                            {this.formatHour(this.state.end.hour)}
+                            {this.formatHour(this.state.end.time)}
                         </Text>
                     </View>
                 </TouchableOpacity>
