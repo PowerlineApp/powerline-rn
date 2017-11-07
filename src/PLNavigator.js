@@ -41,7 +41,7 @@ import ManageGroup from './scenes/dashboard/managegroup/';
 import NewPost from './scenes/dashboard/newpost/';
 import NewPetition from './scenes/dashboard/newpetition';
 import Search from './scenes/search/';
-
+import GroupMembersManagementScene from './scenes/dashboard/managegroup/scenes/userManagement'
 var RouterWithRedux = connect()(Router);
 
 class PLNavigator extends React.Component {
@@ -146,6 +146,7 @@ class PLNavigator extends React.Component {
               <Scene key="groupInvite" component={GroupInvite} />
               <Scene key="groupJoin" component={GroupJoin} />
               <Scene key="managegroup" component={ManageGroup}/>
+              <Scene key="manageGroupMembers" component={GroupMembersManagementScene}/>
             </Scene>
           </RouterWithRedux>
         </Drawer>

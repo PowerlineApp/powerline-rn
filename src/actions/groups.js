@@ -2,7 +2,7 @@
 import api from '../utils/api';
 var { API_URL, PER_PAGE } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
-
+import { ActionTypes } from '../reducers/groupManagement'
 //Loads user's current joined groups
 async function loadUserGroups(token: string, page: ?number = 0, perPage: ?number = PER_PAGE): Promise<Action> {
     try {
@@ -420,6 +420,126 @@ function updateGroupAvatar(token, groupId, image) {
 }
 
 
+const getGroupPendingUsers = (groupId) => (dispatch, getState) => {
+    const token = getState().user.token;
+    dispatch({type: ActionTypes.FETCH_GROUP_MEMBERS_LOADING, payload: true})
+    fetch(API_URL + '/v2/groups/' + groupId + '/users', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token
+        }
+    })
+    .then((res) => res.json())
+    .then(data => {
+        console.log('getGroupPendingUsers', data)
+        dispatch({type: ActionTypes.FETCH_GROUP_MEMBERS_SUCCESS, payload: data.payload})
+        dispatch({type: ActionTypes.FETCH_GROUP_MEMBERS_LOADING, payload: false})
+    })
+    .catch(err => {
+        console.log("get Group Users API Error", err);
+        dispatch({type: ActionTypes.FETCH_GROUP_MEMBERS_LOADING, payload: false})
+        dispatch({type: ActionTypes.FETCH_GROUP_MEMBERS_ERROR, payload: err})        
+    });
+}
+
+const promoteUserToManager = (groupId, userId) => (dispatch, getState) => {
+    const token = getState().user.token;
+    dispatch({type: ActionTypes.GROUP_PROMOTE_USER_LOADING, payload: true})
+    fetch(API_URL + '/v2/groups/' + groupId + '/managers/' + userId, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token
+        }
+    })
+    .then((res) => res.json())
+    .then(data => {
+        console.log('promoteUser', data)
+        if(data.code) {
+            dispatch({type: ActionTypes.GROUP_PROMOTE_USER_ERROR, payload: data.message})        
+            return;
+        }
+        dispatch({type: ActionTypes.GROUP_PROMOTE_USER_SUCCESS, payload: userId})
+        dispatch({type: ActionTypes.GROUP_PROMOTE_USER_LOADING, payload: false})
+    })
+    .catch(err => {
+        console.log("promoteUser API Error", err);
+        dispatch({type: ActionTypes.GROUP_PROMOTE_USER_LOADING, payload: false})
+        dispatch({type: ActionTypes.GROUP_PROMOTE_USER_ERROR, payload: err})        
+    });
+}
+
+const unPromoteUserToMember = (groupId, userId) => (dispatch, getState) => {
+    const token = getState().user.token;
+    dispatch({type: ActionTypes.GROUP_UNPROMOTE_USER_LOADING, payload: true})
+    fetch(API_URL + '/v2/groups/' + groupId + '/managers/' + userId, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token
+        }
+    })
+    .then(data => {
+        console.log('promoteUser', data)
+        if(data.code) {
+            dispatch({type: ActionTypes.GROUP_UNPROMOTE_USER_ERROR, payload: data.message})        
+            return;
+        }
+        dispatch({type: ActionTypes.GROUP_UNPROMOTE_USER_SUCCESS, payload: userId})
+        dispatch({type: ActionTypes.GROUP_UNPROMOTE_USER_LOADING, payload: false})
+    })
+    .catch(err => {
+        console.log("UNPROMOTEUser API Error", err);
+        dispatch({type: ActionTypes.GROUP_UNPROMOTE_USER_LOADING, payload: false})
+        dispatch({type: ActionTypes.GROUP_UNPROMOTE_USER_ERROR, payload: err})        
+    });
+}
+
+const approveUserToGroup = (groupId, userId) => (dispatch, getState) => {
+    const token = getState().user.token;
+    dispatch({type: ActionTypes.GROUP_ACCEPT_USER_LOADING, payload: true})
+    fetch(API_URL + '/v2/groups/' + groupId + '/users/' + userId, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token
+        }
+    })
+    .then((res) => res.json())
+    .then(data => {
+        console.log('approveUserToGroup', data)
+        dispatch({type: ActionTypes.GROUP_ACCEPT_USER_SUCCESS, payload: {data, userId}})
+        dispatch({type: ActionTypes.GROUP_ACCEPT_USER_LOADING, payload: false})
+    })
+    .catch(err => {
+        console.log("approveUserToGroup API Error", err);
+        dispatch({type: ActionTypes.GROUP_ACCEPT_USER_LOADING, payload: false})
+        dispatch({type: ActionTypes.GROUP_ACCEPT_USER_ERROR, payload: err})        
+    });
+}
+
+const removeUserFromGroup = (groupId, userId) => (dispatch, getState) => {
+    const token = getState().user.token;
+    dispatch({type: ActionTypes.GROUP_REMOVE_USER_LOADING, payload: true})
+    fetch(API_URL + '/v2/groups/' + groupId + '/users/' + userId, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token
+        }
+    })
+    .then(data => {
+        console.log('removeUserFromGroup', data)
+        dispatch({type: ActionTypes.GROUP_REMOVE_USER_SUCCESS, payload: userId})
+        dispatch({type: ActionTypes.GROUP_REMOVE_USER_LOADING, payload: false})
+    })
+    .catch(err => {
+        console.log("removeUserFromGroup API Error", err);
+        dispatch({type: ActionTypes.GROUP_REMOVE_USER_LOADING, payload: false})
+        dispatch({type: ActionTypes.GROUP_REMOVE_USER_ERROR, payload: err})        
+    });
+}
 
 module.exports = {
     loadUserGroups,
@@ -440,5 +560,12 @@ module.exports = {
     getUsersByGroup,
     inviteUpvotersToGroup,
     getGroupRequiredFields,
-    updateGroupAvatar
+    updateGroupAvatar,
+
+    // REAL ACTIONS
+    getGroupPendingUsers,
+    promoteUserToManager,
+    approveUserToGroup,
+    removeUserFromGroup,
+    unPromoteUserToMember
 }

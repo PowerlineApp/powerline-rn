@@ -5,7 +5,7 @@ import GroupPermissions from './grouppermissions';
 import UserContentSettings from './usercontentsettings';
 import Invites from './invites';
 import Reports from './reports';
-
+import GroupMembers from './groupmembers'
 export {
     ProfileSetup,
     SubscriptionLevel,
@@ -14,4 +14,5 @@ export {
     UserContentSettings,
     Invites,
     Reports,
+    GroupMembers
 };

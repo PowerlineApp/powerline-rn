@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import {
@@ -111,7 +112,7 @@ class ManageGroup extends Component {
                 />
               </AccordionItem>
               <AccordionItem title="Manage Group Members">
-                <Text>In Progress</Text>
+                <Options.GroupMembers group={this.props.group}/>
               </AccordionItem>
               <AccordionItem title="Group Sections/Sub-Groups">
                 <Text>In Progress</Text>
