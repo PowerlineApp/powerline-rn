@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import {
@@ -26,7 +26,7 @@ import PLImageSelector from '../../../common/PLImageSelector'
 import { AccordionItem } from './components';
 import * as Options from './options';
 import styles from './styles';
-import { updateGroupAvatar } from '../../../actions/groups'
+import { updateGroupAvatar, updateGroupBanner } from '../../../actions/groups'
 class ManageGroup extends Component {
   static propTypes = {
     token: React.PropTypes.string
@@ -37,12 +37,19 @@ class ManageGroup extends Component {
       newAvatar: null
     }
     this.updateGroupAvatar = this.updateGroupAvatar.bind(this)
+    this.updateGroupBanner = this.updateGroupBanner.bind(this)
   }
   
   updateGroupAvatar(image) {
     const { token, group } = this.props;
     this.setState({newAvatar: image.path})
     updateGroupAvatar(token, group.id, image.data).then(res => console.log(res)).catch(err => console.log(err))
+  }
+
+  updateGroupBanner(image) {
+    const { token, group } = this.props;
+    this.setState({newBanner: image.path})
+    updateGroupBanner(token, group.id, image.data).then(res => console.log(res)).catch(err => console.log(err))
   }
 
   render() {
@@ -70,7 +77,11 @@ class ManageGroup extends Component {
             <List style={styles.list}>
               <ListItem style={styles.groupHeaderContainer}>
                 {this.props.group.avatar_file_path ?
-                  <Thumbnail style={styles.avatar} square source={{ uri: (this.state.newAvatar ? this.state.newAvatar : this.props.group.avatar_file_path) }} /> :
+                  <Thumbnail style={styles.avatar} square source={{ uri: (this.state.newAvatar ? this.state.newAvatar : this.props.group.avatar_file_path) }}>
+                    <View style={{justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%'}}>
+                        <PLImageSelector onConfirm={this.updateGroupAvatar} iconSize={20} iconColor='#000' onError={err => console.log(err)} />
+                     </View>
+                  </Thumbnail> :
                   <View style={styles.avatar} />
                 }
                 <Body>
@@ -79,13 +90,19 @@ class ManageGroup extends Component {
                   </Text>
                 </Body>
                 <Right>
-                  <PLImageSelector onConfirm={this.updateGroupAvatar} iconSize={20} onError={err => console.log(err)} />
+                  <PLImageSelector onConfirm={this.updateGroupBanner} iconSize={20} iconColor='#000' onError={err => console.log(err)} />
                 </Right>
               </ListItem>
             </List>
             <List style={{ ...styles.list, ...styles.borderList }}>
               <AccordionItem title="Profile Setup">
                 <Options.ProfileSetup dispatch={dispatch} token={token} group={group} />
+              </AccordionItem>
+              <AccordionItem title="Advanced Profile">
+                <Options.AdvancedProfile dispatch={dispatch} data={this.props.advanced} token={token} group={group} />
+              </AccordionItem>
+              <AccordionItem title="Group Tags">
+                <Options.Tags dispatch={dispatch} data={this.props.groupTags} groupOwnTags={this.props.groupOwnTags} token={token} group={group} />
               </AccordionItem>
               <AccordionItem title="Subscription Level">
                 <Text>In Progress</Text>
@@ -135,5 +152,8 @@ class ManageGroup extends Component {
 }
 
 export default connect(state => ({
-  token: state.user.token
+  token: state.user.token,
+  advanced: state.groupManagement.advancedAttribs,
+  groupTags: state.groupManagement.groupTags,
+  groupOwnTags: state.groupManagement.groupOwnTags
 }))(ManageGroup);

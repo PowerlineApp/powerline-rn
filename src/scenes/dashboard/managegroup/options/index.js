@@ -6,6 +6,9 @@ import UserContentSettings from './usercontentsettings';
 import Invites from './invites';
 import Reports from './reports';
 import GroupMembers from './groupmembers'
+import AdvancedProfile from './advancedprofile'
+import Tags from './tags'
+
 export {
     ProfileSetup,
     SubscriptionLevel,
@@ -14,5 +17,7 @@ export {
     UserContentSettings,
     Invites,
     Reports,
-    GroupMembers
+    GroupMembers,
+    AdvancedProfile,
+    Tags
 };
