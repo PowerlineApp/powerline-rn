@@ -403,7 +403,7 @@ class FeedFooter extends Component {
 
     render () {
         let {item} = this.state;
-        let {showAnalytics} = false;
+        const showAnalytics = true;
         // console.log('item in state => ', item)
         let footer = null
         switch (item.entity.type) {
@@ -411,22 +411,22 @@ class FeedFooter extends Component {
             footer =  this._renderPostFooter(item, showAnalytics);
             break;
         case 'user-petition':
-            footer =  this._renderUserPetitionFooter(item, showAnalytics);
+            footer =  this._renderUserPetitionFooter(item, false);
             break;
         case 'petition':
-            footer =  this._renderLeaderPetitionFooter(item, showAnalytics);
+            footer =  this._renderLeaderPetitionFooter(item, false);
             break;
         case 'question':
-            footer =  this._renderQuestionFooter(item, showAnalytics);
+            footer =  this._renderQuestionFooter(item, false);
             break;
         case 'payment-request':
             footer = null;
             break;
         case 'leader-event':
-            footer =  this._renderLeaderEventFooter(item, showAnalytics);
+            footer =  this._renderLeaderEventFooter(item, false);
             break;
         case 'leader-news':
-            footer =  this._renderLeadNewsFooter(item, showAnalytics);
+            footer =  this._renderLeadNewsFooter(item, false);
             break;
         default:
             footer =  null;
