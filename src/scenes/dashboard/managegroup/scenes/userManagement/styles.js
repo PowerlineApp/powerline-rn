@@ -1,7 +1,7 @@
 import PLColors from 'PLColors';
 import { StyleSheet, PixelRatio, Dimensions } from 'react-native';
 
-import variables from '../../../../native-base-theme/variables/platform';
+import variables from '../../../../../../native-base-theme/variables/platform';
 
 const { width } = Dimensions.get('window');
 
