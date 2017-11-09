@@ -76,9 +76,10 @@ class Representatives extends Component {
     }
 
     //GH35 is the Representative's Specific Page
-    goToProfile(storageId) {
+    goToProfile(storageId, representativeId) {
         Actions.representatyprofile({
-            storageId: storageId
+            storageId,
+            representativeId
         });
     }
 
@@ -126,9 +127,9 @@ class Representatives extends Component {
                                             </ListItem>
                                             {
                                                 group.representatives.map((user, index1) => {
-                                                    console.log(user);
+                                                    // console.log(user);
                                                     return (
-                                                        <ListItem onPress={() => this.goToProfile(user.storage_id)} key={index1}>
+                                                        <ListItem onPress={() => this.goToProfile(user.id)} key={index1}>
                                                             <Thumbnail square size={80} source={{ uri: user.avatar_file_path+'&w=50&h=50&auto=compress,format,q=95' }} />
                                                             <Body>
                                                                 <Text style={{ color: PLColors.main }}>{user.first_name} {user.last_name}</Text>
