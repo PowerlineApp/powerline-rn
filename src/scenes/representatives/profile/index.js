@@ -58,7 +58,7 @@ class RepresentatyProfile extends Component{
     }
 
     loadInfo(){
-        var { token, storageId } = this.props;
+        var { token, storageId, representativeId } = this.props;
 
         loadRepresentatyInfo(token, 0, storageId)
         .then(data => {

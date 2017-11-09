@@ -272,6 +272,7 @@ class Notifications extends Component{
                 <List style={{backgroundColor: 'white'}}>
                     {
                         this.state.invites.map((value, index) => {
+                            console.log(invites);
                             return (
                                 <ListItem avatar key={index} style={styles.listItem}>
                                     <Left>
@@ -300,40 +301,52 @@ class Notifications extends Component{
                     }
                     {
                         this.props.notifications.map((value, index)=> {
+                            console.log(value);
                             if (
                                 value.type == 'comment-mentioned' 
                                 || value.type == 'post-mentioned' 
                                 || value.type == 'own-post-commented' 
                                 || value.type == 'follow-request' 
-                                || value.type == 'own-user-petition-signed')
-                            return (
-                                <ListItem avatar key={index} style={styles.listItem} onPress={() => this.navigate(value)} >
-                                    {value.target.image?
-                                    <Left>
-                                        <Thumbnail small source={{ uri: value.target.image+'&w=50&h=50&auto=compress,format,q=95' }} />
-                                    </Left>:
-                                    <Left>
-                                        <Thumbnail small source={require('img/blank_person.png')} />
-                                    </Left>
-                                    }
-                                    <Body style={styles.listItemBody}>
-                                        {this.showText(value.html_message)}
-                                        {
-                                            this.renderIcon(value)
-                                        }
-                                    </Body>
-                                    {value.type == 'follow-request' && value.ignore == null?
-                                    <Right style={styles.listItemRight}>
-                                        <TouchableOpacity onPress={() => this.acceptFollower(value.target, index, value.id)}>
-                                            <Icon name="checkmark" style={styles.acceptIcon}/>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity onPress={() => this.unFollowers(value.target, index, value.id)}>
-                                            <Icon name="close" style={styles.rejectIcon}/>
-                                        </TouchableOpacity>
-                                    </Right>
-                                    :null}
-                                </ListItem>
-                            );                            
+                                || value.type == 'own-user-petition-signed') {
+                                    return (
+                                        <ListItem avatar key={index} style={styles.listItem} onPress={() => this.navigate(value)} >
+                                            {value.target.image?
+                                            <Left>
+                                                <Thumbnail small source={{ uri: value.target.image+'&w=50&h=50&auto=compress,format,q=95' }} />
+                                            </Left>:
+                                            <Left>
+                                                <Thumbnail small source={require('img/blank_person.png')} />
+                                            </Left>
+                                            }
+                                            <Body style={styles.listItemBody}>
+                                                {this.showText(value.html_message)}
+                                                {
+                                                    this.renderIcon(value)
+                                                }
+                                            </Body>
+                                            {value.type == 'follow-request' && value.ignore == null?
+                                            <Right style={styles.listItemRight}>
+                                                <TouchableOpacity onPress={() => this.acceptFollower(value.target, index, value.id)}>
+                                                    <Icon name="checkmark" style={styles.acceptIcon}/>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity onPress={() => this.unFollowers(value.target, index, value.id)}>
+                                                    <Icon name="close" style={styles.rejectIcon}/>
+                                                </TouchableOpacity>
+                                            </Right>
+                                            :null}
+                                        </ListItem>);                            
+                                }else if(value.type === 'join-to-group-approved'){
+                                    return (
+                                        <ListItem avatar key={index} style={{height: 95}} onPress={() => this.navigate(value)}>
+                                        <Left>
+                                            <Thumbnail small source={{uri : (value.group.avatar_file_path)}} />
+                                        </Left>
+                                        <Body>
+                                            <Text style={{color: PLColors.main}}>{this.showText(value.html_message)}</Text>
+                                            <Text note style={{color: PLColors.lightText}}><Icon name="people" style={styles.icon}/> <TimeAgo time={value.created_at} /></Text>
+                                        </Body>
+                                    </ListItem>);
+                                }
                         })
                     }
                 </List>
