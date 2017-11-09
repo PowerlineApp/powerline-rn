@@ -58,6 +58,18 @@ class Notifications extends Component{
         }
     }
 
+    itemDetail(item){
+
+    }
+
+    followers(item){
+
+    }
+
+    groupDetail(item){
+
+    }
+
     // There are three general types of activities that show up in the Notifications Feed. A social activity update (e.g someone mentioned you in a comment), a Social Follow Request (User A wants to follow you), and a Group Join invite (You were invited to Save the Whales)
     render() {
         WARN(JSON.stringify(this.state.notifications))
@@ -66,9 +78,10 @@ class Notifications extends Component{
                 <List style={{backgroundColor: 'white'}}>
                     {
                         this.state.notifications.map((value, index)=> {
+                            console.log(value);
                             if(value.type == 'comment-mentioned' || value.type == 'own-post-voted' || value.type == 'post-mentioned'){
                                 return (                                    
-                                    <ListItem avatar key={index}>
+                                    <ListItem avatar key={index} onPress={() => this.itemDetail(value)}>
                                         <Left>
                                             <Thumbnail source={{ uri: value.target.image+'&w=50&h=50&auto=compress,format,q=95' }} />
                                         </Left>
@@ -88,7 +101,7 @@ class Notifications extends Component{
                                 );
                             }else if(value.type == 'follow-request'){
                                 return (
-                                    <ListItem avatar key={index} style={{height: 130}}>
+                                    <ListItem avatar key={index} style={{height: 130}} onPress={() => this.followers(value)}>
                                         <Body style={{height: 130}}>
                                             <Text style={{color: PLColors.main}}>{this.showText(value.html_message)}</Text>
                                             <Text note style={{color: PLColors.lightText}}><Icon name="contact" style={styles.icon}/> <TimeAgo time={value.created_at} /></Text>
@@ -108,7 +121,7 @@ class Notifications extends Component{
                                 );
                             }else if(value.type == 'join-to-group-approved'){
                                 return (
-                                    <ListItem avatar key={index} style={{height: 95}}>
+                                    <ListItem avatar key={index} style={{height: 95}} onPress={() => this.groupDetail(value)}>
                                         <Body style={{height: 95}}>
                                             <Text style={{color: PLColors.main}}>{this.showText(value.html_message)}</Text>
                                             <Text note style={{color: PLColors.lightText}}><Icon name="people" style={styles.icon}/> <TimeAgo time={value.created_at} /></Text>

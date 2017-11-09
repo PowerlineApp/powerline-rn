@@ -213,15 +213,15 @@ class Home extends Component {
         console.log('===>', item, '====>', options);
         // return;
         item = item.notification.payload.additionalData.entity.target;
-        let type = 'poll';
-        if (item.type == 'post') {
-            type = 'post'
-        } else if (item.type == 'user-petition') {
-            type = 'petition'
-        }
+        // let type = 'poll';
+        // if (item.type == 'post') {
+        //     type = 'post'
+        // } else if (item.type == 'user-petition') {
+        //     type = 'petition'
+        // }
 
-        console.log('about to go: ', type, item.id)
-        Actions.itemDetail({ entityType: type, entityId: item.id, ...options });
+        // console.log('about to go: ', type, item.id)
+        Actions.itemDetail({ entityType: item.type, entityId: item.id, ...options });
     }
 
     // these are the action buttons actions

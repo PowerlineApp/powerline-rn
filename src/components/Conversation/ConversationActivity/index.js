@@ -3,13 +3,28 @@ import {View} from 'react-native';
 import styles from '../styles';
 import TimeAgo from 'react-native-timeago';
 import {Card, Text, Label, Left, Body, Right, ListItem, Thumbnail, Icon, Button} from 'native-base';
+import {Actions} from 'react-native-router-flux';
 
 class ConversationActivity extends Component {
+
+    redirect(item, options, scene = 'itemDetail') {
+        let type;
+        if (item.poll) {
+            type = 'poll';
+        } else if (item.post) {
+            type = 'post';
+        } else if (item.user_petition) {
+            type = 'user-petition';
+        }
+        Actions[scene]({ entityType: type, entityId: item.entity.id, ...options });
+    }
+
+
     render () {
         let {item, token, profile} = this.props; 
 
         return (
-            <ListItem avatar key={item.index} style={{backgroundColor: 'white', marginLeft: 0, paddingLeft: 15}}>
+            <ListItem onPress={() => this.redirect(item)} avatar key={item.index} style={{backgroundColor: 'white', marginLeft: 0, paddingLeft: 15}}>
                 <Left>
                     <Thumbnail small source={{uri: item.user.avatar_file_name+'&w=200&h=200&auto=compress,format,q=95'}}/>
                 </Left>
