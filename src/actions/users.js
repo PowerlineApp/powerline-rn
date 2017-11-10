@@ -95,6 +95,7 @@ function getInvites(token) {
 
 //for registering for push notifications with Powerline backend. NOT for OneSignal
 function registerDevice(token, params) {
+    console.log('/this REGISTERING : ', token, params)
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2/devices', {
             method: "POST",

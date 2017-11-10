@@ -184,10 +184,12 @@ class Home extends Component {
     }
 
     onRegistered(data) {
-        // console.log('registered :', data);
+        console.log('/this registered :', data);
+        // OneSignal.removeEventListener()
     }
 
     onIds(data) {
+        console.log('/this idsss', data);
         var { token } = this.props;
         AsyncStorage.setItem('pushId', data.userId);
 
@@ -204,25 +206,53 @@ class Home extends Component {
         // Device needs to be registered with Powerline backend after token received from OneSignal
         registerDevice(token, params)
             .then(data => {
+                console.log('REGISTER RESPONSE', data);
             })
             .catch(err => {
+                console.log('REGISTER ERROR', err);
             });
     }
 
-    redirect(item, options = {}) {
-        console.log('===>', item, '====>', options);
-        // return;
-        item = item.notification.payload.additionalData.entity.target;
-        // let type = 'poll';
-        // if (item.type == 'post') {
-        //     type = 'post'
-        // } else if (item.type == 'user-petition') {
-        //     type = 'petition'
-        // }
+    // redirect(item, options = {}) {
+    //     console.log('===>', item, '====>', options);
+    //     // return;
+    //     item = item.notification.payload.additionalData.entity.target;
+    //     // let type = 'poll';
+    //     // if (item.type == 'post') {
+    //     //     type = 'post'
+    //     // } else if (item.type == 'user-petition') {
+    //     //     type = 'petition'
+    //     // }
 
-        // console.log('about to go: ', type, item.id)
+    //     // console.log('about to go: ', type, item.id)
+    //     Actions.itemDetail({ entityType: item.type, entityId: item.id, ...options });
+    // }
+    itemDetail(notification, options) {
+        // return;
+        console.log(notification);
+        let item = notification.additionalData.entity.target;
+
         Actions.itemDetail({ entityType: item.type, entityId: item.id, ...options });
     }
+
+    redirect(type, notification, options = {}){
+        console.log('redirect', type, notification, options)
+        switch(type){
+            case 'join-to-group-approved':
+                Actions.groupprofile({id: notification.group.id});
+                break;
+            case 'comment-mentioned':
+            case 'post-mentioned':
+            case 'own-post-commented':
+            case 'own-post-voted':
+            case 'own-user-petition-signed':
+                this.itemDetail(notification, options);
+                break;
+            case 'follow-request':
+                Actions.myInfluences()
+        }        
+    }
+
 
     // these are the action buttons actions
     _signPetition(token, data) {
@@ -230,10 +260,6 @@ class Home extends Component {
 
         signUserPetition(token, target.id).then(res => console.log(res));
     }
-    _viewPetition(data) {
-        this.redirect(data);
-    }
-
     _mutePetition(token, data) {
         let { target } = data.notification.payload.additionalData.entity;
 
@@ -251,9 +277,6 @@ class Home extends Component {
                 });
             }
         );
-    }
-    _openPost(data) {
-        this.redirect(data);
     }
     _approveFollowRequest(token, data, dispatch) {
         acceptFollowers(token, data.notification.payload.additionalData.entity.target.id).then((ret) => {
@@ -292,9 +315,6 @@ class Home extends Component {
     _sharePost(token, data) {
         // TODO
     }
-    _viewPost(data) {
-        this.redirect(data);
-    }
     _mutePost(token, data) {
         let { target } = data.notification.payload.additionalData.entity;
         unsubscribeFromPost(token, target.id);
@@ -303,26 +323,10 @@ class Home extends Component {
         let groupId = data.notification.payload.additionalData.entity.target.id;
         joinGroup(token, groupId);
     }
-    _ignoreInvite(token, data) {
-        // does nothing? if yes, working
-    }
-    _openGroup(token, data) {
-        let { target } = data.notification.payload.additionalData.entity;
-        Actions.groupprofile({ id: target.id });
-    }
-    _viewPoll(data) {
-        this.redirect(data);
-    }
     _mutePoll(token, data) {
         let { target } = data.notification.payload.additionalData.entity;
         unsubscribeFromPoll(token, target.id);
     }
-    _replyComment(data) {
-        // navigates to the post/petition/poll -> opens comment -> fill the input with the other user username // for now it only goes to the post/poll/petition
-        // console.log('replyComment', token, data);
-        this.redirect(data);
-    }
-
     _shareAnnouncement(token, data) {
         // TODO
         // console.log('shareAnnouncement', token, data);
@@ -332,32 +336,142 @@ class Home extends Component {
         this.redirect(data);
     }
 
+
+
+
+/*
+{
+   "notification": {
+      "payload": {
+         "additionalData": {
+            "entity": {
+               "target": {
+                  "type": "post",
+                  "id": 1043,
+                  "preview": "@Zxc6"
+               },
+               "id": 6428
+            },
+            "user": {
+               "username": "Zxc6",
+               "id": 146
+            },
+            "type": "post-mentioned"
+         },
+         "actionButtons": [
+            {
+               "icon": "ic_civix_open",
+               "text": "Open",
+               "id": "open-post-button"
+            },
+            {
+               "icon": "ic_civix_ignore",
+               "text": "Ignore",
+               "id": "ignore-button"
+            }
+         ]
+      }
+   },
+   "action": {
+      "type": 0
+   }
+}
+
+
+{
+   "notification": {
+      "payload": {
+         "additionalData": {
+            "entity": {
+               "target": {
+                  "type": "post",
+                  "id": 1043
+               },
+               "id": 6429
+            },
+            "user": {
+               "username": "Zxc6",
+               "id": 146
+            },
+            "type": "follow-post-created",
+         },
+         "actionButtons": [
+            {
+               "icon": "ic_civix_upvote",
+               "text": "Upvote",
+               "id": "upvote-post-button"
+            },
+            {
+               "icon": "ic_civix_downvote",
+               "text": "Downvote",
+               "id": "downvote-post-button"
+            }
+         ],
+      },
+   },
+   "action": {
+      "type": 1,
+      "actionID": "upvote-post-button"
+   }
+}
+
+
+    */
+
     onOpened(data) {
+        console.log('OPENED', data);
+        
         let { token, dispatch } = this.props;
-        let { action } = data;
-        if (!action) return;
-        let { actionID } = action;
-        console.log(actionID, data);
-        switch (actionID) {
+        let {type} = data.notification.payload.additionalData;
+        let actionButton = data.action.actionID;
+
+        if (!actionButton) {
+            this.redirect(type, data.notification.payload);
+            return;
+        }
+
+        // switch(type){
+        //     case 'join-to-group-approved':
+        //         Actions.groupprofile({id: notification.group.id});
+        //         break;
+        //     case 'comment-mentioned':
+        //     case 'post-mentioned':
+        //     case 'own-post-commented':
+        //     case 'own-user-petition-signed':
+        //         this.itemDetail(notification, options);
+        //         break;
+        //     case 'follow-request':
+        //         Actions.myInfluences()
+
+        // }
+
+        switch (actionButton) {
+            // these simply do nothing
             case 'ignore-button':
+            case 'ignore-invite-button':
                 break;
-            case 'sign-petition-button':
-                this._signPetition(token, data);
-                break;
+            // all of the above just redirect
             case 'view-petition-button':
-                this._viewPetition(data);
+            case 'open-post-button':
+            case 'open-poll-button':
+            case 'view-post-button':
+            case 'open-group-button':
+            case 'respond-button':
+            case 'view-poll-button':
+                this.redirect(type, data.notification.payload);
                 break;
-            case 'mute-petition-button':
-                this._mutePetition(token, data);
+            case 'reply-comment-button':
+                this.redirect(type, data.notification.payload, {commenting: true, commentText: '@' + data.notification.payload.additionalData.user.username});
                 break;
             case 'open-comment-button':
                 this._openComment(token, data);
                 break;
-            case 'open-post-button':
-                this._openPost(data);
+
+            case 'sign-petition-button':
+                this._signPetition(token, data);
                 break;
-            case 'open-poll-button':
-                this._viewPoll(data);
+            case 'mute-petition-button':
+                this._mutePetition(token, data);
                 break;
             case 'approve-follow-request-button':
                 this._approveFollowRequest(token, data, dispatch);
@@ -375,9 +489,6 @@ class Home extends Component {
                 this._sharePost(token, data);
                 break;
             // own post boosted and own post commented, follow post commented, own post voted
-            case 'view-post-button':
-                this._viewPost(data);
-                break;
             case 'mute-post-button':
                 this._mutePost(token, data);
                 break;
@@ -385,30 +496,12 @@ class Home extends Component {
             case 'join-group-button':
                 this._joinGroup(token, data);
                 break;
-            case 'ignore-invite-button':
-                this._ignoreInvite(token, data);
-                break;
-            // group permission changed
-            case 'open-group-button':
-                this._openGroup(token, data);
-                break;
-            // own poll commented, poll answered and follow poll commented
-            case 'view-poll-button':
-                this._viewPoll(data);
-                break;
             case 'mute-poll-button':
                 this._mutePoll(token, data);
-                break;
-            // comment replied
-            case 'reply-comment-button':
-                this._replyComment(data);
                 break;
             // announcement
             case 'share-announcement-button':
                 this._shareAnnouncement(token, data);
-                break;
-            case 'respond-button':
-                this._viewPoll(data);
                 break;
             case 'rsvp-button':
                 this.rspv(data);

@@ -96,10 +96,12 @@ class ItemDetail extends Component {
         // console.log('=xx=x=x=x=x=x=x=x=x==x')
         // console.log('propss', this.props.entityType, this.props.entityId);
         if (this.props.commenting) {
-            // console.log('commenting...')
             setTimeout(
                 () => this._onAddComment()
                 , 1000);
+        }
+        if (this.props.commentText){
+            this.setState({commentText: this.props.commentSendText })
         }
         this.loadEntity();
     }
@@ -249,6 +251,8 @@ class ItemDetail extends Component {
                 this.setState({ isLoading: false, inputDescription: this.item.description });
                 this.loadComments();
                 this.onShare(this.props.share, data.payload[0]);
+            } else {
+                Actions.pop();
             }
         }).catch(e => {
             this.setState({ isLoading: false });
