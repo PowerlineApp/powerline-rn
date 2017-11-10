@@ -239,7 +239,7 @@ class Home extends Component {
         console.log('redirect', type, notification, options)
         switch(type){
             case 'join-to-group-approved':
-                Actions.groupprofile({id: notification.group.id});
+                Actions.groupprofile({id: notification.additionalData.entity.target.id});
                 break;
             case 'comment-mentioned':
             case 'post-mentioned':
