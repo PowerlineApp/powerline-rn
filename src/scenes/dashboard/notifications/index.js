@@ -204,7 +204,7 @@ class Notifications extends Component{
 
         switch(notification.type){
             case 'join-to-group-approved':
-                Actions.group({id: notification.group.id});
+                Actions.groupprofile({id: notification.group.id});
                 break;
             case 'comment-mentioned':
             case 'post-mentioned':

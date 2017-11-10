@@ -280,7 +280,7 @@ class NewPetition extends Component {
                     <Title style={{ color: 'white' }}>New Petition</Title>
                 </Body>
                 <Right>
-                    <Button transparent onPress={() => this.createPost()}>
+                    <Button transparent onPress={() => this.createPetition()}>
                         <Label style={{ color: 'white' }}>Send</Label>
                     </Button>
                 </Right>

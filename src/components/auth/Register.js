@@ -570,6 +570,10 @@ class Register extends React.Component{
         );
     }
 
+    componentDidCatch(e) {
+        console.log('e', e)
+    }
+
     render(){
         var { position, isLoading } = this.state;
         return (
