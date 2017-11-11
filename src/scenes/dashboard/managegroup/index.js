@@ -109,7 +109,7 @@ class ManageGroup extends Component {
                 {/* <Options.SubscriptionLevel dispatch={dispatch} token={token} group={group} /> */}
               </AccordionItem>
               <AccordionItem title="Funraiser Setup">
-                <Text>In Progress</Text>
+                <Options.FundRaiser group={group}/>
               </AccordionItem>
               <AccordionItem title="Membership Control">
                 <Options.MembershipControl

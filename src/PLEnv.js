@@ -15,4 +15,5 @@ module.exports = {
   fontFamily: undefined,
   PER_PAGE: 20,
   youTubeAPIKey: 'AIzaSyC2911BA6uHZWYcB0154TC1KcYKc6d337s',
+  stripeAPIKey: 'pk_test_QUgSE3ZhORW9yoDuCkMjnaA2'
 };

@@ -19,6 +19,7 @@
     "react-native-activity-indicator-ios": "1.0.4",
     "react-native-animatable": "1.2.2",
     "react-native-collapsible": "0.9.0",
+    "react-native-datepicker": "^1.6.0",
     "react-native-device-info": "0.11.0",
     "react-native-dismiss-keyboard": "^1.0.0",
     "react-native-drawer": "^2.5.0",

@@ -8,6 +8,7 @@ import Reports from './reports';
 import GroupMembers from './groupmembers'
 import AdvancedProfile from './advancedprofile'
 import Tags from './tags'
+import FundRaiser from './fundraiser'
 
 export {
     ProfileSetup,
@@ -19,5 +20,6 @@ export {
     Reports,
     GroupMembers,
     AdvancedProfile,
-    Tags
+    Tags, 
+    FundRaiser
 };
