@@ -183,8 +183,8 @@ android {
 }
 
 dependencies {
-    compile project(':react-native-share-extension')
     compile project(':react-native-image-crop-picker')
+    compile project(':react-native-share-extension')
     compile project(':react-native-share')
     compile project(':react-native-fetch-blob')
     compile 'com.android.support:multidex:1.0.1'
