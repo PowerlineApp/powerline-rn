@@ -21,6 +21,8 @@ import Menu, {
     renderers
 } from 'react-native-popup-menu';
 import PLOverlayLoader from 'PLOverlayLoader';
+import randomPlaceholder from '../../../../utils/placeholder';
+
 
 import { getChildComments, addComment, rateComment } from 'PLActions';
 import SuggestionBox from '../../../../common/suggestionBox';
