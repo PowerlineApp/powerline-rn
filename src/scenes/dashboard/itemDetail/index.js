@@ -825,7 +825,7 @@ class ItemDetail extends Component {
     }
 
     renderAttachedImage(item){
-        let imgURL; // 'https://powerline-dev.imgix.net/avatars/594be2d75ce8f479888664.jpeg?ixlib=php-1.1.0';
+        let imgURL;
         if (item.post){
             imgURL = item.post.image;
         } else {
@@ -852,17 +852,6 @@ class ItemDetail extends Component {
                         </Body>
                     </Left>
                 </CardItem>
-
-
-
-            // <CardItem>
-            //     <View style={{flex: 1}}>
-            //         <ImageLoad
-            //         source={{ uri: imgURL }}
-            //         style={styles.image}
-            //         />
-            //     </View>
-            // </CardItem>
             );
     }
 

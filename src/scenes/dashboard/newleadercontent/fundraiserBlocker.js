@@ -3,7 +3,8 @@ import {View, Modal, Text} from 'react-native';
 
 class FundraiserBlocker extends Component {
     render(){
-        if (!this.props.visible) return null;
+        return null;
+        if (this.props.visible) return null;
         return <Modal>
             <View>
             <Text>It seems that your group does not have any account set up yet!</Text>

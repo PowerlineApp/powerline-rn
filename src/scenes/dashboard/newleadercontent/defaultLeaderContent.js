@@ -95,7 +95,7 @@ class NewLeaderContent extends Component {
 
     componentDidMount() {
         
-        let { token, group } = this.props;
+        let { token, group, type } = this.props;
         loadUserData(token).then(data => {
             this.setState({
                 profile: data
@@ -110,7 +110,7 @@ class NewLeaderContent extends Component {
             if (group && group !== 'all'){
                 showCommunity = false;
                 selectedGroupIndex = ret.payload.map(grouObj => grouObj.id).indexOf(group);
-                this.updateBankInfo(token, ret.payload[selectedGroupIndex].id);
+                this.updateBankInfo(token, ret.payload[selectedGroupIndex].id, type);
             }
             this.setState({
                 grouplist: ret.payload.filter(group => group.user_role === 'owner' || group.user_role === 'manager'),
@@ -121,7 +121,8 @@ class NewLeaderContent extends Component {
         });
     }
 
-    updateBankInfo(token, groupId){
+    updateBankInfo(token, groupId, type){
+        if (type !== 'group_fundraiser') return
         console.log('==>', token, groupId)
         this.setState({enableSend: false});
         groupBankAccounts(token, groupId).then(r => {
@@ -157,8 +158,8 @@ class NewLeaderContent extends Component {
             this.descriptionRef.focus()
         }
         
-        var { token } = this.props;
-        this.updateBankInfo(token, this.state.grouplist[index].id);
+        let { token, type } = this.props;
+        this.updateBankInfo(token, this.state.grouplist[index].id, type);
 
         getPetitionConfig(token, this.state.grouplist[index].id)
             .then(data => {
@@ -239,20 +240,27 @@ class NewLeaderContent extends Component {
         let subject = state.title; // ??? title ?
         let options = state.options;
 
+        options.map(opt => {
+            if (!opt.value){
+                alert('Please provide only valid options')
+                return false;
+            }
+        })
+        
         if (type && subject && options.length > 0)
-            return {type, subject, options}
+        return {type, subject, options}
         if (!subject){
             alert('Please provide a question for your poll!')
             return false;
         }
-
+        
         if (options.length <= 0){
             alert("You need to add at least one option for your poll!")
             return false;
         }
-
+        
     }
-
+    
     prepareGroupEventToServer(){
         console.log(this.state);
         let {state} = this;
@@ -264,7 +272,13 @@ class NewLeaderContent extends Component {
         let initTime = state.init.time;
         let endDate = state.end.date;
         let endTime = state.end.time
-        console.log(initDate, initTime, endDate, endTime)
+        // console.log(initDate, initTime, endDate, endTime)
+        options.map(opt => {
+            if (!opt.value){
+                alert('Please provide only valid response options')
+                return false;
+            }
+        })
 
         let started_at = moment(initDate).startOf('day').add(moment(initTime).hour(), 'hour').add(moment(initTime).minutes(), 'minutes').format('YYYY-MM-DD HH:mm:ssZZ').split(' ').join('T');
         let finished_at = moment(endDate).startOf('day').add(moment(endTime).hour(), 'hour').add(moment(endTime).minutes(), 'minutes').format('YYYY-MM-DD HH:mm:ssZZ').split(' ').join('T');
@@ -316,6 +330,13 @@ class NewLeaderContent extends Component {
                 return false;
             }
         }
+
+        options.map(opt => {
+            if (!opt.value || !opt.amount){
+                alert('Please provide only valid options')
+                return false;
+            }
+        })
 
         if (!title){
             alert('Please provide a title for your ' + crowdfunding.is_crowdfunding ? 'crowdfunding' : 'fundraiser');
@@ -586,13 +607,9 @@ class NewLeaderContent extends Component {
                 <FundraiserBlocker visible={this.state.blockFundraiser} />
                 <Header style={styles.header}>
                     <View style={{alignSelf: 'flex-start'}}>
-                        {
-                            this.state.sharing
-                            ? null
-                            : <Button transparent onPress={() => Actions.pop()} style={{ width: 50, height: 50, paddingLeft: 0 }}  >
-                                <Icon active name='arrow-back' style={{ color: 'white' }} />
-                            </Button>
-                        }
+                        <Button transparent onPress={() => Actions.pop()} style={{ width: 50, height: 50, paddingLeft: 0 }}  >
+                            <Icon active name='arrow-back' style={{ color: 'white' }} />
+                        </Button>
                     </View>
                     <Body>
                         <Title style={{ color: 'white' }}>{headerTitle}</Title>
@@ -603,20 +620,20 @@ class NewLeaderContent extends Component {
                         </Button>
                     </View>
                 </Header>
-                        <List>
-                            <ListItem style={styles.community_container} onPress={() => this.toggleCommunity()}>
-                                <View style={styles.avatar_container}>
-                                    <View style={styles.avatar_wrapper}>
-                                        <Thumbnail square style={styles.avatar_img} source={{ uri: this.state.profile.avatar_file_name + '&w=50&h=50&auto=compress,format,q=95' }} />
-                                    </View>
-                                    <View style={styles.avatar_subfix} />
+                    <List>
+                        <ListItem style={styles.community_container} onPress={() => this.toggleCommunity()}>
+                            <View style={styles.avatar_container}>
+                                <View style={styles.avatar_wrapper}>
+                                    <Thumbnail square style={styles.avatar_img} source={{ uri: this.state.profile.avatar_file_name + '&w=50&h=50&auto=compress,format,q=95' }} />
                                 </View>
+                                <View style={styles.avatar_subfix} />
+                            </View>
                             <Body style={styles.community_text_container}>
                                 <Text style={{color: 'white'}}>
                                     {this.state.selectedGroupIndex == -1 ? 'Select a community' : this.state.grouplist[this.state.selectedGroupIndex].official_name}
                                 </Text>
                             </Body>
-                                <Right style={styles.communicty_icon_container}>
+                            <Right style={styles.communicty_icon_container}>
                                 {
                                     this.state.sharing 
                                     ? <Text style={{color: '#fff'}}>{'[+]'}</Text>
@@ -694,9 +711,6 @@ class NewLeaderContent extends Component {
                             </Label>
                             :<Label />
                         }
-                        {/* <Label style={{ color: 'white' }}>
-                            {(5000 - this.state.content.length)}
-                        </Label> */}
                     </Footer>
                         }
                 </KeyboardAvoidingView>

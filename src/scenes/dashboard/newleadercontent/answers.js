@@ -27,7 +27,7 @@ class Answers extends Component {
     
     addAnswer(){
         let {answers} = this.state;
-        answers.push({amount: '0', value: '', is_user_amount: false});
+        answers.push(this.props.answerType === 'donation' ? {amount: '0', value: '', is_user_amount: false} : {value: ''})
         this.setState({answers});
         this.props.setAnswer(answers);
     }
@@ -102,10 +102,13 @@ class Answers extends Component {
                         </View>
                         <Text style={{color: '#fff'}} >{addAnswersButton}</Text>
                     </Button>
-                    <View style={styles.allowUserAmountSwitch}>
-                        <Switch onValueChange={() => this.setState({allowUserAmount: !allowUserAmount})} value={allowUserAmount} />
-                        <Text style={styles.allowUserAmountTag} >Allow Choose Amount</Text>
-                    </View>
+                    {
+                        this.props.answerType === 'donation' && 
+                        <View style={styles.allowUserAmountSwitch}>
+                            <Switch onValueChange={() => this.setState({allowUserAmount: !allowUserAmount})} value={allowUserAmount} />
+                            <Text style={styles.allowUserAmountTag} >Allow Choose Amount</Text>
+                        </View>
+                    }
                 </View>
 
             </View>
