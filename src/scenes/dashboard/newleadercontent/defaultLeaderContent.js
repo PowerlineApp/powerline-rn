@@ -14,6 +14,8 @@ const fs = RNFetchBlob.fs
 
 import Answers from './answers';
 import Event from './event';
+import CrowdfundingSwitch from './crowdfundingSwitch';
+import FundraiserBlocker from './fundraiserBlocker';
 
 import {
     Container,
@@ -51,11 +53,11 @@ const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
 
 
 const { width, height } = Dimensions.get('window');
-import { loadUserData, getGroups, getUsersByGroup, createPostToGroup, getPetitionConfig, createPoll, createAnnouncement } from 'PLActions';
+import { loadUserData, getGroups, getUsersByGroup, createPostToGroup, getPetitionConfig, createPoll, createAnnouncement, sendAttachment, groupBankAccounts } from 'PLActions';
 import randomPlaceholder from '../../../utils/placeholder';
 import CommunityView from '../../../components/CommunityView';
 
-class NewPost extends Component {
+class NewLeaderContent extends Component {
     constructor(props) {
         super(props);
 
@@ -81,6 +83,9 @@ class NewPost extends Component {
                 date: null,
                 time: null
             },
+            crowdfunding: {
+                is_crowdfunding: false
+            }
         };
 
         this.placeholderTitle = randomPlaceholder('post');
@@ -91,7 +96,6 @@ class NewPost extends Component {
     componentDidMount() {
         
         let { token, group } = this.props;
-        console.log(token);
         loadUserData(token).then(data => {
             this.setState({
                 profile: data
@@ -104,16 +108,34 @@ class NewPost extends Component {
         getGroups(token).then(ret => {
             let showCommunity = true, selectedGroupIndex = -1;
             if (group && group !== 'all'){
-                showCommunity = false,
+                showCommunity = false;
                 selectedGroupIndex = ret.payload.map(grouObj => grouObj.id).indexOf(group);
+                this.updateBankInfo(token, ret.payload[selectedGroupIndex].id);
             }
             this.setState({
-                grouplist: ret.payload,//.filter(group => group.user_role === 'owner' || group.user_role === 'manager'),
+                grouplist: ret.payload.filter(group => group.user_role === 'owner' || group.user_role === 'manager'),
                 showCommunity, selectedGroupIndex
             });
         }).catch(err => {
             
         });
+    }
+
+    updateBankInfo(token, groupId){
+        console.log('==>', token, groupId)
+        this.setState({enableSend: false});
+        groupBankAccounts(token, groupId).then(r => {
+            r.json().then(r => {
+                if (!r || r.length === 0){
+                    this.setState({blockFundraiser: true})
+                } else {
+                    this.setState({enableSend: true})
+                }
+            })
+        }).catch(e => {
+            alert('Something went wrong. Group account data could not be loaded. Try again later.')
+        });
+
     }
 
     toggleCommunity() {
@@ -134,8 +156,9 @@ class NewPost extends Component {
         } else if (this.descriptionRef && this.state.content === '') {
             this.descriptionRef.focus()
         }
-
+        
         var { token } = this.props;
+        this.updateBankInfo(token, this.state.grouplist[index].id);
 
         getPetitionConfig(token, this.state.grouplist[index].id)
             .then(data => {
@@ -172,13 +195,24 @@ class NewPost extends Component {
     prepareGroupAnnouncementToServer(){
         let {state} = this;
         let {content} = state;
+        if (content)
+            return {content};
+        if (!content){
+            alert("Please provide a content for your announcement!") // ok
+            return false
+        }
 
     }
     prepareGroupDiscussionToServer(){
         let {state} = this;
         let type = 'news';
-        let subject = '?'
         let subject = state.content;
+        if (type && subject)
+            return {type, subject}
+        if (!subject){
+            alert("Please provide a content for your discussion!") // ok
+            return false;            
+        }
     }
     prepareGroupPetitionToServer(){
         let {state} = this;
@@ -187,7 +221,7 @@ class NewPost extends Component {
         let petition_body = state.content;
 
         if (type && petition_title && petition_body)
-            return {type, petition_title, petition_body};
+            return {type, petition_title, petition_body, subject: '.'}; // subject??? - ok
 
         if (!petition_title){
             alert("Please create a title for your petition");
@@ -202,16 +236,30 @@ class NewPost extends Component {
     prepareGroupPollToServer(){
         let {state} = this;
         let type = 'group';
-        let question; // ??? title ?
-        let options = state.options.map(option => {value: option})
+        let subject = state.title; // ??? title ?
+        let options = state.options;
+
+        if (type && subject && options.length > 0)
+            return {type, subject, options}
+        if (!subject){
+            alert('Please provide a question for your poll!')
+            return false;
+        }
+
+        if (options.length <= 0){
+            alert("You need to add at least one option for your poll!")
+            return false;
+        }
+
     }
 
     prepareGroupEventToServer(){
+        console.log(this.state);
         let {state} = this;
         let type = 'event';
         let title = state.title;
-        let options = state.options.map(option => {value: option})
-
+        let subject = state.content;
+        let {options} = state.options;
         let initDate = state.init.date;
         let initTime = state.init.time;
         let endDate = state.end.date;
@@ -221,12 +269,16 @@ class NewPost extends Component {
         let started_at = moment(initDate).startOf('day').add(moment(initTime).hour(), 'hour').add(moment(initTime).minutes(), 'minutes').format('YYYY-MM-DD HH:mm:ssZZ').split(' ').join('T');
         let finished_at = moment(endDate).startOf('day').add(moment(endTime).hour(), 'hour').add(moment(endTime).minutes(), 'minutes').format('YYYY-MM-DD HH:mm:ssZZ').split(' ').join('T');
 
-        console.log(title !== '' && options.length > 0 && initDate !== null && initTime !== null && endDate !== null && endTime !== null)
-        if (title !== '' && options.length > 0 && initDate !== null && initTime !== null && endDate !== null && endTime !== null)
-            return {title, started_at, finished_at, type, options};
+        // console.log(title !== '' && options.length > 0 && initDate !== null && initTime !== null && endDate !== null && endTime !== null)
+        if (title !== '' && subject !== '' && options.length > 0 && initDate !== null && initTime !== null && endDate !== null && endTime !== null)
+            return {title, subject, started_at, finished_at, type, options}; // ok
         
         if (!title){
             alert("Please create a title for your event");            
+            return false;
+        }
+        if (!content){
+            alert("Please create a content for your event");            
             return false;
         }
         if (options.length < 1){
@@ -253,13 +305,60 @@ class NewPost extends Component {
 
     }
     prepareGroupFundraiserToServer(){
-        let {state} = this;
-        let type = 'payment_request';
-        let title = state.title;
+        let {state: {title, crowdfunding, content, options}} = this;
+        if (crowdfunding.is_crowdfunding){
+            if (!crowdfunding.goal){
+                alert('Please select a goal for your crowdfunding.');
+                return false;
+            }
+            if (!crowdfunding.deadline){
+                alert('Please use a valid deadline for your crowdfunding.')
+                return false;
+            }
+        }
+
+        if (!title){
+            alert('Please provide a title for your ' + crowdfunding.is_crowdfunding ? 'crowdfunding' : 'fundraiser');
+            return false;
+        }
+        
+        if (!content){
+            alert('Please provide a content for your ' + crowdfunding.is_crowdfunding ? 'crowdfunding' : 'fundraiser');
+            return false;    
+        }
+        if (options.length <= 0){
+            alert('Please provide at least one option for your ' + crowdfunding.is_crowdfunding ? 'crowdfunding' : 'fundraiser');
+            return false;    
+        }
+
+        return (
+            {
+                title, subject: content, options,
+                is_crowdfunding: crowdfunding.is_crowdfunding,
+                crowdfunding_goal_amount: crowdfunding.is_crowdfunding ? crowdfunding.goal : null,
+                crowdfunding_deadline: crowdfunding.is_crowdfunding ? crowdfunding.deadline : null,
+                type: 'payment_request'
+            }
+        )
     }
+
+    sendAttachments(obj, attachments){
+        let {token} = this.props;
+        if (attachments.length <= 0) return;
+        attachments.map((attachment, index) => {
+            sendAttachment(token, obj.id, attachment).then(r => {
+                console.log('attachment', index, r)
+            }).catch(e => {
+                console.log('error attaching ', index, e )
+            })
+        })
+    }
+
     createContent(){
+        if (this.state.blockFundraiser || !this.state.enableSend) return;
         let {token, type} = this.props;
         let groupId = this.state.grouplist[this.state.selectedGroupIndex].id;
+        let {attachments} = this.state;
         let body;
         switch(type){
             case 'group_discussion':
@@ -283,9 +382,8 @@ class NewPost extends Component {
         }
         console.log(body);
         if (body){
-            body.subject = 'x';
             let req;
-            console.log('going to post! :D');
+            // console.log('going to post! :D');
             if (type === 'group_announcement'){
                 req = createAnnouncement(token, groupId, body);
             } else {
@@ -293,9 +391,11 @@ class NewPost extends Component {
             }
 
             req.then(resp => {
-                console.log(resp);
+                console.warn(resp);
+                this.sendAttachments(JSON.parse(resp._bodyInit), attachments);
             }).catch(e => {
-                alert(e);
+                // alert(e);
+                console.warn(JSON.parse(e));
             })
 
         }
@@ -319,7 +419,7 @@ class NewPost extends Component {
 
     addVideoAttachment() {
         let {attachments, videoURL} = this.state;
-        attachments.push({type: 'video', value: videoURL})
+        attachments.push({type: 'video', content: videoURL})
         this.setState({attachments, videoModal: false, videoURL: ''})
     }
 
@@ -339,7 +439,7 @@ class NewPost extends Component {
                     includeBase64: true
                 }).then(image => {
                     let {attachments} = this.state;
-                    attachments.push({type: 'img', value: image.data})
+                    attachments.push({type: 'image', content: image.data})
                     this.setState({attachments})
                 }).catch(v => alert(JSON.stringify(v)));
             }
@@ -351,7 +451,7 @@ class NewPost extends Component {
                 }).then(image => {
                     // console.log(image);
                     let {attachments} = this.state;
-                    attachments.push({type: 'img', value: image.data})
+                    attachments.push({type: 'image', content: image.data})
                     this.setState({attachments})
                 });
             }
@@ -409,10 +509,10 @@ class NewPost extends Component {
             {
                 attachments.map((attachment, index) => {
                         console.log(attachment);
-                        if (attachment.type === 'img'){
+                        if (attachment.type === 'image'){
                             return (
                                 <View style={{ flexDirection: 'row', margin: 8, width: width, height: height, alignItems: 'center', justifyContent: 'center' }}>
-                                <Image source={{ uri: `data:image/png;base64,${attachment.value}` }} resizeMode="cover" style={{ width: width, height: height }} />
+                                <Image source={{ uri: `data:image/png;base64,${attachment.content}` }} resizeMode="cover" style={{ width: width, height: height }} />
                                 <Button transparent style={styles.deleteIconButtonContainer} onPress={() => this.removeAttachment(index)}>
                                 <View style={styles.deleteIconContainer}>
                                     <Icon name="md-close-circle" style={styles.deleteIcon} />
@@ -423,7 +523,7 @@ class NewPost extends Component {
                         }
                         return (
                             <View style={{ flexDirection: 'row', margin: 8, width: width, height: height, alignItems: 'center', justifyContent: 'center' }}>
-                                    <Image source={{url: this.getYoutubeURL(attachment.value)}} resizeMode="cover" style={{ width: width, height: height }} />
+                                    <Image source={{url: this.getYoutubeURL(attachment.content)}} resizeMode="cover" style={{ width: width, height: height }} />
                                     <Button transparent style={styles.deleteIconButtonContainer} onPress={() => this.removeAttachment(index)}>
                                         <View style={styles.deleteIconContainer}>
                                             <Icon name="md-close-circle" style={styles.deleteIcon} />
@@ -432,12 +532,18 @@ class NewPost extends Component {
                                 </View>)
                 })
             }
-            <Button transparent style={{ margin: 8, height: height }} onPress={this.attachImage}>  
-                <Image source={require("img/upload_image.png")} resizeMode="contain" style={{ width: width, height: height, tintColor: 'gray' }} />
-            </Button>
-            <Button transparent style={{ margin: 8, height: height }} onPress={() => this.openVideoAttachment()}>
-                <Image source={require("img/youtube_link.png")} resizeMode="contain" style={{ width: width, height: height, tintColor: 'gray' }} />
-            </Button>
+            {
+                attachments.length < 3
+                ? [
+                    <Button transparent style={{ margin: 8, height: height }} onPress={this.attachImage}>  
+                        <Image source={require("img/upload_image.png")} resizeMode="contain" style={{ width: width, height: height, tintColor: 'gray' }} />
+                    </Button>,
+                    <Button transparent style={{ margin: 8, height: height }} onPress={() => this.openVideoAttachment()}>
+                        <Image source={require("img/youtube_link.png")} resizeMode="contain" style={{ width: width, height: height, tintColor: 'gray' }} />
+                    </Button>
+                ]
+                : null
+            }
         </View>)
     }
 
@@ -453,6 +559,7 @@ class NewPost extends Component {
                 hasAnswers,
                 addAnswersButton,
                 answersPlaceholder,
+                answerType,
                 attachments,
                 descriptionPlaceHolder}
             } = this.props;
@@ -476,6 +583,7 @@ class NewPost extends Component {
                             {this.getYoutubeThumbnail(this.state.videoURL)}
                     </View>
                 </Modal>
+                <FundraiserBlocker visible={this.state.blockFundraiser} />
                 <Header style={styles.header}>
                     <View style={{alignSelf: 'flex-start'}}>
                         {
@@ -548,6 +656,10 @@ class NewPost extends Component {
                             />
                         }
                         {
+                            this.props.type === 'group_fundraiser' &&
+                            <CrowdfundingSwitch updateCrowdfundingInfo={(data) => this.setState({crowdfunding: data})} />
+                        }
+                        {
                             event &&
                             <Event setEventDate={(init, end) => this.setEventDate(init, end)} />
                         }
@@ -557,6 +669,7 @@ class NewPost extends Component {
                                 setAnswer={(options) => this.setState({options})}
                                 addAnswersButton={addAnswersButton}
                                 answersPlaceholder={answersPlaceholder}
+                                answerType={answerType}
                             />
                         }
                     </ScrollView>
@@ -596,4 +709,4 @@ const mapStateToProps = state => ({
     token: state.user.token
 });
 
-export default connect(mapStateToProps)(NewPost);
+export default connect(mapStateToProps)(NewLeaderContent);

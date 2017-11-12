@@ -54,6 +54,7 @@ class NewLeaderContent extends Component{
                     hasAnswers: true,
                     answersPlaceholder: 'Type answer here',
                     addAnswersButton: 'Add answer',
+                    answerType: 'default',
                     attachments: true
                 }
                 break;
@@ -69,6 +70,7 @@ class NewLeaderContent extends Component{
                     hasAnswers: true,
                     addAnswersButton: 'Add RSVP Response',
                     answersPlaceholder: 'Type answer here',
+                    answerType: 'default',
                     attachments: true
                 }
                 break;
@@ -78,7 +80,12 @@ class NewLeaderContent extends Component{
                     hasTitle: true,
                     titlePlaceholder: 'Fundraiser title',
                     hasDescription: true,
-                    descriptionPlaceHolder: 'Description Placeholder',
+                    wrapDescription: true,                    
+                    descriptionPlaceHolder: 'Type your description here',
+                    hasAnswers: 'Add Answer',
+                    addAnswersButton: 'Add option',
+                    answersPlaceholder: 'Option description',
+                    answerType: 'donation',
                     attachments: true
                 }
                 break;

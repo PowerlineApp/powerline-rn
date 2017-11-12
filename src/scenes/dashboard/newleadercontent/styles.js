@@ -163,7 +163,9 @@ export default {
     answerInput: {
         flex: 9,
         backgroundColor: '#fff',
-        padding: 6
+        padding: 6,
+        alignSelf: 'center',
+        height: 35
     },
 
     /// answer component
@@ -172,10 +174,13 @@ export default {
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'row',
-        height: 35
+        height: 35,
+        textAlign: 'center',
+        textAlignVertical: 'center'
     },
     answerMainContainer: {
-        marginTop: 16
+        marginTop: 16,
+        alignItems: 'center'
     },
     answersRemoveOptionIcon: {
         color: '#bbb',
@@ -192,4 +197,74 @@ export default {
     eventMainContainer: {
         marginTop: 16
     },
+
+    inputContainerWithSuffix: {
+        flexDirection: 'row',
+        alignSelf: 'center'
+    },
+    numericInput: {
+        width: 70,
+        overflow: 'visible',
+        backgroundColor: '#fff',
+    },
+    suffix: {
+        color: '#bbb'
+    },
+    suffixContainer: {
+        width: 50,
+        backgroundColor: '#fff',
+        height: 35,
+        textAlign: 'center',
+        textAlignVertical: 'center',
+        justifyContent: 'center',
+        marginRight: 3
+    },
+    bottomPanel: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-around'
+    },
+    allowUserAmountSwitch: {
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    allowUserAmountTag: {
+        color: '#aaa'
+    },
+
+    // crowdfunding
+    crowdfundingSwitch: {
+        marginTop: 6,
+        marginBottom: 6,
+        padding: 8,
+        backgroundColor: '#fff',
+        alignContent: 'flex-start'
+    },
+    switchContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center'
+    },
+    crowdfundingGoal: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between'
+    },
+    crowdfundingGoalInput: {
+        width: 70,
+        overflow: 'visible',
+        backgroundColor: '#eee',
+    },
+    crowdFundingDeadLine: {
+        marginTop: 20
+    },
+    crowdfundingDateTitle: {
+        color: '#999'
+    },
+    crowdfundingDate: {
+        fontWeight: '400', padding: 4
+    },
+    crowdfundingDateContainer: {
+        backgroundColor: '#fff', marginTop: 8, padding: 8
+    }
 }
