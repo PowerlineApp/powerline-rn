@@ -279,9 +279,9 @@ export default {
         borderColor: PLColors.cellBorder,
     },
     commentRootContainer: {
-        width: 36,
+        width: 36, // ??
         alignSelf: 'flex-start',
-        paddingLeft: 2,
+        paddingLeft: 2
     },
     commentChildContainer: {
         //ignore

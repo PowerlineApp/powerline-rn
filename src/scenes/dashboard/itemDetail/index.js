@@ -669,20 +669,23 @@ class ItemDetail extends Component {
     }
 
     _renderRootComment = (comment, isChild = false) => {
-        var thumbnail: string = comment.author_picture ? comment.author_picture : '';
-        let title: string = (comment.user ? comment.user.first_name : '' || '') + ' ' + (comment.user ? comment.user.last_name : '' || '');
-        var rateUp: number = (comment.rate_count || 0) / 2 + comment.rate_sum / 2;
-        var rateDown: number = (comment.rate_count || 0) / 2 - comment.rate_sum / 2;
+        console.log('render comment', comment);
+        let thumbnail = comment.author_picture ? comment.author_picture : '';
+        let title = (comment.user ? comment.user.first_name : '' || '') + ' ' + (comment.user ? comment.user.last_name : '' || '');
+        let rateUp = (comment.rate_count || 0) / 2 + comment.rate_sum / 2;
+        let rateDown = (comment.rate_count || 0) / 2 - comment.rate_sum / 2;
         let rateValue = comment.rate_value;
 
-        const style: object = { paddingBottom: 0 };
+        let style: object = { paddingBottom: 0 };
         if (isChild) {
             style.marginLeft = 40;
             style.marginTop = 5;
         }
 
+        console.log(thumbnail, title, rateUp, rateDown)
+
         return (
-            <CardItem style={styles.commentRootContainer}>
+            <CardItem style={style}>
                 <Left>
                     <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail + '&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                     <Body style={{ alignSelf: 'flex-start' }}>
@@ -860,9 +863,10 @@ class ItemDetail extends Component {
     }
 
     _renderPostOrUserPetitionCard(item, state) {
+        console.log('got here')
         return (
             <View>
-                <FeedDescription item={item} />
+                <FeedDescription item={item} profile={this.props.profile} />
                 <FeedMetaData item={item} />
                 <View style={styles.borderContainer} />
                 {this.renderAttachedImage(item)}
@@ -874,7 +878,7 @@ class ItemDetail extends Component {
     _renderGroupCard(item) {
         return (
             <Card>
-                <FeedDescription item={item} />
+                <FeedDescription item={item} profile={this.props.profile} />
                 <FeedCarousel item={item} />
                 <View style={styles.borderContainer} />
                 <FeedFooter item={item} profile={this.props.profile} token={this.props.token} showAnalytics />
@@ -947,11 +951,11 @@ class ItemDetail extends Component {
         // console.log(this.state.sharing);
         // console.log(this.refs);
         if (this.item === null) {
-            return (
-            {/* Turning of Pulse Loader until we can stabilize its performance
-                <PLOverlayLoader visible={this.state.isLoading} logo />
-            */}
-            );
+            return ( null);
+            // {/* Turning of Pulse Loader until we can stabilize its performance
+            //     <PLOverlayLoader visible={this.state.isLoading} logo />
+            // */}
+            // );
         }
         let item = this.item;
         return (
