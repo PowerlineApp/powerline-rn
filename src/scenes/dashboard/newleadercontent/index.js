@@ -54,7 +54,7 @@ class NewLeaderContent extends Component{
                     hasAnswers: true,
                     answersPlaceholder: 'Type answer here',
                     addAnswersButton: 'Add answer',
-                    answerType: 'default',
+                    answerType: 'poll',
                     attachments: true
                 }
                 break;
@@ -70,7 +70,7 @@ class NewLeaderContent extends Component{
                     hasAnswers: true,
                     addAnswersButton: 'Add RSVP Response',
                     answersPlaceholder: 'Type answer here',
-                    answerType: 'default',
+                    answerType: 'event',
                     attachments: true
                 }
                 break;

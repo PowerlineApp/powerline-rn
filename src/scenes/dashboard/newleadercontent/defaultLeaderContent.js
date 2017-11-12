@@ -53,7 +53,7 @@ const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
 
 
 const { width, height } = Dimensions.get('window');
-import { loadUserData, getGroups, getUsersByGroup, createPostToGroup, getPetitionConfig, createPoll, createAnnouncement, sendAttachment, groupBankAccounts } from 'PLActions';
+import { loadUserData, getGroups, getUsersByGroup, createPostToGroup, getPetitionConfig, createPoll, createAnnouncement, sendAttachment, groupBankAccounts, publishPoll } from 'PLActions';
 import randomPlaceholder from '../../../utils/placeholder';
 import CommunityView from '../../../components/CommunityView';
 
@@ -181,12 +181,13 @@ class NewLeaderContent extends Component {
             return;
         }
 
-        groupId = this.state.grouplist[this.state.selectedGroupIndex].id;
+        let group = this.state.grouplist[this.state.selectedGroupIndex];
+        groupId = group.id;
         Alert.alert(
             'Are you sure?',
-            'This will send a push notification to all group members immediately.',
+            `Are you sure you want to send this ${this.props.options.headerTitle} to all ${group.total_members} group members?`,
             [
-              {text: 'Yes', onPress: () => this.createContent()},
+              {text: "Yes, I'm sure", onPress: () => this.createContent()},
               {text: 'Cancel', onPress: () => {}, style: 'cancel'},
             ],
             { cancelable: false }
@@ -330,13 +331,26 @@ class NewLeaderContent extends Component {
                 return false;
             }
         }
+        let valid = false;
 
-        options.map(opt => {
-            if (!opt.value || !opt.amount){
+        options = options.map((opt, i) => {
+            console.log(opt);
+            if (!opt.value || (!opt.amount && !opt.is_user_amount)){
                 alert('Please provide only valid options')
-                return false;
+                valid = false;
             }
+
+            if (opt.is_user_amount){
+                valid = true;
+            }
+
+            valid = true;
+            return {value: (opt.value), payment_amount: opt.amount, is_user_amount: !!opt.is_user_amount}
         })
+
+        if (!valid){
+            return false;
+        }
 
         if (!title){
             alert('Please provide a title for your ' + crowdfunding.is_crowdfunding ? 'crowdfunding' : 'fundraiser');
@@ -363,20 +377,39 @@ class NewLeaderContent extends Component {
         )
     }
 
-    sendAttachments(obj, attachments){
+    async sendAttachments(obj, attachments){
         let {token} = this.props;
-        if (attachments.length <= 0) return;
-        attachments.map((attachment, index) => {
-            sendAttachment(token, obj.id, attachment).then(r => {
-                console.log('attachment', index, r)
-            }).catch(e => {
-                console.log('error attaching ', index, e )
-            })
+        for (let attachment of attachments){
+            try {
+                await sendAttachment(token, obj.id, attachment);
+            } catch (error) {
+                console.log('error attaching: ', attachment, ' of ', attachments, 'for ', obj);
+            }
+        }
+        this.publish(obj)
+
+        // attachments.map((attachment, index) => {
+        //     sendAttachment(token, obj.id, attachment).then(r => {
+        //         console.log('attachment', index, r)
+        //     }).catch(e => {
+        //         console.log('error attaching ', index, e )
+        //     })
+        // })
+    }
+
+    publish(obj){
+        let {token} = this.props;
+        publishPoll(token, obj.id).then(r => {
+            console.log('published', r)
+        }).catch(e => {
+            console.log('error publishing', e)
         })
+
     }
 
     createContent(){
-        if (this.state.blockFundraiser || !this.state.enableSend) return;
+        
+        // if (this.state.blockFundraiser || !this.state.enableSend) return;
         let {token, type} = this.props;
         let groupId = this.state.grouplist[this.state.selectedGroupIndex].id;
         let {attachments} = this.state;
@@ -412,8 +445,10 @@ class NewLeaderContent extends Component {
             }
 
             req.then(resp => {
-                console.warn(resp);
-                this.sendAttachments(JSON.parse(resp._bodyInit), attachments);
+                resp.json().then(r => {
+                    console.warn(r);
+                    this.sendAttachments(r, attachments);
+                })
             }).catch(e => {
                 // alert(e);
                 console.warn(JSON.parse(e));
@@ -529,7 +564,7 @@ class NewLeaderContent extends Component {
             <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
             {
                 attachments.map((attachment, index) => {
-                        console.log(attachment);
+                        // console.log(attachment);
                         if (attachment.type === 'image'){
                             return (
                                 <View style={{ flexDirection: 'row', margin: 8, width: width, height: height, alignItems: 'center', justifyContent: 'center' }}>
@@ -699,20 +734,9 @@ class NewLeaderContent extends Component {
                         }
                 </ScrollView>
                 <KeyboardAvoidingView behavior={Platform.select({android:'height', ios: 'padding'})}>
-                        {
-                            this.renderAttachments()   
-                        }
-                        {
-                    <Footer style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: PLColors.main, paddingLeft: 10, paddingRight: 10 }}>
-                        {
-                            this.state.contentRemaining
-                            ? <Label style={{ color: 'white', fontSize: 10 }}>
-                                You have <Label style={{ fontWeight: 'bold' }}>{this.state.contentRemaining}</Label> group content left in this group
-                            </Label>
-                            :<Label />
-                        }
-                    </Footer>
-                        }
+                    {
+                        this.renderAttachments()   
+                    }
                 </KeyboardAvoidingView>
             </Container>
         );

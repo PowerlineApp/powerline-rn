@@ -45,6 +45,18 @@ async function sendAttachment(token, pollId, attachment){
     })
 }
 
+async function publishPoll(token, pollId, attachment){
+    console.log('about to publish => ',`${API_URL}/v2/polls/${pollId}`, token, pollId, attachment )
+    return fetch(`${API_URL}/v2/polls/${pollId}`, {
+        method: 'PATCH',
+        headers: {
+            'token': token,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(attachment)
+    })
+}
+
 
 function handleError(error) {
     const message = error.message || error;
@@ -54,5 +66,6 @@ function handleError(error) {
 module.exports = {
     unsubscribeFromPoll,
     createPoll,
-    sendAttachment
+    sendAttachment,
+    publishPoll
 };

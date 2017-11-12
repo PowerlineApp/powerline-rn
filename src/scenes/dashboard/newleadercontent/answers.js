@@ -15,10 +15,16 @@ class Answers extends Component {
         }
     }
 
+    componentDidMount(){
+        if ( this.props.answerType === 'event' ){
+            this.setState({answers: [{value: "Yes, I'll go."}, {value: "No, I won't go."}]})
+        }
+    }
+
     updateAnswer(key, value, index){
-        console.log(key, value, index)
+        // console.log(key, value, index)
         let {answers} = this.state;
-        console.log(answers)
+        // console.log(answers)
         answers[index][key] = value;
         this.setState({answers});
         this.props.setAnswer(answers);
@@ -27,7 +33,7 @@ class Answers extends Component {
     
     addAnswer(){
         let {answers} = this.state;
-        answers.push(this.props.answerType === 'donation' ? {amount: '0', value: '', is_user_amount: false} : {value: ''})
+        answers.push(this.props.answerType === 'donation' ? {amount: '', value: '', is_user_amount: false} : {value: ''})
         this.setState({answers});
         this.props.setAnswer(answers);
     }
@@ -43,16 +49,31 @@ class Answers extends Component {
     renderAnswers(answers, answersPlaceholder){
         return (
             <View style={styles.answerMainContainer}>
+                {this.state.allowUserAmount && answers.length > 0 && <Text style={{alignSelf: 'flex-start'}}>Custom?</Text>}
                 {
                     answers.map(({value, amount, is_user_amount}, index)=>
                         <View key={index} style={styles.answerOptionContainer}>
                         {
                             this.state.allowUserAmount &&
-                            <Switch onValueChange={() => this.updateAnswer('is_user_amount', !is_user_amount, index)} value={is_user_amount} />
+                            <View style={{paddingRight: 8}}>
+                                <Switch onValueChange={() => {
+
+                                    this.updateAnswer('is_user_amount', !is_user_amount, index)
+                                    this.updateAnswer('amount', '', index)
+                                    }}
+
+                                    value={is_user_amount} 
+
+                                />
+                            </View>
                         }
                         {
-                            this.props.answerType === 'donation' &&
-                                [<TextInput
+                            this.props.answerType !== 'donation'
+                            ? null
+                            :  is_user_amount
+                                ? null
+                                : [
+                                <TextInput
                                     maxLength={10000}
                                     keyboardType={'numeric'}
                                     underlineColorAndroid='rgba(0,0,0,0)'
@@ -105,7 +126,15 @@ class Answers extends Component {
                     {
                         this.props.answerType === 'donation' && 
                         <View style={styles.allowUserAmountSwitch}>
-                            <Switch onValueChange={() => this.setState({allowUserAmount: !allowUserAmount})} value={allowUserAmount} />
+                            <Switch
+                                onValueChange={() => 
+                                this.setState({
+                                    allowUserAmount: !allowUserAmount,
+                                    answers: answers.map(answer => 
+                                        ({...answer, is_user_amount: false })
+                                    )}
+                                )}
+                                value={allowUserAmount} />
                             <Text style={styles.allowUserAmountTag} >Allow Choose Amount</Text>
                         </View>
                     }
