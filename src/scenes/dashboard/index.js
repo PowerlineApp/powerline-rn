@@ -172,7 +172,7 @@ class Home extends Component {
             });
 
             ShareExtension.data().then((data) => {
-                console.log('SHARE EXTENSION DATA: ', data);
+                // console.log('SHARE EXTENSION DATA: ', data);
                 if (data.type != "" && data.value != "") {
                         Actions.newpost({ data: data, sharing: true, onPost: () => ShareExtension.close()});
                 }
@@ -571,18 +571,20 @@ class Home extends Component {
 
     // JC: I believe this loads to the group feed when a group is selected from Group Selector More menu
     selectGroup(group){
-        let {id, official_name, avatar_file_path, conversation_view_limit, total_members} = group;
+        console.log('SELECTED GROUP', group)
         var { token, dispatch } = this.props;
         if (group == 'all') {
             dispatch({ type: 'RESET_ACTIVITIES' });
-            dispatch({type: 'SET_GROUP', data: {id: 'all'}})
+            dispatch({type: 'SET_GROUP', data: {id: 'all', header: 'all'}})
             // dispatch(loadActivities(token, 0, 20, 'all'));
         } else {
             let groupObj = this.props.groupList.find(groupObj => groupObj.group_type_label === group);
             if (!groupObj) return;
+            console.log('SELECTED GROUP', groupObj)
+            
 
-            let {id, official_name, avatar_file_path, conversation_view_limit, total_members} = groupObj;
-            dispatch({type: 'SET_GROUP', data: {id, name: official_name, avatar: avatar_file_path, limit: conversation_view_limit, totalMembers: total_members, conversationView: total_members < conversation_view_limit}});
+            let {id, official_name, avatar_file_path, conversation_view_limit, total_members, user_role} = groupObj;
+            dispatch({type: 'SET_GROUP', data: {header: group, user_role, id, name: official_name, avatar: avatar_file_path, limit: conversation_view_limit, totalMembers: total_members, conversationView: total_members < conversation_view_limit}});
             // dispatch(loadActivities(token, 0, 20, id));
         }
         this.setState({ group: group });
@@ -590,13 +592,38 @@ class Home extends Component {
 
     // This is the menu to create new content (GH8)
     selectNewItem(value) {
+        let {selectedGroup} = this.props;
+        console.log('selected group ==> ', selectedGroup)
         this.bottomMenu.close();
-        if (value == 'post') {
+        if (value === 'post'){
             Actions.newpost();
-        } else if (value == 'petition') {
+        } else if (value === 'petition'){
             Actions.newpetition();
-            // The ability to create new "leader" content has not yet been added, but it will go here (GH118)
+        } else {
+            Actions.newleadercontent({contentType: value, group: selectedGroup.group});
         }
+        // switch(value){
+        //     case 'post':
+        //         break;
+        //     case 'petition':
+        //         break;
+        //     case 'group_announcement':
+        //         Actions.newgroupannouncement();
+        //         break;
+        //     case 'group_petition':
+        //         Actions.newgrouppetition();
+        //         break;
+        //     case 'group_poll':
+        //         Actions.newgrouppoll();
+        //         break;
+        //     case 'group_event':
+        //         Actions.newgroupevent();
+        //         break;
+        //     case 'group_fundraiser':
+        //         Actions.newgroupfundraiser();
+        //         break;
+        //     default:
+        // }
     }
 
     onRef = r => {
@@ -660,10 +687,70 @@ class Home extends Component {
         Actions.search({ search });
     }
 
+    renderMenuOptions(group){
+        console.log('SELECTED GROUP', group);
+        let options = [
+                <MenuOption value={'petition'}>
+                <Button iconLeft transparent dark onPress={() => this.selectNewItem('petition')}>
+                    <Icon name="ios-clipboard" style={styles.menuIcon} />
+                    <Text style={styles.menuText}>New Petition</Text>
+                </Button>
+                </MenuOption>,
+                <MenuOption value={'post'}>
+                    <Button iconLeft transparent dark onPress={() => this.selectNewItem('post')}>
+                        <Icon name="ios-flag" style={styles.menuIcon} />
+                        <Text style={styles.menuText}>New Post</Text>
+                    </Button>
+                </MenuOption>
+        ]
+        if (group && (group.group === 'all' || group.user_role === 'owner' || group.user_role === 'manager'))
+        options.unshift(
+            <MenuOption value={'group_announcement'}>
+            <Button iconLeft transparent dark onPress={() => this.selectNewItem('group_announcement')}>
+                <Icon name="volume-up" style={styles.menuIcon} />
+                <Text style={styles.menuText}>New Group Announcement</Text>
+            </Button>
+            </MenuOption>,
+            <MenuOption value={'group_fundraiser'}>
+                <Button iconLeft transparent dark onPress={() => this.selectNewItem('group_fundraiser')}>
+                    <Icon name="ios-cash" style={styles.menuIcon} />
+                    <Text style={styles.menuText}>New Group Fundraiser</Text>
+                </Button>
+            </MenuOption>,
+            <MenuOption value={'group_event'}>
+                <Button iconLeft transparent dark onPress={() => this.selectNewItem('group_event')}>
+                    <Icon name="ios-calendar" style={styles.menuIcon} />
+                    <Text style={styles.menuText}>New Group Event</Text>
+                </Button>
+            </MenuOption>,
+            <MenuOption value={'group_petition'}>
+                <Button iconLeft transparent dark onPress={() => this.selectNewItem('group_petition')}>
+                    <Icon name="ios-clipboard" style={styles.menuIcon} />
+                    <Text style={styles.menuText}>New Group Petition</Text>
+                </Button>
+            </MenuOption>,
+            <MenuOption value={'group_discussion'}>
+                <Button iconLeft transparent dark onPress={() => this.selectNewItem('group_discussion')}>
+                    <Icon name="ios-chatbubbles" style={styles.menuIcon} />
+                    <Text style={styles.menuText}>New Group Discussion</Text>
+                </Button>
+            </MenuOption>,
+            <MenuOption value={'group_poll'}>
+                <Button iconLeft transparent dark onPress={() => this.selectNewItem('group_poll')}>
+                    <Icon name="ios-stats" style={styles.menuIcon} />
+                    <Text style={styles.menuText}>New Group Poll</Text>
+                </Button>
+            </MenuOption>
+        )
+
+        return options;
+    }
+    
     render() {
+        let {selectedGroup} = this.props;
         //       return (
-        // <Container>
-        //           <Header searchBar rounded style={styles.header}>
+            // <Container>
+            //           <Header searchBar rounded style={styles.header}>
         //             <Left style={{ flex: 0.1 }}>
         //               <Button transparent onPress={this.props.openDrawer}>
         //                 <Icon active name="menu" style={{ color: 'white' }} />
@@ -703,7 +790,7 @@ class Home extends Component {
                             <Grid>
                                 <Row>
                                     <Col style={styles.col}>
-                                        <Button style={this.state.group == 'all' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('all'); }}>
+                                        <Button style={selectedGroup.header == 'all' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('all'); }}>
                                             <Image
                                                 style={styles.iconP}
                                                 source={require("img/p_logo.png")}
@@ -712,25 +799,25 @@ class Home extends Component {
                                         <Text style={styles.iconText} onPress={() => { Keyboard.dismiss(); this.selectGroup('all'); }}>All</Text>
                                     </Col>
                                     <Col style={styles.col}>
-                                        <Button style={this.state.group == 'local' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('local'); }}>
+                                        <Button style={selectedGroup.header== 'local' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('local'); }}>
                                             <Icon active name="pin" style={styles.icon} />
                                         </Button>
                                         <Text style={styles.iconText} numberOfLines={1} onPress={() => { Keyboard.dismiss(); this.selectGroup('town'); }}>{this.props.town}</Text>
                                     </Col>
                                     <Col style={styles.col}>
-                                        <Button style={this.state.group == 'state' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('state'); }}>
+                                        <Button style={selectedGroup.header == 'state' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('state'); }}>
                                             <Icon active name="pin" style={styles.icon} />
                                         </Button>
                                         <Text style={styles.iconText} numberOfLines={1} onPress={() => { Keyboard.dismiss(); this.selectGroup('state'); }}>{this.props.state}</Text>
                                     </Col>
                                     <Col style={styles.col}>
-                                        <Button style={this.state.group == 'country' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('country'); }}>
+                                        <Button style={selectedGroup.header == 'country' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('country'); }}>
                                             <Icon active name="pin" style={styles.icon} />
                                         </Button>
                                         <Text style={styles.iconText} numberOfLines={1} onPress={() => { Keyboard.dismiss(); this.selectGroup('country'); }}>{this.props.country}</Text>
                                     </Col>
                                     <Col style={styles.col}>
-                                        <Button style={this.state.group == 'more' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.goToGroupSelector(); }}>
+                                        <Button style={selectedGroup.header == 'more' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.goToGroupSelector(); }}>
                                             <Icon active name="more" style={styles.icon} />
                                         </Button>
                                         <Text style={styles.iconText} onPress={() => { Keyboard.dismiss(); this.goToGroupSelector(); }}>More</Text>
@@ -764,54 +851,9 @@ class Home extends Component {
                                         <Icon name="ios-add-circle" style={styles.iconPlus} />
                                     </MenuTrigger>
                                     <MenuOptions customStyles={optionsStyles} renderOptionsContainer={optionsRenderer}>
-                                        <MenuOption value={'group_announcement'}>
-                                            <Button iconLeft transparent dark onPress={() => this.selectNewItem('group_announcement')}>
-                                                <Icon name="volume-up" style={styles.menuIcon} />
-                                                <Text style={styles.menuText}>New Group Announcement</Text>
-                                            </Button>
-                                        </MenuOption>
-                                        <MenuOption value={'group_fundraiser'}>
-                                            <Button iconLeft transparent dark onPress={() => this.selectNewItem('group_fundraiser')}>
-                                                <Icon name="ios-cash" style={styles.menuIcon} />
-                                                <Text style={styles.menuText}>New Group Fundraiser</Text>
-                                            </Button>
-                                        </MenuOption>
-                                        <MenuOption value={'group_event'}>
-                                            <Button iconLeft transparent dark onPress={() => this.selectNewItem('group_event')}>
-                                                <Icon name="ios-calendar" style={styles.menuIcon} />
-                                                <Text style={styles.menuText}>New Group Event</Text>
-                                            </Button>
-                                        </MenuOption>
-                                        <MenuOption value={'group_petition'}>
-                                            <Button iconLeft transparent dark onPress={() => this.selectNewItem('group_petition')}>
-                                                <Icon name="ios-clipboard" style={styles.menuIcon} />
-                                                <Text style={styles.menuText}>New Group Petition</Text>
-                                            </Button>
-                                        </MenuOption>
-                                        <MenuOption value={'group_discussion'}>
-                                            <Button iconLeft transparent dark onPress={() => this.selectNewItem('group_discussion')}>
-                                                <Icon name="ios-chatbubbles" style={styles.menuIcon} />
-                                                <Text style={styles.menuText}>New Group Discussion</Text>
-                                            </Button>
-                                        </MenuOption>
-                                        <MenuOption value={'group_poll'}>
-                                            <Button iconLeft transparent dark onPress={() => this.selectNewItem('group_poll')}>
-                                                <Icon name="ios-stats" style={styles.menuIcon} />
-                                                <Text style={styles.menuText}>New Group Poll</Text>
-                                            </Button>
-                                        </MenuOption>
-                                        <MenuOption value={'petition'}>
-                                            <Button iconLeft transparent dark onPress={() => this.selectNewItem('petition')}>
-                                                <Icon name="ios-clipboard" style={styles.menuIcon} />
-                                                <Text style={styles.menuText}>New Petition</Text>
-                                            </Button>
-                                        </MenuOption>
-                                        <MenuOption value={'post'}>
-                                            <Button iconLeft transparent dark onPress={() => this.selectNewItem('post')}>
-                                                <Icon name="ios-flag" style={styles.menuIcon} />
-                                                <Text style={styles.menuText}>New Post</Text>
-                                            </Button>
-                                        </MenuOption>
+                                        {
+                                            this.renderMenuOptions(selectedGroup)
+                                        } 
                                     </MenuOptions>
                                 </Menu>
                             </Button>
@@ -871,7 +913,8 @@ const mapStateToProps = state => ({
     state: state.groups.state,
     country: state.groups.country,
     newsfeedUnreadCount: state.activities.newsfeedUnreadCount,
-    groupList: state.groups.payload
+    groupList: state.groups.payload,
+    selectedGroup: state.activities.selectedGroup
 });
 
 export default connect(mapStateToProps, bindAction)(Home);

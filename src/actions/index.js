@@ -20,6 +20,8 @@ const drawerActions = require('./drawer');
 const commentActions = require('./comments');
 const petitionActions = require('./petition');
 const profileActions = require('./profile');
+const pollActions = require('./poll');
+const announcementActions = require('./announcements');
 
 module.exports = {
   ...loginActions,
@@ -36,5 +38,7 @@ module.exports = {
   ...drawerActions,
   ...commentActions,
   ...petitionActions,
-  ...profileActions
+  ...profileActions,
+  ...pollActions,
+  ...announcementActions
 };

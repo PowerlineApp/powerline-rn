@@ -397,6 +397,16 @@ function getUsersByGroup(token, groupId, query){
     })
 }
 
+async function groupBankAccounts(token, groupId) {
+    return fetch(API_URL + `/v2/groups/${groupId}/bank-accounts`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token
+        }
+    })
+}
+
 
 
 module.exports = {
@@ -417,5 +427,6 @@ module.exports = {
     getGroupPermissions,
     getUsersByGroup,
     inviteUpvotersToGroup,
-    getGroupRequiredFields
+    getGroupRequiredFields,
+    groupBankAccounts
 }
