@@ -36,8 +36,6 @@ import randomPlaceholder from '../../../utils/placeholder';
 import { FloatingAction } from 'react-native-floating-action';
 import _ from 'lodash';
 
-
-
 // custom components import
 import FeedFooter from '../../../components/Feed/FeedFooter';
 import FeedHeader from '../../../components/Feed/FeedHeader';
@@ -98,10 +96,12 @@ class ItemDetail extends Component {
         // console.log('=xx=x=x=x=x=x=x=x=x==x')
         // console.log('propss', this.props.entityType, this.props.entityId);
         if (this.props.commenting) {
-            // console.log('commenting...')
             setTimeout(
                 () => this._onAddComment()
                 , 1000);
+        }
+        if (this.props.commentText){
+            this.setState({commentText: this.props.commentSendText })
         }
         this.loadEntity();
     }
@@ -251,6 +251,8 @@ class ItemDetail extends Component {
                 this.setState({ isLoading: false, inputDescription: this.item.description });
                 this.loadComments();
                 this.onShare(this.props.share, data.payload[0]);
+            } else {
+                Actions.pop();
             }
         }).catch(e => {
             this.setState({ isLoading: false });
@@ -588,8 +590,6 @@ class ItemDetail extends Component {
                                 <MenuOptions optionsContainerStyle={{
                                     backgroundColor: 'white',
                                     width: WINDOW_WIDTH,
-                                    // height: this.state.visibleHeight,
-                                    // this needs adjustment for android / ios - doesnt work well for android with the suggestionbox
                                     minHeight: Platform.OS === 'android' ? 50 : WINDOW_HEIGHT / 2 + 50
                                 }}>
                                     <ScrollView keyboardShoulPersisTaps>
@@ -829,7 +829,7 @@ class ItemDetail extends Component {
     }
 
     renderAttachedImage(item){
-        let imgURL; // 'https://powerline-dev.imgix.net/avatars/594be2d75ce8f479888664.jpeg?ixlib=php-1.1.0';
+        let imgURL;
         if (item.post){
             imgURL = item.post.image;
         } else {
@@ -856,17 +856,6 @@ class ItemDetail extends Component {
                         </Body>
                     </Left>
                 </CardItem>
-
-
-
-            // <CardItem>
-            //     <View style={{flex: 1}}>
-            //         <ImageLoad
-            //         source={{ uri: imgURL }}
-            //         style={styles.image}
-            //         />
-            //     </View>
-            // </CardItem>
             );
     }
 

@@ -5,6 +5,8 @@ import { Button, Icon, Left, CardItem, Label } from 'native-base';
 import styles from '../styles';
 import { votePost, loadActivityByEntityId, signUserPetition, unsignUserPetition, signLeaderPetition, undoVotePost } from 'PLActions';
 import _ from 'lodash';
+import { showToast } from 'PLToast';
+
 
 class FeedFooter extends Component {
     constructor (props) {
@@ -34,34 +36,39 @@ class FeedFooter extends Component {
         let newItem = _.cloneDeep(this.state.item);
 
         const { profile, token } = this.props;
-
+        console.log('\n before --- \n votes: ',newItem.post.votes[0], '\n upvotes: ', newItem.upvotes_count, '\n downvotes: ' , newItem.downvotes_count, '----------');
+        
         // user shouldn't vote his own post
         if (profile.id === item.user.id) {
             alert("You're not supposed to vote on your own Post.");
             return;
         }
+        // console.log(item, option);
         if (this.state.postingVote) {
-            // console.log('posting already!')
+            console.log('posting already!')
             return;
         }
         // uses this state to avoid double clicking, the user is allowed to vote again only when the last request is done
         this.setState({postingVote: true});
         let undo = false;
-
+        console.log(newItem, option);
         if (option === 'upvote') {
             if (!newItem.post.votes[0]) {
             // didnt have any option checked
+                console.log(2)
                 newItem.post.votes.push({option: 1});
                 newItem.upvotes_count += 1;
             } else {
                 // user is unsetting his vote
                 if (newItem.post.votes[0].option === 1) {
-                    newItem.post.votes[0].option = null;
+                    console.log(3)
+                    newItem.post.votes = []; //[0].option = null;
                     newItem.upvotes_count -= 1;
                     undo = true;
                 } else {
                     // user is setting his vote to up, had the down up checked
                     if (item.post.votes[0].option === 2) {
+                        console.log(4)
                         newItem.post.votes[0].option = 1;
                         newItem.upvotes_count += 1;
                         newItem.downvotes_count -= 1;
@@ -70,35 +77,54 @@ class FeedFooter extends Component {
             }
         } else if (option === 'downvote') {
             if (!newItem.post.votes[0]) {
+                console.log(5)
                 // didnt have any option checked
                 newItem.post.votes.push({option: 2});
                 newItem.downvotes_count += 1;
-            }
-            // user is unsetting his vote
-            if (newItem.post.votes[0].option === 2) {
-                newItem.post.votes[0].option = null;
-                newItem.downvotes_count -= 1;
-                undo = true;
             } else {
-                // user is setting his vote to down, had the option up checked
-                if (newItem.post.votes[0].option === 1) {
-                    newItem.post.votes[0].option = 2;
-                    newItem.upvotes_count -= 1;
-                    newItem.downvotes_count += 1;
+                // user is unsetting his vote
+                if (newItem.post.votes[0].option === 2) {
+                    console.log(6)
+                    newItem.post.votes = []; // [0].option = null;
+                    newItem.downvotes_count -= 1;
+                    undo = true;
+                } else {
+                    // user is setting his vote to down, had the option up checked
+                    if (newItem.post.votes[0].option === 1) {
+                        console.log(7)
+                        newItem.post.votes[0].option = 2;
+                        newItem.upvotes_count -= 1;
+                        newItem.downvotes_count += 1;
+                    }
                 }
             }
         }
 
+        console.log('\n after --- \n votes: ',newItem.post.votes[0], '\n upvotes: ', newItem.upvotes_count, '\n downvotes: ' , newItem.downvotes_count, '----------');
         this.setState({item: newItem});
 
+
         let response;
-        if (item.entity.type === 'post') {
+        try {
             if (undo) {
                 response = await undoVotePost(this.props.token, item.entity.id);
-                return;
+                console.log('response', response)
             } else {
                 response = await votePost(this.props.token, item.entity.id, option);
+                console.log('response', response);
+                if (response.status === 200) {
+                    if (option === 'upvote') {
+                        showToast('Upvoted');
+                    }
+                    if (option === 'downvote') {
+                        showToast('Downvoted');
+                    }
+                }
             }
+        } catch (error) {
+            console.log('Failure on voting. was undoing? ', undo, error);
+            this.setState({item: originalItem})
+            
         }
         this.setState({postingVote: false})
     }
@@ -403,7 +429,7 @@ class FeedFooter extends Component {
 
     render () {
         let {item} = this.state;
-        let {showAnalytics} = this.props;
+        const showAnalytics = true;
         // console.log('item in state => ', item)
         let footer = null
         switch (item.entity.type) {
@@ -411,22 +437,22 @@ class FeedFooter extends Component {
             footer =  this._renderPostFooter(item, showAnalytics);
             break;
         case 'user-petition':
-            footer =  this._renderUserPetitionFooter(item, showAnalytics);
+            footer =  this._renderUserPetitionFooter(item, false);
             break;
         case 'petition':
-            footer =  this._renderLeaderPetitionFooter(item, showAnalytics);
+            footer =  this._renderLeaderPetitionFooter(item, false);
             break;
         case 'question':
-            footer =  this._renderQuestionFooter(item, showAnalytics);
+            footer =  this._renderQuestionFooter(item, false);
             break;
         case 'payment-request':
             footer = null;
             break;
         case 'leader-event':
-            footer =  this._renderLeaderEventFooter(item, showAnalytics);
+            footer =  this._renderLeaderEventFooter(item, false);
             break;
         case 'leader-news':
-            footer =  this._renderLeadNewsFooter(item, showAnalytics);
+            footer =  this._renderLeadNewsFooter(item, false);
             break;
         default:
             footer =  null;
