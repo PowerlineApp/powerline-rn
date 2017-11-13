@@ -14,6 +14,19 @@ function createAnnouncement(token, groupId, body){
     })
 }
 
+async function publishAnnouncement(token, announcementId, attachment){
+    console.log('about to publish => ',`${API_URL}/v2/announcements/${announcementId}`, token, announcementId, attachment )
+    return fetch(`${API_URL}/v2/announcements/${announcementId}`, {
+        method: 'PATCH',
+        headers: {
+            'token': token,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(attachment)
+    })
+}
+
 module.exports = {
-    createAnnouncement
+    createAnnouncement,
+    publishAnnouncement
 };

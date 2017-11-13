@@ -13,7 +13,7 @@ import RNFetchBlob from 'react-native-fetch-blob'
 const fs = RNFetchBlob.fs
 
 import {ScrollView} from 'react-native';
-import { Spinner, Container, Header, Title, Textarea, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, List, ListItem, Item, Input } from 'native-base';
+import { Spinner, Container, Header, Title, Textarea, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, List, ListItem, Item, Input, Card } from 'native-base';
 import { Image, View, StyleSheet, TouchableOpacity, Platform, KeyboardAvoidingView, Keyboard, TextInput, ListView } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
@@ -44,6 +44,7 @@ import FeedDescription from '../../../components/Feed/FeedDescription';
 import FeedContext from '../../../components/Feed/FeedContext';
 import FeedMetaData from '../../../components/Feed/FeedMetaData';
 import FeedActivity from '../../../components/Feed/FeedActivity';
+import Options from '../../../components/Feed/Options';
 
 import SuggestionBox from '../../../common/suggestionBox';
 
@@ -806,7 +807,7 @@ class ItemDetail extends Component {
             return null;
         }
     }
-    _renderDescription(item, state) {
+    renderEditableDescription(item, state) {
         return (
             <CardItem>
                 <Left>
@@ -817,13 +818,8 @@ class ItemDetail extends Component {
                     <Body style={styles.descBodyContainer}>
                         <View>
                             {this._renderTitle(item)}
-                            {
-                                state.isEditMode
-                                    ?
-                                    this._renderTextarea(item, state)
-                                    :
-                                    <Text style={styles.description} numberOfLines={5}>{item.description}</Text>
-                            }
+                            {this._renderTextarea(item, state)}
+                            <Text style={styles.description} numberOfLines={5}>{item.description}</Text>
                         </View>
                     </Body>
                 </Left>
@@ -866,11 +862,15 @@ class ItemDetail extends Component {
         console.log('got here')
         return (
             <View>
-                <FeedDescription item={item} profile={this.props.profile} />
+                {
+                    state.isEditMode
+                    ? this.renderEditableDescription(item)
+                    : <FeedDescription item={item} profile={this.props.profile} isInDetail />
+                }
                 <FeedMetaData item={item} />
                 <View style={styles.borderContainer} />
                 {this.renderAttachedImage(item)}
-                <FeedFooter item={item} profile={this.props.profile} token={this.props.token} showAnalytics />
+                <FeedFooter isInDetail item={item} profile={this.props.profile} token={this.props.token} showAnalytics />
             </View>
         );
     }
@@ -878,10 +878,11 @@ class ItemDetail extends Component {
     _renderGroupCard(item) {
         return (
             <Card>
-                <FeedDescription item={item} profile={this.props.profile} />
+                <FeedDescription item={item} profile={this.props.profile} isInDetail />
                 <FeedCarousel item={item} />
+                <Options item={item} profile={this.props.profile} />
                 <View style={styles.borderContainer} />
-                <FeedFooter item={item} profile={this.props.profile} token={this.props.token} showAnalytics />
+                <FeedFooter isInDetail item={item} profile={this.props.profile} token={this.props.token} showAnalytics />
             </Card>
         );
     }

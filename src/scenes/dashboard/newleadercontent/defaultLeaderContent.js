@@ -53,7 +53,7 @@ const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
 
 
 const { width, height } = Dimensions.get('window');
-import { loadUserData, getGroups, getUsersByGroup, createPostToGroup, getPetitionConfig, createPoll, createAnnouncement, sendAttachment, groupBankAccounts, publishPoll } from 'PLActions';
+import { loadUserData, getGroups, getUsersByGroup, createPostToGroup, getPetitionConfig, createPoll, createAnnouncement, sendAttachment, groupBankAccounts, publishPoll, publishAnnouncement } from 'PLActions';
 import randomPlaceholder from '../../../utils/placeholder';
 import CommunityView from '../../../components/CommunityView';
 
@@ -223,7 +223,7 @@ class NewLeaderContent extends Component {
         let petition_body = state.content;
 
         if (type && petition_title && petition_body)
-            return {type, petition_title, petition_body, subject: '.'}; // subject??? - ok
+            return {type, petition_title, petition_body}; // subject??? - ok
 
         if (!petition_title){
             alert("Please create a title for your petition");
@@ -268,7 +268,7 @@ class NewLeaderContent extends Component {
         let type = 'event';
         let title = state.title;
         let subject = state.content;
-        let {options} = state.options;
+        let {options} = state;
         let initDate = state.init.date;
         let initTime = state.init.time;
         let endDate = state.end.date;
@@ -398,12 +398,20 @@ class NewLeaderContent extends Component {
     }
 
     publish(obj){
-        let {token} = this.props;
-        publishPoll(token, obj.id).then(r => {
-            console.log('published', r)
-        }).catch(e => {
-            console.log('error publishing', e)
-        })
+        let {token, type} = this.props;
+        if (type === 'group_announcement'){
+            publishAnnouncement(token, obj.id).then(r => {
+                console.log('published', r)
+            }).catch(e => {
+                console.log('error publishing', e)
+            })
+        } else {
+            publishPoll(token, obj.id).then(r => {
+                console.log('published', r)
+            }).catch(e => {
+                console.log('error publishing', e)
+            })
+        }
 
     }
 

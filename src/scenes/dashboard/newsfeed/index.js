@@ -251,15 +251,10 @@ class Newsfeed extends Component {
 
         let dataArray = this.state.dataArray;
 
-        /**
-         * this is hardcode for testing purposes -- I will remove once ConversationFeed is 100% working 
-         * I still need to be 100% shure on how to decide to display conversationView or FeedView - is the owner of the group
-         * allowed to change it manually yet?
-         * // Felipe
-         */
         let conversationView = false;
         if (this.props.selectedGroup && this.props.selectedGroup.group !== 'all' && this.props.selectedGroup.conversationView){
-            conversationView = true;
+            // hardcore here to test view -- value should be true
+            conversationView = false;
         }
 
         // console.log('newsfeed render')
