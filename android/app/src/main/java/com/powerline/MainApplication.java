@@ -6,6 +6,7 @@ import com.facebook.react.ReactInstanceManager;
 
 import com.crashlytics.android.Crashlytics;
 import com.facebook.react.ReactApplication;
+import com.kevinejohn.RNMixpanel.RNMixpanel;
 import com.reactnative.ivpusic.imagepicker.PickerPackage;
 import cl.json.RNSharePackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
@@ -47,6 +48,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
         new MainReactPackage(),
+            new RNMixpanel(),
             new PickerPackage(),
             new RNSharePackage(),
             new RNFetchBlobPackage(),

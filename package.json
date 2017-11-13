@@ -33,6 +33,7 @@
     "react-native-keyboard-aware-scroll-view": "0.2.8",
     "react-native-keyboard-spacer": "0.4.1",
     "react-native-linear-gradient": "2.0.0",
+    "react-native-mixpanel": "0.0.16",
     "react-native-onesignal": "3.0.6",
     "react-native-popup-menu": "0.7.5",
     "react-native-progress": "^3.4.0",
