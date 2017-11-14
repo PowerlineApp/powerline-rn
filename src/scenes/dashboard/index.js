@@ -446,6 +446,7 @@ class Home extends Component {
             tab3: false,
             tab4: false
         });
+        Mixpanel.track("Newsfeed tab selected");
     }
 
     // Friends Feed Tab
@@ -456,6 +457,7 @@ class Home extends Component {
             tab3: false,
             tab4: false
         });
+        Mixpanel.track("Friends Feed tab selected");
     }
 
     // Messages Tab
@@ -466,6 +468,7 @@ class Home extends Component {
             tab3: true,
             tab4: false
         });
+        Mixpanel.track("Messages tab selected");
     }
 
     // Notifications Feed Tab
@@ -476,6 +479,7 @@ class Home extends Component {
             tab3: false,
             tab4: true
         });
+        Mixpanel.track("Notifications tab selected");
     }
 
     // JC: I believe this loads to the group feed when a group is selected from Group Selector More menu
