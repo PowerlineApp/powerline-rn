@@ -639,7 +639,7 @@ class Home extends Component {
                                         <Text style={styles.iconText} numberOfLines={1} onPress={() => { Keyboard.dismiss(); this.selectGroup('country'); }}>{this.props.country}</Text>
                                     </Col>
                                     <Col style={styles.col}>
-                                        <Button style={this.state.group == 'more' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.goToGroupSelector(); Mixpanel.track("More Button tapped on Home"); }}>
+                                        <Button style={this.state.group == 'more' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.goToGroupSelector();}}>
                                             <Icon active name="more" style={styles.icon} />
                                         </Button>
                                         <Text style={styles.iconText} onPress={() => { Keyboard.dismiss(); this.goToGroupSelector(); }}>More</Text>
@@ -674,49 +674,49 @@ class Home extends Component {
                                     </MenuTrigger>
                                     <MenuOptions customStyles={optionsStyles} renderOptionsContainer={optionsRenderer}>
                                         <MenuOption value={'group_announcement'}>
-                                            <Button iconLeft transparent dark onPress={() => {this.selectNewItem('group_announcement'); Mixpanel.track("New Announcement Form Opened");}}>
+                                            <Button iconLeft transparent dark onPress={() => {this.selectNewItem('group_announcement'); Mixpanel.track("Opened New Announcement Form");}}>
                                                 <Icon name="volume-up" style={styles.menuIcon} />
                                                 <Text style={styles.menuText}>New Group Announcement</Text>
                                             </Button>
                                         </MenuOption>
                                         <MenuOption value={'group_fundraiser'}>
-                                            <Button iconLeft transparent dark onPress={() => {this.selectNewItem('group_fundraiser'); Mixpanel.track("New Fundraiser Form Opened");}}>
+                                            <Button iconLeft transparent dark onPress={() => {this.selectNewItem('group_fundraiser'); Mixpanel.track("Opened New Fundraiser Form");}}>
                                                 <Icon name="ios-cash" style={styles.menuIcon} />
                                                 <Text style={styles.menuText}>New Group Fundraiser</Text>
                                             </Button>
                                         </MenuOption>
                                         <MenuOption value={'group_event'}>
-                                            <Button iconLeft transparent dark onPress={() => {this.selectNewItem('group_event'); Mixpanel.track("New Event Form Opened");}}>
+                                            <Button iconLeft transparent dark onPress={() => {this.selectNewItem('group_event'); Mixpanel.track("Opened New Event Form");}}>
                                                 <Icon name="ios-calendar" style={styles.menuIcon} />
                                                 <Text style={styles.menuText}>New Group Event</Text>
                                             </Button>
                                         </MenuOption>
                                         <MenuOption value={'group_petition'}>
-                                            <Button iconLeft transparent dark onPress={() => {this.selectNewItem('group_petition'); Mixpanel.track("New Group Petition Form Opened");}}>
+                                            <Button iconLeft transparent dark onPress={() => {this.selectNewItem('group_petition'); Mixpanel.track("Opened New Group Petition Form");}}>
                                                 <Icon name="ios-clipboard" style={styles.menuIcon} />
                                                 <Text style={styles.menuText}>New Group Petition</Text>
                                             </Button>
                                         </MenuOption>
                                         <MenuOption value={'group_discussion'}>
-                                            <Button iconLeft transparent dark onPress={() => {this.selectNewItem('group_discussion'); Mixpanel.track("New Discussion Form Opened");}}>
+                                            <Button iconLeft transparent dark onPress={() => {this.selectNewItem('group_discussion'); Mixpanel.track("Opened New Discussion Form");}}>
                                                 <Icon name="ios-chatbubbles" style={styles.menuIcon} />
                                                 <Text style={styles.menuText}>New Group Discussion</Text>
                                             </Button>
                                         </MenuOption>
                                         <MenuOption value={'group_poll'}>
-                                            <Button iconLeft transparent dark onPress={() => {this.selectNewItem('group_poll'); Mixpanel.track("New Poll Form Opened");}}>
+                                            <Button iconLeft transparent dark onPress={() => {this.selectNewItem('group_poll'); Mixpanel.track("Opened New Poll Form");}}>
                                                 <Icon name="ios-stats" style={styles.menuIcon} />
                                                 <Text style={styles.menuText}>New Group Poll</Text>
                                             </Button>
                                         </MenuOption>
                                         <MenuOption value={'petition'}>
-                                            <Button iconLeft transparent dark onPress={() => {this.selectNewItem('petition'); Mixpanel.track("New User Petition Form Opened");}}>
+                                            <Button iconLeft transparent dark onPress={() => {this.selectNewItem('petition'); Mixpanel.track("Opened New User Petition Form");}}>
                                                 <Icon name="ios-clipboard" style={styles.menuIcon} />
                                                 <Text style={styles.menuText}>New Petition</Text>
                                             </Button>
                                         </MenuOption>
                                         <MenuOption value={'post'}>
-                                            <Button iconLeft transparent dark onPress={() => {this.selectNewItem('post'); Mixpanel.track("New Post Form Opened");}}>
+                                            <Button iconLeft transparent dark onPress={() => {this.selectNewItem('post'); Mixpanel.track("Opened New Post Form");}}>
                                                 <Icon name="ios-flag" style={styles.menuIcon} />
                                                 <Text style={styles.menuText}>New Post</Text>
                                             </Button>
