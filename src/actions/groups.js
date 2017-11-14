@@ -710,6 +710,198 @@ const groupSelectTag = (groupId, tag) => (dispatch, getState) => {
     }
 }
 
+const groupGetBankAccounts = (groupId) => (dispatch, getState) => {
+    const token = getState().user.token
+    dispatch({type: ActionTypes.GROUP_GET_BANK_ACCOUNT_LOADING, payload: true})
+    fetch(API_URL + '/v2/groups/' + groupId + '/bank-accounts', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token
+        },
+    })
+    .then(response => response.json())
+    .then(res => {
+        dispatch({type: ActionTypes.GROUP_GET_BANK_ACCOUNT_SUCCESS, payload: res})
+        dispatch({type: ActionTypes.GROUP_GET_BANK_ACCOUNT_LOADING, payload: false})
+    })
+    .catch(err => {
+        dispatch({type: ActionTypes.GROUP_GET_BANK_ACCOUNT_ERROR, payload: err})
+        dispatch({type: ActionTypes.GROUP_GET_BANK_ACCOUNT_LOADING, payload: false})
+        
+    });
+}
+
+const groupCreateBankAccount = (groupId, data) => (dispatch, getState) => {
+    const token = getState().user.token
+    dispatch({type: ActionTypes.GROUP_POST_BANK_ACCOUNT_LOADING, payload: true})
+    fetch(API_URL + '/v2/groups/' + groupId + '/bank-accounts', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token,
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(res => {
+        if(!res.code) {
+            dispatch({type: ActionTypes.GROUP_POST_BANK_ACCOUNT_SUCCESS, payload: res.bank_accounts[0]})
+            dispatch({type: ActionTypes.GROUP_POST_BANK_ACCOUNT_LOADING, payload: false})
+        } else {
+            dispatch({type: ActionTypes.GROUP_POST_BANK_ACCOUNT_ERROR, payload: res})
+        }
+    })
+    .catch(err => {
+        dispatch({type: ActionTypes.GROUP_POST_BANK_ACCOUNT_ERROR, payload: err})
+        dispatch({type: ActionTypes.GROUP_POST_BANK_ACCOUNT_LOADING, payload: false})
+        
+    });
+} 
+const groupDeleteBankAccount = (groupId, accountId) => (dispatch, getState) => {
+    const token = getState().user.token
+    dispatch({type: ActionTypes.GROUP_DELETE_BANK_ACCOUNT_LOADING, payload: true})
+    fetch(API_URL + '/v2/groups/' + groupId + '/bank-accounts/' + accountId, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token
+        }
+    })
+    .then(response => response.json())
+    .then(res => {
+        console.log(res)
+        if(!res.code) {
+            dispatch({type: ActionTypes.GROUP_DELETE_BANK_ACCOUNT_SUCCESS, payload: accountId})
+            dispatch({type: ActionTypes.GROUP_DELETE_BANK_ACCOUNT_LOADING, payload: false})
+        }  else {
+            dispatch({type: ActionTypes.GROUP_DELETE_BANK_ACCOUNT_ERROR, payload: 'Something Went Wrong'})
+        }
+    })
+    .catch(err => {
+        dispatch({type: ActionTypes.GROUP_DELETE_BANK_ACCOUNT_ERROR, payload: err})
+        dispatch({type: ActionTypes.GROUP_DELETE_BANK_ACCOUNT_LOADING, payload: false})
+        
+    });
+} 
+
+const groupDeleteCard = (groupId, cardID) => (dispatch, getState) => {
+    const token = getState().user.token
+    dispatch({type: ActionTypes.GROUP_DELETE_CARD_LOADING, payload: true})
+    fetch(API_URL + '/v2/groups/' + groupId + '/cards/' + cardID, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token
+        }
+    })
+    .then(res => {
+        dispatch({type: ActionTypes.GROUP_DELETE_CARD_SUCCESS, payload: cardID})
+        dispatch({type: ActionTypes.GROUP_DELETE_CARD_LOADING, payload: false})
+    })
+    .catch(err => {
+        dispatch({type: ActionTypes.GROUP_DELETE_CARD_ERROR, payload: err})
+        dispatch({type: ActionTypes.GROUP_DELETE_CARD_LOADING, payload: false})
+        
+    });
+} 
+
+const groupCreateCard = (groupId, data) => (dispatch, getState) => {
+    console.log(data)
+    const token = getState().user.token
+    dispatch({type: ActionTypes.GROUP_POST_CARD_LOADING, payload: true})
+    fetch(API_URL + '/v2/groups/' + groupId + '/cards', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token,
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(res => {
+        console.log(res)
+        if(!res.code) {
+            dispatch({type: ActionTypes.GROUP_POST_CARD_SUCCESS, payload: res.cards})
+            dispatch({type: ActionTypes.GROUP_POST_CARD_LOADING, payload: false})
+        }  else {
+            dispatch({type: ActionTypes.GROUP_POST_CARD_ERROR, payload: res})
+        }
+    })
+    .catch(err => {
+        dispatch({type: ActionTypes.GROUP_POST_CARD_ERROR, payload: err})
+        dispatch({type: ActionTypes.GROUP_POST_CARD_LOADING, payload: false})
+        
+    });
+}
+
+const groupGetCards = (groupId) => (dispatch, getState) => {
+    const token = getState().user.token
+    dispatch({type: ActionTypes.GROUP_GET_CARDS_LOADING, payload: true})
+    fetch(API_URL + '/v2/groups/' + groupId + '/cards', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token
+        },
+    })
+    .then(response => response.json())
+    .then(res => {
+        dispatch({type: ActionTypes.GROUP_GET_CARDS_SUCCESS, payload: res})
+        dispatch({type: ActionTypes.GROUP_GET_CARDS_LOADING, payload: false})
+    })
+    .catch(err => {
+        dispatch({type: ActionTypes.GROUP_GET_CARDS_ERROR, payload: err})
+        dispatch({type: ActionTypes.GROUP_GET_CARDS_LOADING, payload: false})
+        
+    });
+}
+
+const groupGetSubscriptions = (groupId) => (dispatch, getState) => {
+    const token = getState().user.token
+    dispatch({type: ActionTypes.GROUP_GET_SUBSCRIPTIONS_LOADING, payload: true})
+    fetch(API_URL + '/v2/groups/' + groupId + '/subscription', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token
+        },
+    })
+    .then(response => response.json())
+    .then(res => {
+        dispatch({type: ActionTypes.GROUP_GET_SUBSCRIPTIONS_SUCCESS, payload: res})
+        dispatch({type: ActionTypes.GROUP_GET_SUBSCRIPTIONS_LOADING, payload: false})
+    })
+    .catch(err => {
+        dispatch({type: ActionTypes.GROUP_GET_SUBSCRIPTIONS_ERROR, payload: err})
+        dispatch({type: ActionTypes.GROUP_GET_SUBSCRIPTIONS_LOADING, payload: false})
+        
+    });
+}
+
+const groupUpdateSubscriptions = (groupId, package_type) => (dispatch, getState) => {
+    const token = getState().user.token
+    dispatch({type: ActionTypes.GROUP_UPDATE_SUBSCRIPTIONS_LOADING, payload: true})
+    fetch(API_URL + '/v2/groups/' + groupId + '/subscription', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token
+        },
+        body: JSON.stringify({package_type})
+    })
+    .then(response => response.json())
+    .then(res => {
+        dispatch({type: ActionTypes.GROUP_UPDATE_SUBSCRIPTIONS_SUCCESS, payload: res})
+        dispatch({type: ActionTypes.GROUP_UPDATE_SUBSCRIPTIONS_LOADING, payload: false})
+    })
+    .catch(err => {
+        dispatch({type: ActionTypes.GROUP_UPDATE_SUBSCRIPTIONS_ERROR, payload: err})
+        dispatch({type: ActionTypes.GROUP_UPDATE_SUBSCRIPTIONS_LOADING, payload: false})
+        
+    });
+}
+
 module.exports = {
     loadUserGroups,
     clearGroupsInCache,
@@ -743,5 +935,14 @@ module.exports = {
     updateGroupAdvancedAttributes,
     getGroupTags,
     getGroupOwnTags,
-    groupSelectTag
+    groupSelectTag,
+    groupGetBankAccounts,
+    groupCreateBankAccount,
+    groupDeleteBankAccount,
+    groupCreateCard,
+    groupGetCards,
+    groupCreateCard,
+    groupDeleteCard,
+    groupGetSubscriptions,
+    groupUpdateSubscriptions
 }

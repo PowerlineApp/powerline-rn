@@ -105,8 +105,7 @@ class ManageGroup extends Component {
                 <Options.Tags dispatch={dispatch} data={this.props.groupTags} groupOwnTags={this.props.groupOwnTags} token={token} group={group} />
               </AccordionItem>
               <AccordionItem title="Subscription Level">
-                <Text>In Progress</Text>
-                {/* <Options.SubscriptionLevel dispatch={dispatch} token={token} group={group} /> */}
+                <Options.SubscriptionLevel group={group} token={token}/>
               </AccordionItem>
               <AccordionItem title="Funraiser Setup">
                 <Options.FundRaiser group={group}/>

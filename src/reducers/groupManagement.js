@@ -1,4 +1,5 @@
 import update from 'immutability-helper';
+import { ActionConst } from 'react-native-router-flux';
 export const ActionTypes = {
     FETCH_GROUP_MEMBERS_SUCCESS: 'FETCH_GROUP_MEMBERS_SUCCESS',
     FETCH_GROUP_MEMBERS_LOADING: 'FETCH_GROUP_MEMBERS_LOADING',
@@ -38,7 +39,34 @@ export const ActionTypes = {
     GROUP_SAVE_TAG_SUCCESS: 'GROUP_SAVE_TAG_SUCCESS',
     GROUP_SAVE_TAG_ERROR: 'GROUP_SAVE_TAG_ERROR',
     GROUP_DELETE_TAG_SUCCESS: 'GROUP_DELETE_TAG_SUCCESS',
-    GROUP_DELETE_TAG_ERROR: 'GROUP_DELETE_TAG_ERROR'
+    GROUP_DELETE_TAG_ERROR: 'GROUP_DELETE_TAG_ERROR',
+    GROUP_GET_BANK_ACCOUNT_SUCCESS: 'GROUP_GET_BANK_ACCOUNT_SUCCESS',
+    GROUP_GET_BANK_ACCOUNT_ERROR: 'GROUP_GET_BANK_ACCOUNT_ERROR',
+    GROUP_GET_BANK_ACCOUNT_LOADING: 'GROUP_GET_BANK_ACCOUNT_LOADING',
+    GROUP_POST_BANK_ACCOUNT_SUCCESS: 'GROUP_POST_BANK_ACCOUNT_SUCCESS',
+    GROUP_POST_BANK_ACCOUNT_ERROR: 'GROUP_POST_BANK_ACCOUNT_ERROR',
+    GROUP_POST_BANK_ACCOUNT_LOADING: 'GROUP_POST_BANK_ACCOUNT_LOADING',
+    GROUP_DELETE_BANK_ACCOUNT_SUCCESS: 'GROUP_DELETE_BANK_ACCOUNT_SUCCESS',
+    GROUP_DELETE_BANK_ACCOUNT_ERROR: 'GROUP_DELETE_BANK_ACCOUNT_ERROR',
+    GROUP_DELETE_BANK_ACCOUNT_LOADING: 'GROUP_DELETE_BANK_ACCOUNT_LOADING',
+    GROUP_POST_CARD_LOADING: 'GROUP_POST_CARD_LOADING',
+    GROUP_POST_CARD_SUCCESS: 'GROUP_POST_CARD_SUCCESS',
+    GROUP_POST_CARD_ERROR: 'GROUP_POST_CARD_ERROR',
+    GROUP_GET_CARDS_LOADING: 'GROUP_GET_CARDS_LOADING',
+    GROUP_GET_CARDS_SUCCESS: 'GROUP_GET_CARDS_SUCCESS',
+    GROUP_GET_CARDS_ERROR: 'GROUP_GET_CARDS_ERROR',
+
+    GROUP_DELETE_CARD_LOADING: 'GROUP_DELETE_CARD_LOADING',
+    GROUP_DELETE_CARD_SUCCESS: 'GROUP_DELETE_CARD_SUCCESS',
+    GROUP_DELETE_CARD_ERROR: 'GROUP_DELETE_CARD_ERROR',
+
+    GROUP_GET_SUBSCRIPTIONS_LOADING: 'GROUP_GET_SUBSCRIPTIONS_LOADING',
+    GROUP_GET_SUBSCRIPTIONS_SUCCESS: 'GROUP_GET_SUBSCRIPTIONS_SUCCESS',
+    GROUP_GET_SUBSCRIPTIONS_ERROR: 'GROUP_GET_SUBSCRIPTIONS_ERROR',
+
+    GROUP_UPDATE_SUBSCRIPTIONS_LOADING: 'GROUP_UPDATE_SUBSCRIPTIONS_LOADING',
+    GROUP_UPDATE_SUBSCRIPTIONS_SUCCESS: 'GROUP_UPDATE_SUBSCRIPTIONS_SUCCESS',
+    GROUP_UPDATE_SUBSCRIPTIONS_ERROR: 'GROUP_UPDATE_SUBSCRIPTIONS_ERROR'
     
 }
 
@@ -48,7 +76,12 @@ const INITIAL_STATE = {
     joined: null,
     advancedAttribs: null,
     groupOwnTags: null,
-    groupTags: null
+    groupTags: null,
+    bankAccounts: null,
+    bankAccountsLoading: false,
+    creditCards: null,
+    loadingCards: false,
+    subscription: null
 }
 
 export default (state = INITIAL_STATE, action) => {
@@ -110,6 +143,40 @@ export default (state = INITIAL_STATE, action) => {
         case ActionTypes.GROUP_DESELECT_TAG: {
             return {...state, groupOwnTags: state.groupOwnTags.filter(item => item !== action.payload)}
         }
+        case ActionTypes.GROUP_GET_BANK_ACCOUNT_LOADING: {
+            return {...state, bankAccountsLoading: action.payload}
+        }
+        case ActionTypes.GROUP_GET_BANK_ACCOUNT_SUCCESS: {
+            return {...state, bankAccounts: action.payload}
+        }
+
+        case ActionTypes.GROUP_POST_BANK_ACCOUNT_SUCCESS: {
+            return {...state, bankAccounts: [...state.bankAccounts, action.payload]}
+        }
+        
+        case ActionTypes.GROUP_DELETE_BANK_ACCOUNT_SUCCESS: {
+            return {...state, bankAccounts: state.bankAccounts.filter(acc => acc.id !== action.payload)}
+        }
+
+        case ActionTypes.GROUP_POST_CARD_SUCCESS:
+            return {...state, creditCards: action.payload}
+
+        case ActionTypes.GROUP_GET_CARDS_SUCCESS:
+            return {...state, creditCards: action.payload}
+        case ActionTypes.GROUP_GET_CARDS_LOADING:
+            return {...state, loadingCards: action.payload}
+
+        case ActionTypes.GROUP_DELETE_CARD_SUCCESS: {
+            return {...state, creditCards: state.creditCards.filter(item => item.id !== action.payload)}
+        }
+        
+        case ActionTypes.GROUP_GET_SUBSCRIPTIONS_SUCCESS: {
+            return {...state, subscription: action.payload}
+        }
+        case ActionTypes.GROUP_UPDATE_SUBSCRIPTIONS_SUCCESS: {
+            return {...state, subscription: action.payload}
+        }
+        
         default:
             return state
     }

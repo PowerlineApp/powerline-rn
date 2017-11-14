@@ -39,7 +39,6 @@ class Tags extends Component {
     }
 
     render() {
-        console.log('Tags', this.props)
         return (
         <View>
             <Label>Select Tags (optional)</Label>

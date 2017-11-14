@@ -1,5 +1,5 @@
 import React, { Component,  } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Image, Linking, Alert } from 'react-native';
 import {
     Container,
     Content,
@@ -10,16 +10,19 @@ import {
     Right,
     Label,
     Thumbnail,
+    Spinner,
     Item,
     List,
     ListItem,
     Input,
+    Card,
     Button,
     Icon,
     Form,
     Text,
     Picker
 } from 'native-base';
+import HyperLink from 'react-native-hyperlink'
 import { connect } from 'react-redux';
 import moment from 'moment'
 import PLColors from 'PLColors'
@@ -35,7 +38,7 @@ class PLBankAccount extends Component {
             countryCode: 'us',
             currency: 'usd',
             routingNumber: '',
-            accountHolderName: `${props.user.first_name} ${props.user.last_name}`,
+            accountHolderName: `${props.user.full_name}`,
             accountHolderType: 'individual',
             accountNumberValidated: false,
             routingNumberValidated: false,
@@ -46,11 +49,19 @@ class PLBankAccount extends Component {
             bankSaved: false,
             token: null,
             dob: null,
-            address_line1: '',
-            address_line2: '',
-            city: '',
+            dobError: false,
+            address_line1: `${props.user.address1}`,
+            address_line1Error: false,
+            address_line2: (props.user.address2 ? `${props.user.address2}` : ''),
+            city: `${props.user.city}`,
+            ssn_last_4Error: false,
+            tax_idError: false,
+            ssn_last_4: '',
             business_name: '',
-            tokenLoading: null,
+            postal_code: `${props.user.zip}`,
+            postal_codeError: false,
+            state: `${props.user.state}`,
+            tokenLoading: false,
             accountNickname: ''
         }
         this.inputChanged = this.inputChanged.bind(this)
@@ -72,15 +83,76 @@ class PLBankAccount extends Component {
             this.setState({accountNumberValidated: false})
         }
         
-        if(this.checkNumber(this.state.routingNumber) && this.state.routingNumber.length === 9) {
+        if(key === 'routingNumber'&& this.checkNumber(prop) && prop.length === 9) {
             this.setState({routingNumberValidated: true})
         } else {
             this.setState({routingNumberValidated: false})
         }
+
+        if(moment().diff(moment(this.state.dob).format(), 'year') < 18) {
+            this.setState({
+                dobError: true
+            })
+            Alert.alert('User age must be higher than 18 years old')
+        } else {
+            this.setState({dobError: false})
+        }
+
+        if(key === 'address_line' && prop.length < 8) {
+            this.setState({
+                address_line1Error: true
+            })
+        } else {
+            this.setState({
+                address_line1Error: false
+            })
+        }
+
+        if(key === 'postal_code' && prop.length <= 4) {
+            this.setState({
+                postal_codeError: true
+            })
+        } else {
+            this.setState({
+                postal_codeError: false
+            })
+        }
+
+        if(key === 'ssn_last_4' && prop.length < 4 ) {
+            this.setState({
+                ssn_last_4Error: false
+            })            
+        } else {
+            if(this.checkNumber(prop)) {
+                this.setState({
+                    ssn_last_4Error: false
+                })
+            } else {
+                this.setState({
+                    ssn_last_4Error: true
+                })
+            }
+        }
+        
+        if(key === 'tax_id' && prop.length < 9) {
+            this.setState({
+                tax_idError: true
+            })
+        } else {
+            if(this.checkNumber(prop)) {
+                this.setState({
+                    tax_idError: false
+                })
+            } else {
+                this.setState({
+                    tax_idError: true
+                })
+            }
+        }
+
     }
 
     checkNumber(number) {
-        console.log(/^\d+$/.test(number))
         return /^\d+$/.test(number);
     }
 
@@ -99,6 +171,27 @@ class PLBankAccount extends Component {
             })
             return false;
         }
+
+        if(this.state.dob && moment().diff(moment(this.state.dob).format(), 'year') < 18) {
+            this.setState({
+                dobError: true
+            })
+            return false;
+        }
+        if(this.state.address_line1.length < 8) {
+            this.setState({
+                address_line1Error: true
+            })
+            return false
+        }
+
+        if(this.state.postal_code.length < 5) {
+            this.setState({
+                postal_codeError: true
+            })
+            return false
+        }
+        
 
         return true;
     }
@@ -125,88 +218,121 @@ class PLBankAccount extends Component {
     }
 
     save(params) {
-        console.log(params)
         const backendData = this.buildObject(params)
+        this.props.onSave(backendData)
     }
 
     buildObject(params) {
-        console.log(params)
+        const obj = {
+            source: params.token,
+            tax_id: params.tax_id,
+            address_line1: params.address_line1,
+            address_line2: params.address_line2,
+            currency: params.currency,
+            type: params.accountHolderType,
+            first_name: params.accountHolderName.split(' ')[0],
+            last_name: params.accountHolderName.split(' ')[params.accountHolderName.split(' ').length - 1],
+            ssn_last_4: params.ssn_last_4.substr(params.ssn_last_4.length - 4, params.ssn_last_4.length),
+            city: params.city,
+            state: params.state,
+            postal_code: params.postal_code,
+            country: params.countryCode.toUpperCase(),
+            dob: params.dob
+        }
+        if(obj.type === 'company') {
+            obj.business_name === params.business_name
+        }
+        return obj
+
     }
 
+    pickColor(condition, conditionError) {
+        if(condition === null) {
+            return 'grey'
+        } else if(condition !== null && conditionError) {
+            return 'red'
+        } else {
+            return 'green'
+        }
+    }
+    
     _renderAditionalForm() {
         return (
-            <Form>
-                { this.state.accountHolderType === 'company' 
-                ?   <View style={{marginVertical: 5}}>
-                        <Text style={{fontSize: 12, color: 'grey', marginLeft: 5}}>Business Name</Text> 
-                        <Item rounded>
-                            <Input placeholder='Business Name' onChangeText={text => this.inputChanged('business_name', text)}/>
+            <Card style={{padding: 10}}>
+                <Form>
+                    { this.state.accountHolderType === 'company' 
+                    ?   <View style={{marginVertical: 5}}>
+                            <Text style={styles.labelStyle}>Business Name</Text> 
+                            <Item rounded>
+                                <Input placeholder='Business Name' onChangeText={text => this.inputChanged('business_name', text)}/>
+                            </Item>
+                        </View>
+                    : null
+                    }
+                    <Text style={styles.labelStyle}>Date of Birth</Text> 
+                    <View style={{borderColor: this.pickColor(this.state.dob, this.state.dobError), borderWidth: StyleSheet.hairlineWidth,  borderRadius: 25, height: 50}}>
+                        <DatePicker 
+                            showIcon={false}
+                            mode='date'
+                            format='YYYY-MM-DD'
+                            customStyles={{dateInput: {borderWidth: 0, marginLeft: -50}, placeholderText: {color: 'grey', fontSize: 17, marginLeft: 20}, dateText: {fontSize: 17, marginLeft: 20}}}
+                            onDateChange={date => this.inputChanged('dob', date)}
+                        />
+                    </View>
+                    <View style={{marginVertical: 5}}>
+                        <Text style={styles.labelStyle}>Address Line 1</Text> 
+                        <Item rounded success={!this.state.address_line1Error} error={this.state.address_line1Error}>
+                            <Input placeholder='Address Line 1' value={this.state.address_line1} onChangeText={text => this.inputChanged('address_line1', text)}/>
                         </Item>
                     </View>
-                : null
-                }
-                <Text style={{fontSize: 12, color: 'grey', marginLeft: 5}}>Date of Birth</Text> 
-                <View style={{borderColor: 'grey', borderWidth: StyleSheet.hairlineWidth,  borderRadius: 25, height: 50}}>
-                    <DatePicker 
-                        showIcon={false}
-                        mode='date'
-                        value={this.state.dob}
-                        customStyles={{dateInput: {borderWidth: 0, marginLeft: -50}, placeholderText: {color: 'grey', fontSize: 17, marginLeft: 20}}}
-                        onDateChange={date => this.inputChanged('dob', date)}
-                    />
-                </View>
-                <View style={{marginVertical: 5}}>
-                    <Text style={{fontSize: 12, color: 'grey', marginLeft: 5}}>Address Line 1</Text> 
-                    <Item rounded>
-                        <Input placeholder='Address Line 1' onChangeText={text => this.inputChanged('address_line1', text)}/>
-                    </Item>
-                </View>
-                <View style={{marginVertical: 5}}>
-                    <Text style={{fontSize: 12, color: 'grey', marginLeft: 5}}>Address Line 2</Text> 
-                    <Item rounded>
-                        <Input placeholder='Address Line 2' onChangeText={text => this.inputChanged('address_line2', text)}/>
-                    </Item>
-                </View>
-                <View style={{marginVertical: 5}}>
-                    <Text style={{fontSize: 12, color: 'grey', marginLeft: 5}}>City</Text> 
-                    <Item rounded>
-                        <Input placeholder='City' onChangeText={text => this.inputChanged('city', text)}/>
-                    </Item>
-                </View>
-                <View style={{marginVertical: 5}}>
-                    <Text style={{fontSize: 12, color: 'grey', marginLeft: 5}}>State</Text> 
-                    <Item rounded>
-                        <Input placeholder='State' onChangeText={text => this.inputChanged('state', text)}/>
-                    </Item>
-                </View>
-                <View style={{marginVertical: 5}}>
-                    <Text style={{fontSize: 12, color: 'grey', marginLeft: 5}}>Postal Code</Text> 
-                    <Item rounded>
-                        <Input placeholder='Postal Code' onChangeText={text => this.inputChanged('postal_code', text)}/>
-                    </Item>
-                </View>
-                <View style={{marginVertical: 5}}>
-                    <Text style={{fontSize: 12, color: 'grey', marginLeft: 5}}>Tax ID</Text> 
-                    <Item rounded>
-                        <Input placeholder='Tax ID' onChangeText={text => this.inputChanged('tax_id', text)}/>
-                    </Item>
-                </View>
-                <View style={{marginVertical: 5}}>
-                    <Text style={{fontSize: 12, color: 'grey', marginLeft: 5}}>SSN 4 last digits</Text> 
-                    <Item rounded>
-                        <Input placeholder='SSN 4 last digits' onChangeText={text =>this.inputChanged('ssn_last_4', text)}/>
-                    </Item>
-                </View>
-
-                <Button block style={styles.submitButtonContainer} onPress={() => this.save(this.state)}>
-                    <Label style={{color: 'white'}}>Save</Label>
-                </Button>
-            </Form>
+                    <View style={{marginVertical: 5}}>
+                        <Text style={styles.labelStyle}>Address Line 2</Text> 
+                        <Item rounded>
+                            <Input placeholder='Address Line 2' value={this.state.address_line2} onChangeText={text => this.inputChanged('address_line2', text)}/>
+                        </Item>
+                    </View>
+                    <View style={{marginVertical: 5}}>
+                        <Text style={styles.labelStyle}>City</Text> 
+                        <Item rounded>
+                            <Input placeholder='City' value={this.state.city} onChangeText={text => this.inputChanged('city', text)}/>
+                        </Item>
+                    </View>
+                    <View style={{marginVertical: 5}}>
+                        <Text style={styles.labelStyle}>State</Text> 
+                        <Item rounded>
+                            <Input placeholder='State' value={this.state.state} onChangeText={text => this.inputChanged('state', text)}/>
+                        </Item>
+                    </View>
+                    <View style={{marginVertical: 5}}>
+                        <Text style={styles.labelStyle}>Postal Code</Text> 
+                        <Item rounded success={!this.state.postal_codeError} error={this.state.postal_codeError}>
+                            <Input placeholder='Postal Code' value={this.state.postal_code} onChangeText={text => this.inputChanged('postal_code', text)}/>
+                        </Item>
+                    </View>
+                    <View style={{marginVertical: 5}}>
+                        <Text style={styles.labelStyle}>Tax ID</Text> 
+                        <Item rounded success={!this.state.tax_idError} error={this.state.tax_idError}>
+                            <Input placeholder='Tax ID' onChangeText={text => this.inputChanged('tax_id', text)}/>
+                        </Item>
+                    </View>
+                    <View style={{marginVertical: 5}}>
+                        <Text style={styles.labelStyle}>SSN</Text> 
+                        <Item rounded success={!this.state.ssn_last_4Error} error={this.state.ssn_last_4Error}>
+                            <Input placeholder='SSN' onChangeText={text =>this.inputChanged('ssn_last_4', text)}/>
+                        </Item>
+                    </View>
+                    
+                    <Agreement />
+                    <Button block style={styles.submitButtonContainer} onPress={() => this.save(this.state)}>
+                        <Label style={{color: 'white'}}>Save</Label>
+                    </Button>
+                </Form>
+            </Card>
         )
     }
 
     render() {
-        console.log(this.state)
+        console.log(this.props.user)
         if(this.state.bankSaved) {
             return this._renderAditionalForm()
         } else {
@@ -216,96 +342,101 @@ class PLBankAccount extends Component {
 
     _renderBankForm() {
         return (
-            <Form>
-                <View style={{marginVertical: 5}}>
-                    <Text style={{fontSize: 12, color: 'grey', marginLeft: 5}}>Account Nickname</Text> 
-                    <Item rounded>
-                        <Input placeholder='Account Nickname' onChangeText={text =>this.inputChanged('accountNickname', text)}/>
-                    </Item>
-                </View>
-                <View style={{marginVertical: 5}}>
-                    <Text style={{fontSize: 12, color: 'grey', marginLeft: 5}}>Account Type</Text> 
-                    <View style={{borderColor: 'grey', borderWidth: StyleSheet.hairlineWidth,  borderRadius: 25}}>
-                        <Picker 
-                            placeholder='Account Type'
-                            iosHeader="Account Type"
-                            mode="dropdown"
-                            selectedValue={this.state.accountHolderType}
-                            onValueChange={value => {
-                                console.log(value)
-                                this.inputChanged('accountHolderType', value)
-                            }}
-                        >
-                            <Item label="Company" value='company'/>
-                            <Item label="Individual" value='individual'/>
-                        </Picker>
+            <Card style={{padding: 10}}>
+                <Form>
+                    <View style={{marginVertical: 5}}>
+                        <Text style={styles.labelStyle}>Account Nickname</Text> 
+                        <Item rounded>
+                            <Input placeholder='Account Nickname' onChangeText={text =>this.inputChanged('accountNickname', text)}/>
+                        </Item>
                     </View>
-                </View>
-                <View style={{marginVertical: 5}}>
-                    <Text style={{fontSize: 12, color: 'grey', marginLeft: 5}}>Country</Text> 
-                    <View style={{borderColor: 'grey', borderWidth: StyleSheet.hairlineWidth,  borderRadius: 25}}>
-                        <Picker 
-                            iosHeader="Country"
-                            mode="dropdown"
-                            selectedValue={this.state.countryCode}
-                            onValueChange={value => {
-                                console.log(value)
-                                this.inputChanged('countryCode', value)
-                            }}
-                        >
-                            <Item label="United States" value='us'/>
-                            {/* <Item label="Personal" value='personal'/> */}
-                        </Picker>
+                    <View style={{marginVertical: 5}}>
+                        <Text style={styles.labelStyle}>Account Type</Text> 
+                        <View style={{borderColor: 'grey', borderWidth: StyleSheet.hairlineWidth,  borderRadius: 25}}>
+                            <Picker 
+                                placeholder='Account Type'
+                                iosHeader="Account Type"
+                                mode="dropdown"
+                                selectedValue={this.state.accountHolderType}
+                                onValueChange={value => {
+                                    this.inputChanged('accountHolderType', value)
+                                }}
+                            >
+                                <Item label="Company" value='company'/>
+                                <Item label="Individual" value='individual'/>
+                            </Picker>
+                        </View>
                     </View>
-                </View>
-                <View style={{marginVertical: 5}}>
-                    <Text style={{fontSize: 12, color: 'grey', marginLeft: 5}}>Currency</Text> 
-                    <View style={{borderColor: 'grey', borderWidth: StyleSheet.hairlineWidth,  borderRadius: 25}}>
-                        <Picker 
-                            iosHeader="Currency"
-                            mode="dropdown"
-                            selectedValue={this.state.currency}
-                            onValueChange={value => {
-                                // console.log(value)
-                                this.inputChanged('currency', value)
-                            }}
-                        >
-                            <Item label="USD" value='usd'/>
-                            {/* <Item label="Personal" value='personal'/> */}
-                        </Picker>
+                    <View style={{marginVertical: 5}}>
+                        <Text style={styles.labelStyle}>Country</Text> 
+                        <View style={{borderColor: 'grey', borderWidth: StyleSheet.hairlineWidth,  borderRadius: 25}}>
+                            <Picker 
+                                iosHeader="Country"
+                                mode="dropdown"
+                                selectedValue={this.state.countryCode}
+                                onValueChange={value => {
+                                    console.log(value)
+                                    this.inputChanged('countryCode', value)
+                                }}
+                            >
+                                <Item label="United States" value='us'/>
+                                {/* <Item label="Personal" value='personal'/> */}
+                            </Picker>
+                        </View>
                     </View>
-                </View>
-                
-                <View style={{marginVertical: 5}}>
-                    <Text style={{fontSize: 12, color: 'grey', marginLeft: 5}}>Holder's name</Text> 
-                    <Item rounded>
-                        <Input value={this.state.accountHolderName} placeholder="Holder's Name" onChangeText={text => this.inputChanged('accountHolderName', text)}/>
-                    </Item>
-                </View>
-                <View style={{marginVertical: 5}}>
-                    <Text style={{fontSize: 12, color: 'grey', marginLeft: 5}}>Account Number</Text> 
-                    <Item rounded success={this.state.accountNumberValidated} error={!this.state.accountNumberValidated}>
-                        <Input placeholder='Account Number' onChangeText={text => this.inputChanged('accountNumber', text)}/>
-                    </Item>
-                    {   this.state.accountNumberErrorMessage
-                        ? <Text style={{color: 'red', fontSize: 12}}>{this.state.accountNumberErrorMessage}</Text>
-                        : null
+                    <View style={{marginVertical: 5}}>
+                        <Text style={styles.labelStyle}>Currency</Text> 
+                        <View style={{borderColor: 'grey', borderWidth: StyleSheet.hairlineWidth,  borderRadius: 25}}>
+                            <Picker 
+                                iosHeader="Currency"
+                                mode="dropdown"
+                                selectedValue={this.state.currency}
+                                onValueChange={value => {
+                                    // console.log(value)
+                                    this.inputChanged('currency', value)
+                                }}
+                            >
+                                <Item label="USD" value='usd'/>
+                                {/* <Item label="Personal" value='personal'/> */}
+                            </Picker>
+                        </View>
+                    </View>
+                    
+                    <View style={{marginVertical: 5}}>
+                        <Text style={styles.labelStyle}>Holder's name</Text> 
+                        <Item rounded>
+                            <Input value={this.state.accountHolderName} placeholder="Holder's Name" onChangeText={text => this.inputChanged('accountHolderName', text)}/>
+                        </Item>
+                    </View>
+                    <View style={{marginVertical: 5}}>
+                        <Text style={styles.labelStyle}>Account Number</Text> 
+                        <Item rounded success={this.state.accountNumberValidated} error={!this.state.accountNumberValidated}>
+                            <Input placeholder='Account Number' onChangeText={text => this.inputChanged('accountNumber', text)}/>
+                        </Item>
+                        {   this.state.accountNumberErrorMessage
+                            ? <Text style={{color: 'red', fontSize: 12}}>{this.state.accountNumberErrorMessage}</Text>
+                            : null
+                        }
+                    </View>
+                    <View style={{marginVertical: 5}}>
+                        <Text style={styles.labelStyle}>Routing Number</Text> 
+                        <Item rounded success={this.state.routingNumberValidated} error={!this.state.routingNumberValidated}>
+                            <Input type='number' placeholder='Routing Number' onChangeText={text => this.inputChanged('routingNumber', text)}/>
+                        </Item>
+                        {   this.state.routingNumberErrorMessage
+                            ? <Text style={{color: 'red', fontSize: 12}}>{this.state.routingNumberErrorMessage}</Text>
+                            : null
+                        }
+                    </View>
+                    <Agreement />
+                    {   !this.state.tokenLoading
+                        ?   <Button block style={styles.submitButtonContainer} onPress={() => this.generateToken(this.state)}>
+                                <Label style={{color: 'white'}}>Submit</Label>
+                            </Button>
+                        :   <Spinner />
                     }
-                </View>
-                <View style={{marginVertical: 5}}>
-                    <Text style={{fontSize: 12, color: 'grey', marginLeft: 5}}>Routing Number</Text> 
-                    <Item rounded success={this.state.routingNumberValidated} error={!this.state.routingNumberValidated}>
-                        <Input type='number' placeholder='Routing Number' onChangeText={text => this.inputChanged('routingNumber', text)}/>
-                    </Item>
-                    {   this.state.routingNumberErrorMessage
-                        ? <Text style={{color: 'red', fontSize: 12}}>{this.state.routingNumberErrorMessage}</Text>
-                        : null
-                    }
-                </View>
-                <Button block style={styles.submitButtonContainer} onPress={() => this.generateToken(this.state)}>
-                    <Label style={{color: 'white'}}>Submit</Label>
-                </Button>
-            </Form>
+                </Form>
+            </Card>
         )
     }
 }
@@ -315,6 +446,12 @@ const styles = {
         backgroundColor: PLColors.main,
         marginTop: 20,
         marginBottom: 12
+    },
+    labelStyle: {
+        fontSize: 12, 
+        color: 'grey', 
+        marginLeft: 5,
+        marginVertical: 5
     }
 }
 
@@ -323,7 +460,35 @@ const mapStateToProps = (state) => ({
 })
 export default connect(mapStateToProps)(PLBankAccount)
 
-
+const Agreement = () => (
+    <View>
+        <View style={{padding: 3, paddingBottom: 10}}>
+            <Text
+                style={{fontSize: 12, color: 'grey'}}
+            >
+                By registering your account, you agree to our
+                <Text
+                    style={{fontSize: 12, color: 'blue'}}
+                    onPress={() => Linking.openURL('https://www.powerli.ne/terms')}
+                >
+                    {''} Terms of Service {''} 
+                </Text>
+                and the
+                <Text
+                    style={{fontSize: 12, color: 'blue'}}
+                    onPress={() => Linking.openURL('https://stripe.com/us/connect-account/legal')}
+                >
+                    {''} Stripe Connected Account Agreement
+                </Text>
+                .
+            </Text>
+        </View>
+        <TouchableOpacity style={{flexDirection: 'row'}} onPress={() => Linking.openURL('https://stripe.com/us/connect-account/legal')}>
+            <Image source={require('../assets/powered_by_stripe@2x.png')} style={{height: 50, flex: 1, borderRadius: 25}}></Image>
+            <Image source={require('../assets/comodo_logo.jpg')} style={{height: 50, flex: 1,  borderRadius: 25}}></Image>
+        </TouchableOpacity>
+    </View>
+)
 // const COUNTRIES = [
 //     {name: 'Austria', currency: ['eur', 'dkk', 'gbp', 'nok', 'sek', 'usd', 'chf'], countryCode: 'at'},
 //     {name: 'Australia', currency: ['aud'], countryCode: 'aud'},
