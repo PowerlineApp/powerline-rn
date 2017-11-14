@@ -4,6 +4,7 @@ use_frameworks!
 target 'Powerline' do
 project './powerline.xcodeproj'
   pod 'Fabric'
+  pod 'Mixpanel'
   pod 'Crashlytics'
   pod 'FBSDKCoreKit'
   pod 'FBSDKLoginKit'

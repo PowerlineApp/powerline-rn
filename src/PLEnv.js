@@ -15,4 +15,5 @@ module.exports = {
   fontFamily: undefined,
   PER_PAGE: 20,
   youTubeAPIKey: 'AIzaSyC2911BA6uHZWYcB0154TC1KcYKc6d337s',
+  MixpanelToken: '41d5e20219405736fed2c133437f2953',
 };

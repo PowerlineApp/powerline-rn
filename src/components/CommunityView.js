@@ -56,7 +56,7 @@ class CommunityView extends PureComponent {
                                         : <View style={styles.thumbnail} />
                                     }
                                     <Body>
-                                        <Text style={{ fontSize: 12, color: light ? 'gray' : 'white' }}>{item.official_name}</Text>
+                                        <Text style={{ fontSize: 15, color: light ? 'gray' : 'white' }}>{item.official_name}</Text>
                                     </Body>
                                     <Right>
                                         <Icon name='ios-arrow-dropright' style={{ color: light ? 'gray' : 'white' }} />
@@ -80,7 +80,7 @@ const styles = {
         width: width,
         height: '100%',
         zIndex: 10,
-        paddingLeft: (width - 250)/ 2,
+        paddingLeft: (width - 250)/ 2,       
     },
 
     community_list_back: {

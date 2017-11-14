@@ -7,10 +7,13 @@
 var ActionSheetIOS = require('ActionSheetIOS');
 var { Platform, AsyncStorage, Keyboard  } = require('react-native');
 var Alert = require('Alert');
-var { API_URL } = require('../PLEnv');
+var { API_URL, MixpanelToken } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
 var FacebookSDK = require('FacebookSDK');
 var { loadUserProfile } = require('./users');
+var Mixpanel = require('react-native-mixpanel');
+
+
 
 import OneSignal from 'react-native-onesignal';
 
@@ -57,6 +60,7 @@ function logInManually(username: string, password: string): ThunkAction {
         dispatch(loadUserProfile(result.data.token));
       }
     );
+    Mixpanel.track("Manual Login3");
     return login;
   }
 }
@@ -102,6 +106,7 @@ function logInWithFacebook() {
                     token: user.token,
                     is_registration_complete: user.is_registration_complete
                 };
+                Mixpanel.track("Facebook Login");
                 resolve(data);
             }else{        
               //if user is not already registered with Facebook, but tries to login with Facebook, this gets information from user's FB account  
@@ -136,6 +141,7 @@ function logInWithFacebook() {
                     if(data.email){
                       payloadData.username = data.email.split("@")[0];
                     }
+                    Mixpanel.track("Facebook Registration");
                     resolve(payloadData);
                 });
             }
@@ -200,6 +206,7 @@ function logOut(token): ThunkAction {
     return dispatch({
       type: 'LOGGED_OUT',
     });
+    Mixpanel.track("Logout");
   };
 }
 
@@ -233,5 +240,6 @@ function logOutWithPrompt(token, pushId): ThunkAction {
     }
   };
 }
+Mixpanel.sharedInstanceWithToken(MixpanelToken);
 
 module.exports = { logInManually, logInWithFacebook, forgotPassword, logOut, logOutWithPrompt };
