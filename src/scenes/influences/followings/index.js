@@ -161,10 +161,10 @@ class Followings extends Component {
           <Text></Text>
         }
         <PLOverlayLoader visible={this.state.refreshing} logo />
-      </ContentPlaceholder>
+        </ContentPlaceholder>
     );
-  }
-
+    }
+    
 }
 
 const mapStateToProps = state => ({
