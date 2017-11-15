@@ -20,15 +20,15 @@ class Event extends Component {
             shift: '',
             mode: '',
             pickervisible: false
-        }
+        };
     }
 
     openDateModal(shift){
-        this.setState({mode: 'date', shift, pickervisible: true})
+        this.setState({mode: 'date', shift, pickervisible: true});
     }
     
     openHourModal(shift){
-        this.setState({mode: 'time', shift, pickervisible: true})
+        this.setState({mode: 'time', shift, pickervisible: true});
     }
 
     handlePicker(content){
@@ -36,19 +36,19 @@ class Event extends Component {
         let {mode, shift} = state;
         state[shift][mode] = content;
         this.setState({...state, pickervisible: false});
-        this.props.setEventDate(this.state.init, this.state.end)
+        this.props.setEventDate(this.state.init, this.state.end);
     }
 
     formatDate(date){
         return date 
         ? moment(date).format('MMMM Do YYYY')
-        : 'Pick a date.'
+        : 'Pick a date.';
     }
     
     formatHour(date){
         return date 
         ? moment(date).format('hh:mm')
-        : 'Pick an hour.'
+        : 'Pick an hour.';
     }
 
 
@@ -80,14 +80,14 @@ class Event extends Component {
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => this.openDateModal('end')}>
                     <View style={styles.dateContainer}>
-                    <Text style={styles.dateTitle}>End of event (day)</Text>
+                        <Text style={styles.dateTitle}>End of event (day)</Text>
                         <Text style={styles.date}>
                             {this.formatDate(this.state.end.date)}
                         </Text>
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => this.openHourModal('end')}>
-                <View style={styles.dateContainer}>
+                    <View style={styles.dateContainer}>
                         <Text style={styles.dateTitle}>End of event (hour)</Text>
                         <Text style={styles.date}>
                             {this.formatHour(this.state.end.time)}
@@ -95,7 +95,7 @@ class Event extends Component {
                     </View>
                 </TouchableOpacity>
             </View>
-        )
+        );
     }
 }
 
@@ -113,6 +113,6 @@ const styles = {
     mainContainer: {
         marginTop: 16
     }
-}
+};
 
 export default Event;

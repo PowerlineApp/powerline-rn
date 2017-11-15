@@ -12,19 +12,19 @@ class Answers extends Component {
         this.state = {
             answers: [],
             allowUserAmount: false
-        }
+        };
     }
 
     componentDidMount(){
         if ( this.props.answerType === 'event' ){
-            this.setState({answers: [{value: "Yes, I'll go."}, {value: "No, I won't go."}]})
+            let answers = [{value: "Yes, I'll go."}, {value: "No, I won't go."}];
+            this.setState({answers});
+            this.props.setAnswer(answers);
         }
     }
 
     updateAnswer(key, value, index){
-        // console.log(key, value, index)
         let {answers} = this.state;
-        // console.log(answers)
         answers[index][key] = value;
         this.setState({answers});
         this.props.setAnswer(answers);
@@ -33,13 +33,12 @@ class Answers extends Component {
     
     addAnswer(){
         let {answers} = this.state;
-        answers.push(this.props.answerType === 'donation' ? {amount: '', value: '', is_user_amount: false} : {value: ''})
+        answers.push(this.props.answerType === 'donation' ? {amount: '', value: '', is_user_amount: false} : {value: ''});
         this.setState({answers});
         this.props.setAnswer(answers);
     }
 
     removeAnswer(key){
-        console.log('key')
         let {answers} = this.state;
         answers = answers.filter((answer, index) => index !== key);
         this.setState({answers});
@@ -53,40 +52,37 @@ class Answers extends Component {
                 {
                     answers.map(({value, amount, is_user_amount}, index)=>
                         <View key={index} style={styles.answerOptionContainer}>
-                        {
+                            {
                             this.state.allowUserAmount &&
                             <View style={{paddingRight: 8}}>
                                 <Switch onValueChange={() => {
-
-                                    this.updateAnswer('is_user_amount', !is_user_amount, index)
-                                    this.updateAnswer('amount', '', index)
-                                    }}
-
+                                    this.updateAnswer('is_user_amount', !is_user_amount, index);
+                                    this.updateAnswer('amount', '', index);
+                                }}
                                     value={is_user_amount} 
-
                                 />
                             </View>
                         }
-                        {
+                            {
                             this.props.answerType !== 'donation'
                             ? null
                             :  is_user_amount
                                 ? null
                                 : [
-                                <TextInput
-                                    maxLength={10000}
-                                    keyboardType={'numeric'}
-                                    underlineColorAndroid='rgba(0,0,0,0)'
-                                    ref={(r) => this.descriptionRef = r}
-                                    onSelectionChange={this.onSelectionChange}
-                                    placeholderTextColor='rgba(0,0,0,0.1)'
-                                    style={styles.numericInput}
-                                    value={amount}
-                                    onChangeText={(amount) => this.updateAnswer('amount', amount, index)}
+                                    <TextInput
+                                        maxLength={10000}
+                                        keyboardType={'numeric'}
+                                        underlineColorAndroid='rgba(0,0,0,0)'
+                                        ref={(r) => this.descriptionRef = r}
+                                        onSelectionChange={this.onSelectionChange}
+                                        placeholderTextColor='rgba(0,0,0,0.1)'
+                                        style={styles.numericInput}
+                                        value={amount}
+                                        onChangeText={(amount) => this.updateAnswer('amount', amount, index)}
                                 />,
-                                <View style={styles.suffixContainer} >
-                                    <Text style={styles.suffix} >USD</Text>
-                                </View>
+                                    <View style={styles.suffixContainer} >
+                                        <Text style={styles.suffix} >USD</Text>
+                                    </View>
                                 ]
                         }
                             <TextInput
@@ -101,7 +97,7 @@ class Answers extends Component {
                                 onChangeText={(text) => this.updateAnswer('value', text, index)}
                             />
                             <Button transparent style={styles.answersRemoveOptionButton} onPress={() => this.removeAnswer(index)}>
-                                    <Icon name="md-close-circle" style={styles.answersRemoveOptionIcon} />
+                                <Icon name='md-close-circle' style={styles.answersRemoveOptionIcon} />
                             </Button>
                         </View>)
                 }
@@ -119,7 +115,7 @@ class Answers extends Component {
                 <View style={styles.bottomPanel}>
                     <Button style={{backgroundColor: PLColors.main, marginTop: 16}} onPress={() => this.addAnswer()}>
                         <View>
-                            <Icon name="md-add-circle" />
+                            <Icon name='md-add-circle' />
                         </View>
                         <Text style={{color: '#fff'}} >{addAnswersButton}</Text>
                     </Button>

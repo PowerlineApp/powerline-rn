@@ -292,7 +292,7 @@ class NewLeaderContent extends Component {
             alert("Please create a title for your event");            
             return false;
         }
-        if (!content){
+        if (!subject){
             alert("Please create a content for your event");            
             return false;
         }
@@ -377,7 +377,7 @@ class NewLeaderContent extends Component {
         )
     }
 
-    async sendAttachments(obj, attachments){
+    async sendAttachmentsAndPublish(obj, attachments){
         let {token} = this.props;
         for (let attachment of attachments){
             try {
@@ -386,32 +386,19 @@ class NewLeaderContent extends Component {
                 console.log('error attaching: ', attachment, ' of ', attachments, 'for ', obj);
             }
         }
-        this.publish(obj)
-
-        // attachments.map((attachment, index) => {
-        //     sendAttachment(token, obj.id, attachment).then(r => {
-        //         console.log('attachment', index, r)
-        //     }).catch(e => {
-        //         console.log('error attaching ', index, e )
-        //     })
-        // })
+        return this.publish(obj);
     }
 
-    publish(obj){
+    async publish(obj){
         let {token, type} = this.props;
+        let result;
         if (type === 'group_announcement'){
-            publishAnnouncement(token, obj.id).then(r => {
-                console.log('published', r)
-            }).catch(e => {
-                console.log('error publishing', e)
-            })
+            result = await publishAnnouncement(token, obj.id);
         } else {
-            publishPoll(token, obj.id).then(r => {
-                console.log('published', r)
-            }).catch(e => {
-                console.log('error publishing', e)
-            })
+            result = await  publishPoll(token, obj.id);
         }
+
+        return result.json();
 
     }
 
@@ -455,7 +442,12 @@ class NewLeaderContent extends Component {
             req.then(resp => {
                 resp.json().then(r => {
                     console.warn(r);
-                    this.sendAttachments(r, attachments);
+                    this.sendAttachmentsAndPublish(r, attachments).then((r) => {
+                        console.log('published: ', r);
+                        Actions.itemDetail({entityType: 'poll', entityId: r.id})
+                    }).catch(e => {
+                        console.log('failure', e)
+                    });
                 })
             }).catch(e => {
                 // alert(e);
