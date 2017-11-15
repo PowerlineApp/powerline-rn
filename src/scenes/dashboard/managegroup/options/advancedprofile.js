@@ -32,17 +32,18 @@ class AdvancedProfile extends Component {
   }
   
   render() {
+    console.log('props on advanced profile', this.props)
     return (
       <View>
         <Label>Welcome Message (optional)</Label>
         <Input
-            value={this.props.data.welcome_message}
+            value={this.props.data ? this.props.data.welcome_message : ''}
             onChangeText={text => this.inputChange('welcome_message', text)}
         />
 
         <Label>Welcome Video (optional)</Label>
         <Input
-            value={this.props.data.welcome_video}
+            value={this.props.data ? this.props.data.welcome_video : ''}
           onChangeText={text => this.inputChange('welcome_video', text)}
         />
 

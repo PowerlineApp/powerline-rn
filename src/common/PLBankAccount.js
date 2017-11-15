@@ -1,5 +1,5 @@
 import React, { Component,  } from 'react';
-import { View, StyleSheet, TouchableOpacity, Image, Linking, Alert } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Image, Linking, Alert, Picker } from 'react-native';
 import {
     Container,
     Content,
@@ -19,16 +19,15 @@ import {
     Button,
     Icon,
     Form,
-    Text,
-    Picker
+    Text
 } from 'native-base';
-import HyperLink from 'react-native-hyperlink'
+import HyperLink from 'react-native-hyperlink';
 import { connect } from 'react-redux';
-import moment from 'moment'
-import PLColors from 'PLColors'
-import DatePicker from 'react-native-datepicker'
-import { Actions } from 'react-native-router-flux'
-import Stripe from 'tipsi-stripe'
+import moment from 'moment';
+import PLColors from 'PLColors';
+import DatePicker from 'react-native-datepicker';
+import { Actions } from 'react-native-router-flux';
+import Stripe from 'tipsi-stripe';
 
 class PLBankAccount extends Component {
     constructor(props) {
@@ -63,90 +62,90 @@ class PLBankAccount extends Component {
             state: `${props.user.state}`,
             tokenLoading: false,
             accountNickname: ''
-        }
-        this.inputChanged = this.inputChanged.bind(this)
-        this.validateFields = this.validateFields.bind(this)
-        this.generateToken = this.generateToken.bind(this)
-        this.buildObject = this.buildObject.bind(this)
-        this.save = this.save.bind(this)
+        };
+        this.inputChanged = this.inputChanged.bind(this);
+        this.validateFields = this.validateFields.bind(this);
+        this.generateToken = this.generateToken.bind(this);
+        this.buildObject = this.buildObject.bind(this);
+        this.save = this.save.bind(this);
     } 
 
     inputChanged(key, prop) {
         this.setState(state => {
             state[key] = prop;
             return state;
-        })
+        });
 
         if(this.checkNumber(this.state.accountNumber) && this.state.accountNumber.length > 3) {
-            this.setState({accountNumberValidated: true})
+            this.setState({accountNumberValidated: true});
         } else {
-            this.setState({accountNumberValidated: false})
+            this.setState({accountNumberValidated: false});
         }
         
         if(key === 'routingNumber'&& this.checkNumber(prop) && prop.length === 9) {
-            this.setState({routingNumberValidated: true})
+            this.setState({routingNumberValidated: true});
         } else {
-            this.setState({routingNumberValidated: false})
+            this.setState({routingNumberValidated: false});
         }
 
         if(moment().diff(moment(this.state.dob).format(), 'year') < 18) {
             this.setState({
                 dobError: true
-            })
-            Alert.alert('User age must be higher than 18 years old')
+            });
+            Alert.alert('User age must be higher than 18 years old');
         } else {
-            this.setState({dobError: false})
+            this.setState({dobError: false});
         }
 
         if(key === 'address_line' && prop.length < 8) {
             this.setState({
                 address_line1Error: true
-            })
+            });
         } else {
             this.setState({
                 address_line1Error: false
-            })
+            });
         }
 
         if(key === 'postal_code' && prop.length <= 4) {
             this.setState({
                 postal_codeError: true
-            })
+            });
         } else {
             this.setState({
                 postal_codeError: false
-            })
+            });
         }
 
         if(key === 'ssn_last_4' && prop.length < 4 ) {
             this.setState({
                 ssn_last_4Error: false
-            })            
+            });            
         } else {
             if(this.checkNumber(prop)) {
                 this.setState({
                     ssn_last_4Error: false
-                })
+                });
             } else {
                 this.setState({
                     ssn_last_4Error: true
-                })
+                });
             }
         }
         
         if(key === 'tax_id' && prop.length < 9) {
             this.setState({
                 tax_idError: true
-            })
+            });
         } else {
             if(this.checkNumber(prop)) {
                 this.setState({
                     tax_idError: false
-                })
+                });
             } else {
                 this.setState({
                     tax_idError: true
-                })
+                });
             }
         }
 
@@ -159,8 +158,8 @@ class PLBankAccount extends Component {
     validateFields() {
         const { routingNumber, accountNumber } = this.state;
         if(!this.checkNumber(this.state.accountNumber) && this.state.accountNumber.length >= 3) {
-            this.setState({accountNumberValidated: false})
-            this.setState({accountNumberErrorMessage: 'Invalid Account Number'})
+            this.setState({accountNumberValidated: false});
+            this.setState({accountNumberErrorMessage: 'Invalid Account Number'});
             return false;
         }
 
@@ -168,28 +167,28 @@ class PLBankAccount extends Component {
             this.setState({
                 routingNumberValidated: false,
                 routingNumberErrorMessage: 'Routing Number must have 9 digits'
-            })
+            });
             return false;
         }
 
         if(this.state.dob && moment().diff(moment(this.state.dob).format(), 'year') < 18) {
             this.setState({
                 dobError: true
-            })
+            });
             return false;
         }
         if(this.state.address_line1.length < 8) {
             this.setState({
                 address_line1Error: true
-            })
-            return false
+            });
+            return false;
         }
 
         if(this.state.postal_code.length < 5) {
             this.setState({
                 postal_codeError: true
-            })
-            return false
+            });
+            return false;
         }
         
 
@@ -197,29 +196,29 @@ class PLBankAccount extends Component {
     }
 
     generateToken({accountNumber, accountHolderName, currency, routingNumber, countryCode, accountHolderType, accountNickname}) {
-        this.setState({tokenLoading: true})
-        const params = {accountNumber, accountHolderName, currency, routingNumber, countryCode, accountHolderType, metadata: {Label: accountNickname}}
+        this.setState({tokenLoading: true});
+        const params = {accountNumber, accountHolderName, currency, routingNumber, countryCode, accountHolderType, metadata: {Label: accountNickname}};
         if(this.validateFields()) {
             Stripe.createTokenWithBankAccount(params)
                 .then(token => {
-                    console.log(token)
+                    console.log(token);
                     if(token.tokenId) {
-                        this.setState({token: token.tokenId, bankSaved: true, tokenLoading: false})
+                        this.setState({token: token.tokenId, bankSaved: true, tokenLoading: false});
                     } else {
-                        this.setState({tokenLoading: false, stripeError: 'Something Wrong Happened'})
+                        this.setState({tokenLoading: false, stripeError: 'Something Wrong Happened'});
                     }
                 })
                 .catch(error => {
-                    this.setState({stripeError: error, tokenLoading: false})
-                })
+                    this.setState({stripeError: error, tokenLoading: false});
+                });
         } else {
-            this.setState({saveError: true, tokenLoading: false})
+            this.setState({saveError: true, tokenLoading: false});
         }
     }
 
     save(params) {
-        const backendData = this.buildObject(params)
-        this.props.onSave(backendData)
+        const backendData = this.buildObject(params);
+        this.props.onSave(backendData);
     }
 
     buildObject(params) {
@@ -238,21 +237,21 @@ class PLBankAccount extends Component {
             postal_code: params.postal_code,
             country: params.countryCode.toUpperCase(),
             dob: params.dob
-        }
+        };
         if(obj.type === 'company') {
-            obj.business_name === params.business_name
+            obj.business_name === params.business_name;
         }
-        return obj
+        return obj;
 
     }
 
     pickColor(condition, conditionError) {
         if(condition === null) {
-            return 'grey'
+            return 'grey';
         } else if(condition !== null && conditionError) {
-            return 'red'
+            return 'red';
         } else {
-            return 'green'
+            return 'green';
         }
     }
     
@@ -262,11 +261,11 @@ class PLBankAccount extends Component {
                 <Form>
                     { this.state.accountHolderType === 'company' 
                     ?   <View style={{marginVertical: 5}}>
-                            <Text style={styles.labelStyle}>Business Name</Text> 
-                            <Item rounded>
-                                <Input placeholder='Business Name' onChangeText={text => this.inputChanged('business_name', text)}/>
-                            </Item>
-                        </View>
+                        <Text style={styles.labelStyle}>Business Name</Text> 
+                        <Item rounded>
+                            <Input placeholder='Business Name' onChangeText={text => this.inputChanged('business_name', text)} />
+                        </Item>
+                    </View>
                     : null
                     }
                     <Text style={styles.labelStyle}>Date of Birth</Text> 
@@ -282,43 +281,43 @@ class PLBankAccount extends Component {
                     <View style={{marginVertical: 5}}>
                         <Text style={styles.labelStyle}>Address Line 1</Text> 
                         <Item rounded success={!this.state.address_line1Error} error={this.state.address_line1Error}>
-                            <Input placeholder='Address Line 1' value={this.state.address_line1} onChangeText={text => this.inputChanged('address_line1', text)}/>
+                            <Input placeholder='Address Line 1' value={this.state.address_line1} onChangeText={text => this.inputChanged('address_line1', text)} />
                         </Item>
                     </View>
                     <View style={{marginVertical: 5}}>
                         <Text style={styles.labelStyle}>Address Line 2</Text> 
                         <Item rounded>
-                            <Input placeholder='Address Line 2' value={this.state.address_line2} onChangeText={text => this.inputChanged('address_line2', text)}/>
+                            <Input placeholder='Address Line 2' value={this.state.address_line2} onChangeText={text => this.inputChanged('address_line2', text)} />
                         </Item>
                     </View>
                     <View style={{marginVertical: 5}}>
                         <Text style={styles.labelStyle}>City</Text> 
                         <Item rounded>
-                            <Input placeholder='City' value={this.state.city} onChangeText={text => this.inputChanged('city', text)}/>
+                            <Input placeholder='City' value={this.state.city} onChangeText={text => this.inputChanged('city', text)} />
                         </Item>
                     </View>
                     <View style={{marginVertical: 5}}>
                         <Text style={styles.labelStyle}>State</Text> 
                         <Item rounded>
-                            <Input placeholder='State' value={this.state.state} onChangeText={text => this.inputChanged('state', text)}/>
+                            <Input placeholder='State' value={this.state.state} onChangeText={text => this.inputChanged('state', text)} />
                         </Item>
                     </View>
                     <View style={{marginVertical: 5}}>
                         <Text style={styles.labelStyle}>Postal Code</Text> 
                         <Item rounded success={!this.state.postal_codeError} error={this.state.postal_codeError}>
-                            <Input placeholder='Postal Code' value={this.state.postal_code} onChangeText={text => this.inputChanged('postal_code', text)}/>
+                            <Input placeholder='Postal Code' value={this.state.postal_code} onChangeText={text => this.inputChanged('postal_code', text)} />
                         </Item>
                     </View>
                     <View style={{marginVertical: 5}}>
                         <Text style={styles.labelStyle}>Tax ID</Text> 
                         <Item rounded success={!this.state.tax_idError} error={this.state.tax_idError}>
-                            <Input placeholder='Tax ID' onChangeText={text => this.inputChanged('tax_id', text)}/>
+                            <Input placeholder='Tax ID' onChangeText={text => this.inputChanged('tax_id', text)} />
                         </Item>
                     </View>
                     <View style={{marginVertical: 5}}>
                         <Text style={styles.labelStyle}>SSN</Text> 
                         <Item rounded success={!this.state.ssn_last_4Error} error={this.state.ssn_last_4Error}>
-                            <Input placeholder='SSN' onChangeText={text =>this.inputChanged('ssn_last_4', text)}/>
+                            <Input placeholder='SSN' onChangeText={text =>this.inputChanged('ssn_last_4', text)} />
                         </Item>
                     </View>
                     
@@ -328,15 +327,15 @@ class PLBankAccount extends Component {
                     </Button>
                 </Form>
             </Card>
-        )
+        );
     }
 
     render() {
-        console.log(this.props.user)
+        console.log(this.props.user);
         if(this.state.bankSaved) {
-            return this._renderAditionalForm()
+            return this._renderAditionalForm();
         } else {
-            return this._renderBankForm()
+            return this._renderBankForm();
         }
     }
 
@@ -347,7 +346,7 @@ class PLBankAccount extends Component {
                     <View style={{marginVertical: 5}}>
                         <Text style={styles.labelStyle}>Account Nickname</Text> 
                         <Item rounded>
-                            <Input placeholder='Account Nickname' onChangeText={text =>this.inputChanged('accountNickname', text)}/>
+                            <Input placeholder='Account Nickname' onChangeText={text =>this.inputChanged('accountNickname', text)} />
                         </Item>
                     </View>
                     <View style={{marginVertical: 5}}>
@@ -355,15 +354,15 @@ class PLBankAccount extends Component {
                         <View style={{borderColor: 'grey', borderWidth: StyleSheet.hairlineWidth,  borderRadius: 25}}>
                             <Picker 
                                 placeholder='Account Type'
-                                iosHeader="Account Type"
-                                mode="dropdown"
+                                iosHeader='Account Type'
+                                mode='dropdown'
                                 selectedValue={this.state.accountHolderType}
                                 onValueChange={value => {
-                                    this.inputChanged('accountHolderType', value)
+                                    this.inputChanged('accountHolderType', value);
                                 }}
                             >
-                                <Item label="Company" value='company'/>
-                                <Item label="Individual" value='individual'/>
+                                <Item label='Company' value='company' />
+                                <Item label='Individual' value='individual' />
                             </Picker>
                         </View>
                     </View>
@@ -371,15 +370,15 @@ class PLBankAccount extends Component {
                         <Text style={styles.labelStyle}>Country</Text> 
                         <View style={{borderColor: 'grey', borderWidth: StyleSheet.hairlineWidth,  borderRadius: 25}}>
                             <Picker 
-                                iosHeader="Country"
-                                mode="dropdown"
+                                iosHeader='Country'
+                                mode='dropdown'
                                 selectedValue={this.state.countryCode}
                                 onValueChange={value => {
-                                    console.log(value)
-                                    this.inputChanged('countryCode', value)
+                                    console.log(value);
+                                    this.inputChanged('countryCode', value);
                                 }}
                             >
-                                <Item label="United States" value='us'/>
+                                <Item label='United States' value='us' />
                                 {/* <Item label="Personal" value='personal'/> */}
                             </Picker>
                         </View>
@@ -388,15 +387,15 @@ class PLBankAccount extends Component {
                         <Text style={styles.labelStyle}>Currency</Text> 
                         <View style={{borderColor: 'grey', borderWidth: StyleSheet.hairlineWidth,  borderRadius: 25}}>
                             <Picker 
-                                iosHeader="Currency"
-                                mode="dropdown"
+                                iosHeader='Currency'
+                                mode='dropdown'
                                 selectedValue={this.state.currency}
                                 onValueChange={value => {
                                     // console.log(value)
-                                    this.inputChanged('currency', value)
+                                    this.inputChanged('currency', value);
                                 }}
                             >
-                                <Item label="USD" value='usd'/>
+                                <Item label='USD' value='usd' />
                                 {/* <Item label="Personal" value='personal'/> */}
                             </Picker>
                         </View>
@@ -405,13 +404,13 @@ class PLBankAccount extends Component {
                     <View style={{marginVertical: 5}}>
                         <Text style={styles.labelStyle}>Holder's name</Text> 
                         <Item rounded>
-                            <Input value={this.state.accountHolderName} placeholder="Holder's Name" onChangeText={text => this.inputChanged('accountHolderName', text)}/>
+                            <Input value={this.state.accountHolderName} placeholder="Holder's Name" onChangeText={text => this.inputChanged('accountHolderName', text)} />
                         </Item>
                     </View>
                     <View style={{marginVertical: 5}}>
                         <Text style={styles.labelStyle}>Account Number</Text> 
                         <Item rounded success={this.state.accountNumberValidated} error={!this.state.accountNumberValidated}>
-                            <Input placeholder='Account Number' onChangeText={text => this.inputChanged('accountNumber', text)}/>
+                            <Input placeholder='Account Number' onChangeText={text => this.inputChanged('accountNumber', text)} />
                         </Item>
                         {   this.state.accountNumberErrorMessage
                             ? <Text style={{color: 'red', fontSize: 12}}>{this.state.accountNumberErrorMessage}</Text>
@@ -421,7 +420,7 @@ class PLBankAccount extends Component {
                     <View style={{marginVertical: 5}}>
                         <Text style={styles.labelStyle}>Routing Number</Text> 
                         <Item rounded success={this.state.routingNumberValidated} error={!this.state.routingNumberValidated}>
-                            <Input type='number' placeholder='Routing Number' onChangeText={text => this.inputChanged('routingNumber', text)}/>
+                            <Input type='number' placeholder='Routing Number' onChangeText={text => this.inputChanged('routingNumber', text)} />
                         </Item>
                         {   this.state.routingNumberErrorMessage
                             ? <Text style={{color: 'red', fontSize: 12}}>{this.state.routingNumberErrorMessage}</Text>
@@ -431,13 +430,13 @@ class PLBankAccount extends Component {
                     <Agreement />
                     {   !this.state.tokenLoading
                         ?   <Button block style={styles.submitButtonContainer} onPress={() => this.generateToken(this.state)}>
-                                <Label style={{color: 'white'}}>Submit</Label>
-                            </Button>
+                            <Label style={{color: 'white'}}>Submit</Label>
+                        </Button>
                         :   <Spinner />
                     }
                 </Form>
             </Card>
-        )
+        );
     }
 }
 
@@ -453,12 +452,12 @@ const styles = {
         marginLeft: 5,
         marginVertical: 5
     }
-}
+};
 
 const mapStateToProps = (state) => ({
     user: state.user.profile
-})
-export default connect(mapStateToProps)(PLBankAccount)
+});
+export default connect(mapStateToProps)(PLBankAccount);
 
 const Agreement = () => (
     <View>
@@ -484,11 +483,11 @@ const Agreement = () => (
             </Text>
         </View>
         <TouchableOpacity style={{flexDirection: 'row'}} onPress={() => Linking.openURL('https://stripe.com/us/connect-account/legal')}>
-            <Image source={require('../assets/powered_by_stripe@2x.png')} style={{height: 50, flex: 1, borderRadius: 25}}></Image>
-            <Image source={require('../assets/comodo_logo.jpg')} style={{height: 50, flex: 1,  borderRadius: 25}}></Image>
+            <Image source={require('../assets/powered_by_stripe@2x.png')} style={{height: 50, flex: 1, borderRadius: 25}} />
+            <Image source={require('../assets/comodo_logo.jpg')} style={{height: 50, flex: 1,  borderRadius: 25}} />
         </TouchableOpacity>
     </View>
-)
+);
 // const COUNTRIES = [
 //     {name: 'Austria', currency: ['eur', 'dkk', 'gbp', 'nok', 'sek', 'usd', 'chf'], countryCode: 'at'},
 //     {name: 'Australia', currency: ['aud'], countryCode: 'aud'},

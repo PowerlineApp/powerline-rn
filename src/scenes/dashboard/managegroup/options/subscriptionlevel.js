@@ -50,6 +50,7 @@ class SubscriptionLevel extends Component {
   }
 
   render() {
+    return null;
     return (
       <View>
         {this.props.subscription

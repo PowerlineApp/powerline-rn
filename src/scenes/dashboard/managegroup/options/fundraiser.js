@@ -17,7 +17,7 @@ import {
 } from 'native-base';
 import { View, Text } from 'react-native';
 import { Label, Input, PopupLabel } from '../components';
-import { Actions } from 'react-native-router-flux'
+import { Actions } from 'react-native-router-flux';
 import styles from '../styles';
 
 class FundRaiser extends Component {
