@@ -24,7 +24,7 @@ const PLColors = require('PLColors');
 import { getFollowers, unFollowers, acceptFollowers } from 'PLActions';
 import styles from './styles';
 import ContentPlaceholder from '../../../components/ContentPlaceholder';
-import PLLoader from 'PLLoader';
+import PLOverlayLoader from 'PLOverlayLoader';
 
 class Followers extends Component {
   static propTypes = {
@@ -75,7 +75,7 @@ class Followers extends Component {
   unFollowers(index) {
     var { token } = this.props;
 
-    Alert.alert("Confirm", "Do you want to stop " + this.state.followers[index].username + " from following you ?", [
+    Alert.alert("Confirm", "Do you want to unapprove " + this.state.followers[index].username + " from following you ?", [
       {
         text: 'Cancel'
       },
@@ -132,7 +132,7 @@ class Followers extends Component {
     return (
       <ContentPlaceholder
         empty={followers.length === 0}
-        title="Hmm. Looks like you don't have any followers yet. Create a post!"
+        title="Hmm. Looks like you don't have any followers yet. The best way to gain followers is to create posts!"
         refreshControl={Platform.OS === 'android' &&
           <RefreshControl
             refreshing={false}
@@ -147,7 +147,6 @@ class Followers extends Component {
           }
         }}
       >
-        {this.state.refreshing && <PLLoader position="bottom" />}
         { followers.length > 0 &&
           <List>
             {
@@ -188,6 +187,7 @@ class Followers extends Component {
             }
           </List>
         }
+        <PLOverlayLoader visible={refreshing} logo />
       </ContentPlaceholder>
     );
   }

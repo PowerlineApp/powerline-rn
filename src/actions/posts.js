@@ -65,14 +65,6 @@ async function undoVotePost(token: string, postId: string) {
             body: JSON.stringify({})
         });
         console.log('res ==>', response);
-        if (response.status === 200) {
-            if (option === 'upvote') {
-                showToast('Upvoted');
-            }
-            if (option === 'downvote') {
-                showToast('Downvoted');
-            }
-        }
         return response;
     } catch (error) {
         handleError(error);
@@ -171,15 +163,19 @@ function handleError(error) {
     alert(message);
 }
 
-function createPostToGroup(token, groupId, content){
+function createPostToGroup(token, groupId, content, base64image) {
     return new Promise((resolve, reject) => {
+        const body = { body: content };
+        if (base64image) {
+            body.image = base64image;
+        }
         fetch(API_URL + '/v2/groups/' + groupId + '/posts', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'token': token
             },
-            body: JSON.stringify({body: content})
+            body: JSON.stringify(body)
         })
         .then((res) => res.json())
         .then(data => {
@@ -193,11 +189,15 @@ function createPostToGroup(token, groupId, content){
     });
 }
 
-function createPetition(token, groupId, title, content){
+function createPetition(token, groupId, title, content, base64image) {
     var data = {
         title: title,
         body: content
     };
+
+    if (base64image) {
+        data.image = base64image;
+    }
 
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2.2/groups/' + groupId + '/user-petitions', {

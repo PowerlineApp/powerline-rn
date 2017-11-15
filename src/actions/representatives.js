@@ -22,6 +22,7 @@ function getRepresentatives(token, page, per_page){
 }
 
 function loadRepresentatyInfo(token, representativeId, storageId){
+    console.log('to the api: ', token, representativeId, storageId, ' \n', API_URL + '/representatives/info/' + representativeId + '/' + storageId);
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/representatives/info/' + representativeId + '/' + storageId, {
             method: 'GET',

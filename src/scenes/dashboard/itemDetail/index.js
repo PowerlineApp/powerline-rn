@@ -5,9 +5,15 @@
 
 
 import React, { Component } from 'react';
+
 import { connect } from 'react-redux';
+import Share from 'react-native-share';
+
+import RNFetchBlob from 'react-native-fetch-blob'
+const fs = RNFetchBlob.fs
+
 import {ScrollView} from 'react-native';
-import { Container, Header, Title, Textarea, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, List, ListItem, Item, Input } from 'native-base';
+import { Spinner, Container, Header, Title, Textarea, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, List, ListItem, Item, Input } from 'native-base';
 import { Image, View, StyleSheet, TouchableOpacity, Platform, KeyboardAvoidingView, Keyboard, TextInput, ListView } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
@@ -27,9 +33,8 @@ import Menu, {
 import { getComments, votePost, getUsersByGroup, addComment, editComment, deleteComment, rateComment, loadActivityByEntityId, deletePost, deletePetition, changePost, changePetition } from 'PLActions';
 import PLOverlayLoader from 'PLOverlayLoader';
 import randomPlaceholder from '../../../utils/placeholder';
+import { FloatingAction } from 'react-native-floating-action';
 import _ from 'lodash';
-import PLLoader from 'PLLoader';
-
 
 // custom components import
 import FeedFooter from '../../../components/Feed/FeedFooter';
@@ -42,14 +47,12 @@ import FeedActivity from '../../../components/Feed/FeedActivity';
 
 import SuggestionBox from '../../../common/suggestionBox';
 
-
 const { youTubeAPIKey } = require('PLEnv');
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
 const { SlideInMenu } = renderers;
 const numberPerPage = 5;
 
 class ItemDetail extends Component {
-
     commentToReply: Object;
     isLoadedAll: boolean;
     item: Object;
@@ -73,6 +76,7 @@ class ItemDetail extends Component {
             dataSource: ds,
             inputDescription: '',
             placeholderTitle: '',
+            sharing: false
         };
         this.commentToReply = null;
         this.isLoadedAll = false;
@@ -84,22 +88,22 @@ class ItemDetail extends Component {
     componentWillMount() {
         this.keyboardDidShowListener = Keyboard.addListener('keyboardWillShow', this._keyboardWillShow.bind(this));
         this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide.bind(this));
-        
+
     }
-    
-    componentDidMount(){
+
+    componentDidMount() {
         // this.addCommentInput.focus(); 
         // console.log('=xx=x=x=x=x=x=x=x=x==x')
         // console.log('propss', this.props.entityType, this.props.entityId);
-        if (this.props.commenting){
+        if (this.props.commenting) {
             // console.log('commenting...')
             setTimeout(
                 () => this._onAddComment()
                 , 1000);
-            }   
+        }
         this.loadEntity();
     }
-    
+
     onCommentInputRef = r => {
         this.addCommentInput = r;
     }
@@ -163,17 +167,88 @@ class ItemDetail extends Component {
         Actions.commentDetail({ comment: comment, entityType: entityType, entityId: entityId });
     }
 
+    async onShare(share, entity){
+        if (!share) return
+
+        // to avoid double clicks, etc
+        console.log(this.state.sharing);
+        // WARN('aigmentity', entity);
+        // console.log('sharing... 1');
+        if (this.state.sharing) return;
+
+        // console.log('sharing... 2');
+        this.setState({sharing: true});
+
+        let type = 'poll';
+        if (entity.post) {
+            type = 'post';
+        }
+        if (entity.user_petition){
+            type = 'user_petition'
+        }
+
+        let imgURL = entity[type].facebook_thumbnail;
+
+        // console.log(imgURL);
+
+        let imagePath = null
+        
+        RNFetchBlob.config({ fileCache : true }).fetch('GET', imgURL).then((resp) => {
+            // the image is now dowloaded to device's storage
+            imagePath = resp.path()
+            return resp.readFile('base64')
+        }).then((base64Data) => {
+            // here's base64 encoded image
+            
+            // will set only the base64 image, will not set title or message
+            let options = {
+                url: `data:image/png;base64,` + base64Data,
+                // default type is png
+                type: 'image/png',
+                message: '',
+                title: ''
+            };
+            Share.open(options).then(response => {
+                
+            }).catch(err => {
+                console.log('err', err)
+                // alert('Failed to share');
+                this.setState({sharing: false})
+            });
+            
+            // allow user to hit share again
+            this.setState({sharing: false})
+            
+            // remove the file from storage
+            return fs.unlink(imagePath)
+        }).catch(e => {
+            alert('Failed to load image');
+            // allow user to hit share again
+            this.setState({sharing: false}) 
+        })
+    }
+
+
+
     // API Calls
     async loadEntity() {
         // console.log(this.props.entityId, this.props.entityType);
         const { props: { token, entityId, entityType, dispatch } } = this;
         // console.log(entityId, entityType)
         this.setState({ isLoading: true });
-        loadActivityByEntityId(token, entityType, entityId).then(data => {
+
+        let type = 'poll';
+        if (entityType === 'user-petition') type = 'petition';
+        if (entityType === 'post') type = 'post'
+
+
+        loadActivityByEntityId(token, type, entityId).then(data => {
+            console.log('data', data)
             if (data.payload && data.payload[0]) {
                 this.item = data.payload[0];
                 this.setState({ isLoading: false, inputDescription: this.item.description });
                 this.loadComments();
+                this.onShare(this.props.share, data.payload[0]);
             }
         }).catch(e => {
             this.setState({ isLoading: false });
@@ -183,13 +258,16 @@ class ItemDetail extends Component {
     }
 
     async loadComments() {
+        
         const { props: { token, entityId, entityType, dispatch } } = this;
         this.setState({ isCommentsLoading: true });
+        WARN(entityType)
         try {
             let response = await Promise.race([
                 getComments(token, entityType, entityId),
                 timeout(15000),
             ]);
+            // LOG('rsp3ioj2fo2jf', response);
             if (response.nextCursor) {
                 this.nextCursor = response.nextCursor;
                 this.isLoadedAll = false;
@@ -329,7 +407,7 @@ class ItemDetail extends Component {
         // console.log('=x=x=x=x=x=x', comment, option);
 
         // to control if a rating is being requested.
-        if (this.state.isRating){
+        if (this.state.isRating) {
             return;
         }
 
@@ -370,7 +448,7 @@ class ItemDetail extends Component {
             isEditMode: false,
         });
     }
-    
+
     edit(item) {
         this.setState({ isEditMode: true });
         this.menu && this.menu.close();
@@ -398,8 +476,8 @@ class ItemDetail extends Component {
         return <FeedHeader item={item} />
     }
 
-    substitute (mention) {
-        let {init, end} = this.state;
+    substitute(mention) {
+        let { init, end } = this.state;
         let newContent = this.state.commentText;
         let initialLength = newContent.length;
 
@@ -408,11 +486,11 @@ class ItemDetail extends Component {
 
         let finalString = firstPart + mention + finalPart;
 
-        this.setState({commentText: finalString, displaySuggestionBox: false, lockSuggestionPosition: end});
+        this.setState({ commentText: finalString, displaySuggestionBox: false, lockSuggestionPosition: end });
     }
 
-    onSelectionChange (event) {
-        let {start, end} = event.nativeEvent.selection;
+    onSelectionChange(event) {
+        let { start, end } = event.nativeEvent.selection;
         // let userRole = this.state.grouplist[this.state.selectedGroupIndex].user_role;
         setTimeout(() => {
             if (start !== end) return;
@@ -440,24 +518,24 @@ class ItemDetail extends Component {
             if (displayMention) {
                 let suggestionSearch = text.slice(i + 1, end);
                 this.updateSuggestionList(this.props.token, suggestionSearch);
-                this.setState({displaySuggestionBox: displayMention, init: i, end: end});
+                this.setState({ displaySuggestionBox: displayMention, init: i, end: end });
             } else {
                 // console.log('false');
-                this.setState({suggestionList: [], displaySuggestionBox: false});
+                this.setState({ suggestionList: [], displaySuggestionBox: false });
             }
         }, 100);
     }
 
-    updateSuggestionList (token, suggestionSearch) {
+    updateSuggestionList(token, suggestionSearch) {
         // this.setState({suggestionList: []});
         // console.log(this.item);
         getUsersByGroup(token, this.item.group.id, suggestionSearch).then(data => {
-            this.setState({suggestionList: data.payload});
+            this.setState({ suggestionList: data.payload });
         }).catch(err => {
 
         });
     }
-    changeContent (text) {
+    changeContent(text) {
         this.setState({
             inputDescription: text
         });
@@ -491,12 +569,12 @@ class ItemDetail extends Component {
         const { props: { profile } } = this;
         var thumbnail: string = '';
         thumbnail = profile.avatar_file_name ? profile.avatar_file_name : '';
-        
+
         return (
             <TouchableOpacity onPress={() => this._onAddComment()}>
                 <CardItem>
                     <Left>
-                        <Thumbnail small source={thumbnail ? { uri: thumbnail+'&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                        <Thumbnail small source={thumbnail ? { uri: thumbnail + '&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                         <Body>
                             <Text style={styles.addCommentTitle}>Add Comment...</Text>
                             <Menu
@@ -508,22 +586,20 @@ class ItemDetail extends Component {
                                 <MenuOptions optionsContainerStyle={{
                                     backgroundColor: 'white',
                                     width: WINDOW_WIDTH,
-                                    // height: this.state.visibleHeight,
-                                    // this needs adjustment for android / ios - doesnt work well for android with the suggestionbox
-                                    minHeight: Platform.OS ==='android' ? 50 :  WINDOW_HEIGHT/2 + 50
+                                    minHeight: Platform.OS === 'android' ? 50 : WINDOW_HEIGHT / 2 + 50
                                 }}>
-                                        <ScrollView keyboardShoulPersisTaps>
+                                    <ScrollView keyboardShoulPersisTaps>
                                         <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
-                                        </ScrollView>
-                                        <CardItem>
-                                            <Left>
-                                            <Thumbnail small source={thumbnail ? { uri: thumbnail+'&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                                    </ScrollView>
+                                    <CardItem>
+                                        <Left>
+                                            <Thumbnail small source={thumbnail ? { uri: thumbnail + '&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                                             <Body>
                                                 <TextInput
                                                     autoFocus
                                                     keyboardShoulPersisTaps
                                                     style={styles.commentInput}
-                                                    ref={this.onCommentInputRef}                                                    placeholder={this.state.placeholderTitle}
+                                                    ref={this.onCommentInputRef} placeholder={this.state.placeholderTitle}
                                                     defaultValue={this.state.defaultInputValue}
                                                     onChangeText={commentText => this.setState({ commentText })}
                                                     onSelectionChange={(e) => this.onSelectionChange(e)}
@@ -554,7 +630,7 @@ class ItemDetail extends Component {
     _renderCommentsLoading() {
         if (this.state.isCommentsLoading === true) {
             return (
-                <PLLoader position="bottom" />
+                <Spinner color='gray' />
             );
         } else {
             return null;
@@ -590,7 +666,7 @@ class ItemDetail extends Component {
 
     _renderRootComment = (comment, isChild = false) => {
         var thumbnail: string = comment.author_picture ? comment.author_picture : '';
-        let title: string = (comment.user ? comment.user.first_name : '' || '') + ' ' + (comment.user ? comment.user.last_name : '' || '');        
+        let title: string = (comment.user ? comment.user.first_name : '' || '') + ' ' + (comment.user ? comment.user.last_name : '' || '');
         var rateUp: number = (comment.rate_count || 0) / 2 + comment.rate_sum / 2;
         var rateDown: number = (comment.rate_count || 0) / 2 - comment.rate_sum / 2;
         let rateValue = comment.rate_value;
@@ -600,11 +676,11 @@ class ItemDetail extends Component {
             style.marginLeft = 40;
             style.marginTop = 5;
         }
-    
+
         return (
             <CardItem style={style}>
                 <Left>
-                    <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail+'&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                    <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail + '&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                     <Body style={{ alignSelf: 'flex-start' }}>
                         <TouchableOpacity onPress={() => this._onCommentBody(comment)}>
                             <Text style={styles.title}>{title}</Text>
@@ -708,7 +784,7 @@ class ItemDetail extends Component {
             return null;
         }
     }
-    _renderTitle (item) {
+    _renderTitle(item) {
         if (item.title) {
             return (<Text style={styles.title}>{item.title}</Text>);
         } else {
@@ -716,7 +792,7 @@ class ItemDetail extends Component {
         }
     }
     // The priority zone counter lists the count of total priority zone items in the newsfeed
-    _renderZoneIcon (item) {
+    _renderZoneIcon(item) {
         if (item.zone === 'prioritized') {
             return (<Icon active name='ios-flash' style={styles.zoneIcon} />);
         } else {
@@ -736,9 +812,9 @@ class ItemDetail extends Component {
                             {this._renderTitle(item)}
                             {
                                 state.isEditMode
-                                ?
+                                    ?
                                     this._renderTextarea(item, state)
-                                :
+                                    :
                                     <Text style={styles.description} numberOfLines={5}>{item.description}</Text>
                             }
                         </View>
@@ -748,29 +824,73 @@ class ItemDetail extends Component {
         );
     }
 
+    renderAttachedImage(item){
+        let imgURL; // 'https://powerline-dev.imgix.net/avatars/594be2d75ce8f479888664.jpeg?ixlib=php-1.1.0';
+        if (item.post){
+            imgURL = item.post.image;
+        } else {
+            imgURL = item.user_petition.image;
+        }
+        if (!imgURL) return;
+        
+        return (
+                <CardItem>
+                    <Left>
+                        <Body>
+                            <TouchableOpacity
+                                activeOpacity={0.7}
+                                style={styles.attachedImage}
+                                onPress={() => { }}>
+                                <View style={styles.imageContainer}>
+                                    <ImageLoad
+                                        placeholderSource={require('img/empty_image.png')}
+                                        source={{ uri: imgURL + '&w=400&h=400&auto=compress,format,q=95' }}
+                                        style={styles.image}
+                                    />
+                                </View>
+                            </TouchableOpacity>
+                        </Body>
+                    </Left>
+                </CardItem>
+
+
+
+            // <CardItem>
+            //     <View style={{flex: 1}}>
+            //         <ImageLoad
+            //         source={{ uri: imgURL }}
+            //         style={styles.image}
+            //         />
+            //     </View>
+            // </CardItem>
+            );
+    }
+
     _renderPostOrUserPetitionCard(item, state) {
         return (
             <View>
                 {this._renderDescription(item, state)}
                 <FeedMetaData item={item} />
                 <View style={styles.borderContainer} />
-                <FeedFooter item={item} profile={this.props.profile} token={this.props.token} />
+                {this.renderAttachedImage(item)}
+                <FeedFooter item={item} profile={this.props.profile} token={this.props.token} showAnalytics />
             </View>
         );
     }
-
+    
     _renderGroupCard(item) {
         return (
             <Card>
                 <FeedDescription item={item} />
                 <FeedCarousel item={item} />
                 <View style={styles.borderContainer} />
-                <FeedFooter item={item} profile={this.props.profile} token={this.props.token} />
+                <FeedFooter item={item} profile={this.props.profile} token={this.props.token} showAnalytics />
             </Card>
         );
     }
 
     _renderActivity(item, state) {
+        console.log('type', item.entity.type)
         switch (item.entity.type) {
             case 'post':
             case 'user-petition':
@@ -792,8 +912,44 @@ class ItemDetail extends Component {
         }
     }
 
+    renderFloatingActionButton(item){
+        console.log(item)
+        if (item.group.group_type_label !== "local"
+            && item.group.group_type_label !== "state"
+            && item.group.group_type_label !== "country")
+            {
+                return null;
+            }
+
+        return (
+            <FloatingAction
+                actions={
+                    [
+                        {
+                            text: 'this will be overridden',
+                            icon: require('../../../assets/share_icon.png'),
+                            name: 'facebook',
+                            position: 2,
+                            color: '#71c9f1'
+                        }
+                    ]
+                }
+                onPressItem={
+                    (name) => {
+                        this.onShare(true, item)
+                    }
+                }
+                buttonColor='#71c9f1'
+                overlayColor='rgba(0,0,0,0)'
+                floatingIcon={require('../../../assets/share_icon.png')}
+                overrideWithAction
+                >
+            </FloatingAction>
+        )
+    }
+
     render() {
-        // console.log(this.item);
+        // console.log(this.state.sharing);
         // console.log(this.refs);
         if (this.item === null) {
             return (
@@ -822,7 +978,7 @@ class ItemDetail extends Component {
                                 ref={(navTitleView) => { this.navTitleView = navTitleView; }}>
                                 <Header style={{ backgroundColor: 'transparent' }}>
                                     <Left>
-                                        <Button transparent onPress={this.onBackPress} style={{width: 50, height: 50 }}  >
+                                        <Button transparent onPress={this.onBackPress} style={{ width: 50, height: 50 }}  >
                                             <Icon active name="arrow-back" style={{ color: 'white' }} />
                                         </Button>
                                     </Left>
@@ -835,12 +991,14 @@ class ItemDetail extends Component {
                         )}
                         renderForeground={() => (
                             <Left style={styles.titleContainer}>
-                                <Button transparent onPress={this.onBackPress} style={{width: 50, height: 50 }} >
+                                <Button transparent onPress={this.onBackPress} style={{ width: 50, height: 50 }} >
                                     <Icon active name="md-arrow-back" style={{ color: 'white' }} />
                                 </Button>
                                 <Body style={{ marginTop: -12 }}>
-                                    <Thumbnail size={50} source={item.group.avatar_file_path ? { uri: item.group.avatar_file_path+'&w=200&h=200&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
-                                    <Text style={styles.imageTitle}>{item.group.official_name}</Text>
+                                    <TouchableOpacity onPress={() => Actions.groupprofile({id: item.group.id})} style={{alignContent: 'center', alignItems: 'center'}} >
+                                        <Thumbnail size={50} source={item.group.avatar_file_path ? { uri: item.group.avatar_file_path + '&w=200&h=200&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                                        <Text style={styles.imageTitle} >{item.group.official_name}</Text>
+                                    </TouchableOpacity>
                                 </Body>
                             </Left>
                         )}>
@@ -860,9 +1018,11 @@ class ItemDetail extends Component {
                         {this._renderLoadMore()}
                         {this._renderCommentsLoading()}
                         <View style={{ height: 50 }} />
-                        <PLOverlayLoader visible={this.state.isLoading} logo />
                     </HeaderImageScrollView>
                 </Container>
+                {
+                    this.renderFloatingActionButton(item)
+                }
             </MenuContext>
         );
     }
