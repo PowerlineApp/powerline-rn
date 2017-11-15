@@ -5,13 +5,18 @@ import PLColors from 'PLColors';
 
 class Label extends PureComponent {
   render() {
+    const { small, disabled } = this.props;
     return (
-        <NBLabel style={{
-            color: PLColors.darkGreyText,
-            fontSize: 16,
+        <NBLabel
+          {...this.props}
+          style={{
+            color: disabled ? PLColors.lightText : PLColors.darkGreyText,
+            fontSize: small ? 14 : 16,
             fontWeight: '300',
             marginTop: 8,
-        }}>{this.props.children}</NBLabel>
+            ...this.props.style,
+          }}
+        >{this.props.children}</NBLabel>
     );
   }
 }

@@ -60,6 +60,10 @@
             android:name="io.fabric.ApiKey"
             android:value="ce0340efb3aa30e519403d7c29e9c50cd087684d" />
         <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
+        <meta-data 
+            android:name="com.google.android.gms.wallet.api.enabled"
+            android:value="true" />
+
     </application>
 
 </manifest>

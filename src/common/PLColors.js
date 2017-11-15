@@ -16,4 +16,5 @@ module.exports = {
   darkBackground: '#183E63',
   textInputBorder: '#a5bbd9',
   textInputBackground: '#edf1f7',
+  blueArrow: '#387EF5',
 };
