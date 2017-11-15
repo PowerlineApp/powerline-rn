@@ -22,6 +22,7 @@ class Options extends Component {
     render(){
         let {item} = this.props;
         let {options} = this.state;
+        return null;
         return (
             <View style={styles.optionsContainer}>
                 {
