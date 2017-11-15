@@ -51,6 +51,10 @@ import { loadUserData, getGroups, getUsersByGroup, createPostToGroup, getPetitio
 import randomPlaceholder from '../../../utils/placeholder';
 import CommunityView from '../../../components/CommunityView';
 const POST_MAX_LENGTH = 5000;
+var { MixpanelToken } = require('../../../PLEnv');
+var Mixpanel = require('react-native-mixpanel');
+
+
 
 class NewPost extends Component {
     constructor(props) {
@@ -318,7 +322,7 @@ class NewPost extends Component {
                         <Title style={{ color: 'white' }}>New Post</Title>
                     </Body>
                     <Right>
-                        <Button transparent onPress={() => this.createPost()}>
+                        <Button transparent onPress={() => { this.createPost(); Mixpanel.track("Sent Post"); }}>
                             <Label style={{ color: 'white' }}>Send</Label>
                         </Button>
                     </Right>
@@ -426,4 +430,5 @@ const mapStateToProps = state => ({
     token: state.user.token
 });
 
+Mixpanel.sharedInstanceWithToken(MixpanelToken);
 export default connect(mapStateToProps)(NewPost);

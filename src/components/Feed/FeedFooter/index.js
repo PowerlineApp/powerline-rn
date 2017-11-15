@@ -6,6 +6,9 @@ import styles from '../styles';
 import { votePost, loadActivityByEntityId, signUserPetition, unsignUserPetition, signLeaderPetition, undoVotePost } from 'PLActions';
 import _ from 'lodash';
 
+var { MixpanelToken } = require('../../../PLEnv');
+var Mixpanel = require('react-native-mixpanel');
+
 class FeedFooter extends Component {
     constructor (props) {
         super(props);
@@ -194,17 +197,17 @@ class FeedFooter extends Component {
             return (
                 <CardItem footer style={{ height: 35 }}>
                     <Left style={{ justifyContent: 'space-between' }}>
-                        <Button iconLeft transparent style={styles.footerButton} onPress={() => this.vote(item, 'upvote')}>
+                        <Button iconLeft transparent style={styles.footerButton} onPress={() => {this.vote(item, 'upvote'); Mixpanel.track("Upvoted post");}}>
                             <Icon name='md-arrow-dropup' style={isVotedUp ? styles.footerIconBlue : styles.footerIcon} />
                             <Label style={isVotedUp ? styles.footerTextBlue : styles.footerText}>Upvote {item.upvotes_count ? item.upvotes_count : 0}</Label>
                         </Button>
-                        <Button iconLeft transparent style={styles.footerButton} onPress={() => this.vote(item, 'downvote')}>
+                        <Button iconLeft transparent style={styles.footerButton} onPress={() => {this.vote(item, 'downvote'); Mixpanel.track("Downvoted post");}}>
                             <Icon active name='md-arrow-dropdown' style={isVotedDown ? styles.footerIconBlue : styles.footerIcon} />
                             <Label style={isVotedDown ? styles.footerTextBlue : styles.footerText}>Downvote {item.downvotes_count ? item.downvotes_count : 0}</Label>
                         </Button>
                         {
                             showAnalytics
-                            ? <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, null, 'analyticsView')} >
+                            ? <Button iconLeft transparent style={styles.footerButton} onPress={() => {this.redirect(item, null, 'analyticsView'); Mixpanel.track("Viewed Post Analytics");}} >
                                 <Icon active name='pulse' style={styles.footerIcon} />
                                 <Label style={styles.footerText} >
                                     {'Analytics '}
@@ -249,13 +252,13 @@ class FeedFooter extends Component {
         return (
             <CardItem footer style={{ height: 35 }}>
                 <Left style={{ justifyContent: 'space-between' }}>
-                    <Button iconLeft transparent style={styles.footerButton} onPress={() => this.sign(item, isSigned)} >
+                    <Button iconLeft transparent style={styles.footerButton} onPress={() => {this.sign(item, isSigned); Mixpanel.track("Signed Petition");}} >
                         <Icon name='md-arrow-dropdown' style={styles.footerIcon} />
                         <Label style={styles.footerText} > { isSigned ? 'Unsign' : 'Sign'}</Label>
                     </Button>
                     {
                         showAnalytics
-                        ?<Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, null, 'analyticsView')} >
+                        ?<Button iconLeft transparent style={styles.footerButton} onPress={() => {this.redirect(item, null, 'analyticsView'); Mixpanel.track("Viewed Petition Analytics");}}>
                             <Icon active name='pulse' style={styles.footerIcon} />
                             <Label style={styles.footerText} >
                                 {'Analytics '}
@@ -381,7 +384,7 @@ class FeedFooter extends Component {
         return (
             <CardItem footer style={{ height: 35 }}>
                 <Left style={{ justifyContent: 'space-between' }}>
-                    <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item)} >
+                    <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, {commenting: true})} >
                         <Icon name='md-arrow-dropdown' style={styles.footerIcon} />
                         <Label style={styles.footerText}>Discuss</Label>
                     </Button>
@@ -439,4 +442,5 @@ class FeedFooter extends Component {
     }
 }
 
+Mixpanel.sharedInstanceWithToken(MixpanelToken);
 export default FeedFooter;
