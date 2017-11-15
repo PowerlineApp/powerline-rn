@@ -16,7 +16,7 @@ PODS:
     - FBSDKCoreKit
   - QBImagePickerController (3.4.0)
   - RSKImageCropper (1.6.3)
-  - Stripe (11.2.0)
+  - Stripe (10.1.0)
 
 DEPENDENCIES:
   - Crashlytics
@@ -26,7 +26,7 @@ DEPENDENCIES:
   - FBSDKShareKit
   - QBImagePickerController
   - RSKImageCropper
-  - Stripe (~> 11.2.0)
+  - Stripe (~> 10.1.0)
 
 SPEC CHECKSUMS:
   Bolts: 8a7995239dbe724f9cba2248b766d48b7ebdd322
@@ -37,10 +37,8 @@ SPEC CHECKSUMS:
   FBSDKShareKit: 320712d8293fde6392872c91eb80ef0da5d73cc3
   QBImagePickerController: d54cf93db6decf26baf6ed3472f336ef35cae022
   RSKImageCropper: 356e36fc58c57c371b5d8b23d603936d6a73df6c
+  Stripe: 1c7aa951a075cced500a919d92b687b35d410705
 
-PODFILE CHECKSUM: 54b9cd8169a9664492f3336ecfc3eb7f47a2b1ef
-  Stripe: 898f83a95d72180c6eb4acd65b2ae6158fc6a8bd
-
-PODFILE CHECKSUM: bf321a0218ffaa87a0744c921920cb1949822874
+PODFILE CHECKSUM: 8a235e5c0b2018c89585a214e93da4f874edaeee
 
 COCOAPODS: 1.3.1

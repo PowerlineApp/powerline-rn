@@ -931,7 +931,7 @@ module.exports = {
     getUsersByGroup,
     inviteUpvotersToGroup,
     getGroupRequiredFields,
-    groupBankAccounts
+    groupBankAccounts,
     updateGroupAvatar,
     updateGroupBanner,
 

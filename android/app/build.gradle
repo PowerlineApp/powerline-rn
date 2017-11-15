@@ -184,6 +184,7 @@ android {
 
 dependencies {
     compile project(':tipsi-stripe')
+    compile project(':react-native-vector-icons')
     compile project(':react-native-share-extension')
     compile project(':react-native-image-crop-picker')
     compile project(':react-native-share-extension')

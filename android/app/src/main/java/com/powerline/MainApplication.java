@@ -7,6 +7,7 @@ import com.facebook.react.ReactInstanceManager;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.react.ReactApplication;
 import com.gettipsi.stripe.StripeReactPackage;
+import com.oblador.vectoricons.VectorIconsPackage;
 import com.reactnative.ivpusic.imagepicker.PickerPackage;
 import cl.json.RNSharePackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
@@ -49,6 +50,7 @@ public class MainApplication extends Application implements ReactApplication {
       return Arrays.<ReactPackage>asList(
         new MainReactPackage(),
             new StripeReactPackage(),
+            new VectorIconsPackage(),
             new PickerPackage(),
             new RNSharePackage(),
             new RNFetchBlobPackage(),
