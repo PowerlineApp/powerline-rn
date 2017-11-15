@@ -4,4 +4,3 @@ const { AppRegistry } = require('react-native');
 const setup = require('./src/PLSetup');
 
 AppRegistry.registerComponent('Powerline', setup);
-AppRegistry.registerComponent('PowerlineShare', setup);

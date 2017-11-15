@@ -3,7 +3,6 @@
 //https://api-dev.powerli.ne/api-doc#get--api-v2-user-groups
 
 import React, { Component } from 'react';
-import { Platform } from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import {
@@ -32,7 +31,6 @@ import {
     View,
     RefreshControl
 } from 'react-native';
-import PLOverlayLoader from 'PLOverlayLoader';
 
 const PLColors = require('PLColors');
 import styles from './styles';
@@ -143,17 +141,12 @@ class GroupList extends Component{
                         </Right>
                     </Header>
                     <Content padder
-                        refreshControl={Platform.OS === 'android' &&
-                            <RefreshControl
-                            refreshing={this.state.refreshing}
-                            onRefresh={this._onRefresh.bind(this)}
-                        />}
-                        onScroll={(e) => {
-                            var offset = e.nativeEvent.contentOffset.y;
-                            if (Platform.OS === 'ios' && offset < -3) {
-                                this._onRefresh();
-                            }
-                        }}
+                        refreshControl={
+                                <RefreshControl
+                                refreshing={this.state.refreshing}
+                                onRefresh={this._onRefresh.bind(this)}
+                            />
+                        }
                         >
                         <List style={{backgroundColor: 'white', marginLeft: 17, marginTop: 17}}>
                             {
@@ -184,7 +177,6 @@ class GroupList extends Component{
                             }                           
                         </List>
                     </Content>
-                    <PLOverlayLoader visible={this.state.refreshing} logo />
                 </Container>
             </MenuContext>
         )

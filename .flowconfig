@@ -1,7 +1,6 @@
 [ignore]
 ; We fork some components by platform
 .*/*[.]android.js
-.*/node_modules/.*
 
 ; Ignore "BUCK" generated dirs
 <PROJECT_ROOT>/\.buckd/
@@ -24,8 +23,9 @@ flow/
 
 [options]
 emoji=true
-module.system.node.resolve_dirname=apps
+
 module.system=haste
+
 experimental.strict_type_args=true
 
 munge_underscores=true

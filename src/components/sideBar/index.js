@@ -5,11 +5,11 @@ import { Container, Content, Text, ListItem, List, Left, Icon, Right } from 'nat
 import { Actions } from 'react-native-router-flux';
 
 import { closeDrawer } from '../../actions/drawer';
-import { logOut, logOutWithPrompt } from 'PLActions';
+import { logOut, logOutWithPrompt, unregisterDevice } from 'PLActions';
 
 import styles from './style';
 import OneSignal from 'react-native-onesignal';
-import { AsyncStorage, Keyboard } from 'react-native';
+import { AsyncStorage } from 'react-native';
 
 const datas = [
   {
@@ -48,36 +48,36 @@ const datas = [
     icon: 'color-filter',
     bg: '#B89EF5',
   },
-  //{
-  //  name: 'Favorites',
-  //  route: 'favorites',
-  //  icon: 'star',
-  //  bg: '#EB6B23',
-  //},
-  //{
-  //  name: 'My Profile',
-  //  route: 'myProfile',
-  //  icon: 'contact',
-  //  bg: '#3591FA',
-  //},
-  //{
-  //  name: 'Settings',
-  //  route: 'settings',
-  //  icon: 'settings',
-  //  bg: '#3591FA',
-  //},
-  //{
-  //  name: 'Find Friends',
-  //  route: 'findFriends',
-  //  icon: 'contacts',
-  //  bg: '#3591FA',
-  //},
-  //{
-  //  name: 'Other Apps',
-  //  route: 'otherApps',
-  //  icon: 'more',
-  //  bg: '#3591FA',
-  //},
+  {
+    name: 'Favorites',
+    route: 'favorites',
+    icon: 'star',
+    bg: '#EB6B23',
+  },
+  {
+    name: 'My Profile',
+    route: 'myProfile',
+    icon: 'contact',
+    bg: '#3591FA',
+  },
+  {
+    name: 'Settings',
+    route: 'settings',
+    icon: 'settings',
+    bg: '#3591FA',
+  },
+  {
+    name: 'Find Friends',
+    route: 'findFriends',
+    icon: 'contacts',
+    bg: '#3591FA',
+  },
+  {
+    name: 'Other Apps',
+    route: 'otherApps',
+    icon: 'more',
+    bg: '#3591FA',
+  },
   {
     name: 'Take Tour',
     route: 'takeTour',
@@ -112,9 +112,18 @@ class SideBar extends Component {
 
   onSelectItem(route: string) {
     if (route == 'logout') {
-      var { token } = this.props;
-      this.props.logOut(token);
-             
+      var { token, pushId } = this.props;
+
+      OneSignal.setSubscription(false);
+      AsyncStorage.getItem('pushId', (err, pushId) => {        
+        unregisterDevice(token, pushId)
+        .then(data => {
+          this.props.logOut();
+        })
+        .catch(err => {
+            
+        });
+      });               
     } else if(route == 'takeTour'){
       Actions['takeTour']();
     }else if(route == 'myInfluences'){
@@ -128,7 +137,6 @@ class SideBar extends Component {
     }else if(route == 'search'){
       Actions['search']();
     }else{
-      Keyboard.dismiss();
       Actions['home']();
     }
     this.props.closeDrawer();
@@ -165,7 +173,7 @@ class SideBar extends Component {
 function bindAction(dispatch) {
   return {
     closeDrawer: () => dispatch(closeDrawer()),
-    logOut: (token) => dispatch(logOutWithPrompt(token)),
+    logOut: () => dispatch(logOutWithPrompt()),
   };
 }
 

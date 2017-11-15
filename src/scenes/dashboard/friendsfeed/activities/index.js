@@ -14,6 +14,7 @@ import TimeAgo from 'react-native-timeago';
 import ImageLoad from 'react-native-image-placeholder';
 import YouTube from 'react-native-youtube';
 import PLOverlayLoader from 'PLOverlayLoader';
+import PLLoader from 'PLLoader';
 
 import Menu, {
     MenuContext,
@@ -58,7 +59,6 @@ class FriendActivity extends Component {
     componentWillReceiveProps(nextProps) {
         this.setState({
             dataArray: nextProps.payload,
-            dataSource: this.state.dataSource.cloneWithRows(nextProps.payload),            
         });
     }
 
@@ -78,15 +78,20 @@ class FriendActivity extends Component {
                 timeout(15000),
             ]);
         } catch (e) {
-            this.setState({ isRefreshing: false });
-            
             const message = e.message || e;
-            if (typeof message === 'string') {
+            if (message !== 'Timed out') {
+                alert(message);
+            }
+            else {
                 alert('Timed out. Please check internet connection');
             }
+            return;
         } finally {
             this.setState({ isRefreshing: false });
         }
+        this.setState({
+            dataSource: this.state.dataSource.cloneWithRows(this.state.dataArray),
+        });
     }
 
     async loadNextActivities() {
@@ -98,15 +103,20 @@ class FriendActivity extends Component {
                 timeout(15000),
             ]);
         } catch (e) {
-            this.setState({ isLoadingTail: false });
-            
             const message = e.message || e;
-            if (typeof message === 'string') {
+            if (message !== 'Timed out') {
+                alert(message);
+            }
+            else {
                 alert('Timed out. Please check internet connection');
             }
+            return;
         } finally {
             this.setState({ isLoadingTail: false });
         }
+        this.setState({
+            dataSource: this.state.dataSource.cloneWithRows(this.state.dataArray),
+        });
     }
 
     _onRefresh() {
@@ -127,13 +137,17 @@ class FriendActivity extends Component {
         return <FeedHeader item={item} />
     }
 
-    render() {
-        const { 
-            isLoading,
-            isLoadingTail,
-            isRefreshing,
-        } = this.state;
+    _renderTailLoading() {
+        if (this.state.isLoadingTail === true) {
+            return (
+                <PLLoader position="bottom" />
+            );
+        } else {
+            return null;
+        }
+    }
 
+    render() {
         return (
             <Content
                 refreshControl={Platform.OS === 'android' &&
@@ -153,14 +167,13 @@ class FriendActivity extends Component {
                         this._onRefresh();
                     }
                 }}>
+                {this.state.isRefreshing && <PLLoader position="bottom" />}
                 <ListView dataSource={this.state.dataSource} renderRow={item => {
                     return <FeedActivity item={item} token={this.props.token} profile={this.props.profile}/>
                 }}
                 />
-                <PLOverlayLoader
-                    visible={isLoading || isLoadingTail || isRefreshing}
-                    logo
-                />
+                <PLOverlayLoader visible={this.state.isLoading} logo />
+                {this._renderTailLoading()}
             </Content >
         );
     }

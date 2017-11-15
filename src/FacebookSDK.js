@@ -92,30 +92,6 @@ var FacebookSDK = {
 
     const request = new GraphRequest(path, { parameters, httpMethod }, processResponse);
     new GraphRequestManager().addRequest(request).start();
-  },
-
-  getFriendsIds: function() {
-    return new Promise((resolve, reject) => {
-      const auth = FacebookSDK.getAuthResponse();
-      if (auth && auth.accessToken) {
-        fetch('https://graph.facebook.com/v2.10/me?fields=friends&access_token=' + auth.accessToken)
-          .then(response => response.json())
-          .then(data => {
-              WARN('OKI', data);
-              if (data && data.friends && Array.isArray(data.friends.data) && data.friends.data.length > 0) {
-                const friendsIds = data.friends.data.map(friend => friend.id);
-                resolve(friendsIds);
-              } else {
-                reject(data.error.message);
-              }
-          })
-          .catch(error => {
-              reject(error);
-          });
-      } else {
-        reject('No facebook access token');
-      }
-    });
   }
 };
 

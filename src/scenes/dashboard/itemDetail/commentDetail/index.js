@@ -3,7 +3,7 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Spinner, Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, List, ListItem, Item, Input } from 'native-base';
+import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, List, ListItem, Item, Input } from 'native-base';
 import { Image, View, StyleSheet, TouchableOpacity, Platform, KeyboardAvoidingView, Keyboard, TextInput, ListView, RefreshControl } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
@@ -21,6 +21,7 @@ import Menu, {
     renderers
 } from 'react-native-popup-menu';
 import PLOverlayLoader from 'PLOverlayLoader';
+import PLLoader from 'PLLoader';
 
 import { getChildComments, addComment, rateComment } from 'PLActions';
 import SuggestionBox from '../../../../common/suggestionBox';
@@ -52,8 +53,6 @@ class CommentDetail extends Component {
         this.isLoadedAll = false;
         this.nextCursor = null;
         this.rootComment = null;
-        //Jesse adds to bring random placeholder to Reply screen
-        this.placeholderTitle = randomPlaceholder('replie');
     }
 
     componentWillMount() {
@@ -221,6 +220,7 @@ class CommentDetail extends Component {
                         {this._renderLoadMore()}
                         {this._renderCommentsLoading()}
                         {this._renderAddComment()}
+                        <PLOverlayLoader visible={this.state.isLoading} logo />
                     </Content>
                 </Container>
             </MenuContext >
@@ -307,7 +307,7 @@ class CommentDetail extends Component {
     _renderCommentsLoading() {
         if (this.state.isCommentsLoading === true) {
             return (
-                <Spinner color='gray' />
+                <PLLoader position="bottom" />
             );
         } else {
             return null;
@@ -412,7 +412,7 @@ class CommentDetail extends Component {
                                     autoFocus
                                     style={styles.commentInput}
                                     ref={this.onCommentInputRef}
-                                    placeholder={this.placeholderTitle}
+                                    placeholder="Comment..." 
                                     onChangeText={commentText => this.setState({ commentText })}
                                     onSelectionChange={(e) => this.onSelectionChange(e)}
                                 />

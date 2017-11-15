@@ -15,16 +15,15 @@ class FeedFooter extends Component {
         };
     }
 
-    redirect(item, options, scene = 'itemDetail') {
-        let type;
-        if (item.poll) {
-            type = 'poll';
-        } else if (item.post) {
-            type = 'post';
-        } else if (item.user_petition) {
-            type = 'user-petition';
-        }
-        Actions[scene]({ entityType: type, entityId: item.entity.id, ...options, postId: item.id });
+    redirect (item, options) {
+        let type = 'poll';
+        if (item.entity.type === 'post') {
+            type = 'post'
+          } else if (item.entity.type === 'user-petition'){
+            type = 'petition' 
+          }
+        // console.log(options);
+        Actions.itemDetail({entityType: type, entityId: item.entity.id, ...options});
     }
 
     // changes the upvote/downvote color to indicate selection, sets the upvote/downvote number before the response comes. if the requisition fails, undo all
@@ -41,7 +40,7 @@ class FeedFooter extends Component {
             return;
         }
         if (this.state.postingVote) {
-            // console.log('posting already!')
+            console.log('posting already!')
             return;
         }
         // uses this state to avoid double clicking, the user is allowed to vote again only when the last request is done
@@ -91,16 +90,51 @@ class FeedFooter extends Component {
 
         this.setState({item: newItem});
 
+        // console.log('=x=x=x=x= updated this.item =x=x=x=x=x=', this.item);
+
         let response;
         if (item.entity.type === 'post') {
             if (undo) {
+                // deletes the option
                 response = await undoVotePost(this.props.token, item.entity.id);
-                return;
             } else {
+                // sets the option
                 response = await votePost(this.props.token, item.entity.id, option);
             }
         }
-        this.setState({postingVote: false})
+
+        try {
+            let res2 = await loadActivityByEntityId(token, 'post', item.entity.id);
+            console.log('res2', res2)
+            this.setState({item: res2.payload[0], postingVote: false})
+        } catch (error) {
+            console.warn(error)
+            this.setState({item: originalItem, postingVote: false})
+        }
+
+        // console.log("res ==> ", response);
+        // if (response.user || response.status == 204) {
+        //     // console.log(token, originalItem.entity);
+        //         loadActivityByEntityId(token, 'post', this.state.item.entity.id).then(data => {
+        //             // console.log(data);
+        //             if (data.payload && data.payload[0]) {
+        //                 this.setState({item: data.payload[0], postingVote: false});
+        //             }
+        //         }).catch(err => {
+        //             // resets this.state.item
+        //             // console.log('strange err', err);
+        //             this.setState({item: originalItem, postingVote: false});
+        //             alert('bbbSomething went wrong to vote');
+        //         })
+        // } else {
+        //     this.setState({item: originalItem, postingVote: false});
+        //     let message = 'aaaaSomething went wrong to vote';
+        //     // console.log(response);
+        //     if (response.errors) {
+        //         message = response.message;
+        //     }
+        //     alert(message);
+        // }
     }
 
     /**
@@ -109,56 +143,75 @@ class FeedFooter extends Component {
      * @param {*} signed tells us if the item is already signed
      */
     async sign (item, signed) {
-        const { profile, token } = this.props;
+        let {token} = this.props;
 
+        // saving original item to change it back if the sign request fails
         let originalItem = _.cloneDeep(item);
+        // let newItem = _.cloneDeep(item);
+        
         // avoid double tapping until the response comes
-
-        
-        // user shouldn't sign his own petition
-        if (profile.id === item.user.id) {
-            alert("You're not supposed to sign your own Petition.");
-            return;
-        }
-        
         if (this.state.signing) {
+            console.log('signing already')
             return;
         }
         
-        let entity;
+        // console.log(item.entity.type);
+        let entity = 'poll';
         if (item.entity.type === 'user-petition'){
-            if (signed) item.user_petition.signatures = [{option_id : 2}]  
-            else item.user_petition.signatures = [{option_id : 1}]
-            this.setState({item: item})
             entity = 'petition'
-        } else {
-            if (signed) item.poll.answers = [{option_id : 2}]
-            else item.poll.answers = [{option_id : 1}]
-            this.setState({item: item})
-            entity = 'poll';
-
         }
         let res;
         this.setState({signing: true});
-        try {
-            if (entity === 'petition') {
-                if (signed){
-                    res = await unsignUserPetition(token, item.entity.id);
-                } else {
-                    res = await signUserPetition(token, item.entity.id);
-                }
+        if (entity === 'petition') {
+
+            if (signed){
+                res = await unsignUserPetition(token, item.entity.id);
             } else {
-                res = await signLeaderPetition(token, item.entity.id, signed ? 2 : 1);
+                res = await signUserPetition(token, item.entity.id);
             }
-            this.setState({signing: false})
-        } catch (error) {
-            console.log(error);
-            this.setState({item: item, signing: false});
+            console.log('res - peition - trying to sign ?', !signed, res)
+        } else {
+            // console.log('poll');
+
+            res = await signLeaderPetition(token, item.entity.id, signed ? 2 : 1);
+            console.log('res - poll - trying to sign ?', !signed,  res);
+            // if (res) {
+            //     // this.setState({signing: false});
+            // } else {
+            //     // this.setState({signing: false, item: originalItem});
+            // }
+            // // this.setState({signing: false, item: res})
+            // // console.log('error on request => ', error);
         }
+        try {
+            let res2 = await loadActivityByEntityId(token, entity, item.entity.id);
+            console.log('res2', res2.payload[0])
+            this.setState({item: res2.payload[0], signing: false})
+        } catch (error) {
+            console.warn(error)
+            this.setState({item: originalItem, signing: false})
+        }
+
+
+
+        // loadActivityByEntityId(token, entity, item.entity.id).then(data => {
+        //     console.log(data);
+        //     if (data.payload && data.payload[0]) {
+        //         this.setState({signing: false, item: data.payload[0]});
+        //     }
+        // }).catch(err => {
+        //     // resets this.state.item
+        //     console.log('strange err', err);
+        //     this.setState({signing: false, item: originalItem});
+        //     alert('Something went wrong to signing');
+        // })
+
+
     }
 
     // on this one we need this to control upvote / downvote before a response comes from the API
-    _renderPostFooter (item, showAnalytics) {
+    _renderPostFooter () {
+        let {item} = this.state;
         // console.log(item);
         if (item.zone === 'expired') {
             return (
@@ -190,7 +243,7 @@ class FeedFooter extends Component {
                     isVotedDown = true;
                 }
             }
-            // console.log(item.description, isVotedUp)
+            console.log(item.description, isVotedUp)
             return (
                 <CardItem footer style={{ height: 35 }}>
                     <Left style={{ justifyContent: 'space-between' }}>
@@ -202,16 +255,6 @@ class FeedFooter extends Component {
                             <Icon active name='md-arrow-dropdown' style={isVotedDown ? styles.footerIconBlue : styles.footerIcon} />
                             <Label style={isVotedDown ? styles.footerTextBlue : styles.footerText}>Downvote {item.downvotes_count ? item.downvotes_count : 0}</Label>
                         </Button>
-                        {
-                            showAnalytics
-                            ? <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, null, 'analyticsView')} >
-                                <Icon active name='pulse' style={styles.footerIcon} />
-                                <Label style={styles.footerText} >
-                                    {'Analytics '}
-                                </Label>
-                            </Button>
-                            : null
-                        }
                         <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, {commenting: true})} >
                             <Icon active name='ios-undo' style={styles.footerIcon} />
                             <Label style={styles.footerText} >
@@ -225,27 +268,27 @@ class FeedFooter extends Component {
         }
     }
 
-    _renderUserPetitionFooter (item, showAnalytics) {
+    _renderUserPetitionFooter (item) {
         // console.log(item.entity.type ? item.entity.type : '==================');
         // console.log(item);
-        // console.log(item.entity.type, item.description)
+        console.log(item.entity.type, item.description)
         let isSigned = false;     // (item.user_petition.signatures[0] ? item.user_petition.signatures[0].option_id : 2) === 1;
         if (
             item && item.user_petition &&
             item.user_petition.signatures && item.user_petition.signatures[0]
         ) {
             let vote = item.user_petition.signatures[0];
-            // console.log('vote', vote);
+            console.log('vote', vote);
             if (vote.option_id === 1) {
                 isSigned = true;
             }
         }
 
         // console.log(item.description, isSigned)
-        // if (this.state.signing){
-        //     isSigned = !isSigned;
-        // }
-        // console.log('got here, signed ? ', isSigned);
+        if (this.state.signing){
+            isSigned = !isSigned;
+        }
+        console.log('got here, signed ? ', isSigned);
         return (
             <CardItem footer style={{ height: 35 }}>
                 <Left style={{ justifyContent: 'space-between' }}>
@@ -253,16 +296,6 @@ class FeedFooter extends Component {
                         <Icon name='md-arrow-dropdown' style={styles.footerIcon} />
                         <Label style={styles.footerText} > { isSigned ? 'Unsign' : 'Sign'}</Label>
                     </Button>
-                    {
-                        showAnalytics
-                        ?<Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, null, 'analyticsView')} >
-                            <Icon active name='pulse' style={styles.footerIcon} />
-                            <Label style={styles.footerText} >
-                                {'Analytics '}
-                            </Label>
-                        </Button>
-                        : null
-                    }
                     <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, {commenting: true})} >
                         <Icon active name='ios-undo' style={styles.footerIcon} />
                         <Label style={styles.footerText} >
@@ -289,7 +322,7 @@ class FeedFooter extends Component {
             isSigned = !isSigned;
         }
 
-        // console.log(item.description, isSigned)
+        console.log(item.description, isSigned)
         return (
             <CardItem footer style={{ height: 35 }}>
                 <Left style={{ justifyContent: 'space-between' }}>
@@ -398,35 +431,53 @@ class FeedFooter extends Component {
     }
 
     _renderDefaultFooter (item) {
+        console.log(item.entity.type ? item.entity.type : '==================');
         return null;
+        // return (
+        //     <CardItem footer style={{ height: 35 }}>
+        //         {/* <Left style={{ justifyContent: 'flex-end' }}>
+        //             <Button iconLeft transparent style={styles.footerButton}>
+        //                 <Icon name='md-arrow-dropup' style={styles.footerIcon} />
+        //                 <Label style={styles.footerText}>Upvote {item.rate_up ? item.rate_up : 0}</Label>
+        //             </Button>
+        //             <Button iconLeft transparent style={styles.footerButton}>
+        //                 <Icon active name='md-arrow-dropdown' style={styles.footerIcon} />
+        //                 <Label style={styles.footerText}>Downvote {item.rate_up ? item.rate_down : 0}</Label>
+        //             </Button>
+        //             <Button iconLeft transparent style={styles.footerButton}>
+        //                 <Icon active name='ios-undo' style={styles.footerIcon} />
+        //                 {this._renderReplyIcon(item, 'post')}
+        //             </Button> */}
+        //         {/* </Left> */}
+        //     </CardItem>
+        // );
     }
 
     render () {
         let {item} = this.state;
-        let {showAnalytics} = false;
         // console.log('item in state => ', item)
         let footer = null
         switch (item.entity.type) {
         case 'post':
-            footer =  this._renderPostFooter(item, showAnalytics);
+            footer =  this._renderPostFooter(item);
             break;
         case 'user-petition':
-            footer =  this._renderUserPetitionFooter(item, showAnalytics);
+            footer =  this._renderUserPetitionFooter(item);
             break;
         case 'petition':
-            footer =  this._renderLeaderPetitionFooter(item, showAnalytics);
+            footer =  this._renderLeaderPetitionFooter(item);
             break;
         case 'question':
-            footer =  this._renderQuestionFooter(item, showAnalytics);
+            footer =  this._renderQuestionFooter(item);
             break;
         case 'payment-request':
             footer = null;
             break;
         case 'leader-event':
-            footer =  this._renderLeaderEventFooter(item, showAnalytics);
+            footer =  this._renderLeaderEventFooter(item);
             break;
         case 'leader-news':
-            footer =  this._renderLeadNewsFooter(item, showAnalytics);
+            footer =  this._renderLeadNewsFooter(item);
             break;
         default:
             footer =  null;

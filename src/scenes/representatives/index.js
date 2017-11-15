@@ -32,12 +32,10 @@ import {
     View,
     RefreshControl
 } from 'react-native';
-import { Platform } from 'react-native';
 
 const PLColors = require('PLColors');
 import styles from './styles';
 import { getRepresentatives, openDrawer } from 'PLActions';
-import PLOverlayLoader from 'PLOverlayLoader';
 
 class Representatives extends Component {
     constructor(props) {
@@ -104,18 +102,12 @@ class Representatives extends Component {
                         </Body>
                     </Header>
                     <Content
-                        refreshControl={Platform.OS === 'android' &&
+                        refreshControl={
                             <RefreshControl
-                                refreshing={false}
+                                refreshing={this.state.refreshing}
                                 onRefresh={this._onRefresh.bind(this)}
                             />
-                        }
-                        onScroll={(e) => {
-                            var offset = e.nativeEvent.contentOffset.y;
-                            if (Platform.OS === 'ios' && offset < -3) {
-                                this._onRefresh();
-                            }
-                        }}>
+                        }>
                         <List style={{ backgroundColor: 'white' }}>
                             {
                                 this.state.groups.map((group, index) => {
@@ -126,7 +118,6 @@ class Representatives extends Component {
                                             </ListItem>
                                             {
                                                 group.representatives.map((user, index1) => {
-                                                    console.log(user);
                                                     return (
                                                         <ListItem onPress={() => this.goToProfile(user.storage_id)} key={index1}>
                                                             <Thumbnail square size={80} source={{ uri: user.avatar_file_path+'&w=50&h=50&auto=compress,format,q=95' }} />
@@ -147,7 +138,6 @@ class Representatives extends Component {
                             }
                         </List>
                     </Content>
-                    <PLOverlayLoader visible={this.state.refreshing} logo />
                 </Container>
             </MenuContext>
         );

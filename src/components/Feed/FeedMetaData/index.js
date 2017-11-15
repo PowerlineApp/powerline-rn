@@ -8,6 +8,7 @@ class FeedMetaData extends Component {
     render () {
         let {item} = this.props;
         // console.log('================ metadata', item);
+        // This isn't working currently. It is designed to give user preview of any embedded URL in the item.
         // GH13
         if (item.metadata && item.metadata.image) {
             return (
@@ -22,7 +23,7 @@ class FeedMetaData extends Component {
                                 <View style={styles.imageContainer}>
                                     <ImageLoad
                                         placeholderSource={require('img/empty_image.png')}
-                                        source={{ uri: item.metadata.image + '&w=400&h=400&auto=compress,format,q=95' }}
+                                        source={{ uri: item.metadata.image + '&w=50&h=50&auto=compress,format,q=95' }}
                                         style={styles.image}
                                     />
                                 </View>

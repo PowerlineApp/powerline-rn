@@ -5,14 +5,12 @@
 'use strict';
 
 var ActionSheetIOS = require('ActionSheetIOS');
-var { Platform, AsyncStorage, Keyboard  } = require('react-native');
+var { Platform } = require('react-native');
 var Alert = require('Alert');
 var { API_URL } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
 var FacebookSDK = require('FacebookSDK');
 var { loadUserProfile } = require('./users');
-
-import OneSignal from 'react-native-onesignal';
 
 async function logIn(username: string, password: string): Promise<Action> {
   try {
@@ -144,7 +142,7 @@ function logInWithFacebook() {
             reject(err);
         });        
       }
-    }, {scope: 'public_profile,email,user_friends'});
+    }, {scope: 'public_profile,email'});
   });
 }
 
@@ -167,35 +165,9 @@ async function forgotPassword(email: string) {
   }
 }
 
-
-//for unregistering for push notifications with Powerline backend. NOT for OneSignal
-function unregisterDevice(token, id) {
-  return new Promise((resolve, reject) => {
-      fetch(API_URL + '/v2/devices/' + id, {
-          method: 'DELETE',
-          headers: {
-              'Content-Type': 'application/json',
-              'token': token
-          }
-      })
-          .then(data => {
-              console.log("Unregister Device API Success", JSON.stringify(data));
-              resolve(data);
-          })
-          .catch(err => {
-              console.log("Unregister Device API Error", JSON.stringify(err));
-              reject(err);
-          });
-  });
-}
-
-function logOut(token): ThunkAction {
+function logOut(): ThunkAction {
   return (dispatch) => {
     FacebookSDK.logout();
-    OneSignal.setSubscription(false);
-    AsyncStorage.getItem('pushId', (err, pushId) => {        
-      unregisterDevice(token, pushId)          
-    });  
 
     return dispatch({
       type: 'LOGGED_OUT',
@@ -203,7 +175,7 @@ function logOut(token): ThunkAction {
   };
 }
 
-function logOutWithPrompt(token, pushId): ThunkAction {
+function logOutWithPrompt(): ThunkAction {
   return (dispatch, getState) => {
     let name = getState().user.username || 'there';
 
@@ -217,7 +189,7 @@ function logOutWithPrompt(token, pushId): ThunkAction {
         },
         (buttonIndex) => {
           if (buttonIndex === 0) {
-            dispatch(logOut(token, pushId));
+            dispatch(logOut());
           }
         }
       );
@@ -227,7 +199,7 @@ function logOutWithPrompt(token, pushId): ThunkAction {
         'Log out from Powerline?',
         [
           { text: 'Cancel' },
-          { text: 'Log out', onPress: () => dispatch(logOut(token, pushId)) },
+          { text: 'Log out', onPress: () => dispatch(logOut()) },
         ]
       );
     }

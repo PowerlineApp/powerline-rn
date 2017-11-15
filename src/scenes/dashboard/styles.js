@@ -87,16 +87,12 @@ export default {
         borderTopWidth: 2,
         borderTopColor: '#d8dddf',
         backgroundColor: 'white',
-        overflow: 'visible',
-        position: 'absolute',
-        bottom: 0
+        overflow: 'visible'
       },
       android: {
-        backgroundColor: 'rgba(0,0,0,0)',
+        backgroundColor: 'transparent',
         height: 75,
-        position: 'absolute',
-        alignItems: 'flex-end',
-        bottom: 0,
+        justifyContent: 'flex-end'
       },
     })
   },

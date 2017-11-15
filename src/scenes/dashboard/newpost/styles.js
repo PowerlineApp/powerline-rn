@@ -5,8 +5,6 @@ import {
 } from 'react-native';
 const { width, height } = Dimensions.get('window');
 
-import variables from '../../../../native-base-theme/variables/platform';
-
 const platform = Platform.OS;
 
 export default {
@@ -65,45 +63,36 @@ export default {
 
     main_content: {
         width: width, 
-        height: height - 55 - variables.toolbarHeight,
-        position: 'relative',
+        height: (height - 185), 
+        position: 'relative'
     },
 
     textarea: {
-        paddingTop: 0,
-        marginTop: 0,
-        textAlignVertical: 'top',
         width: width, 
-        height: height - 185,
+        height: (height - 185), 
         fontSize: 18, 
-        color: 'rgba(0,0,0,0.6)',
-        zIndex: 5,
+        color: 'rgba(0,0,0,0.6)', 
+        zIndex: 5
     },
 
-    deleteIconContainer: {
+    community_list_container: {
         position: 'absolute',
-        ...Platform.select({
-            ios: {
-                right: -4,
-                top: -4,
-                height: 22,    
-            },
-            android: {
-                right: -1,
-                top: -2,
-                height: 24,
-            }
-        }),
-        width: 22,
-        borderRadius: 12,
-        overflow: 'hidden',
-        
+        left: 0,
+        top: 0,
+        width: width,
+        height: (height  - 185),
+        zIndex: 10,
+        paddingLeft: (width - 250)/ 2
     },
-    deleteIcon: {
-        fontSize: 25,
-        ...Platform.select({
-            ios: {  backgroundColor: '#e2e7ea' }
-        }),
+
+    community_list_back: {
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        bottom: 0,
+        right: 0,
+        backgroundColor: 'black',
+        opacity: 0.4
     }
 
 }

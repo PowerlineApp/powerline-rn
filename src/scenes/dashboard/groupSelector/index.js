@@ -11,7 +11,7 @@ import { Actions } from 'react-native-router-flux';
 import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, ListItem, Thumbnail, List, Badge } from 'native-base';
 import { View, RefreshControl, Platform } from 'react-native';
 import { loadUserGroups, clearGroupsInCache, loadActivities,resetActivities } from 'PLActions';
-import PLOverlayLoader from 'PLOverlayLoader';
+import PLLoader from 'PLLoader';
 
 import styles from './styles';
 
@@ -91,13 +91,21 @@ class GroupSelector extends Component {
     //     }
     // }
 
+    // _renderTailLoading() {
+    //     if (this.state.isLoadingTail === true) {
+    //         return (
+    //             <PLLoader position="bottom" />
+    //         );
+    //     } else {
+    //         return null;
+    //     }
+    // }
+
     //Selecting this should load the Town Group Feed into the Newsfeed tab
     _renderTownGroup() {
         if (this.props.town !== 'Town') {
-            let group = this.props.groupList.find(group => group.official_name === this.props.town)
-            console.log('Town', group)
             return (
-            <ListItem icon style={{ paddingVertical: 5 }} onPress={() => this.goToGroupFeed(group)} >
+                <ListItem icon style={{ paddingVertical: 5 }}>
                     <Left>
                         <Button style={styles.iconButton}>
                             <Icon active name="pin" style={styles.icon} />
@@ -116,10 +124,8 @@ class GroupSelector extends Component {
     //Selecting this should load the State Group Feed into the Newsfeed tab
     _renderStateGroup() {
         if (this.props.state !== 'State') {
-            let group = this.props.groupList.find(group => group.official_name === this.props.state)
-            console.log('State', group)
             return (
-                    <ListItem icon style={{ paddingVertical: 5 }} onPress={() => this.goToGroupFeed(group)} >
+                <ListItem icon style={{ paddingVertical: 5 }}>
                     <Left>
                         <Button style={styles.iconButton}>
                             <Icon active name="pin" style={styles.icon} />
@@ -137,10 +143,8 @@ class GroupSelector extends Component {
     //Selecting this should load the Country Group Feed into the Newsfeed tab
     _renderCountryGroup() {
         if (this.props.country !== 'Country') {
-            let group = this.props.groupList.find(group => group.official_name === this.props.country)
-            console.log('Country', group)
             return (
-                <ListItem icon style={{ paddingVertical: 5 }} onPress={() => this.goToGroupFeed(group)} >
+                <ListItem icon style={{ paddingVertical: 5 }}>
                     <Left>
                         <Button style={styles.iconButton}>
                             <Icon active name="pin" style={styles.icon} />
@@ -155,35 +159,14 @@ class GroupSelector extends Component {
             return null;
         }
     }
-
-    renderGroupItem(group){
-        return (
-            <ListItem avatar style={{ paddingVertical: 5 }} onPress={() => this.goToGroupFeed(group)} badge>                                
-                <Left style={{position: 'relative'}}>                                
-                    <Thumbnail small source={group.avatar_file_path ? { uri: group.avatar_file_path+'&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} style={styles.thumbnail} />
-                    {group.priority_item_count!=0?
-                    <Badge style={{position: 'absolute', bottom: 0, right: -5, height: 18, paddingLeft: 3, paddingRight: 3, paddingTop: 1.7, paddingBottom: 1.7}}>
-                        <Text style={{fontSize: 11, lineHeight: 14, textAlign: 'center'}}>
-                        {group.priority_item_count}
-                        </Text>
-                    </Badge>:null}
-                </Left>
-                <Body>
-                    <Text style={styles.cellText}>{group.official_name}</Text>
-                </Body>
-        </ListItem>);
-    }
-
     //Selecting this should load the appropriate/selected Group Feed into the Newsfeed tab
     //Depending on group, "Newsfeed View" will display or "Conversation View" will display
     //GH45, GH142
-    goToGroupFeed(group){
-        let {id, official_name, avatar_file_path, conversation_view_limit, total_members} = group;
-        // console.log(groupId, groupName, avatar, limit)     
+    goToGroupFeed(groupId, groupName, avatar,limit){     
         var { dispatch, token } = this.props;
-        dispatch({type: 'SET_GROUP', data: {id, name: official_name, avatar: avatar_file_path, limit: conversation_view_limit, totalMembers: total_members, conversationView: total_members < conversation_view_limit}});
+        dispatch({type: 'SET_GROUP', data: {id: groupId, name: groupName, avatar: avatar, limit: limit}});
         
-        dispatch(loadActivities(token, 0, 20, id));
+        dispatch(loadActivities(token, 0, 20, groupId));
         Actions.pop();        
         
     }
@@ -194,8 +177,6 @@ class GroupSelector extends Component {
     }
 
     render() {
-        console.log(this.props.groupList, this.props)
-        const { isLoading, isRefreshing } = this.state;
         return (
             <Container style={styles.container}>
                 <Header searchBar rounded style={styles.header}>
@@ -224,6 +205,7 @@ class GroupSelector extends Component {
                         }
                     }}
                 >
+                    {this.state.isLoading && <PLLoader position="bottom" padder />}
                     <ListItem itemHeader first style={{ borderBottomWidth: 0 }}>
                         <Left>
                             <Text style={styles.titleText}>Choose Group</Text>
@@ -239,10 +221,24 @@ class GroupSelector extends Component {
                     {this._renderStateGroup()}
                     {this._renderCountryGroup()}
                     <List
-                        dataArray={this.props.others} renderRow={(group) => this.renderGroupItem(group)}>
+                        dataArray={this.props.others} renderRow={(group) =>
+                            <ListItem avatar style={{ paddingVertical: 5 }} onPress={() => this.goToGroupFeed(group.id, group.official_name, group.avatar_file_path, group.conversation_view_limit)} badge>                                
+                                <Left style={{position: 'relative'}}>                                
+                                    <Thumbnail small source={group.avatar_file_path ? { uri: group.avatar_file_path+'&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} style={styles.thumbnail} />
+                                    {group.priority_item_count!=0?
+                                    <Badge style={{position: 'absolute', bottom: 0, right: -5, height: 18, paddingLeft: 3, paddingRight: 3, paddingTop: 1.7, paddingBottom: 1.7}}>
+                                        <Text style={{fontSize: 11, lineHeight: 14, textAlign: 'center'}}>
+                                        {group.priority_item_count}
+                                        </Text>
+                                    </Badge>:null}
+                                </Left>
+                                <Body>
+                                    <Text style={styles.cellText}>{group.official_name}</Text>
+                                </Body>
+                            </ListItem>
+                        }>
                     </List>
                 </Content>
-                <PLOverlayLoader visible={isLoading || isRefreshing} logo />
             </Container>
         );
     }
@@ -262,7 +258,6 @@ const mapStateToProps = state => ({
     town: state.groups.town,
     state: state.groups.state,
     country: state.groups.country,
-    groupList: state.groups.payload
 });
 
 

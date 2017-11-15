@@ -24,7 +24,7 @@ const initialState = {
     groupName: '',
     groupAvatar: '',
     groupLimit: 10,
-    selectedGroup: {
+    savedGroup: {
         group: 'all',
         groupName: '',
         groupAvatar: '',
@@ -35,7 +35,7 @@ const initialState = {
 const payloadStack: Array<Object> = [];
 
 function activities(state: State = initialState, action: Action): State {
-    // console.log('action(activities):', action);
+    console.log(action);
     if (action.type === 'LOADED_ACTIVITIES') {
         payloadStack = payloadStack.concat(action.data.payload);
         return {
@@ -45,24 +45,17 @@ function activities(state: State = initialState, action: Action): State {
             totalItems: action.data.totalItems,
             payload: payloadStack,
             count: action.data.payload.length,
+            newsfeedUnreadCount: action.data.newsfeedUnreadCount,
         };
     }
-
+    
     if (action.type === 'RESET_ACTIVITIES') {
-        console.log('RESET_ACTIVITIES', action);
         payloadStack = [];
         return {
             ...initialState,
-            selectedGroup: state.selectedGroup,
-            // newsfeedUnreadCount: state.newsfeedUnreadCount,
+            savedGroup: state.savedGroup,
+            newsfeedUnreadCount: state.newsfeedUnreadCount,
         };
-    }
-
-    if (action.type === 'SET_NEWSFEED_COUNT') {
-        return {
-            ...state,
-            newsfeedUnreadCount: action.count,
-        }
     }
 
     if (action.type === 'LOGGED_OUT') {
@@ -70,24 +63,24 @@ function activities(state: State = initialState, action: Action): State {
         return initialState;
     }
 
-    if (action.type === 'SET_GROUP') {
-        console.log('SET_GROUP', action);
+    if(action.type === 'SET_GROUP'){
         payloadStack = [];
         return {
             ...state,
+            group: action.data.id,
+            groupName: action.data.name,
+            groupAvatar: action.data.avatar,
+            groupLimit: action.data.limit,
             payload: [],
-            selectedGroup: {
-                group: action.data ? action.data.id : null,
-                groupName: action.data ? action.data.name : null,
-                groupAvatar: action.data ? action.data.avatar : null,
-                conversationView: action.data ? action.data.conversationView : null,
-                groupMembers: action.data ? action.data.totalMembers : null,
-                groupLimit: action.data ? action.data.limit : null,
+            savedGroup: {
+                group: action.data.id,
+                groupName: action.data.name,
+                groupAvatar: action.data.avatar,
             },
         }
     }
 
-    if (action.type === 'DELETE_ACTIVITIES') {
+    if(action.type === 'DELETE_ACTIVITIES'){
         payloadStack = [];
         return {
             ...state,
@@ -128,75 +121,6 @@ function activities(state: State = initialState, action: Action): State {
                     ...activity,
                     zone: 'prioritized'
                 }
-            } else {
-                return activity;
-            }
-        });
-        return {
-            ...state,
-            payload: payloadStack,
-        }
-    }
-
-    if (action.type === 'CHANGE_FOLLOW_STATUS') {
-        const { follow_status, id } = action.data;
-        payloadStack = state.payload.map(activity => {
-            if (activity.id === id) {
-                return {
-                    ...activity,
-                    user: {
-                        ...activity.user,
-                        follow_status,
-                    }
-                }
-            } else {
-                return activity;
-            }
-        });
-        return {
-            ...state,
-            payload: payloadStack,
-        }
-    }
-
-    if (action.type === 'ACTIVITY_NOTIFICATION_SUBSCRIBE') {
-        let { type, id } = action.data;
-        if (type === 'user-petition') {
-            type = 'user_petition';
-        }
-        payloadStack = state.payload.map(activity => {
-            if (activity.id === id) {
-                return {
-                    ...activity,
-                    [type]: {
-                        ...activity[type],
-                        is_subscribed: true,
-                    }
-                };
-            } else {
-                return activity;
-            }
-        });
-        return {
-            ...state,
-            payload: payloadStack,
-        }
-    }
-
-    if (action.type === 'ACTIVITY_NOTIFICATION_UNSUBSCRIBE') {
-        let { type, id } = action.data;
-        if (type === 'user-petition') {
-            type = 'user_petition';
-        }
-        payloadStack = state.payload.map(activity => {
-            if (activity.id === id) {
-                return {
-                    ...activity,
-                    [type]: {
-                        ...activity[type],
-                        is_subscribed: false,
-                    }
-                };
             } else {
                 return activity;
             }

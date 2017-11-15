@@ -2,17 +2,10 @@ import React, { Component, PropTypes } from 'react';
 import { Content, Text, Center } from 'native-base';
 import { View, StyleSheet } from 'react-native';
 
-const styles = {
-  container: { 
-    flex: 1, 
-    justifyContent: 'center',
-     alignItems: 'center'
-  },
-  title: {
-    fontSize: 15,
-    fontWeight: '500'
-  }
-};
+const styles = StyleSheet.create({
+  container: { flex: 1, justifyContent: 'center', alignItems: 'center', },
+  title: { fontSize: 15, fontWeight: '500', },
+});
 
 const ContentPlaceholder = ({ empty, title, children, ...otherProps }) => {
   if (empty) {

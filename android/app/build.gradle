@@ -111,15 +111,13 @@ android {
         applicationId "com.powerline"
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 16
+        versionCode 13
         versionName "1.0"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
         manifestPlaceholders = [onesignal_app_id: "6728c7ff-e832-4472-9fef-84dcf2af5328",
                                 onesignal_google_project_number: "354736666363"]
-        vectorDrawables.useSupportLibrary = true
-        multiDexEnabled true
     }
     splits {
         abi {
@@ -167,14 +165,9 @@ android {
 }
 
 dependencies {
-    compile project(':tipsi-stripe')
-    compile project(':react-native-share-extension')
-    compile project(':react-native-image-crop-picker')
-    compile project(':react-native-share')
-    compile project(':react-native-fetch-blob')
-    compile 'com.android.support:multidex:1.0.1'
     compile project(':react-native-device-info')
     compile project(':react-native-onesignal')
+    compile project(':react-native-share-extension')
     compile project(':react-native-youtube')
     compile project(':react-native-fbsdk')
     compile fileTree(dir: "libs", include: ["*.jar"])
