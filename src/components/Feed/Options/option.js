@@ -18,7 +18,7 @@ class Option extends Component{
             <CheckBox onPress={() => this.props.onCheck()} checked={opt.checked} uncheckedIcon={'circle-o'} checkedColor={'#183E63'} containerStyle={{backgroundColor: opt.checked ? '#ADD8E6' : '#fff', borderColor: '#fff', borderBottomColor: '#efefef', borderWidth: 2, margin: 0}} title={
                 <View style={{flex: 1, paddingLeft: 20, height: '100%'}}>
                     <Text style={styles.mainText}>{opt.value}</Text>
-                    <Text style={styles.caption}>33 responses</Text>
+                    <Text style={styles.caption}>{opt.votes_count} responses</Text>
                 </View>}
             />
         );

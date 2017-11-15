@@ -2,6 +2,19 @@ var { API_URL, PER_PAGE } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
 
 
+async function loadPollByEntityId(token, entityId) {
+    console.log('fetching poll - ', `${API_URL}/v2/polls/${entityId}`, token, entityId)
+    let res = await fetch(`${API_URL}/v2/polls/${entityId}`, {
+        method: 'GET',
+        headers: {
+            'token': token,
+            'Content-Type': 'application/json'
+        }
+    });
+    return res.json();
+}
+
+
 // trying new req pattern
 function createPoll(token, groupId, body){
     console.log('creating poll - ', `${API_URL}/v2/groups/${groupId}/polls`, token, groupId, body)
@@ -67,5 +80,6 @@ module.exports = {
     unsubscribeFromPoll,
     createPoll,
     sendAttachment,
-    publishPoll
+    publishPoll,
+    loadPollByEntityId
 };

@@ -17,7 +17,7 @@ class FeedCommentPreview extends Component {
     }
 
     redirect (item, options) {
-        let type = 'poll';
+        let type = item.entity.type;
         if (item.post) {
             type = 'post';
         } else if (item.user_petition) {

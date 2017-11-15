@@ -33,7 +33,7 @@ class FeedHeader extends Component {
     redirect(item, options, scene = 'itemDetail') {
         let type;
         if (item.poll) {
-            type = 'poll';
+            type = item.entity.type;
         } else if (item.post) {
             type = 'post';
         } else if (item.user_petition) {
@@ -93,7 +93,7 @@ class FeedHeader extends Component {
                 var newDate = new Date((new Date()).getTime() + 1000 * 60 * 60 * hours);
                 editFollowers(token, item.owner.id, false, newDate)
                     .then(data => {
-                        console.warn(JSON)
+                        console.warn(JSON);
                     })
                     .catch(err => {
 
@@ -223,17 +223,17 @@ class FeedHeader extends Component {
         let canSpam = false;
 
         switch (item.entity.type) {
-            case 'post':
-            case 'user-petition':
-                thumbnail = item.owner.avatar_file_path ? item.owner.avatar_file_path : '';
-                title = item.owner ? item.owner.first_name : '' + ' ' + item.owner ? item.owner.last_name : '';
-                canInviteUpvoters = isBoosted;
-                canSpam = true;
-                break;
-            default:
-                thumbnail = item.group.avatar_file_path ? item.group.avatar_file_path : '';
-                title = item.user.full_name;
-                break;
+        case 'post':
+        case 'user-petition':
+            thumbnail = item.owner.avatar_file_path ? item.owner.avatar_file_path : '';
+            title = item.owner ? item.owner.first_name : '' + ' ' + item.owner ? item.owner.last_name : '';
+            canInviteUpvoters = isBoosted;
+            canSpam = true;
+            break;
+        default:
+            thumbnail = item.group.avatar_file_path ? item.group.avatar_file_path : '';
+            title = item.user.full_name;
+            break;
         }
 //Header
         return (
@@ -260,19 +260,19 @@ class FeedHeader extends Component {
                                 {
                                     !this.isSubscribed(item)
                                     ?
-                                    <MenuOption onSelect={() => this.subscribe(item)}>
-                                        <Button iconLeft transparent dark onPress={() => this.subscribe(item)}>
-                                            <Icon name='md-notifications' style={styles.menuIcon} />
-                                            <Text style={styles.menuText}>Subscribe to Notifications</Text>
-                                        </Button>
-                                    </MenuOption>
+                                        <MenuOption onSelect={() => this.subscribe(item)}>
+                                            <Button iconLeft transparent dark onPress={() => this.subscribe(item)}>
+                                                <Icon name='md-notifications' style={styles.menuIcon} />
+                                                <Text style={styles.menuText}>Subscribe to Notifications</Text>
+                                            </Button>
+                                        </MenuOption>
                                     :
-                                    <MenuOption onSelect={() => this.unsubscribe(item)}>
-                                        <Button iconLeft transparent dark onPress={() => this.unsubscribe(item)}>
+                                        <MenuOption onSelect={() => this.unsubscribe(item)}>
+                                            <Button iconLeft transparent dark onPress={() => this.unsubscribe(item)}>
                                             <Icon name='md-notifications-off' style={styles.menuIcon} />
                                             <Text style={styles.menuText}>Unsubscribe to Notifications</Text>
                                         </Button>
-                                    </MenuOption>
+                                        </MenuOption>
                                 }
                                 {
                                     !isAuthor && canUnfollow &&
@@ -303,8 +303,8 @@ class FeedHeader extends Component {
                                     <MenuOption onSelect={() => this.followAuthor(this.props.item)}>
                                         <Button iconLeft transparent dark onPress={() => this.followAuthor(this.props.item)}>
                                             <View style={styles.buttonContainer}>
-                                                <Icon name="ios-person" style={styles.activeIconLarge} />
-                                                <Icon name="ios-add-circle-outline" style={styles.activeIconSmall} />
+                                                <Icon name='ios-person' style={styles.activeIconLarge} />
+                                                <Icon name='ios-add-circle-outline' style={styles.activeIconSmall} />
                                             </View>
                                             <Text style={styles.menuText}>Follow this person</Text>
                                         </Button>
@@ -315,8 +315,8 @@ class FeedHeader extends Component {
                                     <MenuOption onSelect={() => this.unfollowAuthor(this.props.item)}>
                                         <Button iconLeft transparent dark onPress={() => this.unfollowAuthor(this.props.item)}>
                                             <View style={styles.buttonContainer}>
-                                                <Icon name="ios-person" style={styles.activeIconLarge} />
-                                                <Icon name="ios-remove-circle-outline" style={styles.activeIconSmall} />
+                                                <Icon name='ios-person' style={styles.activeIconLarge} />
+                                                <Icon name='ios-remove-circle-outline' style={styles.activeIconSmall} />
                                             </View>
                                             <Text style={styles.menuText}>Unfollow this person</Text>
                                         </Button>

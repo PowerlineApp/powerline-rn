@@ -30,7 +30,7 @@ import Menu, {
     MenuOption,
     renderers
 } from 'react-native-popup-menu';
-import { getComments, votePost, getUsersByGroup, addComment, editComment, deleteComment, rateComment, loadActivityByEntityId, deletePost, deletePetition, changePost, changePetition } from 'PLActions';
+import { getComments, votePost, getUsersByGroup, addComment, editComment, deleteComment, rateComment, loadActivityByEntityId, deletePost, deletePetition, changePost, changePetition, loadPollByEntityId } from 'PLActions';
 import PLOverlayLoader from 'PLOverlayLoader';
 import randomPlaceholder from '../../../utils/placeholder';
 import { FloatingAction } from 'react-native-floating-action';
@@ -244,22 +244,29 @@ class ItemDetail extends Component {
         if (entityType === 'user-petition') type = 'petition';
         if (entityType === 'post') type = 'post'
 
+        let data = null;
+        // try {
+            await this.loadItem(token, type, entityId, entityType);
+            this.setState({ isLoading: false, inputDescription: this.item.description });
+            this.loadComments();
+            this.onShare(this.props.share, this.item);
+        // } catch (error) {
+        //     setTimeout(() => alert(error));
+        // }
+    }
 
-        loadActivityByEntityId(token, type, entityId).then(data => {
-            console.log('data', data)
-            if (data.payload && data.payload[0]) {
-                this.item = data.payload[0];
-                this.setState({ isLoading: false, inputDescription: this.item.description });
-                this.loadComments();
-                this.onShare(this.props.share, data.payload[0]);
-            } else {
-                Actions.pop();
-            }
-        }).catch(e => {
-            this.setState({ isLoading: false });
-            const message = e.message || e;
-            setTimeout(() => alert(message), 1000);
-        });
+    async loadItem(token, type, entityId, entityType){
+            data = await loadActivityByEntityId(token, type, entityId);
+            this.item = data.payload[0];
+            // if (type !== 'petition' && type !== 'post'){
+            //     data = await loadPollByEntityId(token, entityId)
+            //     this.item = {...this.item, options: data.options };
+            // }
+
+        if (!this.item){
+            alert('Error ocurred loading activity.')
+            Actions.pop(); 
+        }
     }
 
     async loadComments() {
