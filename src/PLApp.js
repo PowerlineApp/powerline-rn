@@ -6,6 +6,7 @@
 'use strict';
 
 var React = require('React');
+import Stripe from 'tipsi-stripe'
 var AppState = require('AppState');
 var Platform = require('Platform');
 var LoginScene = require('./scenes/auth/LoginScene');
@@ -17,7 +18,7 @@ var View = require('View');
 var StatusBar = require('StatusBar');
 var SplashScreen = require('react-native-splash-screen');
 var { connect } = require('react-redux');
-var { version } = require('./PLEnv.js');
+var { version, stripeAPIKey } = require('./PLEnv.js');
 var { StackNavigator } = require('react-navigation');
 var RegisterScene  = require('./scenes/auth/RegisterScene');
 var TourScene = require('./scenes/auth/TourScene');
@@ -27,11 +28,14 @@ var PLApp = React.createClass({
   displayName: 'PLApp',
 
   componentDidMount: function () { 
-
+    Stripe.init({
+      publishableKey: stripeAPIKey
+    })
     if (Platform.OS === 'android') {
       SplashScreen.hide();
       
     }
+
     AppState.addEventListener('change', this.handleAppStateChange);
   },
 

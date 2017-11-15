@@ -8,7 +8,7 @@ import styles from '../styles';
 class Input extends PureComponent {
   render() {
     return (
-      <View style={styles.inputContainer}>
+      <View style={[styles.inputContainer, this.props.style]}>
          <NBInput
           {...this.props}
           style={styles.inputText}
