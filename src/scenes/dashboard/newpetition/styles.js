@@ -3,8 +3,6 @@ var { Platform } = require('react-native');
 import {
     Dimensions
 } from 'react-native';
-import variables from '../../../../native-base-theme/variables/platform';
-
 const { width, height } = Dimensions.get('window');
 
 const platform = Platform.OS;
@@ -65,17 +63,16 @@ export default {
 
     main_content: {
         width: width, 
-        height: height - 55 - variables.toolbarHeight,
+        height: (height - 185), 
         position: 'relative'
     },
 
     textarea: {
-        width: width, 
-        height: (height - 185), 
+        width: width - 20, 
+        height: (height - 234), 
         fontSize: 14, 
         color: 'rgba(0,0,0,0.6)', 
-        zIndex: 5,
-        marginTop: 0
+        zIndex: 5
     },
 
     community_list_container: {
@@ -107,40 +104,13 @@ export default {
         backgroundColor: 'white',
         fontSize: 14,
         paddingLeft: 12,
-        paddingRight: 5,
-        marginTop: 0
+        paddingRight: 5
     },
 
     main_wrapper: {
         padding: 10,
         width: (width - 20),
         height: (height - 131)
-    },
-
-
-    deleteIconContainer: {
-        position: 'absolute',
-        ...Platform.select({
-            ios: {
-                right: -4,
-                top: -4,
-                height: 22,    
-            },
-            android: {
-                right: -1,
-                top: -2,
-                height: 24,
-            }
-        }),
-        width: 22,
-        borderRadius: 12,
-        overflow: 'hidden',   
-    },
-    deleteIcon: {
-        fontSize: 25,
-        ...Platform.select({
-            ios: {  backgroundColor: '#e2e7ea' }
-        }),
     }
 
 }

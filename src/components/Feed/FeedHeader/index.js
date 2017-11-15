@@ -10,7 +10,6 @@ import Menu, {
     MenuOptions,
     MenuOption
 } from 'react-native-popup-menu';
-import { showAlertOkCancel, showAlertYesNo } from 'PLAlert';
 
 import { WINDOW_WIDTH } from 'PLConstants';
 import {
@@ -21,40 +20,43 @@ import {
     unFollowings,
     putFollowings,
     editFollowers,
-    getFollowingUser,
-    subscribeNotification,
-    unsubscribeNotification,
-    markAsSpam,
+    getFollowingUser
 } from 'PLActions';
 
 import styles from '../styles';
 
 class FeedHeader extends Component {
-    redirect(item, options, scene = 'itemDetail') {
+    state = {
+        isFollowed: false,
+    }
+
+    componentDidMount() {
+        getFollowingUser(this.props.token, this.props.item.owner.id).then(data => {
+            if (!data.code && data.status === 'active') {
+                this.setState({ isFollowed: true });
+            }
+        }).catch(err => {});
+    }
+    redirect (item, options) {
         let type;
         if (item.poll) {
             type = 'poll';
         } else if (item.post) {
             type = 'post';
-        } else if (item.user_petition) {
+        } else if (item.petition) {
             type = 'petition';
         }
-        Actions[scene]({ entityType: type, entityId: item.entity.id, ...options });
+        Actions.itemDetail({entityType: type, entityId: item.entity.id, ...options});
     }
 
-    subscribe(item) {
-        this.props.dispatch(subscribeNotification(this.props.token, item.entity.id, item.id, item.entity.type));
+    edit (item) {
+        // Actions.itemDetail({
+        //     entityId: item.entity.id,
+        //     entityType: item.entity.type,
+        //     isEditEnabled: true
+        // });
         this.menu && this.menu.close();
-    }
-
-    unsubscribe(item) {
-        this.props.dispatch(unsubscribeNotification(this.props.token, item.entity.id, item.id, item.entity.type));
-        this.menu && this.menu.close();        
-    }
-
-    edit(item) {
-        this.menu && this.menu.close();
-        this.redirect(item, { isEditEnabled: true });
+        this.redirect(item, {isEditEnabled: true});
     }
 
     boost(item) {
@@ -64,14 +66,14 @@ class FeedHeader extends Component {
 
     unmute(item) {
         var { token, dispatch } = this.props;
-
+        
         editFollowers(token, item.owner.id, false, newDate)
-            .then(data => {
+        .then(data => {
 
-            })
-            .catch(err => {
+        })
+        .catch(err => {
 
-            });
+        });
     }
 
     mute(item) {
@@ -92,15 +94,15 @@ class FeedHeader extends Component {
 
                 var newDate = new Date((new Date()).getTime() + 1000 * 60 * 60 * hours);
                 editFollowers(token, item.owner.id, false, newDate)
-                    .then(data => {
-                        console.warn(JSON)
-                    })
-                    .catch(err => {
+                .then(data => {
+                    console.warn(JSON)
+                })
+                .catch(err => {
 
-                    });
+                });
             }
         );
-        this.menu && this.menu.close();
+        this.menu && this.menu.close();        
     }
 
     delete(item) {
@@ -115,68 +117,19 @@ class FeedHeader extends Component {
     }
 
     followAuthor(item) {
-        this.props.dispatch(putFollowings(this.props.token, item.owner.id, item.id));
+        this.props.dispatch(putFollowings(this.props.token, item.owner.id));
         this.menu && this.menu.close();
     }
 
     unfollowAuthor(item) {
-        this.props.dispatch(unFollowings(this.props.token, item.owner.id, item.id)); 
+        this.props.dispatch(unFollowings(this.props.token, item.owner.id));
         this.menu && this.menu.close();
     }
 
     notify(item) {
-        let isUpvoted = false;
-        if (entity.upvotes_count > 0 || entity.responses_count > 0) {
-            let type = entity.entity.type;
-            if (type === 'user-petition') {
-                type = 'user_petition';
-            }
-
-            let option = 'votes';
-            let id = 'option';
-            if (entity.poll) {
-                option = 'answers';
-            }
-
-            if (entity.user_petition) {
-                option = 'signatures';
-                id = 'option_id';
-            }
-
-            if (
-                entity[type] &&
-                entity[type][option] &&
-                entity[type][option].length > 0 &&
-                entity[type][option][0][id] === 1
-            ) {
-                isUpvoted = true;
-            }
-            
-        }
-        
-        if (!isUpvoted) {
-            alert('User can share only a post he has upvoted.');
-            return;
-        }
-
         sharePost(this.props.token, item.entity.id);
-
+        
         this.menu && this.menu.close();
-    }
-
-    inviteUpvoters(item) {
-        showAlertOkCancel('Are you sure you want to invite all of the upvoters of your post to this group? You can only do this once per boosted post!', () => {
-            this.redirect(item, null, 'groupInvite');
-        });
-
-        this.menu && this.menu.close();        
-    }
-
-    spam(item) {
-        showAlertOkCancel('Are you sure you want to report this item? Group leaders can only remove items that have been reported by multiple users.', () => {
-            this.props.dispatch(markAsSpam(this.props.token, item.entity.id, item.entity.type));
-        });
-        this.menu && this.menu.close();        
     }
 
     onPressThumbnail(item) {
@@ -194,51 +147,28 @@ class FeedHeader extends Component {
         Actions.groupprofile({ id: item.group.id });
     }
 
-    isGroupOwnerOrManager(item) {
-        return item.group.user_role === 'manager' || item.group.user_role === 'owner';
-    }
-
-    isSubscribed(item) {
-        let type = item.entity.type;
-        if (type === 'user-petition') {
-            type = 'user_petition';
-        }
-        if (item[type] !== undefined) {
-            return item[type].is_subscribed;
-        }
-
-        return false;
-    }
-
     render() {
-        const { item } = this.props;
         let thumbnail = '';
         let title = '';
-        const isBoosted = item.zone === 'prioritized';
-        const isAuthor = item.owner.id === this.props.userId;
-        const canUnfollow = item.user.follow_status === 'active';
-        const canFollow = item.user.follow_status === null;
-        let canInviteUpvoters = false;
-        let canSpam = false;
+        let isBoosted = false;
+        const isOwner = this.props.item.owner.id === this.props.userId;
 
-        switch (item.entity.type) {
-            case 'post':
-            case 'user-petition':
-                thumbnail = item.owner.avatar_file_path ? item.owner.avatar_file_path : '';
-                title = item.owner ? item.owner.first_name : '' + ' ' + item.owner ? item.owner.last_name : '';
-                canInviteUpvoters = isBoosted;
-                canSpam = true;
+        switch (this.props.item.entity.type) {
+            case 'post' || 'user-petition':
+                thumbnail = this.props.item.owner.avatar_file_path ? this.props.item.owner.avatar_file_path : '';
+                title = this.props.item.owner ? this.props.item.owner.first_name : '' + ' ' + this.props.item.owner ? this.props.item.owner.last_name : '';
                 break;
             default:
-                thumbnail = item.group.avatar_file_path ? item.group.avatar_file_path : '';
-                title = item.user.full_name;
+                thumbnail = this.props.item.group.avatar_file_path ? this.props.item.group.avatar_file_path : '';
+                title = this.props.item.user.full_name;
                 break;
         }
 
+        console.warn('itemxzcsadf:', this.props.item);
         return (
             <CardItem style={{ paddingBottom: 0 }}>
                 <Left>
-                    <TouchableHighlight onPress={() => this.onPressThumbnail(item)} underlayColor={'#fff'}>
+                    <TouchableHighlight onPress={() => this.onPressThumbnail(this.props.item)} underlayColor={'#fff'}>
                         <View>
                             <Thumbnail small
                                 source={thumbnail ? { uri: thumbnail + '&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")}
@@ -247,8 +177,8 @@ class FeedHeader extends Component {
                         </View>
                     </TouchableHighlight>
                     <Body>
-                        <Text style={styles.title} onPress={() => this.onPressAuthor(item)}>{title}</Text>
-                        <Text note style={styles.subtitle} onPress={() => this.onPressGroup(item)}>{item.group.official_name} • <TimeAgo time={item.sent_at} hideAgo /></Text>
+                        <Text style={styles.title} onPress={() => this.onPressAuthor(this.props.item)} >{title}</Text>
+                        <Text note style={styles.subtitle} onPress={() => this.onPressGroup(this.props.item)} >{this.props.item.group.official_name} • <TimeAgo time={this.props.item.sent_at} hideAgo /></Text>
                     </Body>
                     <Right style={{ flex: 0.2 }}>
                         <Menu ref={(ref) => { this.menu = ref; }}>
@@ -256,104 +186,81 @@ class FeedHeader extends Component {
                                 <Icon name='ios-arrow-down' style={styles.dropDownIcon} />
                             </MenuTrigger>
                             <MenuOptions customStyles={optionsStyles}>
+                                <MenuOption>
+                                    <Button iconLeft transparent dark>
+                                        <Icon name='logo-rss' style={styles.menuIcon} />
+                                        <Text style={styles.menuText}>Subscribe to this Post</Text>
+                                    </Button>
+                                </MenuOption>
                                 {
-                                    !this.isSubscribed(item)
-                                    ?
-                                    <MenuOption onSelect={() => this.subscribe(item)}>
-                                        <Button iconLeft transparent dark onPress={() => this.subscribe(item)}>
-                                            <Icon name='md-notifications' style={styles.menuIcon} />
-                                            <Text style={styles.menuText}>Subscribe to Notifications</Text>
-                                        </Button>
-                                    </MenuOption>
-                                    :
-                                    <MenuOption onSelect={() => this.unsubscribe(item)}>
-                                        <Button iconLeft transparent dark onPress={() => this.unsubscribe(item)}>
-                                            <Icon name='md-notifications-off' style={styles.menuIcon} />
-                                            <Text style={styles.menuText}>Unsubscribe to Notifications</Text>
-                                        </Button>
-                                    </MenuOption>
-                                }
-                                {
-                                    !isAuthor && canUnfollow &&
-                                    <MenuOption onSelect={() => this.mute(item)}>
-                                        <Button iconLeft transparent dark onPress={() => this.mute(item)}>
+                                    !isOwner && this.state.isFollowed &&
+                                    <MenuOption onSelect={() => this.mute(this.props.item)}>
+                                        <Button iconLeft transparent dark onPress={() => this.mute(this.props.item)}>
                                             <Icon name='md-volume-off' style={styles.menuIcon} />
                                             <Text style={styles.menuText}>Mute Notifications from this User</Text>
                                         </Button>
                                     </MenuOption>
                                 }
-                                <MenuOption onSelect={() => this.notify(item)}>
-                                    <Button iconLeft transparent dark onPress={() => this.notify(item)}>
+                                <MenuOption>
+                                    <Button iconLeft transparent dark>
+                                        <Icon name='ios-heart' style={styles.menuIcon} />
+                                        <Text style={styles.menuText}>Add to Favorites</Text>
+                                    </Button>
+                                </MenuOption>
+                                <MenuOption>
+                                    <Button iconLeft transparent dark>
+                                        <Icon name='md-person-add' style={styles.menuIcon} />
+                                        <Text style={styles.menuText}>Add to Contact</Text>
+                                    </Button>
+                                </MenuOption>
+                                <MenuOption onSelect={() => this.notify(this.props.item)}>
+                                    <Button iconLeft transparent dark onPress={() => this.notify(this.props.item)}>
                                         <Icon name='md-megaphone' style={styles.menuIcon} />
                                         <Text style={styles.menuText}>Share this post to followers</Text>
                                     </Button>
                                 </MenuOption>
-                                {
-                                    canInviteUpvoters &&
-                                    <MenuOption onSelect={() => this.inviteUpvoters(item)}>
-                                        <Button iconLeft transparent dark onPress={() => this.inviteUpvoters(item)}>
-                                            <Image source={require("img/invite_upvoters.png")} style={[styles.menuIcon, { marginLeft: -2, marginRight: 12 }]} />
-                                            <Text style={styles.menuText}>Invite Upvoters to a Group</Text>
-                                        </Button>
-                                    </MenuOption>
-                                }
-                                {
-                                    canFollow &&
+                                {/* {
+                                    !isOwner &&
                                     <MenuOption onSelect={() => this.followAuthor(this.props.item)}>
                                         <Button iconLeft transparent dark onPress={() => this.followAuthor(this.props.item)}>
-                                            <View style={styles.buttonContainer}>
-                                                <Icon name="ios-person" style={styles.activeIconLarge} />
-                                                <Icon name="ios-add-circle-outline" style={styles.activeIconSmall} />
-                                            </View>
+                                            <Icon name='md-walk' style={styles.menuIcon} />
                                             <Text style={styles.menuText}>Follow this item's author</Text>
                                         </Button>
                                     </MenuOption>
                                 }
                                 {
-                                    canUnfollow &&
+                                    !isOwner &&
                                     <MenuOption onSelect={() => this.unfollowAuthor(this.props.item)}>
                                         <Button iconLeft transparent dark onPress={() => this.unfollowAuthor(this.props.item)}>
-                                            <View style={styles.buttonContainer}>
-                                                <Icon name="ios-person" style={styles.activeIconLarge} />
-                                                <Icon name="ios-remove-circle-outline" style={styles.activeIconSmall} />
-                                            </View>
+                                            <Icon name='md-walk' style={styles.menuIcon} />
                                             <Text style={styles.menuText}>Unfollow this person</Text>
                                         </Button>
                                     </MenuOption>
-                                }
+                                } */}
                                 {
-                                    this.isGroupOwnerOrManager(item) && !isBoosted &&
-                                    <MenuOption onSelect={() => this.boost(item)}>
-                                        <Button iconLeft transparent dark onPress={() => this.boost(item)}>
+                                    isOwner && !isBoosted && // TODO (#149): check if group manager
+                                    <MenuOption onSelect={() => this.boost(this.props.item)}>
+                                        <Button iconLeft transparent dark onPress={() => this.boost(this.props.item)}>
                                             <Icon name='md-flash' style={styles.menuIcon} />
                                             <Text style={styles.menuText}>Boost Post</Text>
                                         </Button>
                                     </MenuOption>
                                 }
                                 {
-                                    isAuthor && !isBoosted &&
-                                    <MenuOption onSelect={() => this.edit(item)}>
-                                        <Button iconLeft transparent dark onPress={() => this.edit(item)}>
+                                    isOwner && !isBoosted &&
+                                    <MenuOption onSelect={() => this.edit(this.props.item)}>
+                                        <Button iconLeft transparent dark onPress={() => this.edit(this.props.item)}>
                                             <Icon name='md-create' style={styles.menuIcon} />
                                             <Text style={styles.menuText}>Edit Post</Text>
                                         </Button>
                                     </MenuOption>
                                 }
                                 {
-                                    isAuthor && !isBoosted &&
-                                    <MenuOption onSelect={() => this.delete(item)}>
-                                        <Button iconLeft transparent dark onPress={() => this.delete(item)}>
+                                    isOwner &&
+                                    <MenuOption onSelect={() => this.delete(this.props.item)}>
+                                        <Button iconLeft transparent dark onPress={() => this.delete(this.props.item)}>
                                             <Icon name='md-trash' style={styles.menuIcon} />
                                             <Text style={styles.menuText}>Delete Post</Text>
-                                        </Button>
-                                    </MenuOption>
-                                }
-                                {
-                                    canSpam &&
-                                    <MenuOption onSelect={() => this.spam(item)}>
-                                        <Button iconLeft transparent dark onPress={() => this.spam(item)}>
-                                            <Image source={require("img/spam.png")} style={[styles.menuIcon, { marginLeft: -2, marginRight: 12 }]} />
-                                            <Text style={styles.menuText}>Mark As Spam</Text>
                                         </Button>
                                     </MenuOption>
                                 }

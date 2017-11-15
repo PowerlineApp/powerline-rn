@@ -26,24 +26,18 @@ import { StyleProvider, variables } from 'native-base';
 import TourScene from './scenes/auth/TourScene';
 import Influences from './scenes/influences/';
 import SearchFollowing from './scenes/influences/search/';
-import AnalyticsView from './scenes/dashboard/analyticsView'
 import Representatives from './scenes/representatives/';
 import RepresentatyProfile from './scenes/representatives/profile/';
 import Profile from './scenes/profile/';
 import CreateGroup from './scenes/dashboard/creategroup/';
 import GroupProfile from './scenes/dashboard/groupprofile/';
 import GroupList from './scenes/dashboard/grouplist/';
-import GroupJoin from './scenes/dashboard/groupJoin/';
 import GroupSearch from './scenes/dashboard/grouplist/search/';
 import GroupMembers from './scenes/dashboard/groupmembers/';
-import GroupInvite from './scenes/dashboard/groupinvite/';
-import ManageGroup from './scenes/dashboard/managegroup/';
 import NewPost from './scenes/dashboard/newpost/';
 import NewPetition from './scenes/dashboard/newpetition';
 import Search from './scenes/search/';
-import GroupMembersManagementScene from './scenes/dashboard/managegroup/scenes/userManagement'
-import GroupBankAccountScene from './scenes/dashboard/managegroup/scenes/fundraiser'
-import GroupAddCardScene from './scenes/dashboard/managegroup/scenes/subscription'
+
 var RouterWithRedux = connect()(Router);
 
 class PLNavigator extends React.Component {
@@ -126,7 +120,6 @@ class PLNavigator extends React.Component {
         >
           <RouterWithRedux>
             <Scene key="root">
-              <Scene key="analyticsView" component={AnalyticsView} hideNavBar/>
               <Scene key="home" component={Home} hideNavBar initial />
               <Scene key="groupSelector" component={GroupSelector} />
               <Scene key="takeTour" component={TourScene} />
@@ -145,12 +138,6 @@ class PLNavigator extends React.Component {
               <Scene key="newpost" component={NewPost} />
               <Scene key="newpetition" component={NewPetition} />
               <Scene key="search" component={Search}/>
-              <Scene key="groupInvite" component={GroupInvite} />
-              <Scene key="groupJoin" component={GroupJoin} />
-              <Scene key="managegroup" component={ManageGroup}/>
-              <Scene key="manageGroupMembers" component={GroupMembersManagementScene}/>
-              <Scene key="groupBankAccountScene" component={GroupBankAccountScene}/>
-              <Scene key="groupAddCardScene" component={GroupAddCardScene}/>
             </Scene>
           </RouterWithRedux>
         </Drawer>

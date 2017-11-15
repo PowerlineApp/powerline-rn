@@ -34,6 +34,7 @@ import { RefreshControl, TouchableOpacity, Image, WebView, Platform } from 'reac
 import Carousel from 'react-native-snap-carousel';
 import styles , { sliderWidth, itemWidth } from './styles';
 const PLColors = require('PLColors');
+import PLLoader from 'PLLoader';
 
 import { loadUserProfileById, resetActivities, editFollowers, votePost, loadActivitiesByUserId, getFollowingUser, unFollowings, putFollowings } from 'PLActions';
 import TimeAgo from 'react-native-timeago';
@@ -188,6 +189,16 @@ class Profile extends Component{
         const { props: { page, count } } = this;
         if (this.state.isLoadingTail === false && count > 0) {
             this.loadNextActivities();
+        }
+    }
+
+    _renderTailLoading() {
+        if (this.state.isLoadingTail === true) {
+            return (
+                <PLLoader position="bottom" />
+            );
+        } else {
+            return null;
         }
     }
 

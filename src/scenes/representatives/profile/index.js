@@ -4,7 +4,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import {
-    Spinner,
     Container,
     Header,
     Left,
@@ -31,6 +30,7 @@ import {
 import styles from './styles';
 const PLColors  = require('PLColors');
 import { loadRepresentatyInfo, loadCommittees, loadSponsoredBills } from 'PLActions';
+import PLLoader from 'PLLoader';
 
 class RepresentatyProfile extends Component{
     static propTypes = {
@@ -136,7 +136,7 @@ class RepresentatyProfile extends Component{
                 >
                     {this.state.data?
                     <View>
-                    {this.state.refreshing && <Spinner color='gray' />}
+                    {this.state.refreshing && <PLLoader position="bottom" />}
                     <List style={{backgroundColor: 'white'}}>
                         <ListItem>
                             <Thumbnail square size={80}  source={{uri: this.state.data.avatar_file_path+'&w=50&h=50&auto=compress,format,q=95'}}/>

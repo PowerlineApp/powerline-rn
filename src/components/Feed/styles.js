@@ -101,7 +101,7 @@ export default {
         alignSelf: 'flex-start'
     },
     descBodyContainer: {
-        alignSelf: 'flex-start',
+        alignSelf: 'flex-start'
     },
     metaContainer: {
         height: metaHeight,
@@ -119,8 +119,7 @@ export default {
     },
     menuIcon: {
         color: '#223549',
-        width: 25,
-        height: 25,
+        width: 25
     },
     menuText: {
         color: '#293f53'
@@ -140,21 +139,5 @@ export default {
     commentPreviewContainer: {
         backgroundColor: '#F8F8F8',
         minHeight: 64
-    },
-    buttonContainer: {
-        flexDirection: 'row'
-    },
-    activeIconLarge: {
-        color: '#223549',
-        fontSize: 25,
-        width: 15,
-        marginRight: 0
-    },
-    activeIconSmall: {
-        color: PLColors.lightText,
-        fontSize: 8,
-        width: 8,
-        marginTop: 15,
-        marginRight: 12
-    },
+    }
 };

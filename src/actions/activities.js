@@ -2,14 +2,12 @@
 import api from '../utils/api';
 var { API_URL, PER_PAGE } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
-import { showToast } from 'PLToast';
 
 //Newsfeed activities can be loaded by All, by Group (town/state/country/group), by Friends, by Specific user, or by Favorites
 async function loadActivities(token: string, page: ?number = 0, perPage: ?number = PER_PAGE, group: ?string = 'all', user: ?string = 'all', followed = 'all'): Promise<Action> {
-    // console.log(`${API_URL}/v2/activities?_format=json&user=${user}&group=${group}&page=${page + 1}&per_page=${perPage}&followed=${followed}`);
+    console.log(`${API_URL}/v2/activities?_format=json&user=${user}&group=${group}&page=${page + 1}&per_page=${perPage}&followed=${followed}`);
     // '/api/v2/activities?user=all&group=all&page=1&per_page=20&followed=true'
     // '/api/v2/activities?user=all&group=all&followed=true&page=0&per_page=20'
-    console.log('API -> ', token, page, perPage, group, user, followed)
     try {
         var response = await fetch(`${API_URL}/v2/activities?_format=json&user=${user}&group=${group}&followed=${followed}&page=${page + 1}&per_page=${perPage}`, {
             method: 'GET',
@@ -19,9 +17,9 @@ async function loadActivities(token: string, page: ?number = 0, perPage: ?number
             }
         });
         var json = await response.json();
-
-        // const statistics = await api.get(token, '/v2/user/statistics');
-        // const { priority_item_count } = await statistics.json();
+        
+        const statistics = await api.get(token, '/v2/user/statistics');
+        const { priority_item_count } = await statistics.json();
 
         if (json.totalItems) {
             const action = {
@@ -31,7 +29,7 @@ async function loadActivities(token: string, page: ?number = 0, perPage: ?number
                     totalItems: json.totalItems,
                     items: json.items,
                     payload: json.payload,
-                    // newsfeedUnreadCount: priority_item_count,
+                    newsfeedUnreadCount: priority_item_count,
                 },
             };
             return Promise.resolve(action);
@@ -47,7 +45,7 @@ async function loadActivities(token: string, page: ?number = 0, perPage: ?number
 }
 async function loadFriendsActivities(token: string, page: ?number = 0, perPage: ?number = PER_PAGE): Promise<Action> {
     try {
-        var response = await fetch(`${API_URL}/v2/activities?_format=json&followed=1&page=${page + 1}&per_page=${perPage}`, {
+        var response = await fetch(`${API_URL}/v2/activities?_format=json&followed=true&page=${page + 1}&per_page=${perPage}`, {
             method: 'GET',
             headers: {
                 'token': token,
@@ -159,43 +157,11 @@ function putSocialActivity(token, id, ignore){
     });
 }
 
-async function subscribeNotification(token: string, id: number, activityId: number, type: string): Promise<Action> {
-    LOG('Subscribe to notification API', id, type);
-    const response = await api.put(token, `/v2/user/${type}s/${id}`);
-    if (response.status === 204) {
-        showToast('Subscribed to post');
-        return {
-            type: 'ACTIVITY_NOTIFICATION_SUBSCRIBE',
-            data: { id: activityId, type }
-        }
-    }
-}
-
-async function unsubscribeNotification(token: string, id: number, activityId: number, type: string): Promise<Action> {
-    LOG('Unsubscribe to notification API', id, type);
-    const response = await api.delete(token, `/v2/user/${type}s/${id}`);
-    if (response.status === 204) {
-        showToast('Unsubscribed');
-        return {
-            type: 'ACTIVITY_NOTIFICATION_UNSUBSCRIBE',
-            data: { id: activityId, type }
-        }
-    }
-}
-
-async function markAsSpam(token: string, id: number, type: string): Promise<Action> {
-    LOG('Mark as spam API', id);
-    const response = await api.post(token, `/v2/${type}s/${id}/spam`);
-}
-
 module.exports = {
     loadActivities,
     resetActivities,
     loadActivitiesByUserId,
     loadActivityByEntityId,
     putSocialActivity,
-    loadFriendsActivities,
-    subscribeNotification,
-    unsubscribeNotification,
-    markAsSpam
+    loadFriendsActivities
 }
