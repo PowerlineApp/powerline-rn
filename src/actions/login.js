@@ -60,7 +60,9 @@ function logInManually(username: string, password: string): ThunkAction {
         dispatch(loadUserProfile(result.data.token));
       }
     );
+    Mixpanel.identify(username);
     Mixpanel.track("Manual Login3");
+        
     return login;
   }
 }
@@ -106,7 +108,8 @@ function logInWithFacebook() {
                     token: user.token,
                     is_registration_complete: user.is_registration_complete
                 };
-                Mixpanel.track("Facebook Login");
+                //Mixpanel.identify(username);
+                //Mixpanel.track("Facebook Login");
                 resolve(data);
             }else{        
               //if user is not already registered with Facebook, but tries to login with Facebook, this gets information from user's FB account  
@@ -141,7 +144,8 @@ function logInWithFacebook() {
                     if(data.email){
                       payloadData.username = data.email.split("@")[0];
                     }
-                    Mixpanel.track("Facebook Registration");
+                    //Mixpanel.identify(username);
+                    //Mixpanel.track("Facebook Registration");
                     resolve(payloadData);
                 });
             }
