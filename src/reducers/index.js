@@ -15,6 +15,7 @@ import notifications from './notifications';
 import followers from './followers';
 import analytics from './analytics';
 import groupManagement from './groupManagement'
+import representativesForm from './representativesForm'
 
 module.exports = combineReducers({
   user,
@@ -25,5 +26,6 @@ module.exports = combineReducers({
   activities,
   notifications,
   followers,
-  groupManagement
+  groupManagement,
+  representativesForm
 });

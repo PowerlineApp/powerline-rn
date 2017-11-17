@@ -44,6 +44,8 @@ import Search from './scenes/search/';
 import GroupMembersManagementScene from './scenes/dashboard/managegroup/scenes/userManagement'
 import GroupBankAccountScene from './scenes/dashboard/managegroup/scenes/fundraiser'
 import GroupAddCardScene from './scenes/dashboard/managegroup/scenes/subscription'
+import ElectedLeadersForm from './scenes/dashboard/electedLadersForm'
+import Modal from './components/Modal'
 var RouterWithRedux = connect()(Router);
 
 class PLNavigator extends React.Component {
@@ -127,7 +129,7 @@ class PLNavigator extends React.Component {
           <RouterWithRedux>
             <Scene key="root">
               <Scene key="analyticsView" component={AnalyticsView} hideNavBar/>
-              <Scene key="home" component={Home} hideNavBar initial />
+              <Scene key="home" component={Home} initial hideNavBar />
               <Scene key="groupSelector" component={GroupSelector} />
               <Scene key="takeTour" component={TourScene} />
               <Scene key="itemDetail" component={ItemDetail} />
@@ -151,6 +153,8 @@ class PLNavigator extends React.Component {
               <Scene key="manageGroupMembers" component={GroupMembersManagementScene}/>
               <Scene key="groupBankAccountScene" component={GroupBankAccountScene}/>
               <Scene key="groupAddCardScene" component={GroupAddCardScene}/>
+              <Scene key='formModal' hideNavBar={false} component={Modal} direction='vertical' rightTitle='Save'/>
+              <Scene key="electedLeadersForm" component={ElectedLeadersForm} hideNavBar />
             </Scene>
           </RouterWithRedux>
         </Drawer>

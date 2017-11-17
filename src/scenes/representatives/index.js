@@ -146,6 +146,14 @@ class Representatives extends Component {
                                 })
                             }
                         </List>
+                        {
+                            this.props.is_registration_complete
+                            ?   <View style={{padding: 20}}>
+                                    <Button style={{width: '100%', justifyContent: 'center'}} onPress={Actions.electedLeadersForm} iconRight><Text>Create Representative</Text><Icon name='circle-plus'></Icon></Button>
+                                </View>
+                            :   null
+                        }
+                        
                     </Content>
                     <PLOverlayLoader visible={this.state.refreshing} logo />
                 </Container>
@@ -160,7 +168,8 @@ const menuContextStyles = {
 };
 
 const mapStateToProps = state => ({
-    token: state.user.token
+    token: state.user.token,
+    is_registration_complete: state.user.profile.is_registration_complete
 });
 
 const mapDispatchToProps = dispatch => ({
