@@ -6,6 +6,7 @@ import com.facebook.react.ReactInstanceManager;
 
 import com.crashlytics.android.Crashlytics;
 import com.facebook.react.ReactApplication;
+import com.vonovak.AddCalendarEventPackage;
 import com.gettipsi.stripe.StripeReactPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.reactnative.ivpusic.imagepicker.PickerPackage;
@@ -49,6 +50,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
         new MainReactPackage(),
+            new AddCalendarEventPackage(),
             new StripeReactPackage(),
             new VectorIconsPackage(),
             new PickerPackage(),

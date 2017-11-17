@@ -183,6 +183,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-add-calendar-event')
     compile project(':tipsi-stripe')
     compile project(':react-native-vector-icons')
     compile project(':react-native-share-extension')

@@ -4,6 +4,7 @@ import {Actions} from 'react-native-router-flux';
 import moment from 'moment';
 import PLAddCard from '../../../common/PLAddCard';
 import { answerPoll, loadUserCards, userAddCard, answerPollPut } from 'PLActions';
+import {presentNewCalendarEventDialog} from 'react-native-add-calendar-event';
 import {
     Container,
     Content,
@@ -55,24 +56,14 @@ class Options extends Component {
         loadUserCards(this.props.token).then(r => {
             let shouldAddCard =  !r.length >= 1;
             if (!shouldAddCard){
-                if (item.answers[0]){
-                    this.changeAnswer(token, item.entity.id , this.state.options[this.state.checked].id, item.poll.is_user_amount ? this.state.amount : null ).then(r => {
-                        this.alertMessage();
-                        this.setState({voting: false});
-                    }).catch(e => {
-                        alert('error :' + e.message);
-                        console.warn('error: ', e);
-                    });
-                } else {
-                    this.sendAnswer(token, item.entity.id , this.state.options[this.state.checked].id, item.poll.is_user_amount ? this.state.amount : null ).then(r => {
-                        this.alertMessage();
-                        this.setState({voting: false});
-                    }).catch(e => {
-                        alert('error :' + e.message);
-                        console.warn('error: ', e);
-                    });
-                    this.props.onVote();                    
-                }
+                this.sendAnswer(token, item.entity.id , this.state.options[this.state.checked].id, item.poll.is_user_amount ? this.state.amount : null ).then(r => {
+                    this.alertMessage();
+                    this.setState({voting: false});
+                }).catch(e => {
+                    alert('error :' + e.message);
+                    console.warn('error: ', e);
+                });
+                this.props.onVote();                    
             } else {
                 alert("You don't have any credit cards setup yet, please add your card info to proceed with payment");
                 this.setState({voting: false});
@@ -90,14 +81,31 @@ class Options extends Component {
 
         this.setState({options, checked: index, amount});
         if (this.props.item.entity.type !== 'crowdfunding-payment-request'){
-            this.props.item.answers[0]
-            ? this.changeAnswer(token, item.entity.id, options[index].id).then(r => {
-                this.setState({voting: false});
-            })
-            : this.sendAnswer(token, item.entity.id, options[index].id).then(r => {
+            this.sendAnswer(token, item.entity.id, options[index].id).then(r => {
                 this.setState({voting: false});
             });
             this.props.onVote();
+        }
+
+        if (item.entity.type === 'leader-event'){
+            // open callendar
+            let eventConfig = {
+                title: item.title,	
+                startDate: moment(item.poll.started_at).utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+                endDate: moment(item.poll.finished_at).utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+                notes: item.description
+            };
+            console.log(eventConfig);
+            presentNewCalendarEventDialog(eventConfig).then(eventId => {
+                if (eventId){
+                    // id of event he might have created.
+                    console.log(eventId);
+                } else {
+                    //dissmissed - mixpanel here?
+                }
+            }).catch(e => {
+                console.log('error => ', e);
+            });
         }
     }
 
@@ -106,16 +114,9 @@ class Options extends Component {
         this.setState({voting: true});
         return answerPoll(token, id , answerId, answerAmount);
     }
-    
-    changeAnswer(token, id, answerId, answerAmount) {
-        console.log('changing answer...');
-        this.setState({voting: true});
-        return answerPollPut(token, id, answerId, answerAmount);
-    }
 
     sendPayment(){
         this.setState({voting: true});
-        console.log('THIS => ', this);
         this.verifyCardAndSendAnswer();
     }
 
