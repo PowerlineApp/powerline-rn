@@ -71,7 +71,7 @@ class ElectedLeadersForm extends Component {
         if(data.country === "US" || data.country === 'us') {
             const obj = {
                 city: data.city,
-                country: {"USA": `${data.country.toUpperCase()}`},
+                country: data.country.toUpperCase(),
                 email: data.emailAddress,
                 private_email: data.privateEmailAddress,
                 phone: data.phone,
