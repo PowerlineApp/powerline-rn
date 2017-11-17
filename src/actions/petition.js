@@ -47,31 +47,6 @@ async function unsignUserPetition(token: string, petitionId: string) {
     }
 }
 
-async function signLeaderPetition(token: string, petitionId: string, option: string) {
-    console.log('to the api => ', token, petitionId, option, ' --- ' + `${API_URL}/v2/polls/${petitionId}/answers/${option}`)
-    try {
-        let response = await fetch(`${API_URL}/v2/polls/${petitionId}/answers/${option}`, {
-            method: 'PUT',
-            headers: {
-                'token': token,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-            })
-        });
-        console.log('real response: x=x=>', response);
-        
-        // let responseJson = await response.json();
-        return response;
-    } catch (error) {
-        console.log('real error =x=x=> ', error);
-        
-        handleError(error);
-    }
-}
-
-
-
 
 function handleError(error) {
     const message = error.message || error;
@@ -81,6 +56,5 @@ function handleError(error) {
 
 module.exports = {
     signUserPetition,
-    unsignUserPetition,
-    signLeaderPetition
+    unsignUserPetition
 };

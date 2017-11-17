@@ -50,10 +50,11 @@ class SubscriptionLevel extends Component {
   }
 
   render() {
+    console.log(this.props);
     return null;
     return (
       <View>
-        {this.props.subscription
+        {(this.props.subscription && this.props.subscription.package_type)
            ? <Label>{`Current Account: ${this.props.subscription.package_type.charAt(0).toUpperCase() + this.props.subscription.package_type.slice(1)}`}</Label>
           : <Spinner />
         }

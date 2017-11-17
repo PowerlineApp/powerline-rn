@@ -42,9 +42,10 @@ import NewPost from './scenes/dashboard/newpost/';
 import NewPetition from './scenes/dashboard/newpetition';
 import NewLeaderContent from './scenes/dashboard/newleadercontent';
 import Search from './scenes/search/';
-import GroupMembersManagementScene from './scenes/dashboard/managegroup/scenes/userManagement'
-import GroupBankAccountScene from './scenes/dashboard/managegroup/scenes/fundraiser'
-import GroupAddCardScene from './scenes/dashboard/managegroup/scenes/subscription'
+import GroupMembersManagementScene from './scenes/dashboard/managegroup/scenes/userManagement';
+import GroupBankAccountScene from './scenes/dashboard/managegroup/scenes/fundraiser';
+import GroupAddCardScene from './scenes/dashboard/managegroup/scenes/subscription';
+import UserAddCard from './scenes/profile/userAddCard.js';
 var RouterWithRedux = connect()(Router);
 
 class PLNavigator extends React.Component {
@@ -153,6 +154,7 @@ class PLNavigator extends React.Component {
               <Scene key="manageGroupMembers" component={GroupMembersManagementScene}/>
               <Scene key="groupBankAccountScene" component={GroupBankAccountScene}/>
               <Scene key="groupAddCardScene" component={GroupAddCardScene}/>
+              <Scene key="userAddCardScene" component={UserAddCard} />
             </Scene>
           </RouterWithRedux>
         </Drawer>

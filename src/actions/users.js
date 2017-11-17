@@ -3,6 +3,39 @@ var { Action, ThunkAction } = require('./types');
 var FacebookSDK = require('FacebookSDK');
 import api from '../utils/api';
 
+async function loadUserCards(token) {
+    try {
+        let res = await fetch(`${API_URL}/v2/cards`, {
+            method: 'GET',
+            headers: {
+                'token': token,
+                'Content-Type': 'application/json',
+            }
+        })
+        return res.json();
+    } catch (error) {
+        console.warn(error);   
+    }
+}
+
+async function userAddCard (token, data) {
+    console.log(API_URL + '/v2/cards', token, data);
+    try {
+        let res = await fetch(API_URL + '/v2/cards', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'token': token
+            },
+            body: JSON.stringify(data)
+        });
+        console.log('res on adding card', res)
+        return res.json();
+    } catch (error) {
+        console.warn(error);
+    }
+}
+
 async function loadUserProfile(token: string): Promise<Action> {
     try {
         var response = await fetch(`${API_URL}/v2/user?_format=json`, {
@@ -148,6 +181,8 @@ async function getFriendsSuggestions(token: string) {
 
 module.exports = {
     loadUserProfile,
+    loadUserCards,
+    userAddCard,
     loadUserProfileById,
     loadUserData,
     getInvites,

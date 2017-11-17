@@ -884,13 +884,13 @@ class ItemDetail extends Component {
     
     _renderGroupCard(item) {
         return (
-            <Card>
-                <FeedDescription item={item} profile={this.props.profile} isInDetail />
-                <FeedCarousel item={item} />
-                <Options item={item} profile={this.props.profile} />
-                <View style={styles.borderContainer} />
-                <FeedFooter isInDetail item={item} profile={this.props.profile} token={this.props.token} showAnalytics />
-            </Card>
+                <Card>
+                    <FeedDescription item={item} profile={this.props.profile} isInDetail />
+                    <FeedCarousel item={item} />
+                    <Options onVote={() => this.loadEntity()} item={item} profile={this.props.profile} token={this.props.token} />
+                    <View style={styles.borderContainer} />
+                    <FeedFooter isInDetail item={item} profile={this.props.profile} token={this.props.token} showAnalytics />
+                </Card>
         );
     }
 
@@ -956,14 +956,8 @@ class ItemDetail extends Component {
     }
 
     render() {
-        // console.log(this.state.sharing);
-        // console.log(this.refs);
         if (this.item === null) {
             return ( null);
-            // {/* Turning of Pulse Loader until we can stabilize its performance
-            //     <PLOverlayLoader visible={this.state.isLoading} logo />
-            // */}
-            // );
         }
         let item = this.item;
         return (
@@ -977,14 +971,14 @@ class ItemDetail extends Component {
                             //Eventually this should show the Group Banner GH19
                             //https://github.com/PowerlineApp/powerline-mobile/issues/596
                             <Image
-                                style={styles.headerImage}
-                                source={require('img/item_detail_header.png')}
+                            style={styles.headerImage}
+                            source={require('img/item_detail_header.png')}
                             />
                         )}
                         renderFixedForeground={() => (
                             <Animatable.View
-                                style={styles.navTitleView}
-                                ref={(navTitleView) => { this.navTitleView = navTitleView; }}>
+                            style={styles.navTitleView}
+                            ref={(navTitleView) => { this.navTitleView = navTitleView; }}>
                                 <Header style={{ backgroundColor: 'transparent' }}>
                                     <Left>
                                         <Button transparent onPress={this.onBackPress} style={{ width: 50, height: 50 }}  >
@@ -1011,12 +1005,13 @@ class ItemDetail extends Component {
                                 </Body>
                             </Left>
                         )}>
+                                    <Content>
                         <TriggeringView
                             onHide={() => this.navTitleView.fadeInUp(200)}
                             onDisplay={() => this.navTitleView.fadeOut(100)}>
                             {this._renderHeader(item)}
                         </TriggeringView>
-                        {this._renderActivity(item, this.state)}
+                            {this._renderActivity(item, this.state)}
                         <View style={styles.borderContainer} />
                         {this._renderAddComment()}
                         <View style={styles.borderContainer} />
@@ -1027,7 +1022,8 @@ class ItemDetail extends Component {
                         {this._renderLoadMore()}
                         {this._renderCommentsLoading()}
                         <View style={{ height: 50 }} />
-                    </HeaderImageScrollView>
+                </Content>
+                            </HeaderImageScrollView>
                 </Container>
                 {
                     this.renderFloatingActionButton(item)

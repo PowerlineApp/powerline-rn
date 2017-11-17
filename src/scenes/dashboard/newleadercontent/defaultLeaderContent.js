@@ -106,6 +106,7 @@ class NewLeaderContent extends Component {
         // console.log('group ==> ', group)
         
         getGroups(token).then(ret => {
+            console.log('ret => ', ret)
             let showCommunity = true, selectedGroupIndex = -1;
             if (group && group !== 'all'){
                 showCommunity = false;
@@ -123,12 +124,21 @@ class NewLeaderContent extends Component {
 
     updateBankInfo(token, groupId, type){
         if (type !== 'group_fundraiser') return
-        console.log('==>', token, groupId)
         this.setState({enableSend: false});
         groupBankAccounts(token, groupId).then(r => {
             r.json().then(r => {
+                console.log('BANK ACCOUNTS:', r)
                 if (!r || r.length === 0){
                     this.setState({blockFundraiser: true})
+                    Alert.alert('This group does not have an Bank Account setup yet',
+                        "It seems that your group doesn't have any bank account registered. Please add a bank account to your group or ask the group owner to do so.",
+                        [
+                            {text: 'Cancel', onPress: () => Actions.pop(), style: 'cancel'},
+                            {text: 'OK', onPress: () => {Actions.pop(); setTimeout(() => {Actions.groupprofile({id: groupId});}, 500);}},
+                        ],
+                          {cancelable: false}
+                    )
+
                 } else {
                     this.setState({enableSend: true})
                 }
@@ -180,8 +190,10 @@ class NewLeaderContent extends Component {
             : alert('Please select Group.');
             return;
         }
-
+        
         let group = this.state.grouplist[this.state.selectedGroupIndex];
+        // re-check if user has bank account set up
+        this.updateBankInfo(this.props.token, group.id, this.props.type);
         groupId = group.id;
         Alert.alert(
             'Are you sure?',
@@ -221,9 +233,10 @@ class NewLeaderContent extends Component {
         let type = 'petition';
         let petition_title = state.title;
         let petition_body = state.content;
+        let subject = state.content;
 
-        if (type && petition_title && petition_body)
-            return {type, petition_title, petition_body}; // subject??? - ok
+        if (type && petition_title && petition_body && subject)
+            return {type, petition_title, petition_body, subject}; // subject??? - ok
 
         if (!petition_title){
             alert("Please create a title for your petition");
@@ -550,14 +563,11 @@ class NewLeaderContent extends Component {
     }
 
     renderAttachments(){
-        if (this.state.showCommunity){
-            return <View style={{height: 70, backgroundColor: 'rgba(0,0,0,0.4)'}} />;
-        }
         if (!this.props.options.attachments){
             return <View />
         }
-        let height = 40; 
-        let width = 50;
+        let height = 30;
+        let width = 40;
 
         let {attachments} = this.state;
         return (
@@ -567,7 +577,7 @@ class NewLeaderContent extends Component {
                         // console.log(attachment);
                         if (attachment.type === 'image'){
                             return (
-                                <View style={{ flexDirection: 'row', margin: 8, width: width, height: height, alignItems: 'center', justifyContent: 'center' }}>
+                                <View style={{ flexDirection: 'row', margin: 4, width: width, height: height, alignItems: 'center', justifyContent: 'center' }}>
                                 <Image source={{ uri: `data:image/png;base64,${attachment.content}` }} resizeMode="cover" style={{ width: width, height: height }} />
                                 <Button transparent style={styles.deleteIconButtonContainer} onPress={() => this.removeAttachment(index)}>
                                 <View style={styles.deleteIconContainer}>
@@ -578,7 +588,7 @@ class NewLeaderContent extends Component {
                             )
                         }
                         return (
-                            <View style={{ flexDirection: 'row', margin: 8, width: width, height: height, alignItems: 'center', justifyContent: 'center' }}>
+                            <View style={{ flexDirection: 'row', margin: 4, width: width, height: height, alignItems: 'center', justifyContent: 'center' }}>
                                     <Image source={{url: this.getYoutubeURL(attachment.content)}} resizeMode="cover" style={{ width: width, height: height }} />
                                     <Button transparent style={styles.deleteIconButtonContainer} onPress={() => this.removeAttachment(index)}>
                                         <View style={styles.deleteIconContainer}>
@@ -591,10 +601,10 @@ class NewLeaderContent extends Component {
             {
                 attachments.length < 3
                 ? [
-                    <Button transparent style={{ margin: 8, height: height }} onPress={this.attachImage}>  
+                    <Button transparent style={{ margin: 4, height: height }} onPress={this.attachImage}>  
                         <Image source={require("img/upload_image.png")} resizeMode="contain" style={{ width: width, height: height, tintColor: 'gray' }} />
                     </Button>,
-                    <Button transparent style={{ margin: 8, height: height }} onPress={() => this.openVideoAttachment()}>
+                    <Button transparent style={{ margin: 4, height: height }} onPress={() => this.openVideoAttachment()}>
                         <Image source={require("img/youtube_link.png")} resizeMode="contain" style={{ width: width, height: height, tintColor: 'gray' }} />
                     </Button>
                 ]
@@ -622,6 +632,7 @@ class NewLeaderContent extends Component {
         return (
             <Container style={styles.container}>
                 <Modal visible={this.state.videoModal} transparent>
+
                     <View style={{flexDirection: 'column', alignSelf: 'center', width: '100%' ,borderRadius: 8, margin: 16, marginTop: 250, backgroundColor: '#ccc', padding: 16, paddingRight: 8, paddingLeft: 8}}>
                         <View style={{flexDirection: 'row'}}>
                             <TextInput
@@ -631,7 +642,7 @@ class NewLeaderContent extends Component {
                                 value={this.state.videoURL}
                                 onChangeText={(text) => this.setState({videoURL : text})}
                                 underlineColorAndroid={'transparent'}
-                            />
+                                />
                             <Button onPress={() => this.addVideoAttachment()}>
                                 <Text>Ok</Text>
                             </Button>
@@ -639,7 +650,10 @@ class NewLeaderContent extends Component {
                             {this.getYoutubeThumbnail(this.state.videoURL)}
                     </View>
                 </Modal>
-                <FundraiserBlocker visible={this.state.blockFundraiser} />
+                {
+                    /* this.state.blockFundraiser && !this.state.showCommunity &&
+                    // <FundraiserBlocker group={this.state.grouplist[this.state.selectedGroupIndex]} visible={this.state.blockFundraiser && !this.state.showCommunity} /> */
+                }
                 <Header style={styles.header}>
                     <View style={{alignSelf: 'flex-start'}}>
                         <Button transparent onPress={() => Actions.pop()} style={{ width: 50, height: 50, paddingLeft: 0 }}  >
@@ -679,32 +693,33 @@ class NewLeaderContent extends Component {
                     </List>
                 <ScrollView keyboardShouldPersistTaps={'handled'} style={styles.main_content} >
                     <ScrollView style={{margin: 16}}  >
+                        <Content>
                         {
                             hasTitle &&
                             <TextInput
-                                placeholder={titlePlaceholder}
-                                ref={(r) => this.titleRef = r}
-                                underlineColorAndroid='rgba(0,0,0,0)'
-                                style={styles.input_text}
-                                autoCorrect={false}
-                                value={this.state.title}
-                                onChangeText={(text) => this.changeTitle(text)}
-                                underlineColorAndroid={'transparent'}
+                            placeholder={titlePlaceholder}
+                            ref={(r) => this.titleRef = r}
+                            underlineColorAndroid='rgba(0,0,0,0)'
+                            style={styles.input_text}
+                            autoCorrect={false}
+                            value={this.state.title}
+                            onChangeText={(text) => this.changeTitle(text)}
+                            underlineColorAndroid={'transparent'}
                             />
                         }
                         {
                             hasDescription &&
                             <TextInput
-                                maxLength={10000}
-                                underlineColorAndroid='rgba(0,0,0,0)'
-                                ref={(r) => this.descriptionRef = r}
-                                onSelectionChange={this.onSelectionChange}
-                                placeholderTextColor='rgba(0,0,0,0.1)'
-                                style={wrapDescription ? styles.wrappedTextarea : styles.textarea}
-                                multiline
-                                placeholder={descriptionPlaceHolder}
-                                value={this.state.content}
-                                onChangeText={(text) => this.changeContent(text)}
+                            maxLength={10000}
+                            underlineColorAndroid='rgba(0,0,0,0)'
+                            ref={(r) => this.descriptionRef = r}
+                            onSelectionChange={this.onSelectionChange}
+                            placeholderTextColor='rgba(0,0,0,0.1)'
+                            style={wrapDescription ? styles.wrappedTextarea : styles.textarea}
+                            multiline
+                            placeholder={descriptionPlaceHolder}
+                            value={this.state.content}
+                            onChangeText={(text) => this.changeContent(text)}
                             />
                         }
                         {
@@ -718,18 +733,19 @@ class NewLeaderContent extends Component {
                         {
                             hasAnswers &&
                             <Answers
-                                setAnswer={(options) => this.setState({options})}
-                                addAnswersButton={addAnswersButton}
-                                answersPlaceholder={answersPlaceholder}
-                                answerType={answerType}
+                            setAnswer={(options) => this.setState({options})}
+                            addAnswersButton={addAnswersButton}
+                            answersPlaceholder={answersPlaceholder}
+                            answerType={answerType}
                             />
                         }
+                    </Content>
                     </ScrollView>
                         {
                             this.state.showCommunity &&
                             <CommunityView
-                                grouplist={this.state.grouplist}
-                                onPress={this.selectGroupList.bind(this)}
+                            grouplist={this.state.grouplist}
+                            onPress={this.selectGroupList.bind(this)}
                             />
                         }
                 </ScrollView>
