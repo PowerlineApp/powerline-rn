@@ -5,6 +5,8 @@ import { Button, Icon, Left, CardItem, Label } from 'native-base';
 import styles from '../styles';
 import { votePost, loadActivityByEntityId, signUserPetition, unsignUserPetition, signLeaderPetition, undoVotePost } from 'PLActions';
 import _ from 'lodash';
+import { showToast } from 'PLToast';
+
 
 class FeedFooter extends Component {
     constructor (props) {
@@ -34,34 +36,39 @@ class FeedFooter extends Component {
         let newItem = _.cloneDeep(this.state.item);
 
         const { profile, token } = this.props;
-
+        console.log('\n before --- \n votes: ',newItem.post.votes[0], '\n upvotes: ', newItem.upvotes_count, '\n downvotes: ' , newItem.downvotes_count, '----------');
+        
         // user shouldn't vote his own post
         if (profile.id === item.user.id) {
             alert("You're not supposed to vote on your own Post.");
             return;
         }
+        // console.log(item, option);
         if (this.state.postingVote) {
-            // console.log('posting already!')
+            console.log('posting already!');
             return;
         }
         // uses this state to avoid double clicking, the user is allowed to vote again only when the last request is done
         this.setState({postingVote: true});
         let undo = false;
-
+        console.log(newItem, option);
         if (option === 'upvote') {
             if (!newItem.post.votes[0]) {
             // didnt have any option checked
+                console.log(2);
                 newItem.post.votes.push({option: 1});
                 newItem.upvotes_count += 1;
             } else {
                 // user is unsetting his vote
                 if (newItem.post.votes[0].option === 1) {
-                    newItem.post.votes[0].option = null;
+                    console.log(3);
+                    newItem.post.votes = []; //[0].option = null;
                     newItem.upvotes_count -= 1;
                     undo = true;
                 } else {
                     // user is setting his vote to up, had the down up checked
                     if (item.post.votes[0].option === 2) {
+                        console.log(4);
                         newItem.post.votes[0].option = 1;
                         newItem.upvotes_count += 1;
                         newItem.downvotes_count -= 1;
@@ -70,37 +77,56 @@ class FeedFooter extends Component {
             }
         } else if (option === 'downvote') {
             if (!newItem.post.votes[0]) {
+                console.log(5);
                 // didnt have any option checked
                 newItem.post.votes.push({option: 2});
                 newItem.downvotes_count += 1;
-            }
-            // user is unsetting his vote
-            if (newItem.post.votes[0].option === 2) {
-                newItem.post.votes[0].option = null;
-                newItem.downvotes_count -= 1;
-                undo = true;
             } else {
-                // user is setting his vote to down, had the option up checked
-                if (newItem.post.votes[0].option === 1) {
-                    newItem.post.votes[0].option = 2;
-                    newItem.upvotes_count -= 1;
-                    newItem.downvotes_count += 1;
+                // user is unsetting his vote
+                if (newItem.post.votes[0].option === 2) {
+                    console.log(6);
+                    newItem.post.votes = []; // [0].option = null;
+                    newItem.downvotes_count -= 1;
+                    undo = true;
+                } else {
+                    // user is setting his vote to down, had the option up checked
+                    if (newItem.post.votes[0].option === 1) {
+                        console.log(7);
+                        newItem.post.votes[0].option = 2;
+                        newItem.upvotes_count -= 1;
+                        newItem.downvotes_count += 1;
+                    }
                 }
             }
         }
 
+        console.log('\n after --- \n votes: ',newItem.post.votes[0], '\n upvotes: ', newItem.upvotes_count, '\n downvotes: ' , newItem.downvotes_count, '----------');
         this.setState({item: newItem});
 
+
         let response;
-        if (item.entity.type === 'post') {
+        try {
             if (undo) {
                 response = await undoVotePost(this.props.token, item.entity.id);
-                return;
+                console.log('response', response);
             } else {
                 response = await votePost(this.props.token, item.entity.id, option);
+                console.log('response', response);
+                if (response.status === 200) {
+                    if (option === 'upvote') {
+                        showToast('Upvoted');
+                    }
+                    if (option === 'downvote') {
+                        showToast('Downvoted');
+                    }
+                }
             }
+        } catch (error) {
+            console.log('Failure on voting. was undoing? ', undo, error);
+            this.setState({item: originalItem});
+            
         }
-        this.setState({postingVote: false})
+        this.setState({postingVote: false});
     }
 
     /**
@@ -110,31 +136,26 @@ class FeedFooter extends Component {
      */
     async sign (item, signed) {
         const { profile, token } = this.props;
-
         let originalItem = _.cloneDeep(item);
         // avoid double tapping until the response comes
-
-        
         // user shouldn't sign his own petition
         if (profile.id === item.user.id) {
             alert("You're not supposed to sign your own Petition.");
             return;
         }
-        
         if (this.state.signing) {
             return;
         }
-        
         let entity;
         if (item.entity.type === 'user-petition'){
-            if (signed) item.user_petition.signatures = [{option_id : 2}]  
-            else item.user_petition.signatures = [{option_id : 1}]
-            this.setState({item: item})
-            entity = 'petition'
+            if (signed) item.user_petition.signatures = [{option_id : 2}];  
+            else item.user_petition.signatures = [{option_id : 1}];
+            this.setState({item: item});
+            entity = 'petition';
         } else {
-            if (signed) item.poll.answers = [{option_id : 2}]
-            else item.poll.answers = [{option_id : 1}]
-            this.setState({item: item})
+            if (signed) item.poll.answers = [{option_id : 2}];
+            else item.poll.answers = [{option_id : 1}];
+            this.setState({item: item});
             entity = 'poll';
 
         }
@@ -150,10 +171,30 @@ class FeedFooter extends Component {
             } else {
                 res = await signLeaderPetition(token, item.entity.id, signed ? 2 : 1);
             }
-            this.setState({signing: false})
+            this.setState({signing: false});
         } catch (error) {
             console.log(error);
             this.setState({item: item, signing: false});
+        }
+    }
+
+
+    async signLeaderPetition(item, signed, signId, unsignId){
+        const { profile, token } = this.props;
+        let originalItem = _.cloneDeep(item);
+        if (this.state.signing) {
+            return;
+        }
+        let option = signed ? unsignId : signId;
+        item.poll.answers[0] = {option: {id: option}};
+        let res;
+        this.setState({signing: true});
+        try {
+            res = await signLeaderPetition(token, item.entity.id, option);
+            this.setState({signing: false, item});
+        } catch (error) {
+            console.log(error);
+            this.setState({item: originalItem, signing: false});
         }
     }
 
@@ -276,24 +317,18 @@ class FeedFooter extends Component {
     }
     _renderLeaderPetitionFooter (item) {
         let isSigned = false;
-        if (
-            item && item.poll &&
-            item.poll.answers && item.poll.answers[0]
-        ) {
-            let vote = item.poll.answers[0];
-            if (vote.option_id === 1) {
-                isSigned = true;
-            }
-        }
-        if (this.state.signing){
-            isSigned = !isSigned;
-        }
+        let options = item.poll.options;
+        let signOptionIndex = item.poll.options.findIndex(opt => opt.value === 'sign');
+        let unsignOptionIndex = signOptionIndex === 0 ? 1 : 0;
 
+        if (item.poll.answers[0] && item.poll.options[signOptionIndex].id === item.poll.answers[0].option.id){
+            isSigned = true;
+        }
         // console.log(item.description, isSigned)
         return (
             <CardItem footer style={{ height: 35 }}>
                 <Left style={{ justifyContent: 'space-between' }}>
-                    <Button iconLeft transparent style={styles.footerButton} onPress={() => this.sign(item, isSigned)}>
+                    <Button iconLeft transparent style={styles.footerButton} onPress={() => this.signLeaderPetition(item, isSigned, item.poll.options[signOptionIndex].id, item.poll.options[unsignOptionIndex].id)}>
                         <Icon name='md-arrow-dropdown' style={styles.footerIcon} />
                         <Label style={styles.footerText} > {isSigned ? 'Unsign' : 'Sign'}</Label>
                     </Button>
@@ -396,6 +431,27 @@ class FeedFooter extends Component {
             </CardItem>
         );
     }
+    _renderFundraiserFooter (item) {
+        return (
+            <CardItem footer style={{ height: 35 }}>
+                <Left style={{ justifyContent: 'space-between' }}>
+                    <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item)} >
+                        <Icon name='md-arrow-dropdown' style={styles.footerIcon} />
+                        <Label style={styles.footerText}>Donate</Label>
+                    </Button>
+                    <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, {commenting: true})} >
+                        <Icon active name='ios-undo' style={styles.footerIcon} />
+                        <Label style={styles.footerText} >
+                            {'Reply '}
+                            {item.comments_count ? item.comments_count : 0}
+                        </Label>
+                    </Button>
+                </Left>
+            </CardItem>
+        );
+    }
+
+    
 
     _renderDefaultFooter (item) {
         return null;
@@ -405,7 +461,7 @@ class FeedFooter extends Component {
         let {item} = this.state;
         const showAnalytics = true;
         // console.log('item in state => ', item)
-        let footer = null
+        let footer = null;
         switch (item.entity.type) {
         case 'post':
             footer =  this._renderPostFooter(item, showAnalytics);
@@ -419,8 +475,9 @@ class FeedFooter extends Component {
         case 'question':
             footer =  this._renderQuestionFooter(item, false);
             break;
+        case 'crowdfunding-payment-request':
         case 'payment-request':
-            footer = null;
+            footer = this._renderFundraiserFooter(item, false);
             break;
         case 'leader-event':
             footer =  this._renderLeaderEventFooter(item, false);
@@ -435,7 +492,7 @@ class FeedFooter extends Component {
             <View style={{backgroundColor: '#ff0'}} >
                 {footer}
             </View>
-        )
+        );
     }
 }
 

@@ -107,7 +107,7 @@ class ManageGroup extends Component {
               <AccordionItem title="Subscription Level">
                 <Options.SubscriptionLevel group={group} token={token}/>
               </AccordionItem>
-              <AccordionItem title="Funraiser Setup">
+              <AccordionItem title="Fundraiser Setup">
                 <Options.FundRaiser group={group}/>
               </AccordionItem>
               <AccordionItem title="Membership Control">

@@ -168,7 +168,7 @@ class FriendActivity extends Component {
 
 const optionsStyles = {
     optionsContainer: {
-        backgroundColor: '#fafafa',
+        backgroundColor: '#55c5ff',
         paddingLeft: 5,
         width: WINDOW_WIDTH,
     },

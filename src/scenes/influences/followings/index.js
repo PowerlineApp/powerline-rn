@@ -160,7 +160,9 @@ class Followings extends Component {
           </List> :
           <Text></Text>
         }
+        {/* Turning off Pulse Loader until we can stabilize its performance
         <PLOverlayLoader visible={this.state.refreshing} logo />
+        */}
       </ContentPlaceholder>
     );
   }

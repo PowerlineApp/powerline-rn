@@ -50,9 +50,15 @@ class SubscriptionLevel extends Component {
   }
 
   render() {
+    console.log(this.props);
+    if (this.props.subscription.code === '403') {
+      return (
+        <Label>You do not have permission to see this content</Label>
+      )
+    }
     return (
       <View>
-        {this.props.subscription
+        {(this.props.subscription.code !== '403' && this.props.subscription.package_type)
            ? <Label>{`Current Account: ${this.props.subscription.package_type.charAt(0).toUpperCase() + this.props.subscription.package_type.slice(1)}`}</Label>
           : <Spinner />
         }

@@ -397,6 +397,16 @@ function getUsersByGroup(token, groupId, query){
     })
 }
 
+async function groupBankAccounts(token, groupId) {
+    return fetch(API_URL + `/v2/groups/${groupId}/bank-accounts`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token
+        }
+    })
+}
+
 function updateGroupAvatar(token, groupId, image) {
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2/groups/' + groupId + '/avatar', {
@@ -921,6 +931,7 @@ module.exports = {
     getUsersByGroup,
     inviteUpvotersToGroup,
     getGroupRequiredFields,
+    groupBankAccounts,
     updateGroupAvatar,
     updateGroupBanner,
 

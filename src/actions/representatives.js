@@ -1,6 +1,7 @@
 var { API_URL } =  require('../PLEnv');
 
 function getRepresentatives(token, page, per_page){
+    console.log(API_URL + '/representatives?_format=json&page='+page +'&per_page=' + per_page, token)
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/representatives?_format=json&page='+page +'&per_page=' + per_page, {
             method: 'GET',

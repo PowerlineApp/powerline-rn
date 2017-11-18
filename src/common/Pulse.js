@@ -2,7 +2,8 @@ import React from 'react';
 import { View, StyleSheet, Animated, Easing, Dimensions, Platform } from 'react-native';
 
 const { height, width } = Dimensions.get('window');
-
+// https://github.com/mastermoo/react-native-pulse-loader/blob/master/Pulse.js - this is original credits, greg made changes based on this one
+// https://github.com/MrVisitor/react-native-pulse-loader/commit/538c9beec8364844e60cb6d178663b40dbe6322d we should use this one
 export default class Pulse extends React.Component {
   constructor(props) {
     super(props);

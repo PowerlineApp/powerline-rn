@@ -17,7 +17,7 @@ class FeedCommentPreview extends Component {
     }
 
     redirect (item, options) {
-        let type = 'poll';
+        let type = item.entity.type;
         if (item.post) {
             type = 'post';
         } else if (item.user_petition) {
@@ -47,13 +47,13 @@ class FeedCommentPreview extends Component {
                     <Left>
                         <View>
                             <Thumbnail small
-                                source={comment.author_picture ? { uri: comment.author_picture + '&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")}
+                                source={comment.author_picture ? { uri: comment.author_picture + '&w=75&h=75&auto=compress,format,q=95' } : require("img/blank_person.png")}
                                 defaultSource={require("img/blank_person.png")}
                             />
                         </View>
                         <Body>
-                            <Text style={styles.title} >{comment.user.full_name}</Text>
-                            <Text>{this.limitString(comment.comment_body)}</Text>
+                            <Text style={styles.commentTitle} >{comment.user.full_name}</Text>
+                            <Text style={styles.commentPreviewText} >{this.limitString(comment.comment_body)}</Text>
                         </Body>
                     </Left>
                 </CardItem>
