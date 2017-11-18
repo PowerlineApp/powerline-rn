@@ -25,6 +25,8 @@ import { getFollowers, unFollowers, acceptFollowers } from 'PLActions';
 import styles from './styles';
 import ContentPlaceholder from '../../../components/ContentPlaceholder';
 import PLOverlayLoader from 'PLOverlayLoader';
+var { MixpanelToken } = require('../../../PLEnv');
+var Mixpanel = require('react-native-mixpanel');
 
 class Followers extends Component {
   static propTypes = {
@@ -155,7 +157,7 @@ class Followers extends Component {
                   <ListItem avatar key={index} onPress={() => this.goToProfile(follow.id)}>
                     <Left>
                       { follow.avatar_file_name &&
-                        <Thumbnail source={{ uri: follow.avatar_file_name + '&w=50&h=50&auto=compress,format,q=95' }} />
+                        <Thumbnail source={{ uri: follow.avatar_file_name + '&w=150&h=150&auto=compress,format,q=95' }} />
                       }
                     </Left>
                     <Body>
@@ -187,7 +189,9 @@ class Followers extends Component {
             }
           </List>
         }
+        {/* Turning off Pulse Loader until we can stabilize its performance
         <PLOverlayLoader visible={refreshing} logo />
+        */}
       </ContentPlaceholder>
     );
   }
@@ -198,4 +202,5 @@ const mapStateToProps = state => ({
   token: state.user.token
 });
 
+Mixpanel.sharedInstanceWithToken(MixpanelToken);
 export default connect(mapStateToProps)(Followers);

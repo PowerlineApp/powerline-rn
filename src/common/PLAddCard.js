@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet,  } from 'react-native';
 import { connect } from 'react-redux'
 import Stripe, {PaymentCardTextField} from 'tipsi-stripe'
 import {
@@ -93,6 +93,10 @@ class PLAddCard extends Component {
             .catch(err => console.log(err))
       }
       render() {
+        let countryList = [{label:'United States', value:'us'}];
+        let currencyList = {
+            'us': [{label:'USD', value:'usd'}]
+        };
         return (
             <Card style={{padding: 10}}>
                 <View style={{marginVertical: 5}}>
@@ -103,18 +107,25 @@ class PLAddCard extends Component {
                 </View>
                 <View style={{marginVertical: 5}}>
                     <Text style={styles.labelStyle}>Country</Text> 
-                    <View style={{borderColor: 'grey', borderWidth: StyleSheet.hairlineWidth,  borderRadius: 25}}>
-                        <Picker 
-                            placeholder='Country'
-                            iosHeader="Country"
-                            mode="dropdown"
-                            selectedValue={this.state.addressCountry}
-                            onValueChange={value => {
-                                this.inputChanged('addressCountry', value)
-                            }}
-                        >
-                            <Item label="United States" value='US'/>
-                        </Picker>
+                    <View style={{borderColor: 'grey', minHeight: 50, justifyContent: 'center', borderWidth: StyleSheet.hairlineWidth,  borderRadius: 25}}>
+                    {
+                                countryList.length > 1
+                                ?
+                                    <Picker 
+                                        iosHeader='Country'
+                                        mode='dropdown'
+                                        selectedValue={this.state.countryCode}
+                                        onValueChange={value => {
+                                            console.log(value);
+                                            this.inputChanged('countryCode', value);
+                                        }}
+                                >
+                                        {countryList.map(country => 
+                                            <Item label={country.label} value={country.value} />
+                                        )}
+                                    </Picker>
+                        : <Text style={{marginLeft: 16}}>{countryList[0].label}</Text>
+                        }
                     </View>
                 </View>
                 <View style={{marginVertical: 5}}>

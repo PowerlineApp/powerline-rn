@@ -37,6 +37,7 @@ export default {
     listItem: {
         marginLeft: 0,
         paddingLeft: 17,
+        paddingRight: 20,
         borderBottomWidth: 0.6
     },
 

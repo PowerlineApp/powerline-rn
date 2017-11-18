@@ -21,41 +21,41 @@ import {
     Spinner,
     Text
 } from 'native-base';
-import { Actions } from 'react-native-router-flux'
-import styles from './styles'
-import Stripe from 'tipsi-stripe'
-import { connect } from 'react-redux'
-import PLAddCard from '../../../../../common/PLAddCard'
-import { groupCreateCard, groupGetCards, groupDeleteCard } from 'PLActions'
+import { Actions } from 'react-native-router-flux';
+import styles from './styles';
+import Stripe from 'tipsi-stripe';
+import { connect } from 'react-redux';
+import PLAddCard from '../../../../../common/PLAddCard';
+import { groupCreateCard, groupGetCards, groupDeleteCard } from 'PLActions';
 class GroupAddCard extends Component {
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
             showForm: false
-        }
-        this.onSave = this.onSave.bind(this)
-        this.renderCardListOrForm = this.renderCardListOrForm.bind(this)
-        this.renderCardList = this.renderCardList.bind(this)
-        this.showForm = this.showForm.bind(this)
+        };
+        this.onSave = this.onSave.bind(this);
+        this.renderCardListOrForm = this.renderCardListOrForm.bind(this);
+        this.renderCardList = this.renderCardList.bind(this);
+        this.showForm = this.showForm.bind(this);
     }
     
     componentDidMount() {
-        const { group, getCards } = this.props
-        this.props.getCards(group.id)
+        const { group, getCards } = this.props;
+        this.props.getCards(group.id);
     }
 
     onSave(token) {
-        const data = {source: token.tokenId}
-        const {group: {id}} = this.props
-        this.props.createCard(id, data)
-        this.setState({showForm: false})
+        const data = {source: token.tokenId};
+        const {group: {id}} = this.props;
+        this.props.createCard(id, data);
+        this.setState({showForm: false});
     }
 
     renderCardList() {
         return (
             <List>
                 {this.props.cards.map(card => {
-                    console.log(card.id)
+                    console.log(card.id);
                     return (
                         <Card style={{margin: 5, padding: 10}}>
                             <View style={{flexDirection: 'row', justifyContent:'space-between'}}>
@@ -71,31 +71,31 @@ class GroupAddCard extends Component {
                                 </View>
                                 <View style={{alignItems: 'center', justifyContent: 'center'}}>
                                     <TouchableOpacity style={{alignItems: 'center'}} onPress={() => this.props.deleteCard(this.props.group.id, card.id)}>
-                                        <Icon name='trash'> </Icon>
+                                        <Icon name='trash' />
                                         <Text>Delete Card</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
                         </Card>
-                    )
+                    );
                 })}
             </List>
-        )
+        );
     }
 
     renderCardListOrForm() {
         if(!this.props.loadingCards) {
             if(!this.state.showForm && this.props.cards && this.props.cards.length >= 1) {
-                return this.renderCardList()
+                return this.renderCardList();
             } else {
                 return (
-                    <PLAddCard onSave={this.onSave}/>
-                )
+                    <PLAddCard onSave={this.onSave} />
+                );
             }
         }else {
             return (
-                <Spinner color='blue'></Spinner>
-            )
+                <Spinner color='blue' />
+            );
         }
     }
 
@@ -103,11 +103,11 @@ class GroupAddCard extends Component {
         if(this.state.showForm) {
             this.setState({
                 showForm: false
-            })
+            });
         } else {
             this.setState({
                 showForm: true
-            })
+            });
         }
     }
     render() {
@@ -116,7 +116,7 @@ class GroupAddCard extends Component {
                 <Header style={styles.header}>
                     <Left>
                         <Button transparent onPress={() => Actions.pop()}>
-                            <Icon active name="arrow-back" style={{ color: 'white' }} />
+                            <Icon active name='arrow-back' style={{ color: 'white' }} />
                         </Button>
                     </Left>
                     <Body>
@@ -125,7 +125,7 @@ class GroupAddCard extends Component {
                     {this.props.cards && this.props.cards.length >= 1
                         ? <Right>
                             <TouchableOpacity onPress={() => this.showForm()}>
-                                <Icon name='plus' size={30} color="#ffffff"></Icon>
+                                <Icon name='plus' size={30} color='#ffffff' />
                             </TouchableOpacity>
                         </Right>
                         : null
@@ -135,20 +135,20 @@ class GroupAddCard extends Component {
                     {this.renderCardListOrForm()}
                 </Content>
             </Container>
-        )
+        );
     }
 }
 
 const mapStateToProps = (state) => ({
     cards: state.groupManagement.creditCards,
     loadingCards: state.groupManagement.loadingCards
-})
+});
 
 const mapDispatchToProps = (dispatch) => ({
     createCard: (id, data) => dispatch(groupCreateCard(id, data)),
     getCards: (id) => dispatch(groupGetCards(id)),
     deleteCard: (id, cardId) => dispatch(groupDeleteCard(id, cardId))
-})
+});
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(GroupAddCard)
+export default connect(mapStateToProps, mapDispatchToProps)(GroupAddCard);

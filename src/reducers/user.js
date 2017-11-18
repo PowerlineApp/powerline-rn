@@ -27,6 +27,7 @@ var initialState = {
 };
 
 function user(state: State = initialState, action: Action): State {
+  console.log('STATE', state)
   if (action.type === 'LOGGED_IN') {
     let { id, username, token } = action.data;
     return {

@@ -17,19 +17,19 @@ import {
 } from 'native-base';
 import { View, Text } from 'react-native';
 import { Label, Input, PopupLabel } from '../components';
-import { Actions } from 'react-native-router-flux'
+import { Actions } from 'react-native-router-flux';
 import styles from '../styles';
 
 class GroupMemberSettings extends Component {
-  render() {
-    return (
-      <View>
-        <Button block style={styles.submitButtonContainer} onPress={() => Actions.manageGroupMembers({group: this.props.group})}>
-          <NSLabel style={styles.submitButtonText}>Go to members page</NSLabel>
-        </Button>
-      </View>
-    );
-  }
+    render() {
+        return (
+            <View>
+                <Button block style={styles.submitButtonContainer} onPress={() => Actions.manageGroupMembers({group: this.props.group})}>
+                    <NSLabel style={styles.submitButtonText}>Go to members page</NSLabel>
+                </Button>
+            </View>
+        );
+    }
 }
 
 export default GroupMemberSettings;

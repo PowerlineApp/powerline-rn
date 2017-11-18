@@ -5,10 +5,10 @@ import GroupPermissions from './grouppermissions';
 import UserContentSettings from './usercontentsettings';
 import Invites from './invites';
 import Reports from './reports';
-import GroupMembers from './groupmembers'
-import AdvancedProfile from './advancedprofile'
-import Tags from './tags'
-import FundRaiser from './fundraiser'
+import GroupMembers from './groupmembers';
+import AdvancedProfile from './advancedprofile';
+import Tags from './tags';
+import FundRaiser from './fundraiser';
 
 export {
     ProfileSetup,

@@ -7,10 +7,13 @@
 var ActionSheetIOS = require('ActionSheetIOS');
 var { Platform, AsyncStorage, Keyboard  } = require('react-native');
 var Alert = require('Alert');
-var { API_URL } = require('../PLEnv');
+var { API_URL, MixpanelToken } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
 var FacebookSDK = require('FacebookSDK');
 var { loadUserProfile } = require('./users');
+var Mixpanel = require('react-native-mixpanel');
+
+
 
 import OneSignal from 'react-native-onesignal';
 
@@ -28,6 +31,7 @@ async function logIn(username: string, password: string): Promise<Action> {
       })
     });
     var user = await response.json();
+    console.log('USER FROM API - LOGING IN MANUALLY', user);
     if (user.token) {
       const action = {
         type: 'LOGGED_IN',
@@ -53,10 +57,14 @@ function logInManually(username: string, password: string): ThunkAction {
     var login = logIn(username, password);
     login.then(
       (result) => {
+        console.log('RESULT FROM LOGIN MANUALLY', result)
         dispatch(result);
         dispatch(loadUserProfile(result.data.token));
       }
     );
+    Mixpanel.identify(username);
+    Mixpanel.track("Manual Login3");
+        
     return login;
   }
 }
@@ -94,7 +102,7 @@ function logInWithFacebook() {
         })
         .then((res) => res.json())
         .then(user => {
-            console.log(user);
+            console.log('USER FROM LOGIN WITH FACEBOOK', user);
             if (user.token) {               
                 var data = {
                     id: user.id,
@@ -102,6 +110,8 @@ function logInWithFacebook() {
                     token: user.token,
                     is_registration_complete: user.is_registration_complete
                 };
+                //Mixpanel.identify(username);
+                //Mixpanel.track("Facebook Login");
                 resolve(data);
             }else{        
               //if user is not already registered with Facebook, but tries to login with Facebook, this gets information from user's FB account  
@@ -136,6 +146,8 @@ function logInWithFacebook() {
                     if(data.email){
                       payloadData.username = data.email.split("@")[0];
                     }
+                    //Mixpanel.identify(username);
+                    //Mixpanel.track("Facebook Registration");
                     resolve(payloadData);
                 });
             }
@@ -170,6 +182,7 @@ async function forgotPassword(email: string) {
 
 //for unregistering for push notifications with Powerline backend. NOT for OneSignal
 function unregisterDevice(token, id) {
+  console.log('/this UNREGISTER', token, id);
   return new Promise((resolve, reject) => {
       fetch(API_URL + '/v2/devices/' + id, {
           method: 'DELETE',
@@ -195,15 +208,17 @@ function logOut(token): ThunkAction {
     OneSignal.setSubscription(false);
     AsyncStorage.getItem('pushId', (err, pushId) => {        
       unregisterDevice(token, pushId)          
-    });  
-
+      AsyncStorage.setItem('pushId', '')
+    });
+    AsyncStorage.clear();
     return dispatch({
       type: 'LOGGED_OUT',
     });
+    Mixpanel.track("Logout");
   };
 }
 
-function logOutWithPrompt(token, pushId): ThunkAction {
+function logOutWithPrompt(token): ThunkAction {
   return (dispatch, getState) => {
     let name = getState().user.username || 'there';
 
@@ -217,7 +232,7 @@ function logOutWithPrompt(token, pushId): ThunkAction {
         },
         (buttonIndex) => {
           if (buttonIndex === 0) {
-            dispatch(logOut(token, pushId));
+            dispatch(logOut(token));
           }
         }
       );
@@ -227,11 +242,12 @@ function logOutWithPrompt(token, pushId): ThunkAction {
         'Log out from Powerline?',
         [
           { text: 'Cancel' },
-          { text: 'Log out', onPress: () => dispatch(logOut(token, pushId)) },
+          { text: 'Log out', onPress: () => dispatch(logOut(token)) },
         ]
       );
     }
   };
 }
+Mixpanel.sharedInstanceWithToken(MixpanelToken);
 
 module.exports = { logInManually, logInWithFacebook, forgotPassword, logOut, logOutWithPrompt };

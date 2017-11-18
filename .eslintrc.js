@@ -1,3 +1,24 @@
 module.exports = {
-    "extends": "google"
-};
+  "extends": ["standard-react"],
+  "plugins": [
+    "react",
+    "react-native"
+  ],
+  "ecmaFeatures": {
+    "jsx": true
+  },
+  "rules": {
+    "indent": [
+      "error",
+      4
+    ],
+    "semi": [
+      2,
+      "always"
+    ],
+    "quotes": 0,
+    "react/jsx-indent": [2, 4],
+    "react/jsx-indent-props": [2, 4],
+    "react/prop-types": [0]
+  }
+}
