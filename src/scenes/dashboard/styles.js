@@ -75,11 +75,12 @@ export default {
     opacity: 0.5,
   },
   menuIcon: {
-    color: '#223549',
+    color: '#000066',
     width: 25,
   },
   menuText: {
-    color: '#293f53',
+    color: '#000066',
+    fontSize: 15,
   },
   footer: {
     ...Platform.select({

@@ -11,7 +11,7 @@ const platform = Platform.OS;
 
 export default {
     container: {
-        backgroundColor: '#e2e7ea',
+        backgroundColor: 'white',
         flex: 1
     },
     

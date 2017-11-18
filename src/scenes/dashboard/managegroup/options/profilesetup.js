@@ -1,21 +1,10 @@
 import React, { Component, PropTypes } from 'react';
 
+import { Text, View } from 'react-native';
 import {
-  Container,
-  Content,
-  Header,
-  Body,
-  Title,
-  Left,
-  Right,
-  Thumbnail,
-  List,
-  ListItem,
   Button,
-  Icon,
   Label as NSLabel
 } from 'native-base';
-import { View, Text } from 'react-native';
 import { updateProfileSetup } from 'PLActions';
 
 import { Label, Input, PopupLabel } from '../components';
@@ -68,7 +57,7 @@ class ProfileSetup extends Component {
     return (
       <View>
         <Label>Group Owner:</Label>
-        <Text style={styles.inputText}>{owner.full_name}</Text>
+        <Text style={styles.inputText}>{owner ? owner.full_name : 'Unknown'}</Text>
 
         <Label>Group Name</Label>
         <Input

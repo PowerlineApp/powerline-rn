@@ -8,7 +8,7 @@ export const MIN_HEIGHT = 80;
 
 export const optionsStyles = {
     optionsContainer: {
-        backgroundColor: '#fafafa',
+        backgroundColor: '#55c5ff',
         paddingLeft: 5,
         width: WINDOW_WIDTH,
     },
@@ -45,8 +45,18 @@ export default {
     },
     title: {
         color: '#21354a',
-        fontSize: 12,
+        fontSize: 16,
         fontWeight: 'bold',
+    },
+    rootTitle: {
+        color: '#21354a',
+        fontSize: 15,
+        fontWeight: '900',
+    },
+    childTitle: {
+        color: '#21354a',
+        fontSize: 15,
+        fontWeight: '200',
     },
     subtitle: {
         color: '#8694ab',
@@ -54,7 +64,32 @@ export default {
     },
     description: {
         color: '#21354a',
-        fontSize: 12,
+        fontSize: 16,
+    },
+    rootDescription: {
+        color: '#21354a',
+        fontSize: 13,
+    },
+    childDescription: {
+        color: '#21354a',
+        fontSize: 13,
+    },
+    descriptionTitle: {
+        color: '#21354a',
+        fontSize: 16,
+        fontWeight: '500'        
+    },
+    commentTitle: {
+        color: '#21354a',
+        fontSize: 15,
+        fontWeight: 'bold'
+    },
+    commentPreviewText: {
+        color: '#21354a',
+        fontSize: 14,
+    },
+    commentAddField: {
+        paddingLeft: 5,
     },
     titleContainer: {
         flex: 1,
@@ -97,18 +132,23 @@ export default {
     },
     descLeftContainer: {
         width: 36,
-        alignItems: 'center',
-        alignSelf: 'flex-start'
+        alignSelf: 'flex-start',
+        paddingLeft: 2,
     },
     descBodyContainer: {
         alignSelf: 'flex-start',
+        marginLeft: -1,
+        paddingLeft: 0,
+        marginTop: -1,
+        paddingTop: 0,
     },
     zoneIcon: {
-        fontSize: 15,
-        color: '#5fc7fa',
+        fontSize: 17,
+        color: '#ED1727',
+        //paddingTop: 1,
     },
     commentCount: {
-        fontSize: 12,
+        fontSize: 14,
         color: '#8694ab',
     },
     footerIcon: {
@@ -122,12 +162,12 @@ export default {
         marginRight: 5,
     },
     footerText: {
-        fontSize: 11,
+        fontSize: 14,
         color: '#8694ab',
         fontWeight: '500',
     },
     footerTextBlue: {
-        fontSize: 11,
+        fontSize: 14,
         color: '#53a8cd',
         fontWeight: '500',
     },
@@ -179,12 +219,12 @@ export default {
     },
     addCommentTitle: {
         color: '#8694ab',
-        fontSize: 12,
+        fontSize: 14,
         fontWeight: '100',
     },
     commentMoreIcon: {
         color: PLColors.lightText,
-        fontSize: 24,
+        fontSize: 20,
         paddingHorizontal: 5,
     },
     commentFooterContainer: {
@@ -237,5 +277,13 @@ export default {
         height: WINDOW_HEIGHT*0.35,
         borderWidth: 1,
         borderColor: PLColors.cellBorder,
-    }
+    },
+    commentRootContainer: {
+        width: 36, // ??
+        alignSelf: 'flex-start',
+        paddingLeft: 2
+    },
+    commentChildContainer: {
+        //ignore
+    },
 }

@@ -103,7 +103,7 @@ export default {
   },
 
   popupIcon: {
-    color: PLColors.main,
+    color: PLColors.blueArrow,
     marginRight: 6,
   },
 
@@ -122,5 +122,11 @@ export default {
     marginBottom: 12
   },
 
-  submitButtonText: { color: 'white' }
+  submitButtonText: { color: 'white' },
+
+  membershipInputContainer: { marginTop: 8, flexDirection: 'row', backgroundColor: '#F2F2F2', justifyContent: 'center' },
+  membershipDeleteIcon: { fontSize: 20, color: 'red' },
+  membershipInput: { flex: 1, borderWidth: 0 },
+  memebershipAddContainer: { marginTop: 8, flexDirection: 'row', justifyContent: 'center' },
+  membershipAddIcon: { fontSize: 24, color: PLColors.main }
 };

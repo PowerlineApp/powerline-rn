@@ -57,6 +57,7 @@ class GroupInvite extends Component {
         });
     }
 
+    //BUG: Something's not right here. If author invites upvoters to group, I would expect to see post or petition ID collected and sent here
     async invite() {
         const { token, grouplist, entityId: id, entityType: type } = this.props;
         const { selectedGroupIndex } = this.state;

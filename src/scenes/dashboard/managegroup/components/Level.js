@@ -1,5 +1,5 @@
 import React, { PureComponent, PropTypes } from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
+import { View, StyleSheet, Dimensions, TouchableOpacity, Text } from 'react-native';
 import { Label, Button } from 'native-base';
 import PLColors from 'PLColors';
 import LinearGradient from "react-native-linear-gradient";
@@ -33,11 +33,10 @@ class Level extends PureComponent {
     } = this.props;
 
     return (
-      <View style={levelStyle.container}>
+      <TouchableOpacity style={levelStyle.container} onPress={() => onPress({name, audience, title, price})}>
         <View style={levelStyle.border}>
           <LinearGradient style={levelStyle.namePrice} colors={['#303079', '#050548']}>
-            {/* <Label>{name}</Label>
-            <Label>{`$${price}/month`}</Label> */}
+            <Text style={{color: 'white', textAlign: 'center'}}>{`$${price}/month`}</Text>
           </LinearGradient>
         </View>
         <View style={levelStyle.description}>
@@ -50,7 +49,7 @@ class Level extends PureComponent {
             </Button>
           }
         </View>
-      </View>
+      </TouchableOpacity>
     );
   }
 }

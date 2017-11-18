@@ -174,7 +174,7 @@ class Home extends Component {
             });
 
             ShareExtension.data().then((data) => {
-                console.log('SHARE EXTENSION DATA: ', data);
+                // console.log('SHARE EXTENSION DATA: ', data);
                 if (data.type != "" && data.value != "") {
                         Actions.newpost({ data: data, sharing: true, onPost: () => ShareExtension.close()});
                 }
@@ -186,10 +186,12 @@ class Home extends Component {
     }
 
     onRegistered(data) {
-        // console.log('registered :', data);
+        console.log('/this registered :', data);
+        // OneSignal.removeEventListener()
     }
 
     onIds(data) {
+        console.log('/this idsss', data);
         var { token } = this.props;
         AsyncStorage.setItem('pushId', data.userId);
 
@@ -206,25 +208,53 @@ class Home extends Component {
         // Device needs to be registered with Powerline backend after token received from OneSignal
         registerDevice(token, params)
             .then(data => {
+                console.log('REGISTER RESPONSE', data);
             })
             .catch(err => {
+                console.log('REGISTER ERROR', err);
             });
     }
 
-    redirect(item, options = {}) {
-        console.log('===>', item, '====>', options);
-        // return;
-        item = item.notification.payload.additionalData.entity.target;
-        let type = 'poll';
-        if (item.type == 'post') {
-            type = 'post'
-        } else if (item.type == 'user-petition') {
-            type = 'petition'
-        }
+    // redirect(item, options = {}) {
+    //     console.log('===>', item, '====>', options);
+    //     // return;
+    //     item = item.notification.payload.additionalData.entity.target;
+    //     // let type = 'poll';
+    //     // if (item.type == 'post') {
+    //     //     type = 'post'
+    //     // } else if (item.type == 'user-petition') {
+    //     //     type = 'petition'
+    //     // }
 
-        console.log('about to go: ', type, item.id)
-        Actions.itemDetail({ entityType: type, entityId: item.id, ...options });
+    //     // console.log('about to go: ', type, item.id)
+    //     Actions.itemDetail({ entityType: item.type, entityId: item.id, ...options });
+    // }
+    itemDetail(notification, options) {
+        // return;
+        console.log(notification);
+        let item = notification.additionalData.entity.target;
+
+        Actions.itemDetail({ entityType: item.type, entityId: item.id, ...options });
     }
+
+    redirect(type, notification, options = {}){
+        console.log('redirect', type, notification, options)
+        switch(type){
+            case 'join-to-group-approved':
+                Actions.groupprofile({id: notification.additionalData.entity.target.id});
+                break;
+            case 'comment-mentioned':
+            case 'post-mentioned':
+            case 'own-post-commented':
+            case 'own-post-voted':
+            case 'own-user-petition-signed':
+                this.itemDetail(notification, options);
+                break;
+            case 'follow-request':
+                Actions.myInfluences()
+        }        
+    }
+
 
     // these are the action buttons actions
     _signPetition(token, data) {
@@ -232,10 +262,6 @@ class Home extends Component {
 
         signUserPetition(token, target.id).then(res => console.log(res));
     }
-    _viewPetition(data) {
-        this.redirect(data);
-    }
-
     _mutePetition(token, data) {
         let { target } = data.notification.payload.additionalData.entity;
 
@@ -243,6 +269,7 @@ class Home extends Component {
     }
     _openComment(token, data) {
         let { target } = data.notification.payload.additionalData.entity;
+        // What is this Felipe?
         // this is to be changed!!! the commentDetail component doesnt accept an id, but the comment object, so I must do this!
         let comment = getComments(token, target.type, target.id).then(
             res => {
@@ -253,9 +280,6 @@ class Home extends Component {
                 });
             }
         );
-    }
-    _openPost(data) {
-        this.redirect(data);
     }
     _approveFollowRequest(token, data, dispatch) {
         acceptFollowers(token, data.notification.payload.additionalData.entity.target.id).then((ret) => {
@@ -292,10 +316,8 @@ class Home extends Component {
         votePost(token, target.id, 'downvote');
     }
     _sharePost(token, data) {
-        // TODO
-    }
-    _viewPost(data) {
-        this.redirect(data);
+        //What is this Felipe? Why is this todo?
+        // TODO 
     }
     _mutePost(token, data) {
         let { target } = data.notification.payload.additionalData.entity;
@@ -305,26 +327,10 @@ class Home extends Component {
         let groupId = data.notification.payload.additionalData.entity.target.id;
         joinGroup(token, groupId);
     }
-    _ignoreInvite(token, data) {
-        // does nothing? if yes, working
-    }
-    _openGroup(token, data) {
-        let { target } = data.notification.payload.additionalData.entity;
-        Actions.groupprofile({ id: target.id });
-    }
-    _viewPoll(data) {
-        this.redirect(data);
-    }
     _mutePoll(token, data) {
         let { target } = data.notification.payload.additionalData.entity;
         unsubscribeFromPoll(token, target.id);
     }
-    _replyComment(data) {
-        // navigates to the post/petition/poll -> opens comment -> fill the input with the other user username // for now it only goes to the post/poll/petition
-        // console.log('replyComment', token, data);
-        this.redirect(data);
-    }
-
     _shareAnnouncement(token, data) {
         // TODO
         // console.log('shareAnnouncement', token, data);
@@ -334,32 +340,142 @@ class Home extends Component {
         this.redirect(data);
     }
 
+
+
+
+/*
+{
+   "notification": {
+      "payload": {
+         "additionalData": {
+            "entity": {
+               "target": {
+                  "type": "post",
+                  "id": 1043,
+                  "preview": "@Zxc6"
+               },
+               "id": 6428
+            },
+            "user": {
+               "username": "Zxc6",
+               "id": 146
+            },
+            "type": "post-mentioned"
+         },
+         "actionButtons": [
+            {
+               "icon": "ic_civix_open",
+               "text": "Open",
+               "id": "open-post-button"
+            },
+            {
+               "icon": "ic_civix_ignore",
+               "text": "Ignore",
+               "id": "ignore-button"
+            }
+         ]
+      }
+   },
+   "action": {
+      "type": 0
+   }
+}
+
+
+{
+   "notification": {
+      "payload": {
+         "additionalData": {
+            "entity": {
+               "target": {
+                  "type": "post",
+                  "id": 1043
+               },
+               "id": 6429
+            },
+            "user": {
+               "username": "Zxc6",
+               "id": 146
+            },
+            "type": "follow-post-created",
+         },
+         "actionButtons": [
+            {
+               "icon": "ic_civix_upvote",
+               "text": "Upvote",
+               "id": "upvote-post-button"
+            },
+            {
+               "icon": "ic_civix_downvote",
+               "text": "Downvote",
+               "id": "downvote-post-button"
+            }
+         ],
+      },
+   },
+   "action": {
+      "type": 1,
+      "actionID": "upvote-post-button"
+   }
+}
+
+
+    */
+
     onOpened(data) {
+        console.log('OPENED', data);
+        
         let { token, dispatch } = this.props;
-        let { action } = data;
-        if (!action) return;
-        let { actionID } = action;
-        console.log(actionID, data);
-        switch (actionID) {
+        let {type} = data.notification.payload.additionalData;
+        let actionButton = data.action.actionID;
+
+        if (!actionButton) {
+            this.redirect(type, data.notification.payload);
+            return;
+        }
+
+        // switch(type){
+        //     case 'join-to-group-approved':
+        //         Actions.groupprofile({id: notification.group.id});
+        //         break;
+        //     case 'comment-mentioned':
+        //     case 'post-mentioned':
+        //     case 'own-post-commented':
+        //     case 'own-user-petition-signed':
+        //         this.itemDetail(notification, options);
+        //         break;
+        //     case 'follow-request':
+        //         Actions.myInfluences()
+
+        // }
+
+        switch (actionButton) {
+            // these simply do nothing
             case 'ignore-button':
+            case 'ignore-invite-button':
                 break;
-            case 'sign-petition-button':
-                this._signPetition(token, data);
-                break;
+            // all of the above just redirect
             case 'view-petition-button':
-                this._viewPetition(data);
+            case 'open-post-button':
+            case 'open-poll-button':
+            case 'view-post-button':
+            case 'open-group-button':
+            case 'respond-button':
+            case 'view-poll-button':
+                this.redirect(type, data.notification.payload);
                 break;
-            case 'mute-petition-button':
-                this._mutePetition(token, data);
+            case 'reply-comment-button':
+                this.redirect(type, data.notification.payload, {commenting: true, commentText: '@' + data.notification.payload.additionalData.user.username});
                 break;
             case 'open-comment-button':
                 this._openComment(token, data);
                 break;
-            case 'open-post-button':
-                this._openPost(data);
+
+            case 'sign-petition-button':
+                this._signPetition(token, data);
                 break;
-            case 'open-poll-button':
-                this._viewPoll(data);
+            case 'mute-petition-button':
+                this._mutePetition(token, data);
                 break;
             case 'approve-follow-request-button':
                 this._approveFollowRequest(token, data, dispatch);
@@ -377,9 +493,6 @@ class Home extends Component {
                 this._sharePost(token, data);
                 break;
             // own post boosted and own post commented, follow post commented, own post voted
-            case 'view-post-button':
-                this._viewPost(data);
-                break;
             case 'mute-post-button':
                 this._mutePost(token, data);
                 break;
@@ -387,30 +500,12 @@ class Home extends Component {
             case 'join-group-button':
                 this._joinGroup(token, data);
                 break;
-            case 'ignore-invite-button':
-                this._ignoreInvite(token, data);
-                break;
-            // group permission changed
-            case 'open-group-button':
-                this._openGroup(token, data);
-                break;
-            // own poll commented, poll answered and follow poll commented
-            case 'view-poll-button':
-                this._viewPoll(data);
-                break;
             case 'mute-poll-button':
                 this._mutePoll(token, data);
-                break;
-            // comment replied
-            case 'reply-comment-button':
-                this._replyComment(data);
                 break;
             // announcement
             case 'share-announcement-button':
                 this._shareAnnouncement(token, data);
-                break;
-            case 'respond-button':
-                this._viewPoll(data);
                 break;
             case 'rsvp-button':
                 this.rspv(data);
@@ -484,18 +579,20 @@ class Home extends Component {
 
     // JC: I believe this loads to the group feed when a group is selected from Group Selector More menu
     selectGroup(group){
-        let {id, official_name, avatar_file_path, conversation_view_limit, total_members} = group;
+        console.log('SELECTED GROUP', group)
         var { token, dispatch } = this.props;
         if (group == 'all') {
             dispatch({ type: 'RESET_ACTIVITIES' });
-            dispatch({type: 'SET_GROUP', data: {id: 'all'}})
+            dispatch({type: 'SET_GROUP', data: {id: 'all', header: 'all'}})
             // dispatch(loadActivities(token, 0, 20, 'all'));
         } else {
             let groupObj = this.props.groupList.find(groupObj => groupObj.group_type_label === group);
             if (!groupObj) return;
+            console.log('SELECTED GROUP', groupObj)
+            
 
-            let {id, official_name, avatar_file_path, conversation_view_limit, total_members} = groupObj;
-            dispatch({type: 'SET_GROUP', data: {id, name: official_name, avatar: avatar_file_path, limit: conversation_view_limit, totalMembers: total_members, conversationView: total_members < conversation_view_limit}});
+            let {id, official_name, avatar_file_path, conversation_view_limit, total_members, user_role} = groupObj;
+            dispatch({type: 'SET_GROUP', data: {header: group, user_role, id, name: official_name, avatar: avatar_file_path, limit: conversation_view_limit, totalMembers: total_members, conversationView: total_members < conversation_view_limit}});
             // dispatch(loadActivities(token, 0, 20, id));
         }
         this.setState({ group: group });
@@ -503,13 +600,38 @@ class Home extends Component {
 
     // This is the menu to create new content (GH8)
     selectNewItem(value) {
+        let {selectedGroup} = this.props;
+        console.log('selected group ==> ', selectedGroup)
         this.bottomMenu.close();
-        if (value == 'post') {
+        if (value === 'post'){
             Actions.newpost();
-        } else if (value == 'petition') {
+        } else if (value === 'petition'){
             Actions.newpetition();
-            // The ability to create new "leader" content has not yet been added, but it will go here (GH118)
+        } else {
+            Actions.newleadercontent({contentType: value, group: selectedGroup.group});
         }
+        // switch(value){
+        //     case 'post':
+        //         break;
+        //     case 'petition':
+        //         break;
+        //     case 'group_announcement':
+        //         Actions.newgroupannouncement();
+        //         break;
+        //     case 'group_petition':
+        //         Actions.newgrouppetition();
+        //         break;
+        //     case 'group_poll':
+        //         Actions.newgrouppoll();
+        //         break;
+        //     case 'group_event':
+        //         Actions.newgroupevent();
+        //         break;
+        //     case 'group_fundraiser':
+        //         Actions.newgroupfundraiser();
+        //         break;
+        //     default:
+        // }
     }
 
     onRef = r => {
@@ -573,10 +695,70 @@ class Home extends Component {
         Actions.search({ search });
     }
 
+    renderMenuOptions(group){
+        console.log('SELECTED GROUP', group);
+        let options = [
+            <MenuOption value={'petition'}>
+                <Button iconLeft transparent dark onPress={() => {this.selectNewItem('petition'); Mixpanel.track("Opened New User Petition Form");}}>
+                    <Icon name="ios-clipboard" style={styles.menuIcon} />
+                    <Text style={styles.menuText}>New Petition</Text>
+                </Button>
+            </MenuOption>,
+            <MenuOption value={'post'}>
+                <Button iconLeft transparent dark onPress={() => {this.selectNewItem('post'); Mixpanel.track("Opened New Post Form");}}>
+                    <Icon name="ios-flag" style={styles.menuIcon} />
+                    <Text style={styles.menuText}>New Post</Text>
+                </Button>
+            </MenuOption>
+        ]
+        if (group && (group.group === 'all' || group.user_role === 'owner' || group.user_role === 'manager'))
+        options.unshift(
+            <MenuOption value={'group_announcement'}>
+                <Button iconLeft transparent dark onPress={() => {this.selectNewItem('group_announcement'); Mixpanel.track("Opened New Announcement Form");}}>
+                    <Icon name="volume-up" style={styles.menuIcon} />
+                    <Text style={styles.menuText}>New Group Announcement</Text>
+                </Button>
+            </MenuOption>,
+            <MenuOption value={'group_fundraiser'}>
+                <Button iconLeft transparent dark onPress={() => {this.selectNewItem('group_fundraiser'); Mixpanel.track("Opened New Fundraiser Form");}}>
+                    <Icon name="ios-cash" style={styles.menuIcon} />
+                    <Text style={styles.menuText}>New Group Fundraiser</Text>
+                </Button>
+            </MenuOption>,
+            <MenuOption value={'group_event'}>
+                <Button iconLeft transparent dark onPress={() => {this.selectNewItem('group_event'); Mixpanel.track("Opened New Event Form");}}>
+                    <Icon name="ios-calendar" style={styles.menuIcon} />
+                    <Text style={styles.menuText}>New Group Event</Text>
+                </Button>
+            </MenuOption>,
+            <MenuOption value={'group_petition'}>
+                <Button iconLeft transparent dark onPress={() => {this.selectNewItem('group_petition'); Mixpanel.track("Opened New Group Petition Form");}}>
+                    <Icon name="ios-clipboard" style={styles.menuIcon} />
+                    <Text style={styles.menuText}>New Group Petition</Text>
+                </Button>
+            </MenuOption>,
+            <MenuOption value={'group_discussion'}>
+                <Button iconLeft transparent dark onPress={() => {this.selectNewItem('group_discussion'); Mixpanel.track("Opened New Discussion Form");}}>
+                    <Icon name="ios-chatbubbles" style={styles.menuIcon} />
+                    <Text style={styles.menuText}>New Group Discussion</Text>
+                </Button>
+            </MenuOption>,
+            <MenuOption value={'group_poll'}>
+                <Button iconLeft transparent dark onPress={() => {this.selectNewItem('group_poll'); Mixpanel.track("Opened New Poll Form");}}>
+                    <Icon name="ios-stats" style={styles.menuIcon} />
+                    <Text style={styles.menuText}>New Group Poll</Text>
+                </Button>
+            </MenuOption>
+        )
+
+        return options;
+    }
+    
     render() {
+        let {selectedGroup} = this.props;
         //       return (
-        // <Container>
-        //           <Header searchBar rounded style={styles.header}>
+            // <Container>
+            //           <Header searchBar rounded style={styles.header}>
         //             <Left style={{ flex: 0.1 }}>
         //               <Button transparent onPress={this.props.openDrawer}>
         //                 <Icon active name="menu" style={{ color: 'white' }} />
@@ -616,7 +798,7 @@ class Home extends Component {
                             <Grid>
                                 <Row>
                                     <Col style={styles.col}>
-                                        <Button style={this.state.group == 'all' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('all'); Mixpanel.track("All Feed Loaded"); }}>
+                                        <Button style={selectedGroup.group == 'all' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('all'); Mixpanel.track("All Feed Loaded"); }}>
                                             <Image
                                                 style={styles.iconP}
                                                 source={require("img/p_logo.png")}
@@ -625,25 +807,25 @@ class Home extends Component {
                                         <Text style={styles.iconText} onPress={() => { Keyboard.dismiss(); this.selectGroup('all'); }}>All</Text>
                                     </Col>
                                     <Col style={styles.col}>
-                                        <Button style={this.state.group == 'local' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('local'); Mixpanel.track("Town Feed Loaded from Home"); }}>
+                                        <Button style={selectedGroup.group == 'local' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('local'); Mixpanel.track("Town Feed Loaded from Home"); }}>
                                             <Icon active name="pin" style={styles.icon} />
                                         </Button>
                                         <Text style={styles.iconText} numberOfLines={1} onPress={() => { Keyboard.dismiss(); this.selectGroup('town'); }}>{this.props.town}</Text>
                                     </Col>
                                     <Col style={styles.col}>
-                                        <Button style={this.state.group == 'state' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('state'); Mixpanel.track("State Feed Loaded from Home");}}>
+                                        <Button style={selectedGroup.group == 'state' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('state'); Mixpanel.track("State Feed Loaded from Home");}}>
                                             <Icon active name="pin" style={styles.icon} />
                                         </Button>
                                         <Text style={styles.iconText} numberOfLines={1} onPress={() => { Keyboard.dismiss(); this.selectGroup('state'); }}>{this.props.state}</Text>
                                     </Col>
                                     <Col style={styles.col}>
-                                        <Button style={this.state.group == 'country' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('country'); Mixpanel.track("Country Feed Loaded from Home"); }}>
+                                        <Button style={selectedGroup.group == 'country' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('country'); Mixpanel.track("Country Feed Loaded from Home"); }}>
                                             <Icon active name="pin" style={styles.icon} />
                                         </Button>
                                         <Text style={styles.iconText} numberOfLines={1} onPress={() => { Keyboard.dismiss(); this.selectGroup('country'); }}>{this.props.country}</Text>
                                     </Col>
                                     <Col style={styles.col}>
-                                        <Button style={this.state.group == 'more' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.goToGroupSelector();}}>
+                                        <Button style={selectedGroup.group == 'more' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.goToGroupSelector();}}>
                                             <Icon active name="more" style={styles.icon} />
                                         </Button>
                                         <Text style={styles.iconText} onPress={() => { Keyboard.dismiss(); this.goToGroupSelector(); }}>More</Text>
@@ -677,54 +859,9 @@ class Home extends Component {
                                         <Icon name="ios-add-circle" style={styles.iconPlus} />
                                     </MenuTrigger>
                                     <MenuOptions customStyles={optionsStyles} renderOptionsContainer={optionsRenderer}>
-                                        <MenuOption value={'group_announcement'}>
-                                            <Button iconLeft transparent dark onPress={() => {this.selectNewItem('group_announcement'); Mixpanel.track("Opened New Announcement Form");}}>
-                                                <Icon name="volume-up" style={styles.menuIcon} />
-                                                <Text style={styles.menuText}>New Group Announcement</Text>
-                                            </Button>
-                                        </MenuOption>
-                                        <MenuOption value={'group_fundraiser'}>
-                                            <Button iconLeft transparent dark onPress={() => {this.selectNewItem('group_fundraiser'); Mixpanel.track("Opened New Fundraiser Form");}}>
-                                                <Icon name="ios-cash" style={styles.menuIcon} />
-                                                <Text style={styles.menuText}>New Group Fundraiser</Text>
-                                            </Button>
-                                        </MenuOption>
-                                        <MenuOption value={'group_event'}>
-                                            <Button iconLeft transparent dark onPress={() => {this.selectNewItem('group_event'); Mixpanel.track("Opened New Event Form");}}>
-                                                <Icon name="ios-calendar" style={styles.menuIcon} />
-                                                <Text style={styles.menuText}>New Group Event</Text>
-                                            </Button>
-                                        </MenuOption>
-                                        <MenuOption value={'group_petition'}>
-                                            <Button iconLeft transparent dark onPress={() => {this.selectNewItem('group_petition'); Mixpanel.track("Opened New Group Petition Form");}}>
-                                                <Icon name="ios-clipboard" style={styles.menuIcon} />
-                                                <Text style={styles.menuText}>New Group Petition</Text>
-                                            </Button>
-                                        </MenuOption>
-                                        <MenuOption value={'group_discussion'}>
-                                            <Button iconLeft transparent dark onPress={() => {this.selectNewItem('group_discussion'); Mixpanel.track("Opened New Discussion Form");}}>
-                                                <Icon name="ios-chatbubbles" style={styles.menuIcon} />
-                                                <Text style={styles.menuText}>New Group Discussion</Text>
-                                            </Button>
-                                        </MenuOption>
-                                        <MenuOption value={'group_poll'}>
-                                            <Button iconLeft transparent dark onPress={() => {this.selectNewItem('group_poll'); Mixpanel.track("Opened New Poll Form");}}>
-                                                <Icon name="ios-stats" style={styles.menuIcon} />
-                                                <Text style={styles.menuText}>New Group Poll</Text>
-                                            </Button>
-                                        </MenuOption>
-                                        <MenuOption value={'petition'}>
-                                            <Button iconLeft transparent dark onPress={() => {this.selectNewItem('petition'); Mixpanel.track("Opened New User Petition Form");}}>
-                                                <Icon name="ios-clipboard" style={styles.menuIcon} />
-                                                <Text style={styles.menuText}>New Petition</Text>
-                                            </Button>
-                                        </MenuOption>
-                                        <MenuOption value={'post'}>
-                                            <Button iconLeft transparent dark onPress={() => {this.selectNewItem('post'); Mixpanel.track("Opened New Post Form");}}>
-                                                <Icon name="ios-flag" style={styles.menuIcon} />
-                                                <Text style={styles.menuText}>New Post</Text>
-                                            </Button>
-                                        </MenuOption>
+                                        {
+                                            this.renderMenuOptions(selectedGroup)
+                                        } 
                                     </MenuOptions>
                                 </Menu>
                             </Button>
@@ -752,7 +889,7 @@ class Home extends Component {
 
 const optionsStyles = {
     optionsContainer: {
-        backgroundColor: '#fafafa',
+        backgroundColor: 'white',
         paddingLeft: 5
     }
 };
@@ -784,7 +921,8 @@ const mapStateToProps = state => ({
     state: state.groups.state,
     country: state.groups.country,
     newsfeedUnreadCount: state.activities.newsfeedUnreadCount,
-    groupList: state.groups.payload
+    groupList: state.groups.payload,
+    selectedGroup: state.activities.selectedGroup
 });
 
 Mixpanel.sharedInstanceWithToken(MixpanelToken);

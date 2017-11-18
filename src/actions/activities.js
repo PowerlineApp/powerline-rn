@@ -45,6 +45,27 @@ async function loadActivities(token: string, page: ?number = 0, perPage: ?number
         return Promise.reject(error);
     }
 }
+
+async function markAsRead(token, id){
+    console.log('marking as read', `${API_URL}/v2/activities`,[{id: id, read: true}] )
+    try {
+        let response = await fetch(`${API_URL}/v2/activities`,
+        {
+          method: 'PATCH',
+          headers: {
+              'token': token,
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({activities: [{id: id, read: true}]})
+        });
+        console.log('response', response)
+        return response.json();
+    } catch (error) {
+        
+    }
+}
+
+
 async function loadFriendsActivities(token: string, page: ?number = 0, perPage: ?number = PER_PAGE): Promise<Action> {
     try {
         var response = await fetch(`${API_URL}/v2/activities?_format=json&followed=1&page=${page + 1}&per_page=${perPage}`, {
@@ -197,5 +218,6 @@ module.exports = {
     loadFriendsActivities,
     subscribeNotification,
     unsubscribeNotification,
-    markAsSpam
+    markAsSpam,
+    markAsRead
 }

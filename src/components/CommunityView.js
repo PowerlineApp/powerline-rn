@@ -25,7 +25,8 @@ import {
     Dimensions,
     Platform,
     StyleSheet,
-    ScrollView
+    ScrollView,
+    Modal
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
@@ -40,18 +41,19 @@ class CommunityView extends PureComponent {
         } = this.props;
         
         return (
-            <View style={styles.community_list_container}>
-                <View style={{
-                    ...styles.community_list_back,
-                    backgroundColor: light ? 'transparent': 'black',
-                    opacity: light ? 1 : 0.4,
-                }} />
-                <ScrollView style={{flex: 1}}>
-                    <List style={{width: 250}}>
-                        { grouplist.map((item, index) => {
-                            return (
-                                <ListItem key={index} onPress={() => onPress(index)}>
-                                    { item.avatar_file_path
+            <Modal transparent>
+                <View style={styles.community_list_container}>
+                    <View style={{
+                        ...styles.community_list_back,
+                        backgroundColor: light ? 'transparent': 'black',
+                        opacity: light ? 1 : 0.4,
+                    }} />
+                    <ScrollView style={{flex: 1}}>
+                        <List style={{width: 250}}>
+                            { grouplist.map((item, index) => {
+                                return (
+                                    <ListItem key={index} onPress={() => onPress(index)}>
+                                        { item.avatar_file_path
                                         ? <Thumbnail square style={styles.thumbnail} source={{ uri: item.avatar_file_path + '&w=50&h=50&auto=compress,format,q=95'}} />
                                         : <View style={styles.thumbnail} />
                                     }
@@ -65,9 +67,10 @@ class CommunityView extends PureComponent {
                             );
                         })
                     }
-                    </List>
-                </ScrollView>
-            </View>
+                        </List>
+                    </ScrollView>
+                </View>
+            </Modal>
         );
     }
 }
@@ -80,7 +83,8 @@ const styles = {
         width: width,
         height: '100%',
         zIndex: 10,
-        paddingLeft: (width - 250)/ 2,       
+        paddingLeft: (width - 250)/ 2,
+        paddingTop: 100,
     },
 
     community_list_back: {

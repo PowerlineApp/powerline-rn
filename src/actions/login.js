@@ -31,6 +31,7 @@ async function logIn(username: string, password: string): Promise<Action> {
       })
     });
     var user = await response.json();
+    console.log('USER FROM API - LOGING IN MANUALLY', user);
     if (user.token) {
       const action = {
         type: 'LOGGED_IN',
@@ -56,6 +57,7 @@ function logInManually(username: string, password: string): ThunkAction {
     var login = logIn(username, password);
     login.then(
       (result) => {
+        console.log('RESULT FROM LOGIN MANUALLY', result)
         dispatch(result);
         dispatch(loadUserProfile(result.data.token));
       }
@@ -100,7 +102,7 @@ function logInWithFacebook() {
         })
         .then((res) => res.json())
         .then(user => {
-            console.log(user);
+            console.log('USER FROM LOGIN WITH FACEBOOK', user);
             if (user.token) {               
                 var data = {
                     id: user.id,
@@ -180,6 +182,7 @@ async function forgotPassword(email: string) {
 
 //for unregistering for push notifications with Powerline backend. NOT for OneSignal
 function unregisterDevice(token, id) {
+  console.log('/this UNREGISTER', token, id);
   return new Promise((resolve, reject) => {
       fetch(API_URL + '/v2/devices/' + id, {
           method: 'DELETE',
@@ -205,8 +208,9 @@ function logOut(token): ThunkAction {
     OneSignal.setSubscription(false);
     AsyncStorage.getItem('pushId', (err, pushId) => {        
       unregisterDevice(token, pushId)          
-    });  
-
+      AsyncStorage.setItem('pushId', '')
+    });
+    AsyncStorage.clear();
     return dispatch({
       type: 'LOGGED_OUT',
     });
@@ -214,7 +218,7 @@ function logOut(token): ThunkAction {
   };
 }
 
-function logOutWithPrompt(token, pushId): ThunkAction {
+function logOutWithPrompt(token): ThunkAction {
   return (dispatch, getState) => {
     let name = getState().user.username || 'there';
 
@@ -228,7 +232,7 @@ function logOutWithPrompt(token, pushId): ThunkAction {
         },
         (buttonIndex) => {
           if (buttonIndex === 0) {
-            dispatch(logOut(token, pushId));
+            dispatch(logOut(token));
           }
         }
       );
@@ -238,7 +242,7 @@ function logOutWithPrompt(token, pushId): ThunkAction {
         'Log out from Powerline?',
         [
           { text: 'Cancel' },
-          { text: 'Log out', onPress: () => dispatch(logOut(token, pushId)) },
+          { text: 'Log out', onPress: () => dispatch(logOut(token)) },
         ]
       );
     }

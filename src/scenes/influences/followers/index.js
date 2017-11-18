@@ -189,7 +189,9 @@ class Followers extends Component {
             }
           </List>
         }
+        {/* Turning off Pulse Loader until we can stabilize its performance
         <PLOverlayLoader visible={refreshing} logo />
+        */}
       </ContentPlaceholder>
     );
   }
