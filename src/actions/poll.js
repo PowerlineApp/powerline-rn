@@ -2,7 +2,7 @@ var { API_URL, PER_PAGE } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
 
 async function signLeaderPetition(token, pollId, option, amount) {
-    console.log('to the api => ', token, pollId, option, ' --- ' + `${API_URL}/v2/polls/${pollId}/answers/${option}`)
+    console.log('to the api => ', token, pollId, option, ' --- ' + `${API_URL}/v2/polls/${pollId}/answers/${option}`, amount)
     try {
         let response = await fetch(`${API_URL}/v2/polls/${pollId}/answers/${option}`, {
             method: 'PUT',

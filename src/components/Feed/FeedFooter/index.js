@@ -431,6 +431,27 @@ class FeedFooter extends Component {
             </CardItem>
         );
     }
+    _renderFundraiserFooter (item) {
+        return (
+            <CardItem footer style={{ height: 35 }}>
+                <Left style={{ justifyContent: 'space-between' }}>
+                    <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item)} >
+                        <Icon name='md-arrow-dropdown' style={styles.footerIcon} />
+                        <Label style={styles.footerText}>Donate</Label>
+                    </Button>
+                    <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, {commenting: true})} >
+                        <Icon active name='ios-undo' style={styles.footerIcon} />
+                        <Label style={styles.footerText} >
+                            {'Reply '}
+                            {item.comments_count ? item.comments_count : 0}
+                        </Label>
+                    </Button>
+                </Left>
+            </CardItem>
+        );
+    }
+
+    
 
     _renderDefaultFooter (item) {
         return null;
@@ -454,8 +475,9 @@ class FeedFooter extends Component {
         case 'question':
             footer =  this._renderQuestionFooter(item, false);
             break;
+        case 'crowdfunding-payment-request':
         case 'payment-request':
-            footer = null;
+            footer = this._renderFundraiserFooter(item, false);
             break;
         case 'leader-event':
             footer =  this._renderLeaderEventFooter(item, false);

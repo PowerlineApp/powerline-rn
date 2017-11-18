@@ -30,7 +30,7 @@ import Menu, {
     MenuOption,
     renderers
 } from 'react-native-popup-menu';
-import { getComments, votePost, getUsersByGroup, addComment, editComment, deleteComment, rateComment, loadActivityByEntityId, deletePost, deletePetition, changePost, changePetition, loadPollByEntityId } from 'PLActions';
+import { getComments, votePost, getUsersByGroup, addComment, editComment, deleteComment, rateComment, loadActivityByEntityId, deletePost, deletePetition, changePost, changePetition, loadPollByEntityId, markAsRead } from 'PLActions';
 import PLOverlayLoader from 'PLOverlayLoader';
 import randomPlaceholder from '../../../utils/placeholder';
 import { FloatingAction } from 'react-native-floating-action';
@@ -106,6 +106,25 @@ class ItemDetail extends Component {
         }
         this.loadEntity();
     }
+
+    markAsRead(item){
+        console.log(item.zone, item.entity.type)
+        if (item.read) return;
+        if (item.zone === 'prioritized'){
+            if (item.entity.type === 'post' || item.entity.type === 'user-petition' || item.entity.type === 'leader-petition'){
+                markAsRead(this.props.token, item.id).then(r => {
+                    console.log(r);
+                });
+            }
+        }
+        
+        if (item.entity.type === 'leader-news'){
+            markAsRead(this.props.token, item.id).then(r => {
+                console.log(r)
+            })
+        }
+    }
+
 
     onCommentInputRef = r => {
         this.addCommentInput = r;
@@ -250,6 +269,8 @@ class ItemDetail extends Component {
             this.setState({ isLoading: false, inputDescription: this.item.description });
             this.loadComments();
             this.onShare(this.props.share, this.item);
+            this.markAsRead(this.item);
+            
         // } catch (error) {
         //     setTimeout(() => alert(error));
         // }

@@ -59,7 +59,7 @@ class Option extends Component{
                     <View style={{flex: 1, flexDirection: 'row', paddingLeft: 20, height: '100%'}}>
                         <Text style={styles.dolarSign}>$</Text>
                         {opt.is_user_amount 
-                            ? <Input 
+                            ? <TextInput 
                                 style={styles.valueInput} 
                                 value={this.state.value} 
                                 onChangeText={(value) => {
@@ -77,14 +77,14 @@ class Option extends Component{
 
     render() {
         let {opt, type} = this.props;
-        console.log('SS', this.state.value);
-        // console.log(opt, type);
+        // console.log('SS', this.state.value);
         switch(type){
         case 'leader-event': 
             return this.renderEventOption(opt);
         case 'question':
             return this.renderPollOption(opt);
         case 'crowdfunding-payment-request':
+        case 'payment-request':
             return this.renderFundraiserOption(opt);
         default:
             return null;

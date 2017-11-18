@@ -1,5 +1,5 @@
 import React, { Component,  } from 'react';
-import { View, StyleSheet, TouchableOpacity, Image, Linking, Alert, Picker } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Image, Linking, Alert } from 'react-native';
 import {
     Container,
     Content,
@@ -19,7 +19,8 @@ import {
     Button,
     Icon,
     Form,
-    Text
+    Text,
+    Picker
 } from 'native-base';
 import HyperLink from 'react-native-hyperlink';
 import { connect } from 'react-redux';
@@ -340,6 +341,11 @@ class PLBankAccount extends Component {
     }
 
     _renderBankForm() {
+        // hardcode to prevent future code changes -- just change these objects from whatever stripe endpoint returns and the pickers should work
+        let countryList = [{label:'United States', value:'us'}];
+        let currencyList = {
+            'us': [{label:'USD', value:'usd'}]
+        };
         return (
             <Card style={{padding: 10}}>
                 <Form>
@@ -368,36 +374,48 @@ class PLBankAccount extends Component {
                     </View>
                     <View style={{marginVertical: 5}}>
                         <Text style={styles.labelStyle}>Country</Text> 
-                        <View style={{borderColor: 'grey', borderWidth: StyleSheet.hairlineWidth,  borderRadius: 25}}>
-                            <Picker 
-                                iosHeader='Country'
-                                mode='dropdown'
-                                selectedValue={this.state.countryCode}
-                                onValueChange={value => {
-                                    console.log(value);
-                                    this.inputChanged('countryCode', value);
-                                }}
-                            >
-                                <Item label='United States' value='us' />
-                                {/* <Item label="Personal" value='personal'/> */}
-                            </Picker>
+                        <View style={{borderColor: 'grey', minHeight: 50, justifyContent: 'center', borderWidth: StyleSheet.hairlineWidth,  borderRadius: 25}}>
+                            {
+                                    countryList.length > 1
+                                    ?
+                                        <Picker 
+                                            iosHeader='Country'
+                                            mode='dropdown'
+                                            selectedValue={this.state.countryCode}
+                                            onValueChange={value => {
+                                                console.log(value);
+                                                this.inputChanged('countryCode', value);
+                                            }}
+                                    >
+                                            {countryList.map(country => 
+                                                <Item label={country.label} value={country.value} />
+                                            )}
+                                        </Picker>
+                            : <Text style={{marginLeft: 16}}>{countryList[0].label}</Text>
+                            }
                         </View>
                     </View>
                     <View style={{marginVertical: 5}}>
                         <Text style={styles.labelStyle}>Currency</Text> 
-                        <View style={{borderColor: 'grey', borderWidth: StyleSheet.hairlineWidth,  borderRadius: 25}}>
-                            <Picker 
-                                iosHeader='Currency'
-                                mode='dropdown'
-                                selectedValue={this.state.currency}
-                                onValueChange={value => {
-                                    // console.log(value)
-                                    this.inputChanged('currency', value);
-                                }}
-                            >
-                                <Item label='USD' value='usd' />
-                                {/* <Item label="Personal" value='personal'/> */}
-                            </Picker>
+                        <View style={{borderColor: 'grey', minHeight: 50, justifyContent: 'center', borderWidth: StyleSheet.hairlineWidth,  borderRadius: 25}}>
+                            {
+                            
+                                currencyList[this.state.countryCode].length > 1
+                                ?
+                                    <Picker 
+                                        iosHeader='Currency'
+                                        mode='dropdown'
+                                        selectedValue={this.state.currency}
+                                        onValueChange={value => {
+                                            this.inputChanged('currency', value);
+                                        }}
+                                    >
+                                        {currencyList[this.state.countryCode].map(country => <Picker.item label={country.label} value={country.value} />)}
+                                    </Picker>
+                                : <Text style={{marginLeft: 16}}>{currencyList[this.state.countryCode][0].label}</Text>
+                            
+                            
+                            }
                         </View>
                     </View>
                     

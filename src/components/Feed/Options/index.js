@@ -26,7 +26,7 @@ import {
 import Option from './option';
 
 const fundraiserThanksMessage = (amount, date) => (`Thank you! A receipt has been sent to your e-mail address on file confirming that you paid ${amount} on ${date}.`);
-const crowdfundingThanksMessage = (amount, deadline, goal) => (`Thanks for your pledge. You will be charged $${amount} on ${dealine} if  this campaign reaches ${goal} in pledges and a receipt will be e-mailed at that time.`);
+const crowdfundingThanksMessage = (amount, deadline, goal) => (`Thanks for your pledge. You will be charged $${amount} on ${deadline} if  this campaign reaches ${goal} in pledges and a receipt will be e-mailed at that time.`);
 
 class Options extends Component {
     
@@ -34,7 +34,7 @@ class Options extends Component {
         super(props);
         
         this.state = {
-            options: props.item.poll.options.map(opt => ({...opt, checked: props.item.entity.type !== 'crowdfunding-payment-request' && props.item.answers[0] && props.item.answers[0].option.id === opt.id})),
+            options: props.item.poll.options.map(opt => ({...opt, checked: props.item.entity.type !== 'crowdfunding-payment-request' && props.item.entity.type !== 'payment-request' && props.item.answers[0] && props.item.answers[0].option.id === opt.id})),
             checked: null
         };
     }
@@ -42,8 +42,9 @@ class Options extends Component {
     alertMessage(){
         let message;
         let item = this.props.item;
-        if (item.crowdfunding_deadline) {
-            message = crowdfundingThanksMessage(this.state.amount, item.crowdfunding_deadline, item.crowfunding_goal_amount);
+        console.log(item.poll.crowdfunding_deadline);
+        if (item.poll.crowdfunding_deadline) {
+            message = crowdfundingThanksMessage(this.state.amount, item.poll.crowdfunding_deadline, item.poll.crowdfunding_goal_amount);
         } else {
             message = fundraiserThanksMessage(this.state.amount, moment().format('MMMM Do YYYY') );
         }
@@ -54,12 +55,14 @@ class Options extends Component {
     verifyCardAndSendAnswer(){
         let {token, item} = this.props;
         loadUserCards(this.props.token).then(r => {
+            console.log('CARDS => ', r);
             let shouldAddCard =  !r.length >= 1;
             if (!shouldAddCard){
-                this.sendAnswer(token, item.entity.id , this.state.options[this.state.checked].id, item.poll.is_user_amount ? this.state.amount : null ).then(r => {
+                this.sendAnswer(token, item.entity.id , this.state.options[this.state.checked].id, this.state.options[this.state.checked].is_user_amount ? this.state.amount : null ).then(r => {
                     this.alertMessage();
                     this.setState({voting: false});
                 }).catch(e => {
+                    console.log(e);
                     alert('error :' + e.message);
                     console.warn('error: ', e);
                 });
@@ -73,14 +76,14 @@ class Options extends Component {
     }
 
     setChecked(index, amount) {
-        console.log(index, amount);
+        // console.log(index, amount);
         if (this.state.voting) return;
         let {options} = this.state;
         let {token, item} = this.props;
         options = options.map((opt, i) => ({...opt, checked: i === index }));
 
         this.setState({options, checked: index, amount});
-        if (this.props.item.entity.type !== 'crowdfunding-payment-request'){
+        if (this.props.item.entity.type !== 'crowdfunding-payment-request' && this.props.item.entity.type !== 'payment-request' ){
             this.sendAnswer(token, item.entity.id, options[index].id).then(r => {
                 this.setState({voting: false});
             });
@@ -88,18 +91,17 @@ class Options extends Component {
         }
 
         if (item.entity.type === 'leader-event'){
-            // open callendar
             let eventConfig = {
                 title: item.title,	
                 startDate: moment(item.poll.started_at).utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
                 endDate: moment(item.poll.finished_at).utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
                 notes: item.description
             };
-            console.log(eventConfig);
+            // console.log(eventConfig);
             presentNewCalendarEventDialog(eventConfig).then(eventId => {
                 if (eventId){
                     // id of event he might have created.
-                    console.log(eventId);
+                    // console.log(eventId);
                 } else {
                     //dissmissed - mixpanel here?
                 }
@@ -109,10 +111,15 @@ class Options extends Component {
         }
     }
 
-    sendAnswer(token, id, answerId, answerAmount){
-        console.log('sending another answer...');
+    async sendAnswer(token, id, answerId, answerAmount){
+        console.log('sending another answer...', token, id, answerId, answerAmount);
         this.setState({voting: true});
-        return answerPoll(token, id , answerId, answerAmount);
+        let r = await answerPoll(token, id , answerId, answerAmount);
+        console.log('res => ', r);
+        return new Promise((resolve, reject) => 
+            r.status == 200 ? resolve(r) : reject(r)
+        );
+        // return answerPoll(token, id , answerId, answerAmount).then(r );
     }
 
     sendPayment(){
@@ -134,48 +141,51 @@ class Options extends Component {
     alreadyDonatedText(item){
         if (item.entity.type === 'crowdfunding-payment-request' && this.props.item.answers[0]) {
             return (
-                <Text style={styles.alreadyDonatedText}>{"You've already donated to this fundraiser. \nFeel free to donate again"}</Text>
+                <Text style={styles.alreadyDonatedText}>{`You've already donated to this crowdfunding. \nYou can change your donation option before the deadline.`}</Text>
             );
         }
+        if (item.entity.type === 'payment-request' && this.props.item.answers[0]) {
+            return (
+                <Text style={styles.alreadyDonatedText}>{`You've already donated to this fundraiser. \nFeel free to donate again`}</Text>
+            );
+        }
+        
     }
     crowdfundingInfo(item){
         if (item.entity.type === 'crowdfunding-payment-request') {
             return (
                 item.poll.is_crowdfunding_completed
-                ? <Text>Woohoo! this is a completed crowdfunding :) </Text>
+                ? <Text style={styles.crowdfundingInfo} >This crowdfunding has achieved its goal</Text>
                 : item.expired 
-                ? <Text>Unfortunately this crowdfunding is expired</Text>
-                : <Text>This crowdfunding will end at {moment(item.poll.crowdfunding_deadline).format('DD/MM/YY hh:mm')} and the objective is ${item.poll.crowdfunding_goal_amount}</Text>
+                ? <Text style={styles.crowdfundingInfo} >Unfortunately this crowdfunding is expired</Text>
+                : <Text style={styles.crowdfundingInfo} >This crowdfunding will end at {moment(item.poll.crowdfunding_deadline).format('DD/MM/YY hh:mm')} and the objective is ${item.poll.crowdfunding_goal_amount}</Text>
             );
         }
     }
 
     renderPastInfo(){
-        return <Text>You cannot vote on this expired content</Text>;
+        let entity = item.poll.crowdfunding_deadline ? 'crowdfunding' : 'fundraiser';
+        return <Text style={styles.expired} >This {entity} has already expired.</Text>;
     }
 
 
     render(){
         let {item} = this.props;
         let {options} = this.state;
-        console.log(this.state);
-
+        console.log(options);
         return (
             <View style={styles.optionsContainer}>
                 {
                     this.crowdfundingInfo(item)
                 }
                 {
-                    !item.expired
-                    ? options.map((opt, i) => {
-                        console.log(opt);
+                    options.map((opt, i) => {
                         return <Option type={item.entity.type} opt={opt} onCheck={(value) => this.setChecked(i, value)} />;
                     })
-                    : this.renderPastInfo(item)
                 }
                 {this.alreadyDonatedText(item)}
                 {
-                    item.entity.type === 'crowdfunding-payment-request'
+                    (item.entity.type === 'crowdfunding-payment-request' || item.entity.type === 'payment-request' )
                     ? this.renderPaymentButton()
                     : null
                 }
@@ -184,12 +194,25 @@ class Options extends Component {
     }
 }
 
-const styles= {
+const styles = {
     optionsContainer: {
         justifyContent: 'flex-start'
     },
     alreadyDonatedText: {
-        fontSize: 10
+        fontSize: 10,
+        color: '#a8a8a8',
+        fontWeight: '500'
+    },
+    crowdfundingInfo: {
+        fontSize: 11,
+        fontWeight: '500',
+        color: '#a5a5a5',
+        maxWidth: '80%'
+    },
+    expired: {
+        fontSize: 11,
+        fontWeight: '500',
+        color: 'b9b9b9'
     }
 };
 
