@@ -2,7 +2,7 @@
 import api from '../utils/api';
 var { API_URL, PER_PAGE } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
-
+import { ActionTypes } from '../reducers/groupManagement'
 //Loads user's current joined groups
 async function loadUserGroups(token: string, page: ?number = 0, perPage: ?number = PER_PAGE): Promise<Action> {
     try {
@@ -397,7 +397,520 @@ function getUsersByGroup(token, groupId, query){
     })
 }
 
+async function groupBankAccounts(token, groupId) {
+    return fetch(API_URL + `/v2/groups/${groupId}/bank-accounts`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token
+        }
+    })
+}
 
+function updateGroupAvatar(token, groupId, image) {
+    return new Promise((resolve, reject) => {
+        fetch(API_URL + '/v2/groups/' + groupId + '/avatar', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'token': token
+            },
+            body: JSON.stringify({avatar: image})
+        })
+        .then((res) => res.json())
+        .then(data => {
+            // console.log("get Group Users API Success", data);
+            resolve(data);
+        })
+        .catch(err => {
+            // console.log("get Group Users API Error", err);
+            reject(err);
+        });
+    })
+}
+
+function updateGroupBanner(token, groupId, image) {
+    // console.log(image)
+    return new Promise((resolve, reject) => {
+        fetch(API_URL + '/v2/groups/' + groupId + '/banner', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'token': token
+            },
+            body: JSON.stringify({banner: image})
+        })
+        .then((res) => res.json())
+        .then(data => {
+            
+            console.log("updateGroupBanner API Success", data);
+            resolve(data);
+        })
+        .catch(err => {
+            // console.log("get Group Users API Error", err);
+            reject(err);
+        });
+    })
+}
+
+
+const getGroupPendingUsers = (groupId) => (dispatch, getState) => {
+    const token = getState().user.token;
+    dispatch({type: ActionTypes.FETCH_GROUP_MEMBERS_LOADING, payload: true})
+    fetch(API_URL + '/v2/groups/' + groupId + '/users', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token
+        }
+    })
+    .then((res) => res.json())
+    .then(data => {
+        console.log('getGroupPendingUsers', data)
+        dispatch({type: ActionTypes.FETCH_GROUP_MEMBERS_SUCCESS, payload: data.payload})
+        dispatch({type: ActionTypes.FETCH_GROUP_MEMBERS_LOADING, payload: false})
+    })
+    .catch(err => {
+        console.log("get Group Users API Error", err);
+        dispatch({type: ActionTypes.FETCH_GROUP_MEMBERS_LOADING, payload: false})
+        dispatch({type: ActionTypes.FETCH_GROUP_MEMBERS_ERROR, payload: err})        
+    });
+}
+
+const promoteUserToManager = (groupId, userId) => (dispatch, getState) => {
+    const token = getState().user.token;
+    dispatch({type: ActionTypes.GROUP_PROMOTE_USER_LOADING, payload: true})
+    fetch(API_URL + '/v2/groups/' + groupId + '/managers/' + userId, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token
+        }
+    })
+    .then((res) => res.json())
+    .then(data => {
+        console.log('promoteUser', data)
+        if(data.code) {
+            dispatch({type: ActionTypes.GROUP_PROMOTE_USER_ERROR, payload: data.message})        
+            return;
+        }
+        dispatch({type: ActionTypes.GROUP_PROMOTE_USER_SUCCESS, payload: userId})
+        dispatch({type: ActionTypes.GROUP_PROMOTE_USER_LOADING, payload: false})
+    })
+    .catch(err => {
+        console.log("promoteUser API Error", err);
+        dispatch({type: ActionTypes.GROUP_PROMOTE_USER_LOADING, payload: false})
+        dispatch({type: ActionTypes.GROUP_PROMOTE_USER_ERROR, payload: err})        
+    });
+}
+
+const unPromoteUserToMember = (groupId, userId) => (dispatch, getState) => {
+    const token = getState().user.token;
+    dispatch({type: ActionTypes.GROUP_UNPROMOTE_USER_LOADING, payload: true})
+    fetch(API_URL + '/v2/groups/' + groupId + '/managers/' + userId, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token
+        }
+    })
+    .then(data => {
+        console.log('promoteUser', data)
+        if(data.code) {
+            dispatch({type: ActionTypes.GROUP_UNPROMOTE_USER_ERROR, payload: data.message})        
+            return;
+        }
+        dispatch({type: ActionTypes.GROUP_UNPROMOTE_USER_SUCCESS, payload: userId})
+        dispatch({type: ActionTypes.GROUP_UNPROMOTE_USER_LOADING, payload: false})
+    })
+    .catch(err => {
+        console.log("UNPROMOTEUser API Error", err);
+        dispatch({type: ActionTypes.GROUP_UNPROMOTE_USER_LOADING, payload: false})
+        dispatch({type: ActionTypes.GROUP_UNPROMOTE_USER_ERROR, payload: err})        
+    });
+}
+
+const approveUserToGroup = (groupId, userId) => (dispatch, getState) => {
+    const token = getState().user.token;
+    dispatch({type: ActionTypes.GROUP_ACCEPT_USER_LOADING, payload: true})
+    fetch(API_URL + '/v2/groups/' + groupId + '/users/' + userId, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token
+        }
+    })
+    .then((res) => res.json())
+    .then(data => {
+        console.log('approveUserToGroup', data)
+        dispatch({type: ActionTypes.GROUP_ACCEPT_USER_SUCCESS, payload: {data, userId}})
+        dispatch({type: ActionTypes.GROUP_ACCEPT_USER_LOADING, payload: false})
+    })
+    .catch(err => {
+        console.log("approveUserToGroup API Error", err);
+        dispatch({type: ActionTypes.GROUP_ACCEPT_USER_LOADING, payload: false})
+        dispatch({type: ActionTypes.GROUP_ACCEPT_USER_ERROR, payload: err})        
+    });
+}
+
+const removeUserFromGroup = (groupId, userId) => (dispatch, getState) => {
+    const token = getState().user.token;
+    dispatch({type: ActionTypes.GROUP_REMOVE_USER_LOADING, payload: true})
+    fetch(API_URL + '/v2/groups/' + groupId + '/users/' + userId, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token
+        }
+    })
+    .then(data => {
+        console.log('removeUserFromGroup', data)
+        dispatch({type: ActionTypes.GROUP_REMOVE_USER_SUCCESS, payload: userId})
+        dispatch({type: ActionTypes.GROUP_REMOVE_USER_LOADING, payload: false})
+    })
+    .catch(err => {
+        console.log("removeUserFromGroup API Error", err);
+        dispatch({type: ActionTypes.GROUP_REMOVE_USER_LOADING, payload: false})
+        dispatch({type: ActionTypes.GROUP_REMOVE_USER_ERROR, payload: err})        
+    });
+}
+
+const getGroupAdvancedAttributes = (groupId) => (dispatch, getState) => {
+    const token = getState().user.token;
+    dispatch({type: ActionTypes.GROUP_GET_ADVANCED_ATTRIBS_LOADING, payload: true})
+    fetch(API_URL + '/v2/groups/' + groupId + '/advanced-attributes', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        dispatch({type: ActionTypes.GROUP_GET_ADVANCED_ATTRIBS_SUCCESS, payload: data})
+        dispatch({type: ActionTypes.GROUP_GET_ADVANCED_ATTRIBS_LOADING, payload: false})
+    })
+    .catch(err => {
+        console.log("removeUserFromGroup API Error", err);
+        dispatch({type: ActionTypes.GROUP_GET_ADVANCED_ATTRIBS_LOADING, payload: false})
+        dispatch({type: ActionTypes.GROUP_GET_ADVANCED_ATTRIBS_ERROR, payload: err})        
+    });
+}
+const getGroupTags = () => (dispatch, getState) => {
+    const token = getState().user.token;
+    dispatch({type: ActionTypes.GROUP_TAGS_LOADING, payload: true})
+    console.log(API_URL + '/v2/group-tags')
+    fetch(API_URL + '/v2/group-tags', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        dispatch({type: ActionTypes.GROUP_TAGS_SUCCESS, payload: data})
+        dispatch({type: ActionTypes.GROUP_TAGS_LOADING, payload: false})
+    })
+    .catch(err => {
+        console.log("removeUserFromGroup API Error", err);
+        dispatch({type: ActionTypes.GROUP_TAGS_LOADING, payload: false})
+        dispatch({type: ActionTypes.GROUP_TAGS_ERROR, payload: err})        
+    });
+}
+
+const getGroupOwnTags = (groupId) => (dispatch, getState) => {
+    const token = getState().user.token;
+    dispatch({type: ActionTypes.GROUP_OWN_TAGS_LOADING, payload: true})
+    console.log(API_URL + '/v2/groups/' + groupId + '/tags')
+    fetch(API_URL + '/v2/groups/' + groupId + '/tags', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        dispatch({type: ActionTypes.GROUP_OWN_TAGS_SUCCESS, payload: data})
+        dispatch({type: ActionTypes.GROUP_OWN_TAGS_LOADING, payload: false})
+    })
+    .catch(err => {
+        console.log("removeUserFromGroup API Error", err);
+        dispatch({type: ActionTypes.GROUP_OWN_TAGS_LOADING, payload: false})
+        dispatch({type: ActionTypes.GROUP_OWN_TAGS_ERROR, payload: err})        
+    });
+}
+
+const updateGroupAdvancedAttributes = (groupId, data) => (dispatch, getState) => {
+    const token = getState().user.token;
+    dispatch({type: ActionTypes.GROUP_UPDATE_ADVANCED_ATTRIBS_LOADING, payload: true})
+    fetch(API_URL + '/v2/groups/' + groupId + '/advanced-attributes', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token
+        },
+        body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(response => {
+        console.log('updateGroupAdvancedAttributes', response)
+        dispatch({type: ActionTypes.GROUP_UPDATE_ADVANCED_ATTRIBS_SUCCESS, payload: response})
+        dispatch({type: ActionTypes.GROUP_UPDATE_ADVANCED_ATTRIBS_LOADING, payload: false})
+    })
+    .catch(err => {
+        console.log("removeUserFromGroup API Error", err);
+        dispatch({type: ActionTypes.GROUP_UPDATE_ADVANCED_ATTRIBS_LOADING, payload: false})
+        dispatch({type: ActionTypes.GROUP_UPDATE_ADVANCED_ATTRIBS_ERROR, payload: err})        
+    });
+}
+
+const groupAdvancedAttribsInputChange = ({key, prop}) => (dispatch) => {
+    dispatch({type: ActionTypes.GROUP_ADVANCED_ATTRIBS_INPUT_CHANGED, payload: {key, prop}})
+}
+
+
+const groupSaveTag = (groupId, tagId, dispatch, getState) => {
+    const token = getState().user.token;
+    fetch(API_URL + '/v2/groups/' + groupId + '/tags/' + tagId, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token
+        },
+    })
+    .then(response => {
+        console.log('updateGroupAdvancedAttributes', response)
+        dispatch({type: ActionTypes.GROUP_SAVE_TAG_SUCCESS, payload: response})
+    })
+    .catch(err => {
+        console.log("removeUserFromGroup API Error", err);
+        dispatch({type: ActionTypes.GROUP_SAVE_TAG_ERROR, payload: err})        
+    });
+}
+
+const groupRemoveTag = (groupId, tagId, dispatch, getState) =>  {
+    const token = getState().user.token;
+    fetch(API_URL + '/v2/groups/' + groupId + '/tags/' + tagId, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token
+        },
+    })
+    .then(response => {
+        console.log('updateGroupAdvancedAttributes', response)
+        dispatch({type: ActionTypes.GROUP_DELETE_TAG_SUCCESS, payload: response})
+    })
+    .catch(err => {
+        console.log("removeUserFromGroup API Error", err);
+        dispatch({type: ActionTypes.GROUP_DELETE_TAG_ERROR, payload: err})        
+    });
+}
+
+const groupSelectTag = (groupId, tag) => (dispatch, getState) => {
+    const tags = getState().groupManagement.groupOwnTags
+    if(tags.includes(tag)) {
+        dispatch({type: ActionTypes.GROUP_DESELECT_TAG, payload: tag})
+        groupRemoveTag(groupId, tag.id, dispatch, getState)
+    } else {
+        dispatch({type: ActionTypes.GROUP_SELECT_TAG, payload: tag})
+        groupSaveTag(groupId, tag.id, dispatch, getState)
+    }
+}
+
+const groupGetBankAccounts = (groupId) => (dispatch, getState) => {
+    const token = getState().user.token
+    dispatch({type: ActionTypes.GROUP_GET_BANK_ACCOUNT_LOADING, payload: true})
+    fetch(API_URL + '/v2/groups/' + groupId + '/bank-accounts', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token
+        },
+    })
+    .then(response => response.json())
+    .then(res => {
+        dispatch({type: ActionTypes.GROUP_GET_BANK_ACCOUNT_SUCCESS, payload: res})
+        dispatch({type: ActionTypes.GROUP_GET_BANK_ACCOUNT_LOADING, payload: false})
+    })
+    .catch(err => {
+        dispatch({type: ActionTypes.GROUP_GET_BANK_ACCOUNT_ERROR, payload: err})
+        dispatch({type: ActionTypes.GROUP_GET_BANK_ACCOUNT_LOADING, payload: false})
+        
+    });
+}
+
+const groupCreateBankAccount = (groupId, data) => (dispatch, getState) => {
+    const token = getState().user.token
+    dispatch({type: ActionTypes.GROUP_POST_BANK_ACCOUNT_LOADING, payload: true})
+    fetch(API_URL + '/v2/groups/' + groupId + '/bank-accounts', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token,
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(res => {
+        if(!res.code) {
+            dispatch({type: ActionTypes.GROUP_POST_BANK_ACCOUNT_SUCCESS, payload: res.bank_accounts[0]})
+            dispatch({type: ActionTypes.GROUP_POST_BANK_ACCOUNT_LOADING, payload: false})
+        } else {
+            dispatch({type: ActionTypes.GROUP_POST_BANK_ACCOUNT_ERROR, payload: res})
+        }
+    })
+    .catch(err => {
+        dispatch({type: ActionTypes.GROUP_POST_BANK_ACCOUNT_ERROR, payload: err})
+        dispatch({type: ActionTypes.GROUP_POST_BANK_ACCOUNT_LOADING, payload: false})
+        
+    });
+} 
+const groupDeleteBankAccount = (groupId, accountId) => (dispatch, getState) => {
+    const token = getState().user.token
+    dispatch({type: ActionTypes.GROUP_DELETE_BANK_ACCOUNT_LOADING, payload: true})
+    fetch(API_URL + '/v2/groups/' + groupId + '/bank-accounts/' + accountId, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token
+        }
+    })
+    .then(response => response.json())
+    .then(res => {
+        console.log(res)
+        if(!res.code) {
+            dispatch({type: ActionTypes.GROUP_DELETE_BANK_ACCOUNT_SUCCESS, payload: accountId})
+            dispatch({type: ActionTypes.GROUP_DELETE_BANK_ACCOUNT_LOADING, payload: false})
+        }  else {
+            dispatch({type: ActionTypes.GROUP_DELETE_BANK_ACCOUNT_ERROR, payload: 'Something Went Wrong'})
+        }
+    })
+    .catch(err => {
+        dispatch({type: ActionTypes.GROUP_DELETE_BANK_ACCOUNT_ERROR, payload: err})
+        dispatch({type: ActionTypes.GROUP_DELETE_BANK_ACCOUNT_LOADING, payload: false})
+        
+    });
+} 
+
+const groupDeleteCard = (groupId, cardID) => (dispatch, getState) => {
+    const token = getState().user.token
+    dispatch({type: ActionTypes.GROUP_DELETE_CARD_LOADING, payload: true})
+    fetch(API_URL + '/v2/groups/' + groupId + '/cards/' + cardID, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token
+        }
+    })
+    .then(res => {
+        dispatch({type: ActionTypes.GROUP_DELETE_CARD_SUCCESS, payload: cardID})
+        dispatch({type: ActionTypes.GROUP_DELETE_CARD_LOADING, payload: false})
+    })
+    .catch(err => {
+        dispatch({type: ActionTypes.GROUP_DELETE_CARD_ERROR, payload: err})
+        dispatch({type: ActionTypes.GROUP_DELETE_CARD_LOADING, payload: false})
+        
+    });
+} 
+
+const groupCreateCard = (groupId, data) => (dispatch, getState) => {
+    console.log(data)
+    const token = getState().user.token
+    dispatch({type: ActionTypes.GROUP_POST_CARD_LOADING, payload: true})
+    fetch(API_URL + '/v2/groups/' + groupId + '/cards', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token,
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(res => {
+        console.log(res)
+        if(!res.code) {
+            dispatch({type: ActionTypes.GROUP_POST_CARD_SUCCESS, payload: res.cards})
+            dispatch({type: ActionTypes.GROUP_POST_CARD_LOADING, payload: false})
+        }  else {
+            dispatch({type: ActionTypes.GROUP_POST_CARD_ERROR, payload: res})
+        }
+    })
+    .catch(err => {
+        dispatch({type: ActionTypes.GROUP_POST_CARD_ERROR, payload: err})
+        dispatch({type: ActionTypes.GROUP_POST_CARD_LOADING, payload: false})
+        
+    });
+}
+
+const groupGetCards = (groupId) => (dispatch, getState) => {
+    const token = getState().user.token
+    dispatch({type: ActionTypes.GROUP_GET_CARDS_LOADING, payload: true})
+    fetch(API_URL + '/v2/groups/' + groupId + '/cards', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token
+        },
+    })
+    .then(response => response.json())
+    .then(res => {
+        dispatch({type: ActionTypes.GROUP_GET_CARDS_SUCCESS, payload: res})
+        dispatch({type: ActionTypes.GROUP_GET_CARDS_LOADING, payload: false})
+    })
+    .catch(err => {
+        dispatch({type: ActionTypes.GROUP_GET_CARDS_ERROR, payload: err})
+        dispatch({type: ActionTypes.GROUP_GET_CARDS_LOADING, payload: false})
+        
+    });
+}
+
+const groupGetSubscriptions = (groupId) => (dispatch, getState) => {
+    const token = getState().user.token
+    dispatch({type: ActionTypes.GROUP_GET_SUBSCRIPTIONS_LOADING, payload: true})
+    fetch(API_URL + '/v2/groups/' + groupId + '/subscription', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token
+        },
+    })
+    .then(response => response.json())
+    .then(res => {
+        dispatch({type: ActionTypes.GROUP_GET_SUBSCRIPTIONS_SUCCESS, payload: res})
+        dispatch({type: ActionTypes.GROUP_GET_SUBSCRIPTIONS_LOADING, payload: false})
+    })
+    .catch(err => {
+        dispatch({type: ActionTypes.GROUP_GET_SUBSCRIPTIONS_ERROR, payload: err})
+        dispatch({type: ActionTypes.GROUP_GET_SUBSCRIPTIONS_LOADING, payload: false})
+        
+    });
+}
+
+const groupUpdateSubscriptions = (groupId, package_type) => (dispatch, getState) => {
+    const token = getState().user.token
+    dispatch({type: ActionTypes.GROUP_UPDATE_SUBSCRIPTIONS_LOADING, payload: true})
+    fetch(API_URL + '/v2/groups/' + groupId + '/subscription', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token
+        },
+        body: JSON.stringify({package_type})
+    })
+    .then(response => response.json())
+    .then(res => {
+        dispatch({type: ActionTypes.GROUP_UPDATE_SUBSCRIPTIONS_SUCCESS, payload: res})
+        dispatch({type: ActionTypes.GROUP_UPDATE_SUBSCRIPTIONS_LOADING, payload: false})
+    })
+    .catch(err => {
+        dispatch({type: ActionTypes.GROUP_UPDATE_SUBSCRIPTIONS_ERROR, payload: err})
+        dispatch({type: ActionTypes.GROUP_UPDATE_SUBSCRIPTIONS_LOADING, payload: false})
+        
+    });
+}
 
 module.exports = {
     loadUserGroups,
@@ -417,5 +930,30 @@ module.exports = {
     getGroupPermissions,
     getUsersByGroup,
     inviteUpvotersToGroup,
-    getGroupRequiredFields
+    getGroupRequiredFields,
+    groupBankAccounts,
+    updateGroupAvatar,
+    updateGroupBanner,
+
+    // REAL ACTIONS
+    getGroupPendingUsers,
+    promoteUserToManager,
+    approveUserToGroup,
+    removeUserFromGroup,
+    unPromoteUserToMember,
+    getGroupAdvancedAttributes,
+    groupAdvancedAttribsInputChange,
+    updateGroupAdvancedAttributes,
+    getGroupTags,
+    getGroupOwnTags,
+    groupSelectTag,
+    groupGetBankAccounts,
+    groupCreateBankAccount,
+    groupDeleteBankAccount,
+    groupCreateCard,
+    groupGetCards,
+    groupCreateCard,
+    groupDeleteCard,
+    groupGetSubscriptions,
+    groupUpdateSubscriptions
 }

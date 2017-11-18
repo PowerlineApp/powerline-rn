@@ -251,21 +251,16 @@ class Newsfeed extends Component {
 
         let dataArray = this.state.dataArray;
 
-        /**
-         * this is hardcode for testing purposes -- I will remove once ConversationFeed is 100% working 
-         * I still need to be 100% shure on how to decide to display conversationView or FeedView - is the owner of the group
-         * allowed to change it manually yet?
-         * // Felipe
-         */
         let conversationView = false;
         if (this.props.selectedGroup && this.props.selectedGroup.group !== 'all' && this.props.selectedGroup.conversationView){
-            conversationView = true;
+            // hardcore here to test view -- value should be true
+            conversationView = false;
         }
 
         // console.log('newsfeed render')
 
         return (
-            <View style={{flex: 1}}>
+            <Container style={{flex: 1}}>
                     {    this.props.selectedGroup && this.props.selectedGroup.group != 'all' &&
                         <TouchableOpacity onPress={() => Actions.groupprofile({ id: this.props.selectedGroup.group })}>
                             {
@@ -313,8 +308,7 @@ class Newsfeed extends Component {
                             )
                         }} />
                     <PLOverlayLoader visible={isLoading || isLoadingTail || isRefreshing} logo />
-                    <KeyboardAvoidingView>
-                        {
+                    {
                         /**
                          * if we are in conversation view, we have a textinput on the bottom, that creates posts
                          * right now works good on android, but on iOS the keyboard goes over the input 
@@ -323,6 +317,7 @@ class Newsfeed extends Component {
                          */
                         conversationView
                         ?
+                        <KeyboardAvoidingView behavior={Platform.select({android:'height', ios: 'padding'})}>
                         <Footer style={styles.CFooter}>
                                 <Item style={styles.CFooterItem}>
                                     <Thumbnail small source={{ uri: this.props.profile.avatar_file_name + '&w=200&h=200&auto=compress,format,q=95' }} />
@@ -333,10 +328,10 @@ class Newsfeed extends Component {
                                     </Button>
                                 </Item>
                             </Footer>
+                    </KeyboardAvoidingView> 
                             : null
                         }
-                    </KeyboardAvoidingView> 
-            </View>
+            </Container>
         );
     }
 }

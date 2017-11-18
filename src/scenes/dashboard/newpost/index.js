@@ -4,7 +4,7 @@
 // https://api-dev.powerli.ne/api-doc#post--api-v2.2-groups-{group}-posts
 
 import React, { Component } from 'react';
-import {TextInput, Keyboard, Platform} from 'react-native';
+import {TextInput, Keyboard, Platform, KeyboardAvoidingView} from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 
@@ -43,6 +43,8 @@ import {
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import { showToast } from 'PLToast';
+const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
+
 
 const { width, height } = Dimensions.get('window');
 import { loadUserData, getGroups, getUsersByGroup, createPostToGroup, getPetitionConfig } from 'PLActions';
@@ -95,9 +97,22 @@ class NewPost extends Component {
             
         });
         this.loadSharedData(this.props.data);
+        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => this._keyboardDidShow);
+        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => this._keyboardDidHide);
     }
 
+    componentWillUnmount () {
+    this.keyboardDidShowListener.remove();
+    this.keyboardDidHideListener.remove();
+    }
 
+    _keyboardDidShow () {
+        this.setState({keyboard: false})
+    }
+
+    _keyboardDidHide () {
+        this.setState({keyboard: true})
+    }
 
     async loadSharedData(data){
         if (!data) {
@@ -308,8 +323,6 @@ class NewPost extends Component {
                         </Button>
                     </Right>
                 </Header>
-                <ScrollView scrollEnabled={!this.state.showCommunity} keyboardShouldPersistTaps={'handled'} >
-                    <View style={styles.main_content}>
                         <List>
                             <ListItem style={styles.community_container} onPress={() => this.toggleCommunity()}>
                                 <View style={styles.avatar_container}>
@@ -318,7 +331,6 @@ class NewPost extends Component {
                                     </View>
                                     <View style={styles.avatar_subfix} />
                                 </View>
-                                <View style={styles.avatar_subfix} />
                             <Body style={styles.community_text_container}>
                                 <Text style={{color: 'white'}}>
                                     {this.state.selectedGroupIndex == -1 ? 'Select a community' : this.state.grouplist[this.state.selectedGroupIndex].official_name}
@@ -333,6 +345,8 @@ class NewPost extends Component {
                         </Right>
                         </ListItem>
                     </List>
+                <ScrollView scrollEnabled={false} keyboardShouldPersistTaps={'handled'} style={styles.main_content} >
+                    {/* <S style={styles.main_content}> */}
 
                     {
                         this.state.displaySuggestionBox && this.state.suggestionList.length > 0
@@ -355,23 +369,6 @@ class NewPost extends Component {
                             onChangeText={(text) => this.changeContent(text)}
                         />
                     </ScrollView>
-                    <Button transparent style={{ marginBottom: 8, height: 60 }} onPress={this.attachImage}>
-                            {
-                                this.state.image ?
-                                    <View style={{ flexDirection: 'row', width: 100, height: 60, alignItems: 'center', justifyContent: 'center' }}>
-                                        <Image source={{ uri: `data:image/png;base64,${this.state.image}` }} resizeMode="cover" style={{ width: 90, height: 50 }} />
-                                        <View style={styles.deleteIconContainer}>
-                                            <Icon name="md-close-circle" style={styles.deleteIcon} />
-                                        </View>
-                                    </View>
-                                    :
-                                    <Image source={require("img/upload_image.png")} resizeMode="contain" style={{ width: 100, height: 60, tintColor: 'gray' }} />
-                            }
-                        </Button>
-                    <ShareFloatingAction 
-                        onPress={() => this.setShareSelected(!this.state.share)}
-                        isSelected={() => this.isShareSelected()}
-                    />
                         {
                             this.state.showCommunity &&
                             <CommunityView
@@ -379,22 +376,42 @@ class NewPost extends Component {
                                 onPress={this.selectGroupList.bind(this)}
                             />
                         }
-                    </View>
                 </ScrollView>
-                <Footer style={{ alignItems: 'center', justifyContent: 'space-between', backgroundColor: PLColors.main, paddingLeft: 10, paddingRight: 10 }}>
-                    {this.state.posts_remaining
-                        ? <Label style={{ color: 'white', fontSize: 10 }}>
-                            You have <Label style={{ fontWeight: 'bold' }}>{this.state.posts_remaining}</Label> posts left in this group
-                    </Label>
-                        : <Label />
-                    }
-                    {/* Related: GH 151 */}
-                    <Label style={{ color: 'white' }}>
+                <KeyboardAvoidingView behavior={Platform.select({android:'height', ios: 'padding'})}>
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                        <Button transparent style={{ marginBottom: 10, height: 60 }} onPress={this.attachImage}>
+                            {
+                                this.state.image ?
+                                <View style={{ flexDirection: 'row', width: 90, height: 50, alignItems: 'center', justifyContent: 'center' }}>
+                                        <Image source={{ uri: `data:image/png;base64,${this.state.image}` }} resizeMode="cover" style={{ width: 90, height: 50 }} />
+                                        <View style={styles.deleteIconContainer}>
+                                            <Icon name="md-close-circle" style={styles.deleteIcon} />
+                                        </View>
+                                    </View>
+                                    :
+                                    <Image source={require("img/upload_image.png")} resizeMode="contain" style={{ width: 90, height: 50, tintColor: 'gray' }} />
+                            }
+                            </Button>
+                            <Button transparent style={{ marginBottom: 10, height: 60 }} onPress={() => this.setShareSelected(!this.state.share)}>
+                                <View style={{ flexDirection: 'row', backgroundColor: this.state.share ? '#71c9f1' : '#ccc', borderRadius: 30, width: 60, height: 60, alignItems: 'center', justifyContent: 'center' }} >
+                                    <Image resizeMode="cover" style={{width: 35, height: 35}} source={require('../../../assets/share_icon.png')} />
+                                </View>
+                            </Button>
+                    </View>
+                    <Footer style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: PLColors.main, paddingLeft: 10, paddingRight: 10 }}>
                         {
-                            (POST_MAX_LENGTH - this.state.content.length)
+                            this.state.posts_remaining
+                            ? <Label style={{ color: 'white', fontSize: 10 }}>
+                                You have <Label style={{ fontWeight: 'bold' }}>{this.state.posts_remaining}</Label> posts left in this group
+                            </Label>
+                            :<Label />
                         }
-                    </Label>
-                </Footer>
+                        {/* Related: GH 151 */}
+                        <Label style={{ color: 'white' }}>
+                            {(POST_MAX_LENGTH - this.state.content.length)}
+                        </Label>
+                    </Footer>
+                </KeyboardAvoidingView>
             </Container>
         );
     }

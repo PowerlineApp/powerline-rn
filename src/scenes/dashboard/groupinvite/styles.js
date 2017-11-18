@@ -82,7 +82,8 @@ export default {
         width: width,
         height: (height  - 185),
         zIndex: 10,
-        paddingLeft: (width - 250)/ 2
+        paddingLeft: (width - 250)/ 2,
+        paddingTop: 40,
     },
 
     community_list_back: {

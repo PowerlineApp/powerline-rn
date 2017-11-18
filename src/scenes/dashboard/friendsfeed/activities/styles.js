@@ -41,8 +41,8 @@ export default {
         alignItems: 'flex-end',
     },
     zoneIcon: {
-        fontSize: 15,
-        color: '#5fc7fa',
+        fontSize: 17,
+        color: '#ED1727',
     },
     commentCount: {
         fontSize: 12,

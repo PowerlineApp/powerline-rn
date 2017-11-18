@@ -13,7 +13,7 @@ import RNFetchBlob from 'react-native-fetch-blob'
 const fs = RNFetchBlob.fs
 
 import {ScrollView} from 'react-native';
-import { Spinner, Container, Header, Title, Textarea, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, List, ListItem, Item, Input } from 'native-base';
+import { Spinner, Container, Header, Title, Textarea, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, List, ListItem, Item, Input, Card } from 'native-base';
 import { Image, View, StyleSheet, TouchableOpacity, Platform, KeyboardAvoidingView, Keyboard, TextInput, ListView } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
@@ -30,13 +30,11 @@ import Menu, {
     MenuOption,
     renderers
 } from 'react-native-popup-menu';
-import { getComments, votePost, getUsersByGroup, addComment, editComment, deleteComment, rateComment, loadActivityByEntityId, deletePost, deletePetition, changePost, changePetition } from 'PLActions';
+import { getComments, votePost, getUsersByGroup, addComment, editComment, deleteComment, rateComment, loadActivityByEntityId, deletePost, deletePetition, changePost, changePetition, loadPollByEntityId, markAsRead } from 'PLActions';
 import PLOverlayLoader from 'PLOverlayLoader';
 import randomPlaceholder from '../../../utils/placeholder';
 import { FloatingAction } from 'react-native-floating-action';
 import _ from 'lodash';
-
-
 
 // custom components import
 import FeedFooter from '../../../components/Feed/FeedFooter';
@@ -46,6 +44,7 @@ import FeedDescription from '../../../components/Feed/FeedDescription';
 import FeedContext from '../../../components/Feed/FeedContext';
 import FeedMetaData from '../../../components/Feed/FeedMetaData';
 import FeedActivity from '../../../components/Feed/FeedActivity';
+import Options from '../../../components/Feed/Options';
 
 import SuggestionBox from '../../../common/suggestionBox';
 
@@ -98,13 +97,34 @@ class ItemDetail extends Component {
         // console.log('=xx=x=x=x=x=x=x=x=x==x')
         // console.log('propss', this.props.entityType, this.props.entityId);
         if (this.props.commenting) {
-            // console.log('commenting...')
             setTimeout(
                 () => this._onAddComment()
                 , 1000);
         }
+        if (this.props.commentText){
+            this.setState({commentText: this.props.commentSendText })
+        }
         this.loadEntity();
     }
+
+    markAsRead(item){
+        console.log(item.zone, item.entity.type)
+        if (item.read) return;
+        if (item.zone === 'prioritized'){
+            if (item.entity.type === 'post' || item.entity.type === 'user-petition' || item.entity.type === 'leader-petition'){
+                markAsRead(this.props.token, item.id).then(r => {
+                    console.log(r);
+                });
+            }
+        }
+        
+        if (item.entity.type === 'leader-news'){
+            markAsRead(this.props.token, item.id).then(r => {
+                console.log(r)
+            })
+        }
+    }
+
 
     onCommentInputRef = r => {
         this.addCommentInput = r;
@@ -243,20 +263,31 @@ class ItemDetail extends Component {
         if (entityType === 'user-petition') type = 'petition';
         if (entityType === 'post') type = 'post'
 
+        let data = null;
+        // try {
+            await this.loadItem(token, type, entityId, entityType);
+            this.setState({ isLoading: false, inputDescription: this.item.description });
+            this.loadComments();
+            this.onShare(this.props.share, this.item);
+            this.markAsRead(this.item);
+            
+        // } catch (error) {
+        //     setTimeout(() => alert(error));
+        // }
+    }
 
-        loadActivityByEntityId(token, type, entityId).then(data => {
-            console.log('data', data)
-            if (data.payload && data.payload[0]) {
-                this.item = data.payload[0];
-                this.setState({ isLoading: false, inputDescription: this.item.description });
-                this.loadComments();
-                this.onShare(this.props.share, data.payload[0]);
-            }
-        }).catch(e => {
-            this.setState({ isLoading: false });
-            const message = e.message || e;
-            setTimeout(() => alert(message), 1000);
-        });
+    async loadItem(token, type, entityId, entityType){
+            data = await loadActivityByEntityId(token, type, entityId);
+            this.item = data.payload[0];
+            // if (type !== 'petition' && type !== 'post'){
+            //     data = await loadPollByEntityId(token, entityId)
+            //     this.item = {...this.item, options: data.options };
+            // }
+
+        if (!this.item){
+            alert('Error ocurred loading activity.')
+            Actions.pop(); 
+        }
     }
 
     async loadComments() {
@@ -574,11 +605,11 @@ class ItemDetail extends Component {
 
         return (
             <TouchableOpacity onPress={() => this._onAddComment()}>
-                <CardItem>
+                <CardItem style={styles.commentAddField}>
                     <Left>
                         <Thumbnail small source={thumbnail ? { uri: thumbnail + '&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                         <Body>
-                            <Text style={styles.addCommentTitle}>Add Comment...</Text>
+                            <Text style={styles.addCommentTitle}>Add your thoughts...</Text>
                             <Menu
                                 renderer={SlideInMenu}
                                 ref={this.onRef}
@@ -588,8 +619,6 @@ class ItemDetail extends Component {
                                 <MenuOptions optionsContainerStyle={{
                                     backgroundColor: 'white',
                                     width: WINDOW_WIDTH,
-                                    // height: this.state.visibleHeight,
-                                    // this needs adjustment for android / ios - doesnt work well for android with the suggestionbox
                                     minHeight: Platform.OS === 'android' ? 50 : WINDOW_HEIGHT / 2 + 50
                                 }}>
                                     <ScrollView keyboardShoulPersisTaps>
@@ -669,17 +698,20 @@ class ItemDetail extends Component {
     }
 
     _renderRootComment = (comment, isChild = false) => {
-        var thumbnail: string = comment.author_picture ? comment.author_picture : '';
-        let title: string = (comment.user ? comment.user.first_name : '' || '') + ' ' + (comment.user ? comment.user.last_name : '' || '');
-        var rateUp: number = (comment.rate_count || 0) / 2 + comment.rate_sum / 2;
-        var rateDown: number = (comment.rate_count || 0) / 2 - comment.rate_sum / 2;
+        console.log('render comment', comment);
+        let thumbnail = comment.author_picture ? comment.author_picture : '';
+        let title = (comment.user ? comment.user.first_name : '' || '') + ' ' + (comment.user ? comment.user.last_name : '' || '');
+        let rateUp = (comment.rate_count || 0) / 2 + comment.rate_sum / 2;
+        let rateDown = (comment.rate_count || 0) / 2 - comment.rate_sum / 2;
         let rateValue = comment.rate_value;
 
-        const style: object = { paddingBottom: 0 };
+        let style: object = { paddingBottom: 0 };
         if (isChild) {
             style.marginLeft = 40;
             style.marginTop = 5;
         }
+
+        console.log(thumbnail, title, rateUp, rateDown)
 
         return (
             <CardItem style={style}>
@@ -687,8 +719,8 @@ class ItemDetail extends Component {
                     <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail + '&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                     <Body style={{ alignSelf: 'flex-start' }}>
                         <TouchableOpacity onPress={() => this._onCommentBody(comment)}>
-                            <Text style={styles.title}>{title}</Text>
-                            <Text style={styles.description} numberOfLines={5}>{comment.comment_body}</Text>
+                            <Text style={styles.rootTitle}>{title}</Text>
+                            <Text style={styles.rootDescription} numberOfLines={5}>{comment.comment_body}</Text>
                             <Text note style={styles.subtitle}><TimeAgo time={comment.created_at} /></Text>
                         </TouchableOpacity>
                         <View style={styles.commentFooterContainer}>
@@ -803,7 +835,7 @@ class ItemDetail extends Component {
             return null;
         }
     }
-    _renderDescription(item, state) {
+    renderEditableDescription(item, state) {
         return (
             <CardItem>
                 <Left>
@@ -814,13 +846,8 @@ class ItemDetail extends Component {
                     <Body style={styles.descBodyContainer}>
                         <View>
                             {this._renderTitle(item)}
-                            {
-                                state.isEditMode
-                                    ?
-                                    this._renderTextarea(item, state)
-                                    :
-                                    <Text style={styles.description} numberOfLines={5}>{item.description}</Text>
-                            }
+                            {this._renderTextarea(item, state)}
+                            <Text style={styles.description} numberOfLines={5}>{item.description}</Text>
                         </View>
                     </Body>
                 </Left>
@@ -829,7 +856,7 @@ class ItemDetail extends Component {
     }
 
     renderAttachedImage(item){
-        let imgURL; // 'https://powerline-dev.imgix.net/avatars/594be2d75ce8f479888664.jpeg?ixlib=php-1.1.0';
+        let imgURL;
         if (item.post){
             imgURL = item.post.image;
         } else {
@@ -856,40 +883,35 @@ class ItemDetail extends Component {
                         </Body>
                     </Left>
                 </CardItem>
-
-
-
-            // <CardItem>
-            //     <View style={{flex: 1}}>
-            //         <ImageLoad
-            //         source={{ uri: imgURL }}
-            //         style={styles.image}
-            //         />
-            //     </View>
-            // </CardItem>
             );
     }
 
     _renderPostOrUserPetitionCard(item, state) {
+        console.log('got here')
         return (
             <View>
-                {this._renderDescription(item, state)}
+                {
+                    state.isEditMode
+                    ? this.renderEditableDescription(item)
+                    : <FeedDescription item={item} profile={this.props.profile} isInDetail />
+                }
                 <FeedMetaData item={item} />
                 <View style={styles.borderContainer} />
                 {this.renderAttachedImage(item)}
-                <FeedFooter item={item} profile={this.props.profile} token={this.props.token} showAnalytics />
+                <FeedFooter isInDetail item={item} profile={this.props.profile} token={this.props.token} showAnalytics />
             </View>
         );
     }
     
     _renderGroupCard(item) {
         return (
-            <Card>
-                <FeedDescription item={item} />
-                <FeedCarousel item={item} />
-                <View style={styles.borderContainer} />
-                <FeedFooter item={item} profile={this.props.profile} token={this.props.token} showAnalytics />
-            </Card>
+                <Card>
+                    <FeedDescription item={item} profile={this.props.profile} isInDetail />
+                    <FeedCarousel item={item} />
+                    <Options onVote={() => this.loadEntity()} item={item} profile={this.props.profile} token={this.props.token} />
+                    <View style={styles.borderContainer} />
+                    <FeedFooter isInDetail item={item} profile={this.props.profile} token={this.props.token} showAnalytics />
+                </Card>
         );
     }
 
@@ -918,6 +940,8 @@ class ItemDetail extends Component {
 
     renderFloatingActionButton(item){
         console.log(item)
+        //Felipe - Need to add: OR if the user is author of this item
+        //User can share anyone's post from a public (local/state/country) group, but can only share his own items from private groups
         if (item.group.group_type_label !== "local"
             && item.group.group_type_label !== "state"
             && item.group.group_type_label !== "country")
@@ -934,7 +958,7 @@ class ItemDetail extends Component {
                             icon: require('../../../assets/share_icon.png'),
                             name: 'facebook',
                             position: 2,
-                            color: '#71c9f1'
+                            color: '#55c5ff'
                         }
                     ]
                 }
@@ -943,7 +967,7 @@ class ItemDetail extends Component {
                         this.onShare(true, item)
                     }
                 }
-                buttonColor='#71c9f1'
+                buttonColor='#55c5ff'
                 overlayColor='rgba(0,0,0,0)'
                 floatingIcon={require('../../../assets/share_icon.png')}
                 overrideWithAction
@@ -953,8 +977,6 @@ class ItemDetail extends Component {
     }
 
     render() {
-        // console.log(this.state.sharing);
-        // console.log(this.refs);
         if (this.item === null) {
             return null;
         }
@@ -970,14 +992,14 @@ class ItemDetail extends Component {
                             //Eventually this should show the Group Banner GH19
                             //https://github.com/PowerlineApp/powerline-mobile/issues/596
                             <Image
-                                style={styles.headerImage}
-                                source={require('img/item_detail_header.png')}
+                            style={styles.headerImage}
+                            source={require('img/item_detail_header.png')}
                             />
                         )}
                         renderFixedForeground={() => (
                             <Animatable.View
-                                style={styles.navTitleView}
-                                ref={(navTitleView) => { this.navTitleView = navTitleView; }}>
+                            style={styles.navTitleView}
+                            ref={(navTitleView) => { this.navTitleView = navTitleView; }}>
                                 <Header style={{ backgroundColor: 'transparent' }}>
                                     <Left>
                                         <Button transparent onPress={this.onBackPress} style={{ width: 50, height: 50 }}  >
@@ -1004,12 +1026,13 @@ class ItemDetail extends Component {
                                 </Body>
                             </Left>
                         )}>
+                                    <Content>
                         <TriggeringView
                             onHide={() => this.navTitleView.fadeInUp(200)}
                             onDisplay={() => this.navTitleView.fadeOut(100)}>
                             {this._renderHeader(item)}
                         </TriggeringView>
-                        {this._renderActivity(item, this.state)}
+                            {this._renderActivity(item, this.state)}
                         <View style={styles.borderContainer} />
                         {this._renderAddComment()}
                         <View style={styles.borderContainer} />
@@ -1020,7 +1043,8 @@ class ItemDetail extends Component {
                         {this._renderLoadMore()}
                         {this._renderCommentsLoading()}
                         <View style={{ height: 50 }} />
-                    </HeaderImageScrollView>
+                </Content>
+                            </HeaderImageScrollView>
                 </Container>
                 {
                     this.renderFloatingActionButton(item)

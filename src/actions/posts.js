@@ -26,9 +26,7 @@ async function loadPost(token: string, entityId: number): Promise<Action> {
 }
 
 async function votePost(token: string, postId: string, option: string) {
-    console.log(token, postId, option);
-    try {
-        let response = await fetch(`${API_URL}/v2/posts/${postId}/vote`, {
+    return fetch(`${API_URL}/v2/posts/${postId}/vote`, {
             method: 'POST',
             headers: {
                 'token': token,
@@ -38,24 +36,11 @@ async function votePost(token: string, postId: string, option: string) {
                 option: option,
             })
         });
-        let responseJson = await response.json();
-        if (response.status === 200) {
-            if (option === 'upvote') {
-                showToast('Upvoted');
-            }
-            if (option === 'downvote') {
-                showToast('Downvoted');
-            }
-        }
-        return responseJson;
-    } catch (error) {
-        handleError(error);
-    }
 }
+
 async function undoVotePost(token: string, postId: string) {
     console.log(token, postId, 'undo');
-    try {
-        let response = await fetch(`${API_URL}/v2/posts/${postId}/vote`, {
+    return fetch(`${API_URL}/v2/posts/${postId}/vote`, {
             method: 'DELETE',
             headers: {
                 'token': token,
@@ -63,19 +48,6 @@ async function undoVotePost(token: string, postId: string) {
             },
             body: JSON.stringify({})
         });
-        console.log('res ==>', response);
-        if (response.status === 200) {
-            if (option === 'upvote') {
-                showToast('Upvoted');
-            }
-            if (option === 'downvote') {
-                showToast('Downvoted');
-            }
-        }
-        return response;
-    } catch (error) {
-        handleError(error);
-    }
 }
 
 

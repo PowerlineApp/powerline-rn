@@ -6,17 +6,17 @@ import PLColors from 'PLColors';
 import styles from '../styles';
 
 class Input extends PureComponent {
-  render() {
-    return (
-      <View style={styles.inputContainer}>
-         <NBInput
-          {...this.props}
-          style={styles.inputText}
-          placeholderTextColor={PLColors.lightText}
+    render() {
+        return (
+            <View style={[styles.inputContainer, this.props.style]}>
+                <NBInput
+                    {...this.props}
+                    style={styles.inputText}
+                    placeholderTextColor={PLColors.lightText}
         />
-      </View>
-    );
-  }
+            </View>
+        );
+    }
 }
 
 export default Input;
