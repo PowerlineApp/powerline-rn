@@ -2,9 +2,16 @@ var { API_URL } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
 
 //For checking if username taken
-function findByUsername(username: string){
+function findByUsernameOrEmail({username, email}){
+    let query = '';
+    if (username) {
+        query = `username=${username}`;
+    } else {
+        query = `email=${email}`;
+    }
+    // console.log(API_URL +`-public/users/?${query}`);
     return new Promise((resolve, reject) => {
-        fetch(API_URL +`-public/users/?username=` + username, {
+        fetch(API_URL +`-public/users/?${query}`, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -82,7 +89,7 @@ function registerFromFB(data){
 }
 
 module.exports = {
-    findByUsername,
+    findByUsernameOrEmail,
     register,
     registerFromFB
 };

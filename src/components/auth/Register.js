@@ -1,5 +1,5 @@
-var React = require('react');
-var {
+import React from 'react';
+import {
     StyleSheet,
     View,
     Text, 
@@ -10,19 +10,21 @@ var {
     Dimensions,
     Switch,
     Alert
-}  = require('react-native');
-var PLColors = require('PLColors');
-var PLConstants = require('PLConstants');
-var PLButton = require('PLButton');
-var { connect } = require('react-redux');
+}  from 'react-native';
+import PLColors from 'PLColors';
+import PLConstants from 'PLConstants';
+import PLButton from 'PLButton';
+import { connect } from 'react-redux';
 import PLOverlayLoader from 'PLOverlayLoader';
+import DeviceInfo from 'react-native-device-info';
 
 const {width} = Dimensions.get('window');
 import {
     NavigationActions
 } from 'react-navigation';
-var { findByUsername, register, registerFromFB }  = require('PLActions');
-var {GooglePlacesAutocomplete} = require('react-native-google-places-autocomplete');
+import { setInterval } from 'timers';
+import { findByUsernameOrEmail, register, registerFromFB }  from 'PLActions';
+import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 
 class Register extends React.Component{
 
@@ -36,7 +38,7 @@ class Register extends React.Component{
 
     state: {
         isLoading: boolean;
-        position: boolean;
+        position: number;
         first_name: string;
         last_name: string;
         username: string;
@@ -54,6 +56,7 @@ class Register extends React.Component{
     constructor(props){
         super(props);
         var { isFb, fbData } = this.props;
+        console.log(fbData);
         this.state = {
             isLoading: false,
             first_name: isFb? fbData.first_name: "",
@@ -68,7 +71,7 @@ class Register extends React.Component{
             country: isFb? fbData.country: "",
             email: isFb? fbData.email: "",
             is_over_13: false,
-            position: false,
+            position: 0,
             autoAddress: null,
             isFb: isFb
         };
@@ -121,23 +124,23 @@ class Register extends React.Component{
 
     onConfirmEmail = () => {
         var {email} = this.state;
-        Alert.alert(
-            'Is this e-mail right?',
-            email,
-            [
-                {text: 'Yes', onPress: () => {}},
-                {text: 'No', onPress: () => {this.setState({email: ''})}}            
-            ],
-            { cancelable: false }
-        );
+        // Alert.alert(
+        //     'Is this e-mail right?',
+        //     email,
+        //     [
+        //         {text: 'Yes', onPress: () => {}},
+        //         {text: 'No', onPress: () => {this.setState({email: ''})}}            
+        //     ],
+        //     { cancelable: false }
+        // );
     }
 
     onBack = () => {
         var { back } = this.props;
         var { position } = this.state;
-        if(position == true){
+        if(position > 0){
             this.setState({
-                position: false
+                position: position - 1
             });
         }else{
             back & back();
@@ -147,7 +150,7 @@ class Register extends React.Component{
     async onNext() {
         var { email, position, first_name, last_name, username, password, address1, zip, city, state, country, is_over_13, confirm_password} = this.state;
         var { onLoggedIn, isFb, fbData, tour } = this.props;
-        if(position == false){
+        if(position === 0){
             
             if(first_name == "" || first_name.trim() == ""){
                 alert("First Name is empty.");
@@ -161,79 +164,7 @@ class Register extends React.Component{
                 alert("Username is empty.");
                 return;
             }
-            if(password == "" && !isFb){
-                alert("Password is empty.");
-                return;
-            }
-            if(password.length < 6 && !isFb){
-                alert("Password must be six characters long");
-                return;
-            }
-            if(confirm_password == "" && !isFb){
-                alert("Confirm password is empty.");
-                return;
-            }
-            if(confirm_password != password && !isFb){
-                alert("Password doesn't match. Try again.");
-                return;
-            }
             
-            this.setState({
-                isLoading: true
-            });
-
-            if(isFb){
-                this.setState({
-                    position: true,
-                    isLoading: false
-                });
-            }else{
-                findByUsername(username).then(users => {
-                    if(users.length > 0){
-                        this.setState({
-                            isLoading: false
-                        });
-                        alert("This username is taken.");
-                        return;
-                    }else{
-                        this.setState({
-                            position: true,
-                            isLoading: false
-                        });
-                    }                
-                })
-                .catch(err => {
-                    this.setState({
-                        position: true,
-                        isLoading: false
-                    });
-                });
-            }                
-        }else{
-            if(is_over_13 == false){
-                alert("You must be 13 or older to register to Powerline.");
-                return;
-            }
-            if(address1 == "" || address1.trim() == ""){
-                alert("Address is empty.");
-                return;
-            }
-            if(zip == "" || zip.trim() == ""){
-                alert("Zipcode is empty.");
-                return;
-            }
-            if(city == "" || city.trim() == ""){
-                alert("City is empty.");
-                return;
-            }
-            if(state == "" || state.trim() == ""){
-                alert("State is empty.");
-                return;
-            }
-            if(country == "" || country.trim() == ""){
-                alert("Country is empty.");
-                return;
-            }            
             if(email == "" || email.trim() == ""){
                 alert("Email is empty.");
                 return;
@@ -243,6 +174,55 @@ class Register extends React.Component{
                 alert("Email is invalid.");
                 return;
             }
+
+            this.setState({
+                isLoading: true
+            });
+
+            if(isFb){
+                this.setState({
+                    position: 1,
+                    isLoading: false
+                });
+            }else{
+                try {
+                    let usersUsername = await findByUsernameOrEmail({username});
+                    let usersEmail = await findByUsernameOrEmail({email});
+                    console.log(usersEmail, usersUsername);
+                    if (usersUsername.length > 0 || usersEmail.length > 0)
+                        Alert.alert('Invalid data',
+                        usersUsername.length > 0 ? "This username is taken" : "This email is taken",
+                        [
+                            {text: 'Ok', onPress: () => {
+                                this.setState({isLoading: false})
+                            }}
+                        ],
+                        {cancelable: false}
+                    )
+                    else {
+                        this.setState({position: 1, isLoading: false})
+                    }
+                } catch (error) {
+                    console.log('err', err)
+                    this.setState({
+                        position: 1,
+                        isLoading: false
+                    });
+                }
+            }                
+        }else if (position === 1) {
+            if(is_over_13 == false){
+                alert("You must be 13 or older to register to Powerline.");
+                return;
+            }
+            if(zip == "" || zip.trim() == ""){
+                alert("Zipcode is empty.");
+                return;
+            }
+            if(country == "" || country.trim() == ""){
+                alert("Country is empty.");
+                return;
+            }            
 
             if(isFb){
                 var data = fbData;
@@ -328,17 +308,7 @@ class Register extends React.Component{
         var address_components = details.address_components;
         console.log(address_components);
         for(var i = 0; i < address_components.length; i++){
-            if(address_components[i].types.indexOf("street_number") != -1){
-                this.state.address1 = address_components[i].long_name;
-            }else if(address_components[i].types.indexOf("locality") != -1 || address_components[i].types.indexOf("neighborhood") != -1){
-                this.setState({
-                    city: address_components[i].long_name
-                });
-            }else if(address_components[i].types.indexOf("administrative_area_level_1") != -1){
-                this.setState({
-                    state: address_components[i].long_name
-                });
-            }else if(address_components[i].types.indexOf("country") != -1){                
+            if(address_components[i].types.indexOf("country") != -1){                
                 this.setState({
                     country: address_components[i].short_name
                 });
@@ -346,15 +316,13 @@ class Register extends React.Component{
                 this.setState({
                     zip : address_components[i].long_name
                 });
-            }else if(address_components[i].types.indexOf("route") != -1){
-                this.state.address1 +=" " + address_components[i].long_name;
             }
         }
-        this.state.autoAddress.setAddressText(this.state.address1);
+        this.state.autoZip.setAddressText(this.state.zip);
     }
 
     renderBasic = () => {
-        var { first_name, last_name, username, password, confirm_password, position } = this.state;
+        var { first_name, last_name, username, email, position } = this.state;
         var { isFb } = this.props;
         return (
             <ScrollView style={styles.container}>
@@ -398,38 +366,20 @@ class Register extends React.Component{
                             <Image source={require('img/user.png')} style={styles.icon}/>
                         </View>
                     </View>
-                    {isFb?null:
                     <View style={styles.fieldContainer}>
                         <TextInput
-                            placeholder="Password"
+                            placeholder="Email"
                             style={styles.textInput}
                             autoCorrect={false}
-                            value={password}
-                            onChangeText={this.onChangePassword}
+                            value={email}
+                            onChangeText={this.onChangeEmail}
+                            // onEndEditing={this.onConfirmEmail}
                             underlineColorAndroid={'transparent'}
-                            secureTextEntry={true}
                         />
                         <View style={styles.iconContainer}>
-                            <Image source={require('img/lock.png')} style={styles.icon}/>
+                            <Image source={require('img/envelope.png')} style={styles.icon}/>
                         </View>
                     </View>
-                    }
-                    {isFb?null:
-                    <View style={styles.fieldContainer}>
-                        <TextInput
-                            placeholder="Confirm Password"
-                            style={styles.textInput}
-                            autoCorrect={false}
-                            value={confirm_password}
-                            onChangeText={this.onChangeConfirmPassword}
-                            underlineColorAndroid={'transparent'}
-                            secureTextEntry={true}
-                        />
-                        <View style={styles.iconContainer}>
-                            <Image source={require('img/lock.png')} style={styles.icon}/>
-                        </View>
-                    </View>   
-                    }
                     <View style={styles.markContainer}>
                         <View style={styles.markWrapper}>
                             <View style={[styles.markItem, styles.markActiveItem]}></View>
@@ -452,8 +402,18 @@ class Register extends React.Component{
                         <Text style={styles.starText}>*</Text>
                         Powerline requires this information to link you to your communities and, if available, your specific elected leaders. This helps prove you are real and not a robot. We  may also aggregate this information for anonymous reporting purposes.
                     </Text>
+                    <View style={styles.fieldContainer}>
+                        <TextInput
+                            placeholder="Country"
+                            style={styles.textInput}
+                            autoCorrect={false}
+                            value={country}
+                            onChangeText={this.onChangeCountry}
+                            underlineColorAndroid={'transparent'}
+                        />
+                    </View>
                     <GooglePlacesAutocomplete
-                        placeholder='Street Address'
+                        placeholder='Zipcode'
                         minLength={2}
                         autoFocus={false}
                         returnKeyType={'Done'}
@@ -465,8 +425,8 @@ class Register extends React.Component{
                             key: 'AIzaSyBQOJDsIGt-XxuSNI7Joe1KRpAOJwDAEQE',
                             language: 'en'
                         }}
-                        ref={(addressobj) => {
-                            this.state.autoAddress = addressobj;
+                        ref={(zipobj) => {
+                            this.state.autoZip = zipobj;
                         }}
                         styles={{
                             container: styles.autoContainer,
@@ -477,20 +437,11 @@ class Register extends React.Component{
                         }}
                         currentLocation={false}                        
                         nearbyPlacesAPI='GoogleReverseGeocoding'
-                        filterReverseGeocodingByTypes={['street_number', 'route','neighborhood', 'locality','administrative_area_level_1','country','postal_code']}
+                        filterReverseGeocodingByTypes={['country']}
                         debounce={200}
                     />
-                    <View style={styles.fieldContainer}>
-                        <TextInput
-                            placeholder="Zipcode"
-                            style={styles.textInput}
-                            autoCorrect={false}
-                            value={zip}
-                            onChangeText={this.onChangeZip}
-                            underlineColorAndroid={'transparent'}
-                        />
-                    </View>
-                    <View style={styles.fieldContainer}>
+                    
+                    {/*<View style={styles.fieldContainer}>
                         <TextInput
                             placeholder="City"
                             style={styles.textInput}
@@ -509,31 +460,9 @@ class Register extends React.Component{
                             onChangeText={this.onChangeState}
                             underlineColorAndroid={'transparent'}
                         />
-                    </View>
-                    <View style={styles.fieldContainer}>
-                        <TextInput
-                            placeholder="Country"
-                            style={styles.textInput}
-                            autoCorrect={false}
-                            value={country}
-                            onChangeText={this.onChangeCountry}
-                            underlineColorAndroid={'transparent'}
-                        />
-                    </View>
-                    <View style={styles.fieldContainer}>
-                        <TextInput
-                            placeholder="Email"
-                            style={styles.textInput}
-                            autoCorrect={false}
-                            value={email}
-                            onChangeText={this.onChangeEmail}
-                            onEndEditing={this.onConfirmEmail}
-                            underlineColorAndroid={'transparent'}
-                        />
-                        <View style={styles.iconContainer}>
-                            <Image source={require('img/envelope.png')} style={styles.icon}/>
-                        </View>
-                    </View>
+                    </View> */}
+
+
                     <View style={styles.switchContainer}>
                         <Text style={styles.switchText}>I am 13 or older</Text>
                         <Switch onTintColor="#8fd5e4" value={is_over_13} onValueChange={this.onChangeSwitch}/>
@@ -563,7 +492,7 @@ class Register extends React.Component{
                 </TouchableWithoutFeedback>
                 <TouchableWithoutFeedback onPress={this.onNext}>
                     <View style={styles.button}>
-                        <Text style={styles.buttonText}>{position?'Register':'Next'}</Text>
+                        <Text style={styles.buttonText}>{position === 1 ?'Register':'Next'}</Text>
                     </View>
                 </TouchableWithoutFeedback>
             </View>
@@ -578,9 +507,9 @@ class Register extends React.Component{
         var { position, isLoading } = this.state;
         return (
             <View style={styles.container}>
-                {position?this.renderContact():this.renderBasic()}
+                {position === 1 ? this.renderContact():this.renderBasic()}
                 {this.renderBottom()}
-                <PLOverlayLoader visible={this.state.isLoading} logo />
+                {isLoading && <PLOverlayLoader visible={isLoading} logo />}
             </View>
         );
     }
@@ -595,7 +524,7 @@ var styles = StyleSheet.create({
     titleText: {
         marginTop: 50,
         color: PLColors.actionText,
-        fontWeight: '100',
+        fontWeight: '600',
         fontSize: 20,
         textAlign: 'center'
     },
@@ -706,7 +635,8 @@ var styles = StyleSheet.create({
     autoTextInput: {
         backgroundColor: 'transparent',
         fontSize: 14,
-        color: PLColors.lightText
+        color: PLColors.lightText,
+        left: -4
     },
     autoDescription: {
         fontWeight: 'bold',

@@ -107,11 +107,13 @@ class Login extends React.Component {
     this.setState({ isLoading: true });
     logInWithFacebook()
       .then((data) => {
+        console.log('data => ', data);
         this.setState({ isLoading: false });
         if (data.token) {
           console.log('DATA BEING DISPATCHED FROM LOGIN WITH FACEBOOK', data)
           dispatch({ type: 'LOGGED_IN', data: data });
         } else {
+          console.log('DATA BEING DISPATCHED FROM REGISTER WITH FACEBOOK', data)
           register && register(true, data);
         }
       })
