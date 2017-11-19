@@ -134,7 +134,7 @@ class PLNavigator extends React.Component {
               <Scene key="home" component={Home} initial hideNavBar />
               <Scene key="groupSelector" component={GroupSelector} />
               <Scene key="takeTour" component={TourScene} />
-              <Scene key="itemDetail" component={ItemDetail} />
+              <Scene key="itemDetail" component={ItemDetail} animation={'fade'} />
               <Scene key="commentDetail" component={CommentDetail} />
               <Scene key="myInfluences" component={Influences} />
               <Scene key="searchFollowing" component={SearchFollowing} />
@@ -146,9 +146,9 @@ class PLNavigator extends React.Component {
               <Scene key="myGroups" component={GroupList} />
               <Scene key="groupsearch" component={GroupSearch} />
               <Scene key="groupmembers" component={GroupMembers} />
-              <Scene key="newpost" component={NewPost} />
-              <Scene key="newpetition" component={NewPetition} />
-              <Scene key="newleadercontent" component={NewLeaderContent} />
+              <Scene key="newpost" component={NewPost} animation={'fade'} />
+              <Scene key="newpetition" component={NewPetition} animation={'fade'} />
+              <Scene key="newleadercontent" component={NewLeaderContent} animation={'fade'} />
               <Scene key="search" component={Search}/>
               <Scene key="groupInvite" component={GroupInvite} />
               <Scene key="groupJoin" component={GroupJoin} />

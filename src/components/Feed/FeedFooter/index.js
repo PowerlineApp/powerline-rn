@@ -6,6 +6,7 @@ import styles from '../styles';
 import { votePost, loadActivityByEntityId, signUserPetition, unsignUserPetition, signLeaderPetition, undoVotePost } from 'PLActions';
 import _ from 'lodash';
 import { showToast } from 'PLToast';
+import AnimatedButton from './animatedButton';
 
 
 var { MixpanelToken } = require('../../../PLEnv');
@@ -207,14 +208,8 @@ class FeedFooter extends Component {
         if (item.zone === 'expired') {
             return (
                 <CardItem footer style={{ height: 35 }}>
-                    <Left style={{ justifyContent: 'flex-end' }}>
-                        <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, {commenting: true})} >
-                            <Icon active name='ios-undo' style={styles.footerIcon} />
-                            <Label style={styles.footerText} >
-                                {'Reply '}
-                                {item.comments_count ? item.comments_count : 0}
-                            </Label>
-                        </Button>
+                    <Left style={{ justifyContent: 'space-between' }}>
+                        {this.ReplyButton({item})}
                     </Left>
                 </CardItem>
             );
@@ -238,14 +233,28 @@ class FeedFooter extends Component {
             return (
                 <CardItem footer style={{ height: 35 }}>
                     <Left style={{ justifyContent: 'space-between' }}>
-                        <Button iconLeft transparent style={styles.footerButton} onPress={() => {this.vote(item, 'upvote'); Mixpanel.track("Upvoted post");}}>
+                        <AnimatedButton onPress={() => { this.vote(item, 'upvote'); Mixpanel.track("Upvoted post"); }} 
+                            iconName={'md-arrow-dropup'} 
+                            label={'Upvote ' + (item.upvotes_count ? item.upvotes_count : 0)}
+                            labelStyle={isVotedUp ? styles.footerTextBlue : styles.footerText}
+                            animateEffect={'tada'}
+                            />
+
+                        {/* <Button iconLeft transparent style={styles.footerButton} onPress={() => {this.vote(item, 'upvote'); Mixpanel.track("Upvoted post");}}>
                             <Icon name='md-arrow-dropup' style={isVotedUp ? styles.footerIconBlue : styles.footerIcon} />
                             <Label style={isVotedUp ? styles.footerTextBlue : styles.footerText}>Upvote {item.upvotes_count ? item.upvotes_count : 0}</Label>
-                        </Button>
-                        <Button iconLeft transparent style={styles.footerButton} onPress={() => {this.vote(item, 'downvote'); Mixpanel.track("Downvoted post");}}>
+                        </Button> */}
+
+                        <AnimatedButton onPress={() => { this.vote(item, 'downvote'); Mixpanel.track("Downvoted post"); }} 
+                            iconName={'md-arrow-dropdown'} 
+                            label={'Downvote ' + (item.downvotes_count ? item.downvotes_count : 0)}
+                            labelStyle={isVotedDown ? styles.footerTextBlue : styles.footerText}
+                            animateEffect={'shake'}
+                        />
+                        {/* <Button iconLeft transparent style={styles.footerButton} onPress={() => {this.vote(item, 'downvote'); Mixpanel.track("Downvoted post");}}>
                             <Icon active name='md-arrow-dropdown' style={isVotedDown ? styles.footerIconBlue : styles.footerIcon} />
                             <Label style={isVotedDown ? styles.footerTextBlue : styles.footerText}>Downvote {item.downvotes_count ? item.downvotes_count : 0}</Label>
-                        </Button>
+                        </Button> */}
                         {
                             showAnalytics
                             ? <Button iconLeft transparent style={styles.footerButton} onPress={() => {this.redirect(item, null, 'analyticsView'); Mixpanel.track("Viewed Post Analytics");}} >
@@ -256,13 +265,18 @@ class FeedFooter extends Component {
                             </Button>
                             : null
                         }
-                        <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, {commenting: true})} >
+                        {this.ReplyButton({item})}
+                        {/* <AnimatedButton onPress={() => this.redirect(item, {commenting: true})} 
+                            iconName={'ios-undo'} 
+                            label={'Reply ' + (item.comments_count ? item.comments_count : 0)} 
+                        /> */}
+                        {/* <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, {commenting: true})} >
                             <Icon active name='ios-undo' style={styles.footerIcon} />
                             <Label style={styles.footerText} >
                                 {'Reply '}
                                 {item.comments_count ? item.comments_count : 0}
                             </Label>
-                        </Button>
+                        </Button> */}
                     </Left>
                 </CardItem>
             );
@@ -293,10 +307,15 @@ class FeedFooter extends Component {
         return (
             <CardItem footer style={{ height: 35 }}>
                 <Left style={{ justifyContent: 'space-between' }}>
-                    <Button iconLeft transparent style={styles.footerButton} onPress={() => {this.sign(item, isSigned); Mixpanel.track("Signed Petition");}} >
+                    <AnimatedButton onPress={() => {this.sign(item, isSigned); Mixpanel.track("Signed Petition");}}
+                        iconName={'md-arrow-dropdown'} 
+                        label={isSigned ? 'Unsign' : 'Sign'}
+                        animateEffect={'tada'}
+                    />
+                    {/* <Button iconLeft transparent style={styles.footerButton} onPress={() => {this.sign(item, isSigned); Mixpanel.track("Signed Petition");}} >
                         <Icon name='md-arrow-dropdown' style={styles.footerIcon} />
                         <Label style={styles.footerText} > { isSigned ? 'Unsign' : 'Sign'}</Label>
-                    </Button>
+                    </Button> */}
                     {
                         showAnalytics
                         ?<Button iconLeft transparent style={styles.footerButton} onPress={() => {this.redirect(item, null, 'analyticsView'); Mixpanel.track("Viewed Petition Analytics");}}>
@@ -307,13 +326,14 @@ class FeedFooter extends Component {
                         </Button>
                         : null
                     }
-                    <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, {commenting: true})} >
+                    {this.ReplyButton({item})}
+                    {/* <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, {commenting: true})} >
                         <Icon active name='ios-undo' style={styles.footerIcon} />
                         <Label style={styles.footerText} >
                             {'Reply '}
                             {item.comments_count ? item.comments_count : 0}
                         </Label>
-                    </Button>
+                    </Button> */}
                 </Left>
             </CardItem>
         );
@@ -335,13 +355,14 @@ class FeedFooter extends Component {
                         <Icon name='md-arrow-dropdown' style={styles.footerIcon} />
                         <Label style={styles.footerText} > {isSigned ? 'Unsign' : 'Sign'}</Label>
                     </Button>
-                    <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, {commenting: true})} >
+                    {this.ReplyButton({item})}
+                    {/* <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, {commenting: true})} >
                         <Icon active name='ios-undo' style={styles.footerIcon} />
                         <Label style={styles.footerText} >
                             {'Reply '}
                             {item.comments_count ? item.comments_count : 0}
                         </Label>
-                    </Button>
+                    </Button> */}
                 </Left>
             </CardItem>
         );
@@ -357,13 +378,14 @@ class FeedFooter extends Component {
                         <Icon name='md-arrow-dropdown' style={styles.footerIcon} />
                         <Label style={styles.footerText}>Answer</Label>
                     </Button>
-                    <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, {commenting: true})} >
+                    {this.ReplyButton({item})}
+                    {/* <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, {commenting: true})} >
                         <Icon active name='ios-undo' style={styles.footerIcon} />
                         <Label style={styles.footerText} >
                             {'Reply '}
                             {item.comments_count ? item.comments_count : 0}
                         </Label>
-                    </Button>
+                    </Button> */}
                 </Left>
             </CardItem>
         );
@@ -379,13 +401,14 @@ class FeedFooter extends Component {
                         <Icon name='md-arrow-dropdown' style={styles.footerIcon} />
                         <Label style={styles.footerText}>Pay</Label>
                     </Button>
-                    <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, {commenting: true})} >
+                    {this.ReplyButton({item})}
+                    {/* <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, {commenting: true})} >
                         <Icon active name='ios-undo' style={styles.footerIcon} />
                         <Label style={styles.footerText} >
                             {'Reply '}
                             {item.comments_count ? item.comments_count : 0}
                         </Label>
-                    </Button>
+                    </Button> */}
                 </Left>
             </CardItem>
         );
@@ -400,13 +423,14 @@ class FeedFooter extends Component {
                         <Icon name='md-arrow-dropdown' style={styles.footerIcon} />
                         <Label style={styles.footerText}>RSVP</Label>
                     </Button>
-                    <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, {commenting: true})} >
+                    {this.ReplyButton({item})}
+                    {/* <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, {commenting: true})} >
                         <Icon active name='ios-undo' style={styles.footerIcon} />
                         <Label style={styles.footerText} >
                             {'Reply '}
                             {item.comments_count ? item.comments_count : 0}
                         </Label>
-                    </Button>
+                    </Button> */}
                 </Left>
             </CardItem>
         );
@@ -423,13 +447,14 @@ class FeedFooter extends Component {
                         <Icon name='md-arrow-dropdown' style={styles.footerIcon} />
                         <Label style={styles.footerText}>Discuss</Label>
                     </Button>
-                    <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, {commenting: true})} >
+                    {this.ReplyButton({item})}
+                    {/* <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, {commenting: true})} >
                         <Icon active name='ios-undo' style={styles.footerIcon} />
                         <Label style={styles.footerText} >
                             {'Reply '}
                             {item.comments_count ? item.comments_count : 0}
                         </Label>
-                    </Button>
+                    </Button> */}
                 </Left>
             </CardItem>
         );
@@ -442,23 +467,30 @@ class FeedFooter extends Component {
                         <Icon name='md-arrow-dropdown' style={styles.footerIcon} />
                         <Label style={styles.footerText}>Donate</Label>
                     </Button>
-                    <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, {commenting: true})} >
+                    {this.ReplyButton({item})}
+                    {/* <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, {commenting: true})} >
                         <Icon active name='ios-undo' style={styles.footerIcon} />
                         <Label style={styles.footerText} >
                             {'Reply '}
                             {item.comments_count ? item.comments_count : 0}
                         </Label>
-                    </Button>
+                    </Button> */}
                 </Left>
             </CardItem>
         );
     }
 
-    
 
     _renderDefaultFooter (item) {
         return null;
     }
+
+    ReplyButton = ({item}) => 
+        <AnimatedButton onPress={() => this.redirect(item, {commenting: true})}
+            iconName={'ios-undo'} 
+            label={'Reply ' + (item.comments_count ? item.comments_count : 0)}
+            animateEffect={'flash'}
+        />;
 
     render () {
         let {item} = this.state;
@@ -498,6 +530,8 @@ class FeedFooter extends Component {
         );
     }
 }
+
+
 
 Mixpanel.sharedInstanceWithToken(MixpanelToken);
 export default FeedFooter;
