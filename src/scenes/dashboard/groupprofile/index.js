@@ -16,21 +16,24 @@ import {
     Left,
     Right,
     Label,
-    Icon,
     List,
+    Icon,
     ListItem,
     Thumbnail,
     Text
 } from 'native-base';
+import IconVI from 'react-native-vector-icons/dist/FontAwesome'
 import {
     View,
     RefreshControl,
-    Alert
+    Alert,
+    Modal
 } from 'react-native';
 import styles  from './styles';
 const PLColors = require('PLColors');
-import { getGroupDetails, inviteAllFollowers, getFollowers, unJoinGroup, getGroupPermissions } from 'PLActions';
+import { getGroupDetails, inviteAllFollowers, getFollowers, unJoinGroup, joinGroup, getGroupPermissions } from 'PLActions';
 
+const PERMS = ['Name', "Street Address", "City", "Country", "State", "Zip Code", "Email", "Phone Number", "Responses"] 
 class GroupProfile extends Component{
     static propTypes = {
         token: React.PropTypes.string
@@ -56,7 +59,8 @@ class GroupProfile extends Component{
             permissions: [],
             data: null,
             refreshing: false,
-            refresh: false
+            refresh: false,
+            showConfirmationModal: false
         };        
 
         this.unjoin = this.unjoin.bind(this);
@@ -191,17 +195,31 @@ class GroupProfile extends Component{
     }
 
     doJoin() {
-        console.log('confirmed')
+        const { id } = this.state.data;
+        const { token } = this.props;
+        joinGroup(token, id)
+            .then(response => {
+                if(response.join_status !== 'active') {
+                    this.setState({
+                        passcodeError: 'Wrong Password'
+                    });
+                    return;
+                }
+                this.setState({showConfirmationModal: false})
+                Actions.pop({refresh: {
+                    shouldRefresh: true
+                }});
+            })
+            .catch(err => {
+                console.log(err);
+            });
     }
 
     join(){
         if(this.state.data.fill_fields_required || this.state.data.membership_control === 'passcode' || this.state.data.membership_control === 'approval') {
             Actions.groupJoin({data: this.state.data})
         } else {
-            Alert.alert('Confirmation', 'Are you Sure?', [
-                {text: "Ok", onPress: () => this.doJoin()},
-                {text: "Cancel", onPress: () => console.log('Cancel pressed'), style: 'cancel'}
-            ])
+            this.setState({showConfirmationModal: true})
         }
     }
 
@@ -336,11 +354,53 @@ class GroupProfile extends Component{
                         </ListItem>: null}
                     </List> : null}                  
                 </Content>
+                <Modal visible={this.state.showConfirmationModal} presentationStyle='pageSheet' transparent>
+                    <View style={{flex: 1, backgroundColor: rgb(0,0,0,0.7), alignItems: 'center', justifyContent: 'center'}}>
+                        <View style={{height: '60%', width: '90%', backgroundColor: 'white', alignItems: 'flex-start', justifyContent: 'center', paddingHorizontal: 20}} >
+                            <Text style={{alignSelf: 'center', color: 'black', fontSize: 20}}>Permissions</Text>
+                            <Text style={{alignSelf: 'center', fontSize: 12, color: 'grey'}}>The group owner is requesting your:</Text>
+                            {
+                                PERMS.sort(item => !this.state.permissions.includes(item)).map(item => {
+                                    return (
+                                        <View style={{flexDirection: 'row', alignItems: 'center'}} >
+                                            <IconVI style={{ color: colorPicker(this.state.permissions, item)}} name={iconPicker(this.state.permissions, item)} />
+                                            <Text style={{color: colorPicker(this.state.permissions, item), marginLeft: 20, fontSize: 18}}>{item}</Text>
+                                        </View>
+                                    )
+                                })
+                            }
+                            <View style={{flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-around'}}>
+                                <Button transparent onPress={() => this.setState({
+                                    showConfirmationModal: false
+                                })}>
+                                    <Label style={{color: PLColors.main}}>Cancel</Label>
+                                </Button>
+                                <Button transparent onPress={() => this.doJoin()}>
+                                    <Label style={{color: PLColors.main}}>Confirm</Label>
+                                </Button>
+                            </View>
+                        </View>
+                    </View>
+                </Modal>
             </Container>
         )
     }
 }
 
+const colorPicker = (array, item) => {
+    if(array.includes(item)) {
+        return PLColors.main
+    } else {
+        return 'grey'
+    }
+}
+const iconPicker = (array, item) => {
+    if(array.includes(item)) {
+        return 'circle'
+    } else {
+        return 'circle-o'
+    }
+}
 const mapStateToProps = state => ({
     token: state.user.token
 });

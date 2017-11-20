@@ -43,7 +43,7 @@ class GroupSearch extends Component{
             newGroups: [],
             text: "",
             searchResults: []
-        }
+        };
 
         this.join = this.join.bind(this);
     }
@@ -64,7 +64,7 @@ class GroupSearch extends Component{
         getGroupsBySort(token, 'new').then(data => {
             this.setState({
                 newGroups: data
-            })
+            });
         })
         .catch(err => {
 
@@ -97,18 +97,8 @@ class GroupSearch extends Component{
         Actions.groupprofile(group);
     }
 
-    join(id){
-        var { token } = this.props;
-        joinGroup(token, id).then(data => {
-            if(data.join_status == 'active'){
-                Actions.myGroups();
-            }else{
-                Actions.myGroups();
-            }
-        })
-        .catch(err => {
-
-        })
+    join(group){
+        Actions.gorupJoin({data: group});
     }
 
     render(){
@@ -117,7 +107,7 @@ class GroupSearch extends Component{
                 <Header style={styles.header}>
                     <Left>
                         <Button transparent onPress={() => Actions.pop()} style={{width: 50, height: 50 }}  >
-                            <Icon active name="arrow-back" style={{color: 'white'}}/>
+                            <Icon active name='arrow-back' style={{color: 'white'}} />
                         </Button>
                     </Left>
                     <Body>
@@ -130,101 +120,101 @@ class GroupSearch extends Component{
                     </Right>
                 </Header>
                 <Item style={styles.searchBar}>
-                    <Input style={styles.searchInput} placeholder="Search for Groups" value={this.state.text} onChangeText={(text) => this.onChangeText(text)}/>
-                    <Icon active name="search" style={styles.searchIcon}/>
+                    <Input style={styles.searchInput} placeholder='Search for Groups' value={this.state.text} onChangeText={(text) => this.onChangeText(text)} />
+                    <Icon active name='search' style={styles.searchIcon} />
                 </Item>
                 <Content padder>
                     <List style={{backgroundColor: 'white'}}>
                         {this.state.popularGroups.length > 0 && this.state.text == ''?
-                        <ListItem itemHeader style={styles.itemHeaderStyle}>
-                            <Text style={styles.itemHeaderText}>Popular Groups</Text>
-                        </ListItem>: null}
+                            <ListItem itemHeader style={styles.itemHeaderStyle}>
+                                <Text style={styles.itemHeaderText}>Popular Groups</Text>
+                            </ListItem>: null}
                         {this.state.text == ''?
-                        <View>
-                        {
+                            <View>
+                                {
                              //This shows popular  groups that users have been joining recently on the platform
                             this.state.popularGroups.map((group, index) => {
                                 return (
                                     <ListItem style={styles.listItem} key={index} onPress={() => this.goToProfile(group)}>
                                         {
                                             group.avatar_file_path?
-                                            <Thumbnail square source={{uri: group.avatar_file_path+'&w=50&h=50&auto=compress,format,q=95'}}/>:
-                                            <View style={{width: 56, height: 56}}/>
+                                                <Thumbnail square source={{uri: group.avatar_file_path+'&w=50&h=50&auto=compress,format,q=95'}} />:
+                                                <View style={{width: 56, height: 56}} />
                                         }
                                         <Body>
                                             <Text style={styles.text1}>{group.official_name}</Text>
                                         </Body>
                                         {!group.joined?
-                                        <Right>
-                                            <Icon name="add-circle" style={styles.joinBtn} onPress={() => this.join(group.id)}/>
-                                        </Right>:null}
+                                            <Right>
+                                                <Icon name='add-circle' style={styles.joinBtn} onPress={() => this.join(group.id)} />
+                                            </Right>:null}
                                     </ListItem>
                                 );
                             })
                         }
-                        </View>: null}
+                            </View>: null}
                         {this.state.newGroups.length > 0 && this.state.text == ''?
-                        <ListItem itemHeader style={styles.itemHeaderStyle}>
-                            <Text style={styles.itemHeaderText}>New Groups</Text>
-                        </ListItem>: null}
+                            <ListItem itemHeader style={styles.itemHeaderStyle}>
+                                <Text style={styles.itemHeaderText}>New Groups</Text>
+                            </ListItem>: null}
                         {this.state.text == ''?
-                        <View>
-                        {
-                           //This shows new groups that have been created on the platform recently
-                           this.state.newGroups.map((group, index) => {
-                                return (
-                                    <ListItem style={styles.listItem} key={index} onPress={() => this.goToProfile(group)}>
-                                        {
-                                            group.avatar_file_path?
-                                            <Thumbnail square source={{uri: group.avatar_file_path+'&w=50&h=50&auto=compress,format,q=95'}}/>:
-                                            <View style={{width: 56, height: 56}}/>
-                                        }
-                                        <Body>
-                                            <Text style={styles.text1}>{group.official_name}</Text>
-                                        </Body>
-                                        {!group.joined?
-                                        <Right>
-                                            <Icon name="add-circle" style={styles.joinBtn} onPress={() => this.join(group.id)}/>
-                                        </Right>:null}
-                                    </ListItem>
-                                );
-                            })
-                        }
-                        </View>: null}
-                        {this.state.text != ''?
-                        <ListItem itemHeader style={styles.itemHeaderStyle}>
-                            <Text style={styles.itemHeaderText}>Results</Text>
-                        </ListItem>: null}
-                        {
-                            this.state.searchResults.length > 0?
                             <View>
                                 {
+                           //This shows new groups that have been created on the platform recently
+                           this.state.newGroups.map((group, index) => {
+                               return (
+                                   <ListItem style={styles.listItem} key={index} onPress={() => this.goToProfile(group)}>
+                                       {
+                                            group.avatar_file_path?
+                                                <Thumbnail square source={{uri: group.avatar_file_path+'&w=50&h=50&auto=compress,format,q=95'}} />:
+                                                <View style={{width: 56, height: 56}} />
+                                        }
+                                       <Body>
+                                           <Text style={styles.text1}>{group.official_name}</Text>
+                                       </Body>
+                                       {!group.joined?
+                                           <Right>
+                                               <Icon name='add-circle' style={styles.joinBtn} onPress={() => this.join(group)} />
+                                           </Right>:null}
+                                   </ListItem>
+                               );
+                           })
+                        }
+                            </View>: null}
+                        {this.state.text != ''?
+                            <ListItem itemHeader style={styles.itemHeaderStyle}>
+                                <Text style={styles.itemHeaderText}>Results</Text>
+                            </ListItem>: null}
+                        {
+                            this.state.searchResults.length > 0?
+                                <View>
+                                    {
                                     this.state.searchResults.map((group, index) => {
                                         return (
                                             <ListItem style={styles.listItem} key={index} onPress={() => this.goToProfile(group)}>
                                                 {
                                                     group.avatar_file_path?
-                                                    <Thumbnail square source={{uri: group.avatar_file_path+'&w=50&h=50&auto=compress,format,q=95'}}/>:
-                                                    <View style={{width: 56, height: 56}}/>
+                                                        <Thumbnail square source={{uri: group.avatar_file_path+'&w=50&h=50&auto=compress,format,q=95'}} />:
+                                                        <View style={{width: 56, height: 56}} />
                                                 }
                                                 <Body>
                                                     <Text style={styles.text1}>{group.official_name}</Text>
                                                 </Body>
                                                 {!group.joined?
-                                                <Right>
-                                                    <Icon name="add-circle" style={styles.joinBtn} onPress={() => this.join(group.id)}/>
-                                                </Right>:null
+                                                    <Right>
+                                                        <Icon name='add-circle' style={styles.joinBtn} onPress={() => this.join(group.id)} />
+                                                    </Right>:null
                                                 }
                                             </ListItem>
                                         );
                                     })
                                 }
-                            </View>: null
+                                </View>: null
                         }
                         {this.state.text != '' && this.state.searchResults.length == 0?
-                        <ListItem style={styles.listItem}>
-                            <Label style={{color: 'black'}}>No results were found.</Label>
-                        </ListItem>: null}                        
+                            <ListItem style={styles.listItem}>
+                                <Label style={{color: 'black'}}>No results were found.</Label>
+                            </ListItem>: null}                        
                     </List>
                 </Content>
             </Container>
