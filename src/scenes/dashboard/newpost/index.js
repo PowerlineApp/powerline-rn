@@ -7,6 +7,7 @@ import React, { Component } from 'react';
 import {TextInput, Keyboard, Platform, KeyboardAvoidingView} from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
+import * as Animatable from 'react-native-animatable';
 
 import RNFetchBlob from 'react-native-fetch-blob'
 const fs = RNFetchBlob.fs
@@ -50,6 +51,7 @@ const { width, height } = Dimensions.get('window');
 import { loadUserData, getGroups, getUsersByGroup, createPostToGroup, getPetitionConfig } from 'PLActions';
 import randomPlaceholder from '../../../utils/placeholder';
 import CommunityView from '../../../components/CommunityView';
+// import { setTimeout } from 'timers';
 const POST_MAX_LENGTH = 5000;
 var { MixpanelToken } = require('../../../PLEnv');
 var Mixpanel = require('react-native-mixpanel');
@@ -189,8 +191,11 @@ class NewPost extends Component {
         createPostToGroup(token, groupId, this.state.content, this.state.image)
             .then(data => {
                 showToast('Post Successful!');
-                if (this.state.sharing) this.props.onPost();
-                else Actions.itemDetail({ entityId: data.id, entityType: 'post', backTo: 'home', share: this.state.share });
+                this.refs.animatedView.fadeInDownBig(1000);
+                setTimeout(() => {
+                    if (this.state.sharing) this.props.onPost();
+                    else Actions.itemDetail({ entityId: data.id, entityType: 'post', backTo: 'home', share: this.state.share });
+                }, 200);
             })
             .catch(err => {
             });
@@ -304,9 +309,10 @@ class NewPost extends Component {
             });
         }
     }
-
+    
     render() {
         return (
+            <Animatable.View style={{flexDirection: 'row'}} animation={'fadeInUpBig'} duration={800} ref="animatedView"  >
             <Container style={styles.container}>
                 <Header style={styles.header}>
                     <Left>
@@ -417,6 +423,7 @@ class NewPost extends Component {
                     </Footer>
                 </KeyboardAvoidingView>
             </Container>
+            </Animatable.View >
         );
     }
 }

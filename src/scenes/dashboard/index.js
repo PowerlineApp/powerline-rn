@@ -6,7 +6,6 @@ import { Actions, ActionConst } from 'react-native-router-flux';
 import { Container, Header, Title, Content, Button, Footer, FooterTab, Text, Body, Left, Right, Icon, Item, Input, Grid, Row, Col, Badge, Label } from 'native-base';
 
 import { View, Image, Keyboard, FlatList, AsyncStorage, Alert, Platform } from 'react-native';
-import * as Animatable from 'react-native-animatable';
 
 import Menu, {
     MenuContext,
