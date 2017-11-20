@@ -20,21 +20,27 @@ const drawerActions = require('./drawer');
 const commentActions = require('./comments');
 const petitionActions = require('./petition');
 const profileActions = require('./profile');
+const representativesFormActions = require('./representativesForm');
+const pollActions = require('./poll');
+const announcementActions = require('./announcements');
 
 module.exports = {
-  ...loginActions,
-  ...navigationActions,
-  ...groupActions,
-  ...bookmarkActions,
-  ...activityActions,
-  ...postActions,
-  ...userActions,
-  ...registerActions,
-  ...followingActions,
-  ...notificationActions,
-  ...representativesActions,
-  ...drawerActions,
-  ...commentActions,
-  ...petitionActions,
-  ...profileActions
+    ...loginActions,
+    ...navigationActions,
+    ...groupActions,
+    ...bookmarkActions,
+    ...activityActions,
+    ...postActions,
+    ...userActions,
+    ...registerActions,
+    ...followingActions,
+    ...notificationActions,
+    ...representativesActions,
+    ...drawerActions,
+    ...commentActions,
+    ...petitionActions,
+    ...profileActions,
+    ...representativesFormActions,
+    ...pollActions,
+    ...announcementActions
 };

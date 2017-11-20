@@ -51,6 +51,10 @@ import { loadUserData, getGroups, getUsersByGroup, createPostToGroup, getPetitio
 import randomPlaceholder from '../../../utils/placeholder';
 import CommunityView from '../../../components/CommunityView';
 const POST_MAX_LENGTH = 5000;
+var { MixpanelToken } = require('../../../PLEnv');
+var Mixpanel = require('react-native-mixpanel');
+
+
 
 class NewPost extends Component {
     constructor(props) {
@@ -318,7 +322,7 @@ class NewPost extends Component {
                         <Title style={{ color: 'white' }}>New Post</Title>
                     </Body>
                     <Right>
-                        <Button transparent onPress={() => this.createPost()}>
+                        <Button transparent onPress={() => { this.createPost(); Mixpanel.track("Sent Post"); }}>
                             <Label style={{ color: 'white' }}>Send</Label>
                         </Button>
                     </Right>
@@ -378,31 +382,26 @@ class NewPost extends Component {
                         }
                 </ScrollView>
                 <KeyboardAvoidingView behavior={Platform.select({android:'height', ios: 'padding'})}>
-                        {
-                            this.state.showCommunity
-                            ? <View style={{height: 70, backgroundColor: 'rgba(0,0,0,0.4)'}} />
-                            :
-                        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                            <Button transparent style={{ marginBottom: 10, height: 60 }} onPress={this.attachImage}>
-                                {
-                                    this.state.image ?
-                                    <View style={{ flexDirection: 'row', width: 90, height: 50, alignItems: 'center', justifyContent: 'center' }}>
-                                            <Image source={{ uri: `data:image/png;base64,${this.state.image}` }} resizeMode="cover" style={{ width: 90, height: 50 }} />
-                                            <View style={styles.deleteIconContainer}>
-                                                <Icon name="md-close-circle" style={styles.deleteIcon} />
-                                            </View>
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                        <Button transparent style={{ marginBottom: 10, height: 60 }} onPress={this.attachImage}>
+                            {
+                                this.state.image ?
+                                <View style={{ flexDirection: 'row', width: 90, height: 50, alignItems: 'center', justifyContent: 'center' }}>
+                                        <Image source={{ uri: `data:image/png;base64,${this.state.image}` }} resizeMode="cover" style={{ width: 90, height: 50 }} />
+                                        <View style={styles.deleteIconContainer}>
+                                            <Icon name="md-close-circle" style={styles.deleteIcon} />
                                         </View>
-                                        :
-                                        <Image source={require("img/upload_image.png")} resizeMode="contain" style={{ width: 90, height: 50, tintColor: 'gray' }} />
-                                }
-                                </Button>
-                                <Button transparent style={{ marginBottom: 10, height: 60 }} onPress={() => this.setShareSelected(!this.state.share)}>
-                                    <View style={{ flexDirection: 'row', backgroundColor: this.state.share ? '#71c9f1' : '#ccc', borderRadius: 30, width: 60, height: 60, alignItems: 'center', justifyContent: 'center' }} >
-                                        <Image resizeMode="cover" style={{width: 35, height: 35}} source={require('../../../assets/share_icon.png')} />
                                     </View>
-                                </Button>
-                        </View>
-                        }
+                                    :
+                                    <Image source={require("img/upload_image.png")} resizeMode="contain" style={{ width: 90, height: 50, tintColor: 'gray' }} />
+                            }
+                            </Button>
+                            <Button transparent style={{ marginBottom: 10, height: 60 }} onPress={() => this.setShareSelected(!this.state.share)}>
+                                <View style={{ flexDirection: 'row', backgroundColor: this.state.share ? '#71c9f1' : '#ccc', borderRadius: 30, width: 60, height: 60, alignItems: 'center', justifyContent: 'center' }} >
+                                    <Image resizeMode="cover" style={{width: 35, height: 35}} source={require('../../../assets/share_icon.png')} />
+                                </View>
+                            </Button>
+                    </View>
                     <Footer style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: PLColors.main, paddingLeft: 10, paddingRight: 10 }}>
                         {
                             this.state.posts_remaining
@@ -426,4 +425,5 @@ const mapStateToProps = state => ({
     token: state.user.token
 });
 
+Mixpanel.sharedInstanceWithToken(MixpanelToken);
 export default connect(mapStateToProps)(NewPost);

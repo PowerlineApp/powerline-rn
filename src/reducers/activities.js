@@ -83,6 +83,8 @@ function activities(state: State = initialState, action: Action): State {
                 conversationView: action.data ? action.data.conversationView : null,
                 groupMembers: action.data ? action.data.totalMembers : null,
                 groupLimit: action.data ? action.data.limit : null,
+                user_role: action.data ? action.data.user_role : null,
+                header: action.data ? action.data.header : 'more'
             },
         }
     }

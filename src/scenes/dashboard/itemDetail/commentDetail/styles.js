@@ -14,6 +14,7 @@ export default {
     },
     rootContainer: {
         backgroundColor: '#f5f9fc',
+        paddingLeft: 5,
     },
     backdrop: {
         backgroundColor: 'black',
@@ -24,13 +25,36 @@ export default {
         fontSize: 12,
         fontWeight: 'bold',
     },
+    rootTitle: {
+        color: '#21354a',
+        fontSize: 15,
+        fontWeight: '900',
+    },
+    childTitle: {
+        color: '#21354a',
+        fontSize: 15,
+        fontWeight: '200',
+    },
     subtitle: {
         color: '#8694ab',
         fontSize: 10,
     },
     description: {
         color: '#21354a',
-        fontSize: 12,
+        fontSize: 14,
+    },
+    rootDescription: {
+        color: '#21354a',
+        fontSize: 13,
+    },
+    childDescription: {
+        color: '#21354a',
+        fontSize: 13,
+    },
+    childCommentContainer: {
+        paddingBottom: 0, 
+        marginLeft: 20, 
+        marginTop: 5, 
     },
     titleContainer: {
         flex: 1,
@@ -70,8 +94,8 @@ export default {
         alignSelf: 'flex-start',
     },
     zoneIcon: {
-        fontSize: 15,
-        color: '#5fc7fa',
+        fontSize: 17,
+        color: '#ED1727',
     },
     commentCount: {
         fontSize: 12,
@@ -129,7 +153,7 @@ export default {
     },
     addCommentTitle: {
         color: '#8694ab',
-        fontSize: 12,
+        fontSize: 10,
         fontWeight: '100',
     },
     commentMoreIcon: {

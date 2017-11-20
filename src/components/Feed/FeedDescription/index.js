@@ -21,7 +21,7 @@ class FeedDescription extends Component {
 
     _renderTitle (item) {
         if (item.title) {
-            return (<Text style={styles.title}>{item.title}</Text>);
+            return (<Text style={styles.descriptionTitle}>{item.title}</Text>);
         } else {
             return null;
         }
@@ -86,9 +86,9 @@ class FeedDescription extends Component {
 
   render() {
     let { item } = this.props;
-
+//Priority Zone, Comment, Counter, and Main Text Body
     return (
-      <CardItem style={{ paddingLeft: 15, paddingRight: 15 }}>
+      <CardItem style={{ paddingLeft: 5, paddingRight: 15 }}>
         <Left>
           <View style={styles.descLeftContainer}>
             {this._renderZoneIcon(item)}

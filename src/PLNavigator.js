@@ -40,12 +40,19 @@ import GroupInvite from './scenes/dashboard/groupinvite/';
 import ManageGroup from './scenes/dashboard/managegroup/';
 import NewPost from './scenes/dashboard/newpost/';
 import NewPetition from './scenes/dashboard/newpetition';
+import NewLeaderContent from './scenes/dashboard/newleadercontent';
 import Search from './scenes/search/';
 import GroupMembersManagementScene from './scenes/dashboard/managegroup/scenes/userManagement'
 import GroupBankAccountScene from './scenes/dashboard/managegroup/scenes/fundraiser'
 import GroupAddCardScene from './scenes/dashboard/managegroup/scenes/subscription'
+<<<<<<< HEAD
 
 import MyInfo from './scenes/profile/components/myInfo'
+=======
+import ElectedLeadersForm from './scenes/dashboard/electedLadersForm'
+import Modal from './components/Modal'
+import UserAddCard from './scenes/profile/userAddCard.js';
+>>>>>>> 73568a2364bb3ad4e282113ac2cbafa2a1507f7a
 var RouterWithRedux = connect()(Router);
 
 class PLNavigator extends React.Component {
@@ -126,6 +133,7 @@ class PLNavigator extends React.Component {
               <Scene key="groupmembers" component={GroupMembers} />
               <Scene key="newpost" component={NewPost} />
               <Scene key="newpetition" component={NewPetition} />
+              <Scene key="newleadercontent" component={NewLeaderContent} />
               <Scene key="search" component={Search}/>
               <Scene key="groupInvite" component={GroupInvite} />
               <Scene key="groupJoin" component={GroupJoin} />
@@ -133,7 +141,9 @@ class PLNavigator extends React.Component {
               <Scene key="manageGroupMembers" component={GroupMembersManagementScene}/>
               <Scene key="groupBankAccountScene" component={GroupBankAccountScene}/>
               <Scene key="groupAddCardScene" component={GroupAddCardScene}/>
-              {/* <Scene key='testScene' component={MyInfo} initial hideNavBar/>  */}
+              <Scene key='formModal' hideNavBar={false} component={Modal} direction='vertical' rightTitle='Save'/>
+              <Scene key="electedLeadersForm" component={ElectedLeadersForm} hideNavBar />
+              <Scene key="userAddCardScene" component={UserAddCard} />
             </Scene>
           </RouterWithRedux>
         </Drawer>

@@ -10,6 +10,8 @@ import { logOut, logOutWithPrompt } from 'PLActions';
 import styles from './style';
 import OneSignal from 'react-native-onesignal';
 import { AsyncStorage, Keyboard } from 'react-native';
+var { MixpanelToken } = require('../../PLEnv');
+var Mixpanel = require('react-native-mixpanel');
 
 const datas = [
   {
@@ -115,6 +117,7 @@ class SideBar extends Component {
     if (route == 'logout') {
       var { token } = this.props;
       this.props.logOut(token);
+      Mixpanel.track("Logout via Menu");
              
     } else if(typeof route === 'string') {
       Actions[route]()
@@ -165,4 +168,5 @@ const mapStateToProps = state => ({
   pushId: state.user.pushId
 });
 
+Mixpanel.sharedInstanceWithToken(MixpanelToken);
 export default connect(mapStateToProps, bindAction)(SideBar);

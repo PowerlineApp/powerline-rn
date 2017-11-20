@@ -21,6 +21,9 @@ import styles from './styles';
 import { openDrawer } from 'PLActions';
 import Followings from './followings';
 import Followers from './followers';
+var { MixpanelToken } = require('../../PLEnv');
+var Mixpanel = require('react-native-mixpanel');
+
 
 class Influences extends Component {
     constructor(props) {
@@ -56,7 +59,7 @@ class Influences extends Component {
                         <Tab heading="Followers" tabStyle={styles.tabsStyle} activeTabStyle={styles.tabsStyle}>
                             <Followers />
                         </Tab>
-                        <Tab heading="Following" tabStyle={styles.tabsStyle} activeTabStyle={styles.tabsStyle}>
+                        <Tab heading="Following" tabStyle={styles.tabsStyle} activeTabStyle={styles.tabsStyle} onPress={Mixpanel.track("Following opened")}>
                             <Followings />
                         </Tab>
                     </Tabs>
@@ -83,4 +86,5 @@ const mapDispatchToProps = dispatch => ({
     openDrawer: () => dispatch(openDrawer())
 });
 
+Mixpanel.sharedInstanceWithToken(MixpanelToken);
 export default connect(mapStateToProps, mapDispatchToProps)(Influences);

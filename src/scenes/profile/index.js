@@ -283,17 +283,20 @@ class Profile extends Component{
                             </TouchableWithoutFeedback>         
                         </View>
                         <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                            <Text style={{color: 'white', fontSize: 16, fontWeight: 'bold'}}>{this.state.user.full_name}</Text>
+                            <Text style={{color: 'white', fontSize: 16, fontWeight: 'bold'}}>{this.state.user.first_name} {this.state.user.last_name}</Text>
                         </View>
                         <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                            <Text style={{color: 'white', fontSize: 11, marginBottom: 5}}>{this.state.user.karma}</Text>
+                            <Text style={{color: 'white', fontSize: 16, marginBottom: 5}}>{this.state.user.slogan}</Text>
                         </View>
                         <View style={{justifyContent: 'center', alignItems: 'center'}}>
                         {/*This should not have the state hard-coded in here*/}
-                            <Text style={{color: 'white', fontSize: 11,  marginBottom: 5}}>California, {this.state.user.country}</Text>
+                            <Text style={{color: 'white', fontSize: 14,  marginBottom: 5}}>{this.state.user.state} {this.state.user.country}</Text>
                         </View>
                         <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                            <Text style={{color: 'white', fontSize: 11,  marginBottom: 5}}>{this.state.user.bio}</Text>
+                            <Text style={{color: 'white', fontSize: 14,  marginBottom: 5}}>Karma: {this.state.user.karma}</Text>
+                        </View>
+                        <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                            <Text style={{color: 'white', fontSize: 12,  marginBottom: 5}}>{this.state.user.bio}</Text>
                         </View>
                     </View>: null}
                     {/*The user's posts should be displayed below the user profile information*/}

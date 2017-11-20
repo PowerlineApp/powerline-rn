@@ -1,3 +1,4 @@
+//Evidently this file controls the styles for the newsfeeds...JC
 var PLColors = require('PLColors');
 var { StyleSheet } = require('react-native');
 
@@ -16,23 +17,53 @@ const metaHeight = viewportHeight * 0.35;
 export const sliderWidth = viewportWidth;
 export const itemWidth = slideWidth + itemHorizontalMargin * 2;
 
+//
+const optionStyles = {
+    optionTouchable: {
+      underlayColor: 'red',
+      activeOpacity: 40,
+    },
+    optionWrapper: {
+      backgroundColor: 'pink',
+      margin: 5,
+    },
+    optionText: {
+      color: 'black',
+    },
+  };
+//
+
 export default {
     title: {
         color: '#21354a',
-        fontSize: 12,
+        fontSize: 16,
         fontWeight: 'bold'
+    },
+    commentTitle: {
+        color: '#21354a',
+        fontSize: 14,
+        fontWeight: 'bold'
+    },
+    commentPreviewText: {
+        color: '#21354a',
+        fontSize: 14,
     },
     subtitle: {
         color: '#8694ab',
-        fontSize: 10
+        fontSize: 14
     },
     description: {
         color: '#21354a',
-        fontSize: 12
+        fontSize: 16
+    },
+    descriptionTitle: {
+        color: '#21354a',
+        fontSize: 16,
+        fontWeight: '500'        
     },
     dropDownIcon: {
         color: PLColors.lightText,
-        fontSize: 14,
+        fontSize: 20,
         fontWeight: '100',
         paddingHorizontal: 5
     },
@@ -41,11 +72,11 @@ export default {
         alignItems: 'flex-end'
     },
     zoneIcon: {
-        fontSize: 15,
-        color: '#5fc7fa'
+        fontSize: 17,
+        color: '#ED1727'
     },
     commentCount: {
-        fontSize: 12,
+        fontSize: 14,
         color: '#8694ab'
     },
     footerIcon: {
@@ -59,12 +90,12 @@ export default {
         marginRight: 5
     },
     footerText: {
-        fontSize: 11,
+        fontSize: 14,
         color: '#8694ab',
         fontWeight: '500'
     },
     footerTextBlue: {
-        fontSize: 11,
+        fontSize: 14,
         color: '#53a8cd',
         fontWeight: '500'
     },
@@ -139,7 +170,8 @@ export default {
     },
     commentPreviewContainer: {
         backgroundColor: '#F8F8F8',
-        minHeight: 64
+        minHeight: 45,
+        paddingLeft: 5
     },
     buttonContainer: {
         flexDirection: 'row'

@@ -76,9 +76,10 @@ class Representatives extends Component {
     }
 
     //GH35 is the Representative's Specific Page
-    goToProfile(storageId) {
+    goToProfile(storageId, representativeId) {
         Actions.representatyprofile({
-            storageId: storageId
+            storageId,
+            representativeId
         });
     }
 
@@ -126,9 +127,9 @@ class Representatives extends Component {
                                             </ListItem>
                                             {
                                                 group.representatives.map((user, index1) => {
-                                                    console.log(user);
+                                                    // console.log(user);
                                                     return (
-                                                        <ListItem onPress={() => this.goToProfile(user.storage_id)} key={index1}>
+                                                        <ListItem onPress={() => this.goToProfile(user.id)} key={index1}>
                                                             <Thumbnail square size={80} source={{ uri: user.avatar_file_path+'&w=50&h=50&auto=compress,format,q=95' }} />
                                                             <Body>
                                                                 <Text style={{ color: PLColors.main }}>{user.first_name} {user.last_name}</Text>
@@ -146,6 +147,14 @@ class Representatives extends Component {
                                 })
                             }
                         </List>
+                        {
+                            this.props.is_registration_complete
+                            ?   <View style={{padding: 20}}>
+                                    <Button style={{width: '100%', justifyContent: 'center'}} onPress={Actions.electedLeadersForm} iconRight><Text>Create Representative</Text><Icon name='circle-plus'></Icon></Button>
+                                </View>
+                            :   null
+                        }
+                        
                     </Content>
                     <PLOverlayLoader visible={this.state.refreshing} logo />
                 </Container>
@@ -160,7 +169,8 @@ const menuContextStyles = {
 };
 
 const mapStateToProps = state => ({
-    token: state.user.token
+    token: state.user.token,
+    is_registration_complete: state.user.profile.is_registration_complete
 });
 
 const mapDispatchToProps = dispatch => ({

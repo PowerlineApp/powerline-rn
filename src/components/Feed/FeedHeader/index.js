@@ -33,7 +33,7 @@ class FeedHeader extends Component {
     redirect(item, options, scene = 'itemDetail') {
         let type;
         if (item.poll) {
-            type = 'poll';
+            type = item.entity.type;
         } else if (item.post) {
             type = 'post';
         } else if (item.user_petition) {
@@ -93,7 +93,7 @@ class FeedHeader extends Component {
                 var newDate = new Date((new Date()).getTime() + 1000 * 60 * 60 * hours);
                 editFollowers(token, item.owner.id, false, newDate)
                     .then(data => {
-                        console.warn(JSON)
+                        console.warn(JSON);
                     })
                     .catch(err => {
 
@@ -124,7 +124,7 @@ class FeedHeader extends Component {
         this.menu && this.menu.close();
     }
 
-    notify(item) {
+    notify(item, cb) {
         let isUpvoted = false;
         if (entity.upvotes_count > 0 || entity.responses_count > 0) {
             let type = entity.entity.type;
@@ -159,11 +159,12 @@ class FeedHeader extends Component {
             return;
         }
 
-        sharePost(this.props.token, item.entity.id);
+        sharePost(this.props.token, item.entity.id, cb);
 
         this.menu && this.menu.close();
     }
 
+    //BUG: This should be inviting the upvoters from the post. groupInvite not correct.
     inviteUpvoters(item) {
         showAlertOkCancel('Are you sure you want to invite all of the upvoters of your post to this group? You can only do this once per boosted post!', () => {
             this.redirect(item, null, 'groupInvite');
@@ -222,21 +223,21 @@ class FeedHeader extends Component {
         let canSpam = false;
 
         switch (item.entity.type) {
-            case 'post':
-            case 'user-petition':
-                thumbnail = item.owner.avatar_file_path ? item.owner.avatar_file_path : '';
-                title = item.owner ? item.owner.first_name : '' + ' ' + item.owner ? item.owner.last_name : '';
-                canInviteUpvoters = isBoosted;
-                canSpam = true;
-                break;
-            default:
-                thumbnail = item.group.avatar_file_path ? item.group.avatar_file_path : '';
-                title = item.user.full_name;
-                break;
+        case 'post':
+        case 'user-petition':
+            thumbnail = item.owner.avatar_file_path ? item.owner.avatar_file_path : '';
+            title = item.owner ? item.owner.first_name : '' + ' ' + item.owner ? item.owner.last_name : '';
+            canInviteUpvoters = isBoosted;
+            canSpam = true;
+            break;
+        default:
+            thumbnail = item.group.avatar_file_path ? item.group.avatar_file_path : '';
+            title = item.user.full_name;
+            break;
         }
-
+//Header
         return (
-            <CardItem style={{ paddingBottom: 0 }}>
+            <CardItem style={{ paddingBottom: 0, paddingLeft:5}}>
                 <Left>
                     <TouchableHighlight onPress={() => this.onPressThumbnail(item)} underlayColor={'#fff'}>
                         <View>
@@ -250,28 +251,28 @@ class FeedHeader extends Component {
                         <Text style={styles.title} onPress={() => this.onPressAuthor(item)}>{title}</Text>
                         <Text note style={styles.subtitle} onPress={() => this.onPressGroup(item)}>{item.group.official_name} • <TimeAgo time={item.sent_at} hideAgo /></Text>
                     </Body>
-                    <Right style={{ flex: 0.2 }}>
+                    <Right style={{ flex: 0.1 }}>
                         <Menu ref={(ref) => { this.menu = ref; }}>
                             <MenuTrigger>
-                                <Icon name='ios-arrow-down' style={styles.dropDownIcon} />
+                                <Icon name='md-more' style={styles.dropDownIcon} />
                             </MenuTrigger>
                             <MenuOptions customStyles={optionsStyles}>
                                 {
                                     !this.isSubscribed(item)
                                     ?
-                                    <MenuOption onSelect={() => this.subscribe(item)}>
-                                        <Button iconLeft transparent dark onPress={() => this.subscribe(item)}>
-                                            <Icon name='md-notifications' style={styles.menuIcon} />
-                                            <Text style={styles.menuText}>Subscribe to Notifications</Text>
-                                        </Button>
-                                    </MenuOption>
+                                        <MenuOption onSelect={() => this.subscribe(item)}>
+                                            <Button iconLeft transparent dark onPress={() => this.subscribe(item)}>
+                                                <Icon name='md-notifications' style={styles.menuIcon} />
+                                                <Text style={styles.menuText}>Subscribe to Notifications</Text>
+                                            </Button>
+                                        </MenuOption>
                                     :
-                                    <MenuOption onSelect={() => this.unsubscribe(item)}>
-                                        <Button iconLeft transparent dark onPress={() => this.unsubscribe(item)}>
+                                        <MenuOption onSelect={() => this.unsubscribe(item)}>
+                                            <Button iconLeft transparent dark onPress={() => this.unsubscribe(item)}>
                                             <Icon name='md-notifications-off' style={styles.menuIcon} />
                                             <Text style={styles.menuText}>Unsubscribe to Notifications</Text>
                                         </Button>
-                                    </MenuOption>
+                                        </MenuOption>
                                 }
                                 {
                                     !isAuthor && canUnfollow &&
@@ -284,8 +285,8 @@ class FeedHeader extends Component {
                                 }
                                 <MenuOption onSelect={() => this.notify(item)}>
                                     <Button iconLeft transparent dark onPress={() => this.notify(item)}>
-                                        <Icon name='md-megaphone' style={styles.menuIcon} />
-                                        <Text style={styles.menuText}>Share this post to followers</Text>
+                                        <Icon name='md-share' style={styles.menuIcon} />
+                                        <Text style={styles.menuText}>Share this post directly to followers</Text>
                                     </Button>
                                 </MenuOption>
                                 {
@@ -302,10 +303,10 @@ class FeedHeader extends Component {
                                     <MenuOption onSelect={() => this.followAuthor(this.props.item)}>
                                         <Button iconLeft transparent dark onPress={() => this.followAuthor(this.props.item)}>
                                             <View style={styles.buttonContainer}>
-                                                <Icon name="ios-person" style={styles.activeIconLarge} />
-                                                <Icon name="ios-add-circle-outline" style={styles.activeIconSmall} />
+                                                <Icon name='ios-person' style={styles.activeIconLarge} />
+                                                <Icon name='ios-add-circle-outline' style={styles.activeIconSmall} />
                                             </View>
-                                            <Text style={styles.menuText}>Follow this item's author</Text>
+                                            <Text style={styles.menuText}>Follow this person</Text>
                                         </Button>
                                     </MenuOption>
                                 }
@@ -314,8 +315,8 @@ class FeedHeader extends Component {
                                     <MenuOption onSelect={() => this.unfollowAuthor(this.props.item)}>
                                         <Button iconLeft transparent dark onPress={() => this.unfollowAuthor(this.props.item)}>
                                             <View style={styles.buttonContainer}>
-                                                <Icon name="ios-person" style={styles.activeIconLarge} />
-                                                <Icon name="ios-remove-circle-outline" style={styles.activeIconSmall} />
+                                                <Icon name='ios-person' style={styles.activeIconLarge} />
+                                                <Icon name='ios-remove-circle-outline' style={styles.activeIconSmall} />
                                             </View>
                                             <Text style={styles.menuText}>Unfollow this person</Text>
                                         </Button>
@@ -353,7 +354,7 @@ class FeedHeader extends Component {
                                     <MenuOption onSelect={() => this.spam(item)}>
                                         <Button iconLeft transparent dark onPress={() => this.spam(item)}>
                                             <Image source={require("img/spam.png")} style={[styles.menuIcon, { marginLeft: -2, marginRight: 12 }]} />
-                                            <Text style={styles.menuText}>Mark As Spam</Text>
+                                            <Text style={styles.menuText}>Report As Spam</Text>
                                         </Button>
                                     </MenuOption>
                                 }
@@ -368,13 +369,10 @@ class FeedHeader extends Component {
 
 const optionsStyles = {
     optionsContainer: {
-        backgroundColor: '#fafafa',
+        backgroundColor: '#55c5ff',
         paddingLeft: 5,
         width: WINDOW_WIDTH
     }
 };
 
-export default connect(state => ({
-    userId: state.user.id,
-    token: state.user.token,
-}))(FeedHeader);
+export default FeedHeader;

@@ -3,10 +3,13 @@ use_frameworks!
 
 target 'Powerline' do
 project './powerline.xcodeproj'
-  pod 'Stripe', '~> 11.2.0'
+  pod 'Stripe', '~> 10.1.0'
   pod 'Fabric'
+  pod 'Mixpanel'
   pod 'Crashlytics'
   pod 'FBSDKCoreKit'
   pod 'FBSDKLoginKit'
   pod 'FBSDKShareKit'
+  pod 'RSKImageCropper'
+  pod 'QBImagePickerController'
 end

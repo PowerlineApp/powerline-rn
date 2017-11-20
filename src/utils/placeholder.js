@@ -69,6 +69,10 @@ function generatePlaceholder(type: Type): string {
       return petitionsPlaceholders[index];
     }
     case 'comment':
+    {
+      const index = randomMaxInt(petitionsPlaceholders.length);
+      return commentsPlaceholders[index];
+    }
     case 'replie': {
       const index = randomMaxInt(petitionsPlaceholders.length);
       return commentsPlaceholders[index];
