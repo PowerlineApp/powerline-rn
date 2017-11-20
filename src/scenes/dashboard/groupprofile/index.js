@@ -234,6 +234,8 @@ class GroupProfile extends Component{
     }
 
     render(){
+        console.log('GROUP PROFILE', this.state)
+        console.log('GROUP PROFILE', this.props)
         return (
             <Container style={styles.container}>
                 <Header style={styles.header}>
@@ -276,17 +278,16 @@ class GroupProfile extends Component{
                         <ListItem style={styles.listItem}>
                             <Text style={styles.groupDescription}>{this.state.data.official_description}</Text>
                         </ListItem>:null}
-                        {this.state.data.joined?
-                        <ListItem style={{borderBottomWidth: 0}}>
-                            <Body>
-                                <Button block style={{backgroundColor: PLColors.main}} onPress={() => this.goToManage()}>
-                                    <Label style={{color: 'white'}}>Manage</Label>
-                                </Button>
-                            </Body>
-                        </ListItem>:
-                        <ListItem style={{borderBottomWidth: 0, height: 40}}>
-                            <Text> </Text>
-                        </ListItem>}
+                        {this.state.data.joined && this.state.data.user_role !== 'member'
+                        ?   <ListItem style={{borderBottomWidth: 0}}>
+                                <Body>
+                                    <Button block style={{backgroundColor: PLColors.main}} onPress={() => this.goToManage()}>
+                                        <Label style={{color: 'white'}}>Manage</Label>
+                                    </Button>
+                                </Body>
+                            </ListItem>
+                        :   null
+                        }
                         {this.state.data.acronym?
                         <ListItem style={styles.listItem}>
                             <Body>
