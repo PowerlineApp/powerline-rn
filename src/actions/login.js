@@ -11,8 +11,7 @@ var { API_URL, MixpanelToken } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
 var FacebookSDK = require('FacebookSDK');
 var { loadUserProfile } = require('./users');
-var Mixpanel = require('react-native-mixpanel');
-
+import Mixpanel from 'react-native-mixpanel'
 
 
 import OneSignal from 'react-native-onesignal';

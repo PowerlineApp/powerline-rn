@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
-import { Label as NSLabel, Button } from 'native-base';
-import { View, Text, Alert, Spinner } from 'react-native';
+import { Label as NSLabel, Button, Spinner } from 'native-base';
+import { View, Text, Alert } from 'react-native';
 import { exportReports } from 'PLActions';
 import { Actions } from 'react-native-router-flux';
 import { Label, Level, Input, PopupLabel } from '../components';
@@ -51,14 +51,14 @@ class SubscriptionLevel extends Component {
 
   render() {
     console.log(this.props);
-    if (this.props.subscription.code === '403') {
-      return (
-        <Label>You do not have permission to see this content</Label>
-      )
-    }
+    // if (this.props.subscription && this.props.subcription.code > 400) {
+    //   return (
+    //     <Label>You do not have permission to see this content</Label>
+    //   )
+    // }
     return (
       <View>
-        {(this.props.subscription.code !== '403' && this.props.subscription.package_type)
+        {(this.props.subscription && this.props.subscription.package_type)
            ? <Label>{`Current Account: ${this.props.subscription.package_type.charAt(0).toUpperCase() + this.props.subscription.package_type.slice(1)}`}</Label>
           : <Spinner />
         }

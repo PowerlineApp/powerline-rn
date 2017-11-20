@@ -51,16 +51,13 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
         new MainReactPackage(),
-<<<<<<< HEAD
-            new RNMixpanel(),
-=======
-            new AddCalendarEventPackage(),
-            new StripeReactPackage(),
-            new VectorIconsPackage(),
->>>>>>> develop_old
-            new PickerPackage(),
-            new RNSharePackage(),
-            new RNFetchBlobPackage(),
+        new RNMixpanel(),
+        new AddCalendarEventPackage(),
+        new StripeReactPackage(),
+        new VectorIconsPackage(),
+        new PickerPackage(),
+        new RNSharePackage(),
+        new RNFetchBlobPackage(),
         new RNDeviceInfo(),
         new ReactNativeOneSignalPackage(),
         new SharePackage(),
