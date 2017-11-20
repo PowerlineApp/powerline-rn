@@ -957,6 +957,8 @@ class ItemDetail extends Component {
             );
         }
         let item = this.item;
+        console.log('ITEMDETAIL', this.state)
+        console.log('ITEMDETAIL', this.props)
         return (
             <MenuContext customStyles={menuContextStyles}>
                 <Container style={{ flex: 1 }}>
@@ -969,7 +971,7 @@ class ItemDetail extends Component {
                             //https://github.com/PowerlineApp/powerline-mobile/issues/596
                             <Image
                                 style={styles.headerImage}
-                                source={require('img/item_detail_header.png')}
+                                source={this.state.banner ? {uri: this.state.banner} : require('img/item_detail_header.png')}
                             />
                         )}
                         renderFixedForeground={() => (

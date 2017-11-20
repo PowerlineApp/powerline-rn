@@ -34,8 +34,9 @@ import { RefreshControl, TouchableOpacity, Image, WebView, Platform } from 'reac
 import Carousel from 'react-native-snap-carousel';
 import styles , { sliderWidth, itemWidth } from './styles';
 const PLColors = require('PLColors');
-
-import { loadUserProfileById, resetActivities, editFollowers, votePost, loadActivitiesByUserId, getFollowingUser, unFollowings, putFollowings } from 'PLActions';
+import Filter from '../../common/PLSegmentedControls'
+import ImageSelector from '../../common/PLImageSelector'
+import { loadUserProfileById, resetActivities, editFollowers, votePost, loadActivitiesByUserId, getUserDiscountCode, getFollowingUser, unFollowings, putFollowings } from 'PLActions';
 import TimeAgo from 'react-native-timeago';
 import ImageLoad from 'react-native-image-placeholder';
 import YouTube from 'react-native-youtube';
@@ -56,7 +57,8 @@ import Menu, {
     MenuOption,
     renderers
 } from 'react-native-popup-menu';
-
+import MyInfo from './components/myInfo'
+import { updateUserProfile } from 'PLActions'
 class Profile extends Component{
     static propTypes = {
         token: React.PropTypes.string
@@ -70,7 +72,9 @@ class Profile extends Component{
             isLoadingTail: false,
             user: null,
             activities: [],
-            following_status: null
+            following_status: null,
+            selected: 'My Posts',
+            referal_code: null
         };
 
         var { token, id } = this.props;
@@ -109,8 +113,18 @@ class Profile extends Component{
         .catch(err => {
         });
 
+        getUserDiscountCode(token).then(data => {
+                this.setState({
+                    referal_code: data.code
+                })
+        }).catch(err => console.log(err))
         this.follow = this.follow.bind(this);
+        this.renderSelectedView = this.renderSelectedView.bind(this);
+        this.updateUserAvatar = this.updateUserAvatar.bind(this);
+
+
     }
+
 
     mute() {
         var { token, id, dispatch } = this.props;
@@ -195,8 +209,33 @@ class Profile extends Component{
         return <FeedHeader item={item} />
     }
 
+    renderSelectedView() {
+        const { selected } = this.state;
+        if(selected === 'My Posts') {
+            return (
+                <List dataArray={this.state.activities} renderRow={item => {
+                    return <FeedActivity item={item} token={this.props.token} profile={this.props.profile} />
+                }}
+                />
+            )
+        }
+        if(selected === 'My Info') {
+            return (
+                <MyInfo token={this.props.token} referal_code={this.state.referal_code}></MyInfo>
+            )
+        }
+    }
+
+    updateUserAvatar(image) {
+        this.setState(state => {
+            state.user.avatar_file_name = image.path
+            return state
+        })
+        updateUserProfile(this.props.token, {avatar_file_name: image.data})
+    }
     // It would appear that the below is the User Profile Screen GH44
     render(){
+        console.log('USER', this.state.user)
         return (
             <MenuContext customStyles={menuContextStyles}>
                 <Container style={styles.container}> 
@@ -218,7 +257,15 @@ class Profile extends Component{
                             }
                         </View> 
                         <View style={{justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}>
-                            <Thumbnail source={{uri: this.state.user.avatar_file_name+'&w=50&h=50&auto=compress,format,q=95'}} style={{marginBottom: 8}}/>  
+                            { this.state.selected === "My Info"
+                                ? <View style={{position: 'absolute', borderRadius: 25, flex: 1, zIndex: 3,  }}>
+                                    <ImageSelector onConfirm={this.updateUserAvatar} iconSize={20} iconColor='#000' onError={err => console.log(err)}/>
+                                </View> 
+                                : null
+                            }
+                            <Thumbnail source={{uri: this.state.user.avatar_file_name}} style={{marginBottom: 8, borderRadius: 25}}>
+                                
+                            </Thumbnail>  
                             <TouchableWithoutFeedback onPress={() => this.follow()}>                              
                                 <View  style={{flexDirection: 'row', backgroundColor: 'white', padding: 1, marginTop: 30, marginLeft: -15, width: 28, height: 28, borderRadius: 24, borderWidth: 1, borderColor: '#11c1f3'}}>
                                     {this.state.following_status == 'pending'?
@@ -251,17 +298,17 @@ class Profile extends Component{
                     </View>: null}
                     {/*The user's posts should be displayed below the user profile information*/}
                     {/*This is driven by Activity API for specific user*/}
-                    <Content>                   
-                        <List dataArray={this.state.activities} renderRow={item => {
-                            return <FeedActivity item={item} token={this.props.token} profile={this.props.profile} />
-                        }}
-                        />
+                    <Filter options={OPTIONS} selected={this.state.selected} onSelection={item => this.setState({selected: item})}/>             
+                    <Content>
+                        {this.renderSelectedView()}
                     </Content>              
                 </Container>
             </MenuContext>
         );
     }
 }
+
+const OPTIONS = ['My Posts', 'My Info']
 
 const menuContextStyles = {
   menuContextWrapper: styles.container,
@@ -277,6 +324,7 @@ async function timeout(ms: number): Promise {
 
 const mapStateToProps = state => ({
     token: state.user.token,
+    id: state.user.profile.id,
     page: state.activities.page,
     totalItems: state.activities.totalItems,
     payload: state.activities.payload,

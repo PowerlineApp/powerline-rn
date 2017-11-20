@@ -44,6 +44,8 @@ import Search from './scenes/search/';
 import GroupMembersManagementScene from './scenes/dashboard/managegroup/scenes/userManagement'
 import GroupBankAccountScene from './scenes/dashboard/managegroup/scenes/fundraiser'
 import GroupAddCardScene from './scenes/dashboard/managegroup/scenes/subscription'
+
+import MyInfo from './scenes/profile/components/myInfo'
 var RouterWithRedux = connect()(Router);
 
 class PLNavigator extends React.Component {
@@ -73,26 +75,6 @@ class PLNavigator extends React.Component {
     }
   }
 
-  _renderScene(props) { // eslint-disable-line class-methods-use-this
-    switch (props.scene.route.key) {
-      case 'home':
-        return <Home />;
-      case 'takeTour':
-        return <TourScene />;
-      case 'myInfluences':
-        return <Influences />;
-      case 'representatives':
-        return <Representatives />;
-      case 'createGroup':
-        return <CreateGroup />;
-      case 'myGroups':
-        return <GroupList />;
-      case 'search':
-        return <Search/>;
-      default:
-        return <Home />;
-    }
-  }
 
   render() {
     return (
@@ -127,7 +109,7 @@ class PLNavigator extends React.Component {
           <RouterWithRedux>
             <Scene key="root">
               <Scene key="analyticsView" component={AnalyticsView} hideNavBar/>
-              <Scene key="home" component={Home} hideNavBar initial />
+              <Scene key="home" component={Home} hideNavBar initial/>
               <Scene key="groupSelector" component={GroupSelector} />
               <Scene key="takeTour" component={TourScene} />
               <Scene key="itemDetail" component={ItemDetail} />
@@ -151,6 +133,7 @@ class PLNavigator extends React.Component {
               <Scene key="manageGroupMembers" component={GroupMembersManagementScene}/>
               <Scene key="groupBankAccountScene" component={GroupBankAccountScene}/>
               <Scene key="groupAddCardScene" component={GroupAddCardScene}/>
+              {/* <Scene key='testScene' component={MyInfo} initial hideNavBar/>  */}
             </Scene>
           </RouterWithRedux>
         </Drawer>

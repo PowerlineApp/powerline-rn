@@ -54,12 +54,12 @@ const datas = [
   //  icon: 'star',
   //  bg: '#EB6B23',
   //},
-  //{
-  //  name: 'My Profile',
-  //  route: 'myProfile',
-  //  icon: 'contact',
-  //  bg: '#3591FA',
-  //},
+  {
+   name: 'My Profile',
+   route: 'profile',
+   icon: 'contact',
+   bg: '#3591FA',
+  },
   //{
   //  name: 'Settings',
   //  route: 'settings',
@@ -111,23 +111,14 @@ class SideBar extends Component {
   }
 
   onSelectItem(route: string) {
+    console.log('onSelectItem', route)
     if (route == 'logout') {
       var { token } = this.props;
       this.props.logOut(token);
              
-    } else if(route == 'takeTour'){
-      Actions['takeTour']();
-    }else if(route == 'myInfluences'){
-      Actions['myInfluences']();  
-    }else if(route == 'representatives'){
-      Actions['representatives']();
-    }else if(route == 'createGroup'){
-      Actions['createGroup']();
-    }else if(route == 'myGroups'){
-      Actions['myGroups']();
-    }else if(route == 'search'){
-      Actions['search']();
-    }else{
+    } else if(typeof route === 'string') {
+      Actions[route]()
+    } else{
       Keyboard.dismiss();
       Actions['home']();
     }

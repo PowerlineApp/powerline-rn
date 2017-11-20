@@ -145,6 +145,49 @@ async function getFriendsSuggestions(token: string) {
     }
 }
 
+function getUserDiscountCode(token) {
+    return new Promise((resolve, reject) => {
+        fetch(API_URL + '/v2/user/discount-code', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application',
+                'token': token
+            }
+        })
+            .then((res) => res.json())
+            .then(data => {
+                console.log("discount code API Success", data);
+                resolve(data);
+            })
+            .catch(err => {
+                console.log("discount code Error", err);
+                reject(err);
+            })
+    });
+}
+
+function updateUserProfile(token, data) {
+    return new Promise((resolve, reject) => {
+        fetch(API_URL + '/profile/update', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'token': token
+            },
+            body: JSON.stringify(data)
+        })
+            .then((res) => res.json())
+            .then(data => {
+                console.log("update User Profile API Success", data);
+                resolve(data);
+            })
+            .catch(err => {
+                console.log("update User Profile Error", err);
+                reject(err);
+            })
+    });
+}
+
 module.exports = {
     loadUserProfile,
     loadUserProfileById,
@@ -152,5 +195,7 @@ module.exports = {
     getInvites,
     registerDevice,
     search,
-    getFriendsSuggestions
+    getFriendsSuggestions,
+    getUserDiscountCode,
+    updateUserProfile
 }

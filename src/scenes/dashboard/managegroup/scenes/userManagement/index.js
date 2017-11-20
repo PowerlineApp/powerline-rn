@@ -20,7 +20,7 @@ import {
   } from 'native-base';
 import styles from './styles'
 import { Actions } from 'react-native-router-flux'
-import Filter from './filter'
+import Filter from '../../../../../common/PLSegmentedControls'
 import { getGroupPendingUsers, promoteUserToManager, approveUserToGroup, removeUserFromGroup, unPromoteUserToMember } from '../../../../../actions/groups'
 const OPTIONS = ['Pending requests', 'Managers', 'All Users']
 class GroupMembersManagingScene extends Component {
