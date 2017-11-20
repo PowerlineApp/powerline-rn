@@ -117,7 +117,7 @@ class PLNavigator extends React.Component {
             <Scene key="root">
               <Scene key="analyticsView" component={AnalyticsView} hideNavBar/>
               <Scene key="home" component={Home} hideNavBar initial/>
-              <Scene key="groupSelector" component={GroupSelector} />
+s              <Scene key="groupSelector" component={GroupSelector} />
               <Scene key="takeTour" component={TourScene} />
               <Scene key="itemDetail" component={ItemDetail} />
               <Scene key="commentDetail" component={CommentDetail} />
