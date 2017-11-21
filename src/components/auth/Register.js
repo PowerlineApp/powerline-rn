@@ -23,7 +23,8 @@ import {
     NavigationActions
 } from 'react-navigation';
 import { setInterval } from 'timers';
-import { findByUsernameOrEmail, register, registerFromFB }  from 'PLActions';
+import { findByUsernameOrEmail, register2, registerFromFB, verifyCode, sendCode }  from 'PLActions';
+import PhoneVerification from './PhoneVerification';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 
 class Register extends React.Component{
@@ -36,33 +37,15 @@ class Register extends React.Component{
         tour: React.PropTypes.func.isRequired
     };
 
-    state: {
-        isLoading: boolean;
-        position: number;
-        first_name: string;
-        last_name: string;
-        username: string;
-        password: string;
-        confirm_password: string;
-        address1: string;
-        zip: string;
-        city: string;
-        state: string;
-        country: string;
-        email: string;
-        is_over_13: boolean;
-    };
-
     constructor(props){
         super(props);
         var { isFb, fbData } = this.props;
-        console.log(fbData);
+        console.log('fbdata => ', fbData);
         this.state = {
             isLoading: false,
             first_name: isFb? fbData.first_name: "",
             last_name: isFb? fbData.last_name: "",
             username: isFb? fbData.username: "",
-            password: "",
             confirm_password: "",
             address1: isFb? fbData.address1: "",
             zip: isFb? fbData.zip: "",
@@ -78,6 +61,30 @@ class Register extends React.Component{
         this.onNext = this.onNext.bind(this);
     }
 
+    register(isFb, data){
+        this.setState({
+            isLoading: true
+        });
+        if (isFb) {
+
+        } else {
+            register(data)
+            .then(ret => {
+                this.setState({
+                    isLoading: false,
+                    position: this.state.position + 1
+                });
+            })
+            .catch(err => {
+                this.setState({
+                    isLoading: false
+                });
+                alert(JSON.stringify(err));
+                return;
+            });
+        }
+    }
+
     onChangeFirstName = fname => {
         this.setState({ first_name: fname });
     }
@@ -90,24 +97,8 @@ class Register extends React.Component{
         this.setState({ username: username });
     }
 
-    onChangePassword = password => {
-        this.setState({ password: password });
-    }
-
-    onChangeConfirmPassword = confirm_password => {
-        this.setState({ confirm_password: confirm_password });
-    }   
-
     onChangeZip = zip => {
         this.setState({ zip: zip });
-    }
-
-    onChangeCity = city => {
-        this.setState({ city: city });
-    }
-
-    onChangeState = state => {
-        this.setState({ state: state });
     }
 
     onChangeCountry = country => {
@@ -136,8 +127,8 @@ class Register extends React.Component{
     }
 
     onBack = () => {
-        var { back } = this.props;
-        var { position } = this.state;
+        let { back } = this.props;
+        let { position } = this.state;
         if(position > 0){
             this.setState({
                 position: position - 1
@@ -148,8 +139,8 @@ class Register extends React.Component{
     }
 
     async onNext() {
-        var { email, position, first_name, last_name, username, password, address1, zip, city, state, country, is_over_13, confirm_password} = this.state;
-        var { onLoggedIn, isFb, fbData, tour } = this.props;
+        let { email, position, first_name, last_name, username, zip, country, is_over_13, phone} = this.state;
+        let { onLoggedIn, isFb, fbData, tour } = this.props;
         if(position === 0){
             
             if(first_name == "" || first_name.trim() == ""){
@@ -225,20 +216,14 @@ class Register extends React.Component{
             }            
 
             if(isFb){
-                var data = fbData;
+                let data = fbData;
                 data.username = username;
                 data.first_name = first_name;
                 data.last_name = last_name;
                 data.email = email;
                 data.email_confirm = email;
-                data.address1 = address1;
-                data.city = city;
-                data.state = state;
                 data.country = country;
                 data.zip = zip;
-                this.setState({
-                    isLoading: true
-                });
                 registerFromFB(data)
                 .then(ret => {
                     this.setState({
@@ -256,44 +241,9 @@ class Register extends React.Component{
                     alert(JSON.stringify(err));
                     return;
                 });
-            }else{
-                //email registration
-                var data = {
-                    first_name: first_name,
-                    last_name: last_name,
-                    username: username,
-                    password: password,                
-                    address1: address1,
-                    city: city,
-                    state: state,
-                    country: country,
-                    zip: zip,
-                    email: email,
-                    confirm: confirm_password,
-                    email_confirm: email
-                };
-                this.setState({
-                    isLoading: true
-                });
-
-                register(data)
-                .then(ret => {
-                    this.setState({
-                        isLoading: false
-                    });
-                    
-                    tour(() => {
-                        onLoggedIn(ret);
-                    });                    
-                })
-                .catch(err => {
-                    this.setState({
-                        isLoading: false
-                    });
-                    alert(JSON.stringify(err));
-                    return;
-                });
-            }                        
+            } else {
+                this.setState({position: position + 1})
+            }
         }
     }
 
@@ -383,6 +333,7 @@ class Register extends React.Component{
                     <View style={styles.markContainer}>
                         <View style={styles.markWrapper}>
                             <View style={[styles.markItem, styles.markActiveItem]}></View>
+                            <View style={styles.markItem}></View>
                             <View style={styles.markItem}></View>
                         </View>
                     </View>             
@@ -474,11 +425,94 @@ class Register extends React.Component{
                         <View style={styles.markWrapper}>
                             <View style={styles.markItem}></View>
                             <View style={[styles.markItem, styles.markActiveItem]}></View>
+                            <View style={styles.markItem}></View>
                         </View>
                     </View>
                 </View>
             </ScrollView>
         );
+    }
+
+    async onRegister(){
+        if (this.state.registered) return;
+        let { first_name, last_name, email, username, zip, country, phone, countryCode} = this.state;
+        let { onLoggedIn, isFb, fbData, tour } = this.props;
+        let data = {
+            username,
+            first_name,
+            last_name,
+            email,
+            country,
+            phone: countryCode + phone,
+            zip
+        }
+        this.setState({loading: true});
+        try {
+            let r = await register2(data);
+            console.log(r);
+            this.setState({enterCode: true, registered: true})
+            this.setState({loading: false})
+        } catch (error) {
+            console.log('error => ', error);
+            this.setState({loading: false})
+        }
+    }
+
+    async sendCode(){
+        let {phone, countryCode} = this.state;
+        this.setState({loading: true});
+        await this.onRegister();
+        sendCode(countryCode + phone).then(r => {
+            console.log(r);
+            this.setState({loading: false})
+        }).catch(e => {
+            console.log(e)
+            this.setState({loading: false})
+        })
+    }
+
+    verifyCode(){
+        this.setState({loading: true});
+        let {phone, code, countryCode} = this.state;
+        this.setState({code: ''})
+        verifyCode(countryCode + phone, code).then(r => {
+            console.log(r);
+            this.setState({loading: false})
+        }).catch(e => {
+            console.log(e);
+            this.setState({loading: false})
+        })
+    }
+    // 32991139867
+
+    renderPhoneVerification(){
+        return <ScrollView style={styles.container}>
+        <Text style={styles.titleText}>Enter your contact details.</Text>
+        <Text style={styles.descriptionText}>You're almost done!</Text>
+        <View style={styles.formContainer}>
+            <PhoneVerification
+                onRegister={() => this.register()}
+                onSendCode={() => this.sendCode()}   
+                onVerifycode={() => this.verifyCode()}
+                onVerifySuccess={() => this.verifySuccess()}
+                onChangeCode={(value) => {this.setState({code: value}); if (value.length === 4) this.verifyCode()}}
+                code={this.props.code}
+                phone={this.props.phone}
+                onChangePhone={(value) => this.setState({phone: value})}
+                loading={this.state.loading}
+                enterCode={this.state.enterCode}
+                setCountryCode={(code) => this.setState({countryCode: '+' + code})}
+            />
+
+            <View style={styles.markContainer}>
+                <View style={styles.markWrapper}>
+                    <View style={styles.markItem}></View>
+                    <View style={styles.markItem}></View>
+                    <View style={[styles.markItem, styles.markActiveItem]}></View>
+                </View>
+            </View>
+        </View>
+    </ScrollView>
     }
 
     renderBottom(){
@@ -492,7 +526,7 @@ class Register extends React.Component{
                 </TouchableWithoutFeedback>
                 <TouchableWithoutFeedback onPress={this.onNext}>
                     <View style={styles.button}>
-                        <Text style={styles.buttonText}>{position === 1 ?'Register':'Next'}</Text>
+                        <Text style={styles.buttonText}>{position > 2 ?'Register':'Next'}</Text>
                     </View>
                 </TouchableWithoutFeedback>
             </View>
@@ -503,11 +537,23 @@ class Register extends React.Component{
         console.log('e', e)
     }
 
+    renderForm(position){
+        console.log(position);
+        switch(position){
+            case 0:
+                return this.renderBasic();
+            case 1: 
+                return this.renderContact();
+            case 2:
+                return this.renderPhoneVerification();
+        }
+    }
+
     render(){
         var { position, isLoading } = this.state;
         return (
             <View style={styles.container}>
-                {position === 1 ? this.renderContact():this.renderBasic()}
+                {this.renderForm(position)}
                 {this.renderBottom()}
                 {isLoading && <PLOverlayLoader visible={isLoading} logo />}
             </View>

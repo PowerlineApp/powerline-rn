@@ -57,6 +57,29 @@ function register(data){
         });
     });
 }
+async function register2(data){
+    console.log('~>' + API_URL + `/v2/security/registration`, data);
+    try {
+        let res = await fetch(API_URL + `/v2/security/registration`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
+        console.log(res);
+        return res.json();
+    } catch (error) {
+        return new Error(error);
+    }
+    // return new Promise((resolve, reject) => {
+    //     .then((res) => res.json())
+    //     .catch(err => {
+    //         reject(err);
+    //     });
+    // });
+}
 
 function registerFromFB(data){
     return new Promise((resolve, reject) => {
@@ -87,9 +110,24 @@ function registerFromFB(data){
         });
     });
 }
+function verifyCode (phone, code) {
+    console.log('~>' + API_URL + `/v2/security/login`, phone, code);
+    console.log('request:', {
+        endpoint: API_URL + '/v2/security/login',
+        method: 'POST',
+        body: JSON.stringify({phone, code})
+    });
+    return fetch(API_URL + '/v2/security/login', {
+        method: 'POST',
+        body: JSON.stringify({phone, code})
+    });    
+}
 
 module.exports = {
     findByUsernameOrEmail,
     register,
-    registerFromFB
+    register2,
+    registerFromFB,
+    verifyCode,
+    sendCode: verifyCode
 };
