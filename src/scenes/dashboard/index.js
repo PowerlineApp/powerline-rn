@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import { Container, Header, Title, Content, Button, Footer, FooterTab, Text, Body, Left, Right, Icon, Item, Input, Grid, Row, Col, Badge, Label } from 'native-base';
 
-import { View, Image, Keyboard, FlatList, AsyncStorage, Alert, Platform } from 'react-native';
+import { View, Image, Keyboard, FlatList, AsyncStorage, Alert, Platform, InteractionManager } from 'react-native';
 
 
 import Menu, {
@@ -190,10 +190,29 @@ class Home extends Component {
         // OneSignal.removeEventListener()
     }
 
+    verifyProfile(){
+        AsyncStorage.getItem('freshRegister').then(item => {
+            if (item === 'true'){
+                Alert.alert('Verify now?', 'Your profile is only 50% complete.', [
+                    {text: "Verify", onPress: () => Actions.verifyProfile()}, 
+                    {text: "Later", onPress: () => {
+                        let h_48 = (48 * 1000 * 60 * 60) 
+                        OneSignal.postNotification({
+                            'en': 'Finish your registration!.'
+                        }, {send_after: (new Date().getTime() + 1000)}, data.userId)
+                    }}
+                ])
+            }
+        });
+        AsyncStorage.setItem('freshRegister', 'false');
+    }
+
     onIds(data) {
         console.log('/this idsss', data);
         var { token } = this.props;
         AsyncStorage.setItem('pushId', data.userId);
+
+        this.verifyProfile();
 
         var params = {
             id: data.userId,
