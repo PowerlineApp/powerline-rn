@@ -1,18 +1,18 @@
 import React, { Component } from 'react';
 import { TouchableOpacity, Modal, View, Text, Image } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
-import { Icon } from 'native-base'
+import { Icon } from 'native-base';
 const INITIAL_STATE = {
     showConfirmationModal: false,
     image: null
-}
+};
 class PLImageSelector extends Component {
     constructor(props) {
         super(props);
-        this.state = INITIAL_STATE
-        this.selectImage = this.selectImage.bind(this)
-        this.onModalConfirm = this.onModalConfirm.bind(this)
-        this.onModalCancel = this.onModalCancel.bind(this)
+        this.state = INITIAL_STATE;
+        this.selectImage = this.selectImage.bind(this);
+        this.onModalConfirm = this.onModalConfirm.bind(this);
+        this.onModalCancel = this.onModalCancel.bind(this);
     } 
     
     selectImage () {
@@ -25,29 +25,29 @@ class PLImageSelector extends Component {
             this.setState({
                 showConfirmationModal: true,
                 image
-            })
+            });
         }).catch(err => {
-            this.props.onError(err)
-        })
+            this.props.onError(err);
+        });
     }
 
     onModalConfirm() {
-        this.setState({showConfirmationModal: false})
-        this.props.onConfirm(this.state.image)
+        this.setState({showConfirmationModal: false});
+        this.props.onConfirm(this.state.image);
     }
 
     onModalCancel() {
-        this.setState(INITIAL_STATE)
+        this.setState(INITIAL_STATE);
     }
 
     render() {
         return (
             <TouchableOpacity onPress={this.selectImage}>
-                <Icon name='camera' size={this.props.iconSize} color={this.props.iconColor}/>
+                <Icon name='camera' size={this.props.iconSize} color={this.props.iconColor} />
                 <Modal visible={this.state.showConfirmationModal} presentationStyle='pageSheet' transparent>
                     <View style={{flex: 1, backgroundColor: rgb(0,0,0,0.7), alignItems: 'center', justifyContent: 'center'}}>
                         <View style={{height: '60%', width: '90%', backgroundColor: 'white'}}>
-                            <Image source={{uri: (this.state.image ? this.state.image.path : null)}} style={{height: '85%', width: '95%', alignSelf: 'center', marginTop: 5}}/>
+                            <Image source={{uri: (this.state.image ? this.state.image.path : null)}} style={{height: '85%', width: '95%', alignSelf: 'center', marginTop: 5}} />
                             <View style={styles.buttonsWrapper}>
                                 <TouchableOpacity style={styles.button} onPress={this.onModalConfirm}>
                                     <Text style={styles.buttonText}>Confirm</Text>
@@ -60,7 +60,7 @@ class PLImageSelector extends Component {
                     </View>
                 </Modal>
             </TouchableOpacity>
-        )
+        );
     }
 }
 
@@ -87,4 +87,4 @@ const styles = {
         alignItems: 'space-around',
         marginTop: 10
     }
-}
+};

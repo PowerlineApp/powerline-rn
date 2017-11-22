@@ -1,38 +1,24 @@
-var React = require('react');
-var { StyleSheet, View, Image, Text, Switch, TextInput, TouchableOpacity } = require('react-native');
-var PLColors = require('PLColors');
-var PLConstants = require('PLConstants');
-var PLButton = require('PLButton');
-var { logInManually, logInWithFacebook } = require('PLActions');
-var { connect } = require('react-redux');
-var { WINDOW_WIDTH } = require('PLConstants');
+import React from 'react';
+import { connect } from 'react-redux';
 
+import { StyleSheet, View, Image, Text, Switch, TextInput, TouchableOpacity } from 'react-native';
 import LinearGradient from "react-native-linear-gradient";
 
+import PLButton from 'PLButton';
+import PLColors from 'PLColors';
+import PLConstants, { WINDOW_WIDTH } from 'PLConstants';
+import { logInManually, logInWithFacebook, verifyCode, sendCode }  from 'PLActions';
+
+import PhoneVerification from './PhoneVerification';
+
 class Login extends React.Component {
-  props: {
-    dispatch: (action: any) => Promise;
-    onLoggedIn: ?() => void;
-    openTerms: ?() => void;
-    openPolicy: ?() => void;
-    forgotPassword: ?() => void;
-    register: ?(isFb, fbData) => void;
-  };
 
-  state: {
-    isLoading: boolean;
-    username: string;
-    password: string;
-  };
-
-  _isMounted: boolean;
 
   constructor() {
     super();
     this.state = {
       isLoading: false,
-      username: "",
-      password: ""
+      displayManualLogin: false
     };
   }
 
@@ -53,65 +39,44 @@ class Login extends React.Component {
   };
 
   onForgotPassword = () => {
-    var { forgotPassword } = this.props;
+    let { forgotPassword } = this.props;
     forgotPassword && forgotPassword();
   };
 
   onSignUp = () => {
-    var { register, tour } = this.props;
+    let { register, tour } = this.props;
     register && register(false, {});
   };
 
   onTermsOfService = () => {
-    var { openTerms } = this.props;
+    let { openTerms } = this.props;
     openTerms && openTerms();
   };
 
   onPrivacyPolicy = () => {
-    var { openPolicy } = this.props;
+    let { openPolicy } = this.props;
     openPolicy && openPolicy();
   };
 
   async onLogIn() {
-    var { dispatch, onLoggedIn } = this.props;
-    if (this.state.username == "") {
-      alert("Username is empty.");
-      return;
-    }
-    if (this.state.password == "") {
-      alert("Password is empty.");
-      return;
-    }
-    this.setState({ isLoading: true });
-    try {
-      await Promise.race([
-        dispatch(logInManually(this.state.username, this.state.password)),
-        timeout(15000),
-      ]);
-    } catch (e) {
-      var message = e.message || e;
-      if (message !== 'Timed out' && message !== 'Canceled by user') {
-        alert('Incorrect username or password.');
-        console.warn(e);
-      }
-      return;
-    } finally {
-      this._isMounted && this.setState({ isLoading: false });
-    }
+    let { dispatch, onLoggedIn } = this.props;
+    this.setState({displayManualLogin: true})
 
-    onLoggedIn && onLoggedIn();
+    // onLoggedIn && onLoggedIn();
   }
 
   async onLogInWithFacebook() {
-    var { dispatch, register } = this.props;
+    let { dispatch, register } = this.props;
     this.setState({ isLoading: true });
     logInWithFacebook()
       .then((data) => {
+        console.log('data => ', data);
         this.setState({ isLoading: false });
         if (data.token) {
           console.log('DATA BEING DISPATCHED FROM LOGIN WITH FACEBOOK', data)
           dispatch({ type: 'LOGGED_IN', data: data });
         } else {
+          console.log('DATA BEING DISPATCHED FROM REGISTER WITH FACEBOOK', data)
           register && register(true, data);
         }
       })
@@ -123,32 +88,9 @@ class Login extends React.Component {
   }
 
   renderLoginForm = () => {
-    var { username, password } = this.state;
+    let { username, password } = this.state;
     return (
       <View style={styles.loginFormContainer}>
-        <View style={styles.nameContainer}>
-          <TextInput
-            placeholder="Username"
-            style={styles.textInput}
-            autoCorrect={false}
-            value={username}
-            onChangeText={this.onChangeUserName}
-          />
-        </View>
-        <View style={styles.nameContainer}>
-          <TextInput
-            placeholder="Password"
-            style={styles.textInput}
-            autoCorrect={false}
-            secureTextEntry={true}
-            value={password}
-            onChangeText={this.onChangePassword}
-          />
-        </View>
-        <View style={styles.switchContainer}>
-          <Text style={styles.switchText}>Keep me logged in</Text>
-          <Switch onTintColor="#030366" disabled={true} value={false} />
-        </View>
         <PLButton
           caption={this.state.isLoading ? "Please wait..." : "Login"}
           style={styles.loginButton}
@@ -195,7 +137,58 @@ class Login extends React.Component {
     );
   };
 
+  sendCode(){
+    let {phone, countryCode} = this.state;
+    countryCode = countryCode || '+1';
+    
+    this.setState({loading: true});
+    sendCode(countryCode + phone).then(r => {
+        console.log(r);
+        this.setState({loading: false, enterCode: true})
+    }).catch(e => {
+        console.log(e)
+        this.setState({loading: false})
+    })
+  }
+  verifyCode(){
+    let { dispatch } = this.props;
+    
+    this.setState({loading: true});
+    let {phone, code, countryCode} = this.state;
+    countryCode = countryCode || '+1';    
+    this.setState({code: ''})
+    verifyCode(countryCode + phone, code).then(r => r.json()).then(r => {
+        console.log(r);
+        if (r.token){
+          dispatch({ type: 'LOGGED_IN', data: r });
+        }
+        this.setState({loading: false})
+    }).catch(e => {
+        console.log(e);
+        this.setState({loading: false})
+    })
+}
+
   render() {
+    if (this.state.displayManualLogin){
+      return(
+        <PhoneVerification
+          onRegister={() => this.register()}
+          onBack={() => this.setState({displayManualLogin: false})}
+          type='login'
+          onSendCode={() => this.sendCode()}   
+          onVerifycode={() => this.verifyCode()}
+          onChangeCode={(value) => {this.setState({code: value}, value.length === 4 ? () => this.verifyCode() : () => {});}}
+          code={this.state.code}
+          phone={this.state.phone}
+          onChangePhone={(value) => this.setState({phone: value})}
+          loading={this.state.loading}
+          enterCode={this.state.enterCode}
+          setCountryCode={(code) => this.setState({countryCode: '+' + code})}
+          resetForm={() => this.setState({code: '', phone: '', countryCode: '', enterCode: false})}
+        />
+      )
+    }
     return (
       <LinearGradient colors={['#afcbe6', '#fff', '#afcbe6']} style={styles.container}>
         <Image source={require("img/logo.png")} style={styles.imgLogo} />
@@ -227,7 +220,7 @@ var styles = StyleSheet.create({
   },
   loginFormContainer: {
     marginHorizontal: 40,
-    marginTop: 10
+    marginTop: 100
   },
   nameContainer: {
     marginTop: 5,
