@@ -74,7 +74,7 @@ function loadUserData(token) {
         })
             .then((res) => res.json())
             .then(data => {
-                console.log("Load User Profile Success", data);
+                console.log("Load User Profile Success 2", data);
                 resolve(data);
             })
             .catch(err => {
