@@ -2,9 +2,16 @@ var { API_URL } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
 
 //For checking if username taken
-function findByUsername(username: string){
+function findByUsernameOrEmail({username, email}){
+    let query = '';
+    if (username) {
+        query = `username=${username}`;
+    } else {
+        query = `email=${email}`;
+    }
+    // console.log(API_URL +`-public/users/?${query}`);
     return new Promise((resolve, reject) => {
-        fetch(API_URL +`-public/users/?username=` + username, {
+        fetch(API_URL +`-public/users/?${query}`, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -50,6 +57,36 @@ function register(data){
         });
     });
 }
+async function register2(data){
+    console.log('~>' + API_URL + `/v2/security/registration`, data);
+    try {
+        let res = await fetch(API_URL + `/v2/security/registration`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
+        return res.json();
+    } catch (error) {
+        return new Error(error);
+    }
+}
+
+async function getZipCode(GEO_KEY){
+    return new Promise((fullfill, reject) => {
+        let position = navigator.geolocation.getCurrentPosition(async function (position) {
+            let geoInfo = fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.coords.latitude},${position.coords.longitude}&result_type=street_address&key=${GEO_KEY}`);
+            geoInfo = await geoInfo.json(); 
+            fullfill(geoInfo);
+        },
+        (error) => console.log(new Date(), error),
+        {enableHighAccuracy: false, timeout: 25000, maximumAge: 3600000});
+
+    });
+    console.log('position', position);
+}
 
 function registerFromFB(data){
     return new Promise((resolve, reject) => {
@@ -80,9 +117,33 @@ function registerFromFB(data){
         });
     });
 }
+function verifyCode (phone, code) {
+    console.log('~>' + API_URL + `/v2/security/login`, phone, code);
+    console.log('request:', {
+        endpoint: API_URL + '/v2/security/login',
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({phone, code})
+    });
+    return fetch(API_URL + '/v2/security/login', {
+        method: 'POST',
+        body: JSON.stringify({phone, code}),
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+    });    
+}
 
 module.exports = {
-    findByUsername,
+    findByUsernameOrEmail,
     register,
-    registerFromFB
+    register2,
+    registerFromFB,
+    verifyCode,
+    sendCode: verifyCode,
+    getZipCode
 };

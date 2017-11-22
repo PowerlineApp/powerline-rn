@@ -5,8 +5,7 @@ import { connect } from 'react-redux';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import { Container, Header, Title, Content, Button, Footer, FooterTab, Text, Body, Left, Right, Icon, Item, Input, Grid, Row, Col, Badge, Label } from 'native-base';
 
-import { View, Image, Keyboard, FlatList, AsyncStorage, Alert, Platform } from 'react-native';
-
+import { View, Image, Keyboard, FlatList, AsyncStorage, Alert, Platform, InteractionManager } from 'react-native';
 
 import Menu, {
     MenuContext,
@@ -190,10 +189,32 @@ class Home extends Component {
         // OneSignal.removeEventListener()
     }
 
+    async verifyProfile(data){
+        // console.log('Im here...');
+        // await AsyncStorage.setItem('freshRegister', 'true'); // for testing.
+        AsyncStorage.getItem('freshRegister').then(item => {
+            if (item === 'true'){
+                Alert.alert('Verify now?', 'Your profile is only 50% complete.', [
+                    // missing: configure action buttons for these.
+                    {text: "Verify", onPress: () => Actions.verifyProfile()}, 
+                    {text: "Later", onPress: () => {
+                        let h_48 = (48 * 1000 * 60 * 60);
+                        OneSignal.postNotification({
+                            'en': 'Finish your registration!'
+                        }, {send_after: (new Date().getTime() + (48 * 1000 * 60 * 60) )}, data.userId)
+                    }}
+                ])
+            }
+        });
+        AsyncStorage.setItem('freshRegister', 'false');
+    }
+
     onIds(data) {
         console.log('/this idsss', data);
         var { token } = this.props;
         AsyncStorage.setItem('pushId', data.userId);
+
+        this.verifyProfile(data);
 
         var params = {
             id: data.userId,
@@ -751,7 +772,7 @@ class Home extends Component {
             </MenuOption>
         )
 
-        return options;
+        return  options;
     }
     
     render() {
@@ -798,7 +819,7 @@ class Home extends Component {
                             <Grid>
                                 <Row>
                                     <Col style={styles.col}>
-                                        <Button style={selectedGroup.group == 'all' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('all'); Mixpanel.track("All Feed Loaded"); }}>
+                                        <Button style={selectedGroup.header == 'all' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('all'); Mixpanel.track("All Feed Loaded"); }}>
                                             <Image
                                                 style={styles.iconP}
                                                 source={require("img/p_logo.png")}
@@ -807,25 +828,25 @@ class Home extends Component {
                                         <Text style={styles.iconText} onPress={() => { Keyboard.dismiss(); this.selectGroup('all'); }}>All</Text>
                                     </Col>
                                     <Col style={styles.col}>
-                                        <Button style={selectedGroup.group == 'local' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('local'); Mixpanel.track("Town Feed Loaded from Home"); }}>
+                                        <Button style={selectedGroup.header == 'local' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('local'); Mixpanel.track("Town Feed Loaded from Home"); }}>
                                             <Icon active name="pin" style={styles.icon} />
                                         </Button>
                                         <Text style={styles.iconText} numberOfLines={1} onPress={() => { Keyboard.dismiss(); this.selectGroup('town'); }}>{this.props.town}</Text>
                                     </Col>
                                     <Col style={styles.col}>
-                                        <Button style={selectedGroup.group == 'state' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('state'); Mixpanel.track("State Feed Loaded from Home");}}>
+                                        <Button style={selectedGroup.header == 'state' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('state'); Mixpanel.track("State Feed Loaded from Home");}}>
                                             <Icon active name="pin" style={styles.icon} />
                                         </Button>
                                         <Text style={styles.iconText} numberOfLines={1} onPress={() => { Keyboard.dismiss(); this.selectGroup('state'); }}>{this.props.state}</Text>
                                     </Col>
                                     <Col style={styles.col}>
-                                        <Button style={selectedGroup.group == 'country' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('country'); Mixpanel.track("Country Feed Loaded from Home"); }}>
+                                        <Button style={selectedGroup.header == 'country' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('country'); Mixpanel.track("Country Feed Loaded from Home"); }}>
                                             <Icon active name="pin" style={styles.icon} />
                                         </Button>
                                         <Text style={styles.iconText} numberOfLines={1} onPress={() => { Keyboard.dismiss(); this.selectGroup('country'); }}>{this.props.country}</Text>
                                     </Col>
                                     <Col style={styles.col}>
-                                        <Button style={selectedGroup.group == 'more' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.goToGroupSelector();}}>
+                                        <Button style={selectedGroup.header == 'more' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.goToGroupSelector();}}>
                                             <Icon active name="more" style={styles.icon} />
                                         </Button>
                                         <Text style={styles.iconText} onPress={() => { Keyboard.dismiss(); this.goToGroupSelector(); }}>More</Text>
@@ -851,19 +872,19 @@ class Home extends Component {
                                 title='FRIENDS'
                             />
                             {/* This is the New Item Menu GH8. Only New Post and New Petition are expected to work at this time */}
-                            <Button style={isIOS ? {} : { height: 75 }}>
+                            <Button style={isIOS ? {} : { height: 75 }} >
                                 {!isIOS && <View style={[styles.fillButton, styles.borderTop]} />}
                                 {!isIOS && <View style={styles.fillCircle} />}
-                                <Menu name="create_item" renderer={SlideInMenu} onSelect={value => this.selectNewItem(value)} ref={this.onRef}>
-                                    <MenuTrigger>
-                                        <Icon name="ios-add-circle" style={styles.iconPlus} />
-                                    </MenuTrigger>
-                                    <MenuOptions customStyles={optionsStyles} renderOptionsContainer={optionsRenderer}>
-                                        {
-                                            this.renderMenuOptions(selectedGroup)
-                                        } 
-                                    </MenuOptions>
-                                </Menu>
+                                    <Menu name="create_item" renderer={SlideInMenu} onSelect={value => this.selectNewItem(value)} ref={this.onRef}>
+                                        <MenuTrigger ref={'menuTrigger'} >
+                                            <Icon name="ios-add-circle" style={styles.iconPlus} />
+                                        </MenuTrigger>
+                                        <MenuOptions ref={r => this.menuOptions = r} customStyles={optionsStyles} renderOptionsContainer={optionsRenderer}>
+                                            {
+                                                this.renderMenuOptions(selectedGroup)
+                                            } 
+                                        </MenuOptions>
+                                    </Menu>
                             </Button>
                             {/* This is the Messages/Announcements tab. It is not working yet */}
                             <FooterTabButton

@@ -30,6 +30,7 @@ import AnalyticsView from './scenes/dashboard/analyticsView'
 import Representatives from './scenes/representatives/';
 import RepresentatyProfile from './scenes/representatives/profile/';
 import Profile from './scenes/profile/';
+import VerifyProfile from './scenes/profile/verifyProfile';
 import CreateGroup from './scenes/dashboard/creategroup/';
 import GroupProfile from './scenes/dashboard/groupprofile/';
 import GroupList from './scenes/dashboard/grouplist/';
@@ -134,21 +135,22 @@ class PLNavigator extends React.Component {
               <Scene key="home" component={Home} initial hideNavBar />
               <Scene key="groupSelector" component={GroupSelector} />
               <Scene key="takeTour" component={TourScene} />
-              <Scene key="itemDetail" component={ItemDetail} />
+              <Scene key="itemDetail" component={ItemDetail} animation={'fade'} />
               <Scene key="commentDetail" component={CommentDetail} />
               <Scene key="myInfluences" component={Influences} />
               <Scene key="searchFollowing" component={SearchFollowing} />
               <Scene key="representatives" component={Representatives} />
               <Scene key="representatyprofile" component={RepresentatyProfile} />
               <Scene key="profile" component={Profile} />
+              <Scene key="verifyProfile" component={VerifyProfile} />
               <Scene key="createGroup" component={CreateGroup} />
               <Scene key="groupprofile" component={GroupProfile} />
               <Scene key="myGroups" component={GroupList} />
               <Scene key="groupsearch" component={GroupSearch} />
               <Scene key="groupmembers" component={GroupMembers} />
-              <Scene key="newpost" component={NewPost} />
-              <Scene key="newpetition" component={NewPetition} />
-              <Scene key="newleadercontent" component={NewLeaderContent} />
+              <Scene key="newpost" component={NewPost} animation={'fade'} />
+              <Scene key="newpetition" component={NewPetition} animation={'fade'} />
+              <Scene key="newleadercontent" component={NewLeaderContent} animation={'fade'} />
               <Scene key="search" component={Search}/>
               <Scene key="groupInvite" component={GroupInvite} />
               <Scene key="groupJoin" component={GroupJoin} />

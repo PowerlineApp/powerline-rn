@@ -50,18 +50,24 @@ const datas = [
     icon: 'color-filter',
     bg: '#B89EF5',
   },
+  {
+   name: 'Verify Profile',
+   route: 'verifyProfile',
+   icon: 'contact',
+   bg: '#3591FA',
+  },
   //{
   //  name: 'Favorites',
   //  route: 'favorites',
   //  icon: 'star',
   //  bg: '#EB6B23',
   //},
-  //{
-  //  name: 'My Profile',
-  //  route: 'myProfile',
-  //  icon: 'contact',
-  //  bg: '#3591FA',
-  //},
+  {
+   name: 'My Profile',
+   route: 'profile',
+   icon: 'contact',
+   bg: '#3591FA',
+  },
   //{
   //  name: 'Settings',
   //  route: 'settings',
@@ -113,29 +119,15 @@ class SideBar extends Component {
   }
 
   onSelectItem(route: string) {
+    console.log('onSelectItem', route)
     if (route == 'logout') {
       var { token } = this.props;
       this.props.logOut(token);
       Mixpanel.track("Logout via Menu");
              
-    } else if(route == 'takeTour'){
-      Actions['takeTour']();
-    }else if(route == 'myInfluences'){
-      Actions['myInfluences']();  
-      Mixpanel.track("User opened Influences via Menu");
-    }else if(route == 'representatives'){
-      Actions['representatives']();
-      Mixpanel.track("User Opened Reps via Menu");
-    }else if(route == 'createGroup'){
-      Actions['createGroup']();
-      Mixpanel.track("User opened Create Group via Menu");
-    }else if(route == 'myGroups'){
-      Actions['myGroups']();
-      Mixpanel.track("User Opened Groups via Menu");
-    }else if(route == 'search'){
-      Actions['search']();
-      Mixpanel.track("User opened search via Menu");
-    }else{
+    } else if(typeof route === 'string') {
+      Actions[route]()
+    } else{
       Keyboard.dismiss();
       Actions['home']();
     }
