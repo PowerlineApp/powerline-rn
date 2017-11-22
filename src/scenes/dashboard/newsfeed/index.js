@@ -236,6 +236,18 @@ class Newsfeed extends Component {
             </View>);
     }
 
+    renderHeader(group){
+        return (group && group.group != 'all' &&
+        <TouchableOpacity onPress={() => Actions.groupprofile({ id: this.props.selectedGroup.group })}>
+            {
+
+                this.state.showAvatar
+                ? this.renderFullHeader()
+                : this.renderSmallHeader()
+            }
+        </TouchableOpacity>)
+    }
+
 
 
     render() {
@@ -261,14 +273,8 @@ class Newsfeed extends Component {
 
         return (
             <Container style={{flex: 1}}>
-                    {    this.props.selectedGroup && this.props.selectedGroup.group != 'all' &&
-                        <TouchableOpacity onPress={() => Actions.groupprofile({ id: this.props.selectedGroup.group })}>
-                            {
-                                this.state.showAvatar
-                                ? this.renderFullHeader()
-                                : this.renderSmallHeader()
-                            }
-                        </TouchableOpacity>
+                    {    
+                        this.renderHeader(this.props.selectedGroup)
                     }
                     <ContentPlaceholder
                         empty={!this.state.isRefreshing && !this.state.isLoading && this.state.dataArray.length === 0}
