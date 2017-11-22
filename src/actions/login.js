@@ -17,6 +17,7 @@ var Mixpanel = require('react-native-mixpanel');
 
 import OneSignal from 'react-native-onesignal';
 
+// deprecated. check method "verifyCode" at ./register! - Felipe
 async function logIn(username: string, password: string): Promise<Action> {
   try {
     var response = await fetch(`${API_URL}/secure/login`, {

@@ -50,6 +50,12 @@ const datas = [
     icon: 'color-filter',
     bg: '#B89EF5',
   },
+  {
+   name: 'Verify Profile',
+   route: 'verifyProfile',
+   icon: 'contact',
+   bg: '#3591FA',
+  },
   //{
   //  name: 'Favorites',
   //  route: 'favorites',
