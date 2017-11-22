@@ -10,11 +10,15 @@ import {
   Platform,
   Alert
 } from 'react-native';
+import PLColors from 'PLColors';
+
 
 import Frisbee from 'frisbee';
+import {Button, Icon} from 'native-base';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Form from 'react-native-form';
 import CountryPicker from 'react-native-country-picker-modal';
+import SmsListener from 'react-native-android-sms-listener';
 
 const MAX_LENGTH_CODE = 6;
 const MAX_LENGTH_NUMBER = 20;
@@ -23,7 +27,7 @@ const MAX_LENGTH_NUMBER = 20;
 const countryPickerCustomStyles = {};
 
 // your brand's theme primary color
-const brandColor = '#744BAC';
+const brandColor = '#6A6AD5';
 
 const styles = StyleSheet.create({
     countryPicker: {
@@ -99,6 +103,15 @@ export default class PhoneVerification extends Component {
                 callingCode: '1'
             }
         };
+        let subscription = SmsListener.addListener(message => {
+            let code = message.body.match(/[\d]{6}/)[0];
+            props.onChangeCode(code);
+            subscription.remove();
+        });
+    }
+
+    componentDidMount(){
+        // console.log('~>', this.refs.countryPicker.props.countryList);
     }
 
     _getCode () {
@@ -112,6 +125,7 @@ export default class PhoneVerification extends Component {
     _tryAgain () {
         this.refs.form.refs.textInput.setNativeProps({ text: '' });
         this.refs.form.refs.textInput.focus();
+        this.props.resetForm();
         this.setState({ enterCode: false });
     }
 
@@ -127,10 +141,10 @@ export default class PhoneVerification extends Component {
 
     _renderFooter () {
 
-        if (this.state.enterCode)
+        if (this.props.enterCode)
             return (
                 <View>
-                    <Text style={styles.wrongNumberText} onPress={this._tryAgain}>
+                    <Text style={styles.wrongNumberText} onPress={() => this._tryAgain()}>
             Enter the wrong number or need a new code?
           </Text>
                 </View>
@@ -146,7 +160,7 @@ export default class PhoneVerification extends Component {
 
     _renderCountryPicker () {
 
-        if (this.state.enterCode)
+        if (this.props.enterCode)
             return (
                 <View />
             );
@@ -165,7 +179,7 @@ export default class PhoneVerification extends Component {
     }
 
     _renderCallingCode () {
-        if (this.state.enterCode)
+        if (this.props.enterCode)
             return (
                 <View />
             );
@@ -179,9 +193,9 @@ export default class PhoneVerification extends Component {
 
     render() {
 
-        let headerText = `What's your ${this.state.enterCode ? 'verification code' : 'phone number'}?`;
-        let buttonText = this.state.enterCode ? 'Verify confirmation code' : 'Send confirmation code';
-        let textStyle = this.state.enterCode ? {
+        let headerText = `What's your ${this.props.enterCode ? 'verification code' : 'phone number'}?`;
+        let buttonText = this.props.enterCode ? 'Verify confirmation code' : 'Send confirmation code';
+        let textStyle = this.props.enterCode ? {
             height: 50,
             textAlign: 'center',
             fontSize: 40,
@@ -191,6 +205,12 @@ export default class PhoneVerification extends Component {
 
         return (
             <View style={styles.container}>
+                {
+                    this.props.type === 'login' &&
+                    <Button transparent onPress={() => this.props.onBack()} style={{ width: 200, height: 50 }}  >
+                        <Icon active name='arrow-back' style={{ color: '#6A6AD5' }} />
+                    </Button>
+                }
                 <Text style={styles.header}>{headerText}</Text>
                 <Form ref={'form'} style={styles.form}>
                     <View style={{ flexDirection: 'row' }}>
@@ -204,7 +224,7 @@ export default class PhoneVerification extends Component {
                             autoCapitalize={'none'}
                             autoCorrect={false}
                             onChangeText={(value) => { this.props.enterCode ? this.props.onChangeCode(value) :  this.props.onChangePhone(value);}}
-                            placeholder={this.props.enterCode ? '_ _ _ _ _ _' : 'Phone Number'}
+                            placeholder={this.props.enterCode ? '_ _ _ _' : 'Phone Number'}
                             value={this.props.enterCode ?  this.props.code : this.props.phone}
                             keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
                             style={[ styles.textInput, textStyle ]}

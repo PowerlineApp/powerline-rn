@@ -68,17 +68,24 @@ async function register2(data){
             },
             body: JSON.stringify(data)
         });
-        console.log(res);
         return res.json();
     } catch (error) {
         return new Error(error);
     }
-    // return new Promise((resolve, reject) => {
-    //     .then((res) => res.json())
-    //     .catch(err => {
-    //         reject(err);
-    //     });
-    // });
+}
+
+async function getZipCode(GEO_KEY){
+    return new Promise((fullfill, reject) => {
+        let position = navigator.geolocation.getCurrentPosition(async function (position) {
+            let geoInfo = fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.coords.latitude},${position.coords.longitude}&result_type=street_address&key=${GEO_KEY}`);
+            geoInfo = await geoInfo.json(); 
+            fullfill(geoInfo);
+        },
+        (error) => console.log(new Date(), error),
+        {enableHighAccuracy: false, timeout: 25000, maximumAge: 3600000});
+
+    });
+    console.log('position', position);
 }
 
 function registerFromFB(data){
@@ -115,11 +122,19 @@ function verifyCode (phone, code) {
     console.log('request:', {
         endpoint: API_URL + '/v2/security/login',
         method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
         body: JSON.stringify({phone, code})
     });
     return fetch(API_URL + '/v2/security/login', {
         method: 'POST',
-        body: JSON.stringify({phone, code})
+        body: JSON.stringify({phone, code}),
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
     });    
 }
 
@@ -129,5 +144,6 @@ module.exports = {
     register2,
     registerFromFB,
     verifyCode,
-    sendCode: verifyCode
+    sendCode: verifyCode,
+    getZipCode
 };

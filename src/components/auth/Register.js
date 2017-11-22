@@ -23,9 +23,11 @@ import {
     NavigationActions
 } from 'react-navigation';
 import { setInterval } from 'timers';
-import { findByUsernameOrEmail, register2, registerFromFB, verifyCode, sendCode }  from 'PLActions';
+import { findByUsernameOrEmail, register2, registerFromFB, verifyCode, sendCode, getZipCode }  from 'PLActions';
 import PhoneVerification from './PhoneVerification';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
+
+const googlePlacesKey = 'AIzaSyBQOJDsIGt-XxuSNI7Joe1KRpAOJwDAEQE';
 
 class Register extends React.Component{
 
@@ -39,27 +41,32 @@ class Register extends React.Component{
 
     constructor(props){
         super(props);
-        var { isFb, fbData } = this.props;
+        let { isFb, fbData } = this.props;
         console.log('fbdata => ', fbData);
+        console.log(DeviceInfo.getDeviceCountry());
         this.state = {
             isLoading: false,
             first_name: isFb? fbData.first_name: "",
             last_name: isFb? fbData.last_name: "",
             username: isFb? fbData.username: "",
-            confirm_password: "",
-            address1: isFb? fbData.address1: "",
             zip: isFb? fbData.zip: "",
-            city: isFb? fbData.city: "",
-            state: isFb? fbData.state: "",
-            country: isFb? fbData.country: "",
+            country: isFb? fbData.country: DeviceInfo.getDeviceCountry(),
             email: isFb? fbData.email: "",
             is_over_13: false,
             position: 0,
             autoAddress: null,
-            isFb: isFb
+            isFb: isFb,
+            enterCode: false
         };
         this.onNext = this.onNext.bind(this);
     }
+
+    componentDidMount(){
+        getZipCode(googlePlacesKey).then(r => {
+            this.setState({googleZip: r})
+        })
+    }
+    
 
     register(isFb, data){
         this.setState({
@@ -194,7 +201,7 @@ class Register extends React.Component{
                         this.setState({position: 1, isLoading: false})
                     }
                 } catch (error) {
-                    console.log('err', err)
+                    console.log('error', error)
                     this.setState({
                         position: 1,
                         isLoading: false
@@ -373,7 +380,7 @@ class Register extends React.Component{
                         renderDescription={(row) => row.description}  
                         onPress={this.onAutoComplete}                      
                         query={{
-                            key: 'AIzaSyBQOJDsIGt-XxuSNI7Joe1KRpAOJwDAEQE',
+                            key: googlePlacesKey,
                             language: 'en'
                         }}
                         ref={(zipobj) => {
@@ -460,6 +467,7 @@ class Register extends React.Component{
 
     async sendCode(){
         let {phone, countryCode} = this.state;
+        countryCode = countryCode || '+1';        
         this.setState({loading: true});
         await this.onRegister();
         sendCode(countryCode + phone).then(r => {
@@ -474,9 +482,18 @@ class Register extends React.Component{
     verifyCode(){
         this.setState({loading: true});
         let {phone, code, countryCode} = this.state;
+        countryCode = countryCode || '+1';
+        let {tour, onLoggedIn} = this.props;
         this.setState({code: ''})
-        verifyCode(countryCode + phone, code).then(r => {
+        verifyCode(countryCode + phone, code).then(r => r.json()).then(r => {
             console.log(r);
+            if (r.token){
+                AsyncStorage.setItem('freshRegister', 'true');                
+                tour(() => {
+                    onLoggedIn(r);
+                });
+            }
+
             this.setState({loading: false})
         }).catch(e => {
             console.log(e);
@@ -495,13 +512,14 @@ class Register extends React.Component{
                 onSendCode={() => this.sendCode()}   
                 onVerifycode={() => this.verifyCode()}
                 onVerifySuccess={() => this.verifySuccess()}
-                onChangeCode={(value) => {this.setState({code: value}); if (value.length === 4) this.verifyCode()}}
+                onChangeCode={(value) => {this.setState({code: value}, value.length === 4 ? () => this.verifyCode() : () => {});}}
                 code={this.props.code}
                 phone={this.props.phone}
                 onChangePhone={(value) => this.setState({phone: value})}
                 loading={this.state.loading}
                 enterCode={this.state.enterCode}
                 setCountryCode={(code) => this.setState({countryCode: '+' + code})}
+                resetForm={() => this.setState({code: '', phone: '', countryCode: '', enterCode: false})}                
             />
 
             <View style={styles.markContainer}>
