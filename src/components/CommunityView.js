@@ -39,7 +39,7 @@ class CommunityView extends PureComponent {
             grouplist,
             onPress
         } = this.props;
-        
+        return null;
         return (
             <Modal transparent>
                 <View style={styles.community_list_container}>

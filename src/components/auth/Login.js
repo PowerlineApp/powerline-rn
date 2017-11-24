@@ -18,7 +18,8 @@ class Login extends React.Component {
     super();
     this.state = {
       isLoading: false,
-      displayManualLogin: false
+      displayManualLogin: false,
+      countryCode: '+11'
     };
   }
 

@@ -22,7 +22,6 @@ const {width} = Dimensions.get('window');
 import {
     NavigationActions
 } from 'react-navigation';
-import { setInterval } from 'timers';
 import { findByUsernameOrEmail, register2, registerFromFB, verifyCode, sendCode, getZipCode }  from 'PLActions';
 import PhoneVerification from './PhoneVerification';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
@@ -52,6 +51,7 @@ class Register extends React.Component{
             zip: isFb? fbData.zip: "",
             country: isFb? fbData.country: DeviceInfo.getDeviceCountry(),
             email: isFb? fbData.email: "",
+            countryCode: '+1',
             is_over_13: false,
             position: 0,
             autoAddress: null,
@@ -453,15 +453,16 @@ class Register extends React.Component{
             phone: countryCode + phone,
             zip
         }
-        this.setState({loading: true});
+        return register2(data);
         try {
             let r = await register2(data);
-            console.log(r);
+            return true;
             this.setState({enterCode: true, registered: true})
             this.setState({loading: false})
         } catch (error) {
-            console.log('error => ', error);
-            this.setState({loading: false})
+            this.setState({loading: false});
+            alert(error.message);
+            return false;
         }
     }
 
@@ -469,13 +470,26 @@ class Register extends React.Component{
         let {phone, countryCode} = this.state;
         countryCode = countryCode || '+1';        
         this.setState({loading: true});
-        await this.onRegister();
-        sendCode(countryCode + phone).then(r => {
-            console.log(r);
-            this.setState({loading: false})
+        let registered = this.onRegister().then(r => {
+            console.log('register success', r)
+            sendCode(countryCode + phone).then(r => {
+                console.log('send code success', r);
+                this.setState({loading: false, enterCode: true})
+            }).catch(e => {
+                console.log('send code fail', e)
+                this.setState({loading: false})
+                setTimeout(() => {
+                    alert(e.message);
+                }, 200)
+                console.log(e);
+            })
         }).catch(e => {
-            console.log(e)
+            console.log('register fail', e);
             this.setState({loading: false})
+            setTimeout(() => {
+                alert(e.message);
+            }, 200)
+            console.log(e);
         })
     }
 
@@ -496,6 +510,7 @@ class Register extends React.Component{
 
             this.setState({loading: false})
         }).catch(e => {
+            alert(e);
             console.log(e);
             this.setState({loading: false})
         })
@@ -508,13 +523,12 @@ class Register extends React.Component{
         <Text style={styles.descriptionText}>You're almost done!</Text>
         <View style={styles.formContainer}>
             <PhoneVerification
-                onRegister={() => this.register()}
                 onSendCode={() => this.sendCode()}   
                 onVerifycode={() => this.verifyCode()}
                 onVerifySuccess={() => this.verifySuccess()}
                 onChangeCode={(value) => {this.setState({code: value}, value.length === 4 ? () => this.verifyCode() : () => {});}}
-                code={this.props.code}
-                phone={this.props.phone}
+                code={this.state.code}
+                phone={this.state.phone}
                 onChangePhone={(value) => this.setState({phone: value})}
                 loading={this.state.loading}
                 enterCode={this.state.enterCode}

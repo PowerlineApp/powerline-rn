@@ -9,8 +9,8 @@ import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import moment from 'moment';
 
-import RNFetchBlob from 'react-native-fetch-blob'
-const fs = RNFetchBlob.fs
+import RNFetchBlob from 'react-native-fetch-blob';
+const fs = RNFetchBlob.fs;
 
 import Answers from './answers';
 import Event from './event';
@@ -106,7 +106,7 @@ class NewLeaderContent extends Component {
         // console.log('group ==> ', group)
         
         getGroups(token).then(ret => {
-            console.log('ret => ', ret)
+            console.log('ret => ', ret);
             let showCommunity = true, selectedGroupIndex = -1;
             if (group && group !== 'all'){
                 showCommunity = false;
@@ -123,13 +123,13 @@ class NewLeaderContent extends Component {
     }
 
     updateBankInfo(token, groupId, type){
-        if (type !== 'group_fundraiser') return
+        if (type !== 'group_fundraiser') return;
         this.setState({enableSend: false});
         groupBankAccounts(token, groupId).then(r => {
             r.json().then(r => {
-                console.log('BANK ACCOUNTS:', r)
+                console.log('BANK ACCOUNTS:', r);
                 if (!r || r.length === 0){
-                    this.setState({blockFundraiser: true})
+                    this.setState({blockFundraiser: true});
                     Alert.alert('This group does not have an Bank Account setup yet',
                         "It seems that your group doesn't have any bank account registered. Please add a bank account to your group or ask the group owner to do so.",
                         [
@@ -137,20 +137,20 @@ class NewLeaderContent extends Component {
                             {text: 'OK', onPress: () => {Actions.pop(); setTimeout(() => {Actions.groupprofile({id: groupId});}, 500);}},
                         ],
                           {cancelable: false}
-                    )
+                    );
 
                 } else {
-                    this.setState({enableSend: true})
+                    this.setState({enableSend: true});
                 }
-            })
+            });
         }).catch(e => {
-            alert('Something went wrong. Group account data could not be loaded. Try again later.')
+            alert('Something went wrong. Group account data could not be loaded. Try again later.');
         });
 
     }
 
     toggleCommunity() {
-        Keyboard.dismiss()
+        Keyboard.dismiss();
         this.setState({
             showCommunity: !this.state.showCommunity
         });
@@ -163,9 +163,9 @@ class NewLeaderContent extends Component {
             showCommunity: false
         });
         if (this.titleRef && this.state.title === ''){
-            this.titleRef.focus()
+            this.titleRef.focus();
         } else if (this.descriptionRef && this.state.content === '') {
-            this.descriptionRef.focus()
+            this.descriptionRef.focus();
         }
         
         let { token, type } = this.props;
@@ -203,7 +203,7 @@ class NewLeaderContent extends Component {
               {text: 'Cancel', onPress: () => {}, style: 'cancel'},
             ],
             { cancelable: false }
-          )
+          );
     }
 
     prepareGroupAnnouncementToServer(){
@@ -212,8 +212,8 @@ class NewLeaderContent extends Component {
         if (content)
             return {content};
         if (!content){
-            alert("Please provide a content for your announcement!") // ok
-            return false
+            alert("Please provide a content for your announcement!"); // ok
+            return false;
         }
 
     }
@@ -222,9 +222,9 @@ class NewLeaderContent extends Component {
         let type = 'news';
         let subject = state.content;
         if (type && subject)
-            return {type, subject}
+            return {type, subject};
         if (!subject){
-            alert("Please provide a content for your discussion!") // ok
+            alert("Please provide a content for your discussion!"); // ok
             return false;            
         }
     }
@@ -256,20 +256,20 @@ class NewLeaderContent extends Component {
 
         options.map(opt => {
             if (!opt.value){
-                alert('Please provide only valid options')
+                alert('Please provide only valid options');
                 return false;
             }
-        })
+        });
         
         if (type && subject && options.length > 0)
-        return {type, subject, options}
+            return {type, subject, options};
         if (!subject){
-            alert('Please provide a question for your poll!')
+            alert('Please provide a question for your poll!');
             return false;
         }
         
         if (options.length <= 0){
-            alert("You need to add at least one option for your poll!")
+            alert("You need to add at least one option for your poll!");
             return false;
         }
         
@@ -285,14 +285,14 @@ class NewLeaderContent extends Component {
         let initDate = state.init.date;
         let initTime = state.init.time;
         let endDate = state.end.date;
-        let endTime = state.end.time
+        let endTime = state.end.time;
         // console.log(initDate, initTime, endDate, endTime)
         options.map(opt => {
             if (!opt.value){
-                alert('Please provide only valid response options')
+                alert('Please provide only valid response options');
                 return false;
             }
-        })
+        });
 
         let started_at = moment(initDate).startOf('day').add(moment(initTime).hour(), 'hour').add(moment(initTime).minutes(), 'minutes').format('YYYY-MM-DD HH:mm:ssZZ').split(' ').join('T');
         let finished_at = moment(endDate).startOf('day').add(moment(endTime).hour(), 'hour').add(moment(endTime).minutes(), 'minutes').format('YYYY-MM-DD HH:mm:ssZZ').split(' ').join('T');
@@ -314,19 +314,19 @@ class NewLeaderContent extends Component {
             return false;
         }
         if (!initDate){
-            alert('Please select a day for the start of event')
+            alert('Please select a day for the start of event');
             return false;
         }
         if (!initTime){
-            alert('Please select an hour for the start of event')
+            alert('Please select an hour for the start of event');
             return false;
         }
         if (!endDate){
-            alert('Please select a day for the end of event')
+            alert('Please select a day for the end of event');
             return false;
         }
         if (!endTime){
-            alert('Please select an hour for the end of event')
+            alert('Please select an hour for the end of event');
             return false;
         }
 
@@ -340,7 +340,7 @@ class NewLeaderContent extends Component {
                 return false;
             }
             if (!crowdfunding.deadline){
-                alert('Please use a valid deadline for your crowdfunding.')
+                alert('Please use a valid deadline for your crowdfunding.');
                 return false;
             }
         }
@@ -349,7 +349,7 @@ class NewLeaderContent extends Component {
         options = options.map((opt, i) => {
             console.log(opt);
             if (!opt.value || (!opt.amount && !opt.is_user_amount)){
-                alert('Please provide only valid options')
+                alert('Please provide only valid options');
                 valid = false;
             }
 
@@ -358,8 +358,8 @@ class NewLeaderContent extends Component {
             }
 
             valid = true;
-            return {value: (opt.value), payment_amount: opt.amount, is_user_amount: !!opt.is_user_amount}
-        })
+            return {value: (opt.value), payment_amount: opt.amount, is_user_amount: !!opt.is_user_amount};
+        });
 
         if (!valid){
             return false;
@@ -380,14 +380,14 @@ class NewLeaderContent extends Component {
         }
 
         return (
-            {
-                title, subject: content, options,
-                is_crowdfunding: crowdfunding.is_crowdfunding,
-                crowdfunding_goal_amount: crowdfunding.is_crowdfunding ? crowdfunding.goal : null,
-                crowdfunding_deadline: crowdfunding.is_crowdfunding ? crowdfunding.deadline : null,
-                type: 'payment_request'
-            }
-        )
+        {
+            title, subject: content, options,
+            is_crowdfunding: crowdfunding.is_crowdfunding,
+            crowdfunding_goal_amount: crowdfunding.is_crowdfunding ? crowdfunding.goal : null,
+            crowdfunding_deadline: crowdfunding.is_crowdfunding ? crowdfunding.deadline : null,
+            type: 'payment_request'
+        }
+        );
     }
 
     async sendAttachmentsAndPublish(obj, attachments){
@@ -423,24 +423,24 @@ class NewLeaderContent extends Component {
         let {attachments} = this.state;
         let body;
         switch(type){
-            case 'group_discussion':
-                body = this.prepareGroupDiscussionToServer(); // title, content
-                break;
-            case 'group_announcement':
-                body = this.prepareGroupAnnouncementToServer();// content
-                break;
-            case 'group_petition':
-                body = this.prepareGroupPetitionToServer(); // title, content
-                break;
-            case 'group_poll':
-                body = this.prepareGroupPollToServer(); // title (question subject), options
-                break;
-            case 'group_event':
-                body = this.prepareGroupEventToServer(); // title, content, date, options
-                break;
-            case 'group_fundraiser':
-                body = this.prepareGroupFundraiserToServer(); // not treted yet
-                break;
+        case 'group_discussion':
+            body = this.prepareGroupDiscussionToServer(); // title, content
+            break;
+        case 'group_announcement':
+            body = this.prepareGroupAnnouncementToServer();// content
+            break;
+        case 'group_petition':
+            body = this.prepareGroupPetitionToServer(); // title, content
+            break;
+        case 'group_poll':
+            body = this.prepareGroupPollToServer(); // title (question subject), options
+            break;
+        case 'group_event':
+            body = this.prepareGroupEventToServer(); // title, content, date, options
+            break;
+        case 'group_fundraiser':
+            body = this.prepareGroupFundraiserToServer(); // not treted yet
+            break;
         }
         console.log(body);
         if (body){
@@ -457,15 +457,15 @@ class NewLeaderContent extends Component {
                     console.warn(r);
                     this.sendAttachmentsAndPublish(r, attachments).then((r) => {
                         console.log('published: ', r);
-                        Actions.itemDetail({entityType: 'poll', entityId: r.id})
+                        Actions.itemDetail({entityType: 'poll', entityId: r.id});
                     }).catch(e => {
-                        console.log('failure', e)
+                        console.log('failure', e);
                     });
-                })
+                });
             }).catch(e => {
                 // alert(e);
                 console.warn(JSON.parse(e));
-            })
+            });
 
         }
     }
@@ -483,16 +483,16 @@ class NewLeaderContent extends Component {
             showToast('Max number of attachments is 3');
             return;
         }        
-        this.setState({videoModal: true})
+        this.setState({videoModal: true});
     }
 
     addVideoAttachment() {
         let {attachments, videoURL} = this.state;
-        attachments.push({type: 'video', content: videoURL})
-        this.setState({attachments, videoModal: false, videoURL: ''})
+        attachments.push({type: 'video', content: videoURL});
+        this.setState({attachments, videoModal: false, videoURL: ''});
     }
 
-    attachImage = () => {
+    attachImage () {
         if (this.state.attachments.length >= 3) {
             showToast('Max number of attachments is 3');
             return;
@@ -502,39 +502,39 @@ class NewLeaderContent extends Component {
             options: ["Take photo", "Choose from gallery", "Cancel"],
             title: "Attach image"
         }, buttonIndex => {
-            if (buttonIndex === 0) {
+            console.log('------------', buttonIndex);
+            switch(buttonIndex){
+            case 0:
+            case '0':
                 ImagePicker.openCamera({
                     cropping: true,
                     includeBase64: true
                 }).then(image => {
                     let {attachments} = this.state;
-                    attachments.push({type: 'image', content: image.data})
-                    this.setState({attachments})
+                    attachments.push({type: 'image', content: image.data});
+                    this.setState({attachments});
                 }).catch(v => alert(JSON.stringify(v)));
-            }
-
-            if (buttonIndex === 1) {
+            case 1:
+            case '1':
                 ImagePicker.openPicker({
                     cropping: true,
                     includeBase64: true
                 }).then(image => {
                     // console.log(image);
                     let {attachments} = this.state;
-                    attachments.push({type: 'image', content: image.data})
-                    this.setState({attachments})
+                    attachments.push({type: 'image', content: image.data});
+                    this.setState({attachments});
                 });
-            }
-
-            if (buttonIndex === 2){
-                // do nothing
+            default:
+                () => {}; // do nothing - action canceled
             }
         });
     }
 
     removeAttachment(key){
         let {attachments} = this.state;
-        attachments = attachments.filter((item, index) => index !== key)
-        this.setState({attachments})
+        attachments = attachments.filter((item, index) => index !== key);
+        this.setState({attachments});
     }
 
     getYoutubeURL (url) {
@@ -553,9 +553,9 @@ class NewLeaderContent extends Component {
     getYoutubeThumbnail (url) {
         let {imgLoaded} = this.state;
         let imgURL = this.getYoutubeURL(url);
-        return <Image source={{url: imgURL}} key={url} resizeMode="cover" style={{ height: imgLoaded ? 180 : 1 }}
-                onLoad={(e) => this.setState({imgLoaded: true})}
-                onError={(e) => this.setState({imgLoaded: false})} />;
+        return <Image source={{url: imgURL}} key={url} resizeMode='cover' style={{ height: imgLoaded ? 180 : 1 }}
+            onLoad={(e) => this.setState({imgLoaded: true})}
+            onError={(e) => this.setState({imgLoaded: false})} />;
     }
 
     setEventDate(init, end){
@@ -564,7 +564,7 @@ class NewLeaderContent extends Component {
 
     renderAttachments(){
         if (!this.props.options.attachments){
-            return <View />
+            return <View />;
         }
         let height = 30;
         let width = 40;
@@ -572,45 +572,45 @@ class NewLeaderContent extends Component {
         let {attachments} = this.state;
         return (
             <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
-            {
+                {
                 attachments.map((attachment, index) => {
                         // console.log(attachment);
-                        if (attachment.type === 'image'){
-                            return (
-                                <View style={{ flexDirection: 'row', margin: 4, width: width, height: height, alignItems: 'center', justifyContent: 'center' }}>
-                                <Image source={{ uri: `data:image/png;base64,${attachment.content}` }} resizeMode="cover" style={{ width: width, height: height }} />
-                                <Button transparent style={styles.deleteIconButtonContainer} onPress={() => this.removeAttachment(index)}>
-                                <View style={styles.deleteIconContainer}>
-                                    <Icon name="md-close-circle" style={styles.deleteIcon} />
-                                </View>
-                            </Button>
-                            </View>
-                            )
-                        }
+                    if (attachment.type === 'image'){
                         return (
                             <View style={{ flexDirection: 'row', margin: 4, width: width, height: height, alignItems: 'center', justifyContent: 'center' }}>
-                                    <Image source={{url: this.getYoutubeURL(attachment.content)}} resizeMode="cover" style={{ width: width, height: height }} />
-                                    <Button transparent style={styles.deleteIconButtonContainer} onPress={() => this.removeAttachment(index)}>
-                                        <View style={styles.deleteIconContainer}>
-                                            <Icon name="md-close-circle" style={styles.deleteIcon} />
-                                        </View>
-                                    </Button>
-                                </View>)
+                                <Image source={{ uri: `data:image/png;base64,${attachment.content}` }} resizeMode='cover' style={{ width: width, height: height }} />
+                                <Button transparent style={styles.deleteIconButtonContainer} onPress={() => this.removeAttachment(index)}>
+                                    <View style={styles.deleteIconContainer}>
+                                        <Icon name='md-close-circle' style={styles.deleteIcon} />
+                                    </View>
+                                </Button>
+                            </View>
+                        );
+                    }
+                    return (
+                        <View style={{ flexDirection: 'row', margin: 4, width: width, height: height, alignItems: 'center', justifyContent: 'center' }}>
+                            <Image source={{url: this.getYoutubeURL(attachment.content)}} resizeMode='cover' style={{ width: width, height: height }} />
+                            <Button transparent style={styles.deleteIconButtonContainer} onPress={() => this.removeAttachment(index)}>
+                                <View style={styles.deleteIconContainer}>
+                                    <Icon name='md-close-circle' style={styles.deleteIcon} />
+                                </View>
+                            </Button>
+                        </View>);
                 })
             }
-            {
+                {
                 attachments.length < 3
                 ? [
-                    <Button transparent style={{ margin: 4, height: height }} onPress={this.attachImage}>  
-                        <Image source={require("img/upload_image.png")} resizeMode="contain" style={{ width: width, height: height, tintColor: 'gray' }} />
+                    <Button transparent style={{ margin: 4, height: height }} onPress={() => this.attachImage()}>  
+                        <Image source={require("img/upload_image.png")} resizeMode='contain' style={{ width: width, height: height, tintColor: 'gray' }} />
                     </Button>,
                     <Button transparent style={{ margin: 4, height: height }} onPress={() => this.openVideoAttachment()}>
-                        <Image source={require("img/youtube_link.png")} resizeMode="contain" style={{ width: width, height: height, tintColor: 'gray' }} />
+                        <Image source={require("img/youtube_link.png")} resizeMode='contain' style={{ width: width, height: height, tintColor: 'gray' }} />
                     </Button>
                 ]
                 : null
             }
-        </View>)
+            </View>);
     }
 
     render() {
@@ -647,7 +647,7 @@ class NewLeaderContent extends Component {
                                 <Text>Ok</Text>
                             </Button>
                         </View>
-                            {this.getYoutubeThumbnail(this.state.videoURL)}
+                        {this.getYoutubeThumbnail(this.state.videoURL)}
                     </View>
                 </Modal>
                 {
@@ -669,83 +669,83 @@ class NewLeaderContent extends Component {
                         </Button>
                     </View>
                 </Header>
-                    <List>
-                        <ListItem style={styles.community_container} onPress={() => this.toggleCommunity()}>
-                            <View style={styles.avatar_container}>
-                                <View style={styles.avatar_wrapper}>
-                                    <Thumbnail square style={styles.avatar_img} source={{ uri: this.state.profile.avatar_file_name + '&w=50&h=50&auto=compress,format,q=95' }} />
-                                </View>
-                                <View style={styles.avatar_subfix} />
+                <List>
+                    <ListItem style={styles.community_container} onPress={() => this.toggleCommunity()}>
+                        <View style={styles.avatar_container}>
+                            <View style={styles.avatar_wrapper}>
+                                <Thumbnail square style={styles.avatar_img} source={{ uri: this.state.profile.avatar_file_name + '&w=50&h=50&auto=compress,format,q=95' }} />
                             </View>
-                            <Body style={styles.community_text_container}>
-                                <Text style={{color: 'white'}}>
-                                    {this.state.selectedGroupIndex == -1 ? 'Select a community' : this.state.grouplist[this.state.selectedGroupIndex].official_name}
-                                </Text>
-                            </Body>
-                            <Right style={styles.communicty_icon_container}>
-                                {
+                            <View style={styles.avatar_subfix} />
+                        </View>
+                        <Body style={styles.community_text_container}>
+                            <Text style={{color: 'white'}}>
+                                {this.state.selectedGroupIndex == -1 ? 'Select a community' : this.state.grouplist[this.state.selectedGroupIndex].official_name}
+                            </Text>
+                        </Body>
+                        <Right style={styles.communicty_icon_container}>
+                            {
                                     this.state.sharing 
                                     ? <Text style={{color: '#fff'}}>{'[+]'}</Text>
                                     : <Icon name='md-create' style={{ color: 'white' }} />
                                 }
-                            </Right>
-                        </ListItem>
-                    </List>
+                        </Right>
+                    </ListItem>
+                </List>
                 <ScrollView keyboardShouldPersistTaps={'handled'} style={styles.main_content} >
                     <ScrollView style={{margin: 16}}  >
                         <Content>
-                        {
+                            {
                             hasTitle &&
                             <TextInput
-                            placeholder={titlePlaceholder}
-                            ref={(r) => this.titleRef = r}
-                            underlineColorAndroid='rgba(0,0,0,0)'
-                            style={styles.input_text}
-                            autoCorrect={false}
-                            value={this.state.title}
-                            onChangeText={(text) => this.changeTitle(text)}
-                            underlineColorAndroid={'transparent'}
+                                placeholder={titlePlaceholder}
+                                ref={(r) => this.titleRef = r}
+                                underlineColorAndroid='rgba(0,0,0,0)'
+                                style={styles.input_text}
+                                autoCorrect={false}
+                                value={this.state.title}
+                                onChangeText={(text) => this.changeTitle(text)}
+                                // underlineColorAndroid={'transparent'}
                             />
                         }
-                        {
+                            {
                             hasDescription &&
                             <TextInput
-                            maxLength={10000}
-                            underlineColorAndroid='rgba(0,0,0,0)'
-                            ref={(r) => this.descriptionRef = r}
-                            onSelectionChange={this.onSelectionChange}
-                            placeholderTextColor='rgba(0,0,0,0.1)'
-                            style={wrapDescription ? styles.wrappedTextarea : styles.textarea}
-                            multiline
-                            placeholder={descriptionPlaceHolder}
-                            value={this.state.content}
-                            onChangeText={(text) => this.changeContent(text)}
+                                maxLength={10000}
+                                underlineColorAndroid='rgba(0,0,0,0)'
+                                ref={(r) => this.descriptionRef = r}
+                                onSelectionChange={this.onSelectionChange}
+                                placeholderTextColor='rgba(0,0,0,0.1)'
+                                style={wrapDescription ? styles.wrappedTextarea : styles.textarea}
+                                multiline
+                                placeholder={descriptionPlaceHolder}
+                                value={this.state.content}
+                                onChangeText={(text) => this.changeContent(text)}
                             />
                         }
-                        {
+                            {
                             this.props.type === 'group_fundraiser' &&
                             <CrowdfundingSwitch updateCrowdfundingInfo={(data) => this.setState({crowdfunding: data})} />
                         }
-                        {
+                            {
                             event &&
                             <Event setEventDate={(init, end) => this.setEventDate(init, end)} />
                         }
-                        {
+                            {
                             hasAnswers &&
                             <Answers
-                            setAnswer={(options) => this.setState({options})}
-                            addAnswersButton={addAnswersButton}
-                            answersPlaceholder={answersPlaceholder}
-                            answerType={answerType}
+                                setAnswer={(options) => this.setState({options})}
+                                addAnswersButton={addAnswersButton}
+                                answersPlaceholder={answersPlaceholder}
+                                answerType={answerType}
                             />
                         }
-                    </Content>
+                        </Content>
                     </ScrollView>
-                        {
+                    {
                             this.state.showCommunity &&
                             <CommunityView
-                            grouplist={this.state.grouplist}
-                            onPress={this.selectGroupList.bind(this)}
+                                grouplist={this.state.grouplist}
+                                onPress={() => this.selectGroupList()}
                             />
                         }
                 </ScrollView>

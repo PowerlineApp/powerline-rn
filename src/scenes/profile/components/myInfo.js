@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { View } from 'react-native';
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
 import {
     Container,
     Content,
@@ -19,9 +19,9 @@ import {
     Text,
     Card
 } from 'native-base';
-import Fields from './fields'
-import PLColors from 'PLColors'
-import { updateUserProfile } from 'PLActions'
+import Fields from './fields';
+import PLColors from 'PLColors';
+import { updateUserProfile } from 'PLActions';
 class MyInfo extends Component {
     constructor(props) {
         super(props);
@@ -42,22 +42,22 @@ class MyInfo extends Component {
             employment_status: props.profile.employment_status,
             philosophy: props.profile.philosophy,
             
-        }
-        this.updateProperty = this.updateProperty.bind(this)
+        };
+        this.updateProperty = this.updateProperty.bind(this);
     }
 
 
     updateProperty (key, value) {
-        let data = {}
+        let data = {};
         this.setState(state => {
             state[key] = value;
             return state;
-        })
+        });
 
-        data[key] = value
+        data[key] = value;
         updateUserProfile(this.props.token, data)
             .then(response => console.log(response))
-            .catch(err => console.log(err))
+            .catch(err => console.log(err));
     }
 
     render() {
@@ -70,28 +70,28 @@ class MyInfo extends Component {
                         </View>
                         <ListItem>
                             <View style={{paddingHorizontal: 10, flexDirection: 'row'}}>
-                                <Icon name='contact' color={PLColors.main} style={{marginRight: 10}}></Icon>
+                                <Icon name='contact' color={PLColors.main} style={{marginRight: 10}} />
                                 <Text style={{color: 'grey'}}>First Name:</Text>
                             </View>
                             <Text>{this.state.first_name}</Text>
                         </ListItem>
                         <ListItem>
                             <View style={{paddingHorizontal: 10, flexDirection: 'row'}}>
-                                <Icon name='contact' color={PLColors.main} style={{marginRight: 10}}></Icon>
+                                <Icon name='contact' color={PLColors.main} style={{marginRight: 10}} />
                                 <Text style={{color: 'grey'}}>Last Name:</Text>
                             </View>
                             <Text>{this.state.last_name}</Text>
                         </ListItem>
                         <ListItem>
                             <View style={{paddingHorizontal: 10, flexDirection: 'row'}}>
-                                <Icon name='contact' color={PLColors.main} style={{marginRight: 10}}></Icon>
+                                <Icon name='contact' color={PLColors.main} style={{marginRight: 10}} />
                                 <Text style={{color: 'grey'}}>Username:</Text>
                             </View>
                             <Text>{this.props.profile.username}</Text>
                         </ListItem>
                         <ListItem>
                             <View style={{paddingHorizontal: 10, flexDirection: 'row'}}>
-                                <Icon name='contact' color={PLColors.main} style={{marginRight: 10}}></Icon>
+                                <Icon name='contact' color={PLColors.main} style={{marginRight: 10}} />
                                 <Text style={{color: 'grey'}}>Referal Code:</Text>
                             </View>
                             <Text>{this.props.referal_code}</Text>
@@ -99,48 +99,48 @@ class MyInfo extends Component {
                         <View style={{padding: 20}}>
                             <Label>Interests</Label>
                         </View>
-                        <Fields value={this.state.bio} label='Bio' onSave={(value) => this.updateProperty('bio', value)}/>
-                        <Fields value={this.state.interests} label='interests:' onSave={(value) =>  this.updateProperty('interests', value)}/>
+                        <Fields value={this.state.bio} label='Bio' onSave={(value) => this.updateProperty('bio', value)} />
+                        <Fields value={this.state.interests} label='interests:' onSave={(value) =>  this.updateProperty('interests', value)} />
                         <View style={{padding: 20}}>
                             <Label>Contact Information</Label>
                         </View>
-                        <Fields value={this.state.address1} label='Street Address:' onSave={(value) =>  this.updateProperty('address1', value)}/>
-                        <Fields value={this.state.address2} label='Apt / Suite:' onSave={(value) =>  this.updateProperty('address2', value)}/>
-                        <Fields value={this.state.zip} label='Zip Code:' onSave={(value) =>  this.updateProperty('zip', value)}/>
-                        <Fields value={this.state.city} label='City:' onSave={(value) =>  this.updateProperty('city', value)}/>
-                        <Fields value={this.state.state} label='State:' onSave={(value) =>  this.updateProperty('state', value)}/>
-                        <Fields value={this.state.country} label='Country:' onSave={(value) =>  this.updateProperty('country', value)}/>
-                        <Fields value={this.state.email} label='Email:' onSave={(value) =>  this.updateProperty('email', value)}/>
-                        <Fields value={this.state.phone} label='Phone:' onSave={(value) =>  this.updateProperty('phone', value)}/>
+                        <Fields value={this.state.address1} label='Street Address:' onSave={(value) =>  this.updateProperty('address1', value)} />
+                        <Fields value={this.state.address2} label='Apt / Suite:' onSave={(value) =>  this.updateProperty('address2', value)} />
+                        <Fields value={this.state.zip} label='Zip Code:' onSave={(value) =>  this.updateProperty('zip', value)} />
+                        <Fields value={this.state.city} label='City:' onSave={(value) =>  this.updateProperty('city', value)} />
+                        <Fields value={this.state.state} label='State:' onSave={(value) =>  this.updateProperty('state', value)} />
+                        <Fields value={this.state.country} label='Country:' onSave={(value) =>  this.updateProperty('country', value)} />
+                        <Fields value={this.state.email} label='Email:' onSave={(value) =>  this.updateProperty('email', value)} />
+                        <Fields value={this.state.phone} label='Phone:' onSave={(value) =>  this.updateProperty('phone', value)} />
                         <View style={{padding: 20}}>
                             <Label>Personal Information</Label>
                         </View>
-                        <Fields date value={this.state.birth} label='Date of Birth:' onSave={(value) =>  this.updateProperty('birth', value)}/>
-                        <Fields value={this.state.sex} label='Sex:' onSave={(value) =>  this.updateProperty('sex', value)}/>
-                        <Fields value={this.state.race} label='Race:' onSave={(value) =>  this.updateProperty('race', value)}/>
-                        <Fields value={this.state.marital_status} label='Marital Status:' onSave={(value) =>  this.updateProperty('marital_status', value)}/>
+                        <Fields date value={this.state.birth} label='Date of Birth:' onSave={(value) =>  this.updateProperty('birth', value)} />
+                        <Fields value={this.state.sex} label='Sex:' onSave={(value) =>  this.updateProperty('sex', value)} />
+                        <Fields value={this.state.race} label='Race:' onSave={(value) =>  this.updateProperty('race', value)} />
+                        <Fields value={this.state.marital_status} label='Marital Status:' onSave={(value) =>  this.updateProperty('marital_status', value)} />
                         <View style={{padding: 20}}>
                             <Label>Employment and Education</Label>
                         </View>
-                        <Fields value={this.state.employment_status} label='Employment Status:' onSave={(value) =>  this.updateProperty('employment_status', value)}/>
+                        <Fields value={this.state.employment_status} label='Employment Status:' onSave={(value) =>  this.updateProperty('employment_status', value)} />
                         <View style={{padding: 20}}>
                             <Label>Politics</Label>
                         </View>
-                        <Fields value={this.state.philosophy} label='Philosophy:' onSave={(value) =>  this.updateProperty('philosophy', value)}/>
-                        <Fields value={this.state.party} label='Party:' onSave={(value) =>  this.updateProperty('party', value)}/>
-                        <Fields value={this.state.donor} label='Donor:' onSave={(value) =>  this.updateProperty('donor', value)}/>
+                        <Fields value={this.state.philosophy} label='Philosophy:' onSave={(value) =>  this.updateProperty('philosophy', value)} />
+                        <Fields value={this.state.party} label='Party:' onSave={(value) =>  this.updateProperty('party', value)} />
+                        <Fields value={this.state.donor} label='Donor:' onSave={(value) =>  this.updateProperty('donor', value)} />
                         <View style={{padding: 20}}>
                             <Text style={{fontSize: 10, color: 'grey'}}>All information collected here is used for anonymous, aggregate reporting purposes. You will be informed before joining any group that wants access any of this information.</Text>
                         </View>
                     </List>
                 </Card>
             </Content>
-        )
+        );
     }
 }
 
 const mapState = (state) => ({
     profile: state.user.profile
-})
+});
 
-export default connect(mapState)(MyInfo)
+export default connect(mapState)(MyInfo);

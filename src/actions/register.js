@@ -59,19 +59,40 @@ function register(data){
 }
 async function register2(data){
     console.log('~>' + API_URL + `/v2/security/registration`, data);
-    try {
-        let res = await fetch(API_URL + `/v2/security/registration`, {
+    return new Promise((fullfill, reject) => {
+        fetch(API_URL + `/v2/security/registration`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(data)
-        });
-        return res.json();
-    } catch (error) {
-        return new Error(error);
-    }
+        }).then(res => {
+            console.log('res register', res);
+            if (res.status === 200){
+                console.log('11');
+                res.json().then(r => fullfill(r));
+            } else {
+                console.log('22');
+                res.json().then(r => reject(r));
+            }
+        }).catch(e => {console.log('hey'); reject(e);});
+    });
+    
+    
+    // try {
+    //     let res = await fetch(API_URL + `/v2/security/registration`, {
+    //         method: 'POST',
+    //         headers: {
+    //             'Accept': 'application/json',
+    //             'Content-Type': 'application/json',
+    //         },
+    //         body: JSON.stringify(data)
+    //     });
+    //     return res.json();
+    // } catch (error) {
+    //     return new Error(error);
+    // }
 }
 
 async function getZipCode(GEO_KEY){
@@ -119,23 +140,25 @@ function registerFromFB(data){
 }
 function verifyCode (phone, code) {
     console.log('~>' + API_URL + `/v2/security/login`, phone, code);
-    console.log('request:', {
-        endpoint: API_URL + '/v2/security/login',
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({phone, code})
+    return new Promise((fullfill, reject) => {
+        fetch(API_URL + '/v2/security/login', {
+            method: 'POST',
+            body: JSON.stringify({phone, code}),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+        }).then(res => {
+            console.log(res);
+            if (res.status === 200){
+                // res.json().then(r => fullfill(r));
+                fullfill(res);
+            } else {
+                // res.json().then(r => reject(r));
+                reject(res);
+            }
+        }).catch(e => {reject(e);});
     });
-    return fetch(API_URL + '/v2/security/login', {
-        method: 'POST',
-        body: JSON.stringify({phone, code}),
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-        },
-    });    
 }
 
 module.exports = {

@@ -156,9 +156,9 @@ class GroupJoin extends Component {
 
     validateFields () {
         if(this.buildArrayOfAnsweredFields(this.state.input).length < this.state.fields.length) {
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
     buildArrayOfAnsweredFields(obj) {
@@ -185,11 +185,11 @@ class GroupJoin extends Component {
         }
         if(data.fill_fields_required) {
             if(this.validateFields()) {
-                Alert.alert('You should fill in the required Fields');
-                return;
+                // Alert.alert('You should fill in the required Fields');
+                // return;
             }
         }
-        if(data.membership_control === 'passcode' && !data.fill_fields_required) {
+        if(true || data.membership_control === 'passcode' && !data.fill_fields_required) {
             joinGroup(token, id, this.state.passcode)
                 .then(response => {
                     if(response.join_status !== 'active') {
