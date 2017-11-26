@@ -116,7 +116,7 @@ class RepresentatyProfile extends Component{
                         </Button>
                     </Left>
                     <Body>
-                        <Title>Rep Profile</Title>
+                        <Title style={{color: '#fff'}}>Rep Profile</Title>
                     </Body>
                 </Header>
                 <Content

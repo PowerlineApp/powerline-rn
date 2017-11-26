@@ -217,6 +217,7 @@ class GroupProfile extends Component{
 
     join(){
         if(this.state.data.fill_fields_required || this.state.data.membership_control === 'passcode' || this.state.data.membership_control === 'approval') {
+            console.log(this.state.data);
             Actions.groupJoin({data: this.state.data})
         } else {
             this.setState({showConfirmationModal: true})
@@ -263,7 +264,7 @@ class GroupProfile extends Component{
                         </Button>
                     </Left>
                     <Body>
-                        <Title>Group Profile</Title>
+                        <Title style={{color: '#fff'}}>Group Profile</Title>
                     </Body>
                     <Right>
                         <Button transparent onPress={() => this.invite()}>

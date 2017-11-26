@@ -42,8 +42,8 @@ class PLImageSelector extends Component {
 
     render() {
         return (
-            <TouchableOpacity onPress={this.selectImage}>
-                <Icon name='camera' size={this.props.iconSize} color={this.props.iconColor} />
+            <TouchableOpacity transparent onPress={this.selectImage}>
+                <Icon name='camera' style={{color: this.props.iconColor, backgroundColor: 'rgba(0,0,0,0)', fontSize: this.props.iconSize}} />
                 <Modal visible={this.state.showConfirmationModal} presentationStyle='pageSheet' transparent>
                     <View style={{flex: 1, backgroundColor: rgb(0,0,0,0.7), alignItems: 'center', justifyContent: 'center'}}>
                         <View style={{height: '60%', width: '90%', backgroundColor: 'white'}}>

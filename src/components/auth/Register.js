@@ -22,7 +22,7 @@ const {width} = Dimensions.get('window');
 import {
     NavigationActions
 } from 'react-navigation';
-import { findByUsernameOrEmail, register2, registerFromFB, verifyCode, sendCode, getZipCode }  from 'PLActions';
+import { findByUsernameEmailOrPhone, register2, registerFromFB, verifyCode, sendCode, verifyNumber, getZipCode }  from 'PLActions';
 import PhoneVerification from './PhoneVerification';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 
@@ -184,28 +184,20 @@ class Register extends React.Component{
                 });
             }else{
                 try {
-                    let usersUsername = await findByUsernameOrEmail({username});
-                    let usersEmail = await findByUsernameOrEmail({email});
-                    console.log(usersEmail, usersUsername);
-                    if (usersUsername.length > 0 || usersEmail.length > 0)
-                        Alert.alert('Invalid data',
-                        usersUsername.length > 0 ? "This username is taken" : "This email is taken",
-                        [
-                            {text: 'Ok', onPress: () => {
-                                this.setState({isLoading: false})
-                            }}
-                        ],
-                        {cancelable: false}
-                    )
-                    else {
-                        this.setState({position: 1, isLoading: false})
-                    }
+                    let usersUsername = await findByUsernameEmailOrPhone({username});
+                    let usersEmail = await findByUsernameEmailOrPhone({email});
+                    this.setState({position: 1, isLoading: false})
+                    
                 } catch (error) {
-                    console.log('error', error)
-                    this.setState({
-                        position: 1,
-                        isLoading: false
-                    });
+                    Alert.alert('Invalid data',
+                    error,
+                    [
+                        {text: 'Ok', onPress: () => {
+                            this.setState({position: 0, isLoading: false})
+                        }}
+                    ],
+                    {cancelable: false}
+                    )
                 }
             }                
         }else if (position === 1) {
@@ -442,7 +434,7 @@ class Register extends React.Component{
 
     async onRegister(){
         if (this.state.registered) return;
-        let { first_name, last_name, email, username, zip, country, phone, countryCode} = this.state;
+        let { first_name, last_name, code, email, username, zip, country, phone, countryCode} = this.state;
         let { onLoggedIn, isFb, fbData, tour } = this.props;
         let data = {
             username,
@@ -451,30 +443,49 @@ class Register extends React.Component{
             email,
             country,
             phone: countryCode + phone,
-            zip
+            zip,
+            code
         }
-        return register2(data);
-        try {
-            let r = await register2(data);
-            return true;
-            this.setState({enterCode: true, registered: true})
+        return register2(data).then(r => {
+            console.log('register success', r);
             this.setState({loading: false})
-        } catch (error) {
-            this.setState({loading: false});
-            alert(error.message);
-            return false;
-        }
+            if (r.token){
+                AsyncStorage.setItem('freshRegister', 'true');                
+                tour(() => {
+                    onLoggedIn(r);
+                });
+            }
+        }).catch(e => {
+            console.log('register fail', e)
+            this.setState({loading: false})
+            setTimeout(() => {
+                alert(e.message);
+            }, 200)
+            console.log(e);
+        })
+        // try {
+        //     let r = await register2(data);
+        //     return true;
+        //     this.setState({enterCode: true, registered: true})
+        //     this.setState({loading: false})
+        // } catch (error) {
+        //     this.setState({loading: false});
+        //     alert(error.message);
+        //     return false;
+        // }
     }
 
     async sendCode(){
         let {phone, countryCode} = this.state;
         countryCode = countryCode || '+1';        
+        phone = countryCode + phone;
         this.setState({loading: true});
-        let registered = this.onRegister().then(r => {
-            console.log('register success', r)
-            sendCode(countryCode + phone).then(r => {
-                console.log('send code success', r);
+        try {
+            let verified = await findByUsernameEmailOrPhone({phone});
+            console.log(verified);         
+            verifyNumber(phone).then(r => {
                 this.setState({loading: false, enterCode: true})
+                console.log('send code success', r);
             }).catch(e => {
                 console.log('send code fail', e)
                 this.setState({loading: false})
@@ -483,37 +494,42 @@ class Register extends React.Component{
                 }, 200)
                 console.log(e);
             })
-        }).catch(e => {
-            console.log('register fail', e);
-            this.setState({loading: false})
-            setTimeout(() => {
-                alert(e.message);
-            }, 200)
-            console.log(e);
-        })
+        } catch (error) {
+            console.log(error);
+            Alert.alert('Invalid data',
+            error,
+            [{text: 'Ok', onPress: () => {
+                this.setState({isLoading: false})
+            }}],
+            {cancelable: false})
+        }
     }
 
     verifyCode(){
-        this.setState({loading: true});
-        let {phone, code, countryCode} = this.state;
-        countryCode = countryCode || '+1';
-        let {tour, onLoggedIn} = this.props;
-        this.setState({code: ''})
-        verifyCode(countryCode + phone, code).then(r => r.json()).then(r => {
-            console.log(r);
-            if (r.token){
-                AsyncStorage.setItem('freshRegister', 'true');                
-                tour(() => {
-                    onLoggedIn(r);
-                });
-            }
+        // this.setState({loading: true});
+        // let {phone, code, countryCode} = this.state;
+        // countryCode = countryCode || '+1';
+        // let {tour, onLoggedIn} = this.props;
+        // this.setState({code: ''});
+        this.onRegister();
 
-            this.setState({loading: false})
-        }).catch(e => {
-            alert(e);
-            console.log(e);
-            this.setState({loading: false})
-        })
+
+
+        // verifyCode(countryCode + phone, code).then(r => r.json()).then(r => {
+        //     console.log(r);
+        //     if (r.token){
+        //         AsyncStorage.setItem('freshRegister', 'true');                
+        //         tour(() => {
+        //             onLoggedIn(r);
+        //         });
+        //     }
+
+        //     this.setState({loading: false})
+        // }).catch(e => {
+        //     alert(e);
+        //     console.log(e);
+        //     this.setState({loading: false})
+        // })
     }
     // 32991139867
 
@@ -556,11 +572,14 @@ class Register extends React.Component{
                         <Text style={styles.buttonText}>Back</Text>
                     </View>
                 </TouchableWithoutFeedback>
+                {
+                    position !== 2 &&
                 <TouchableWithoutFeedback onPress={this.onNext}>
                     <View style={styles.button}>
                         <Text style={styles.buttonText}>{position > 2 ?'Register':'Next'}</Text>
                     </View>
                 </TouchableWithoutFeedback>
+                }
             </View>
         );
     }
@@ -570,7 +589,7 @@ class Register extends React.Component{
     }
 
     renderForm(position){
-        console.log(position);
+        // console.log(position);
         switch(position){
             case 0:
                 return this.renderBasic();

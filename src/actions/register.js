@@ -2,28 +2,35 @@ var { API_URL } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
 
 //For checking if username taken
-function findByUsernameOrEmail({username, email}){
+function findByUsernameEmailOrPhone({username, email, phone}){
     let query = '';
-    if (username) {
+    if (!!username) {
         query = `username=${username}`;
-    } else {
+        // body={username: username};
+    } else if (!!email){
+        // body={email: email};
         query = `email=${email}`;
+    } else {
+        // body={phone: phone};
+        query = `phone=${phone}`;
     }
-    // console.log(API_URL +`-public/users/?${query}`);
+    console.log(API_URL +`-public/users?${query}`);
     return new Promise((resolve, reject) => {
-        fetch(API_URL +`-public/users/?${query}`, {
+        fetch(API_URL +`-public/users?${query}`, {
             method: 'GET',
             headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded',
             }
         })
-        .then((res) => res.json())
-        .then(users => {
-            resolve(users);
-        })
-        .catch(err => {
-            reject(err);
+        .then((res) => {
+            console.log('res => ', res);
+            if (res.status === 404){
+                resolve(res);
+            } else {
+                reject(`${!!username ? 'Username' : !!email ? 'Email' : 'Phone'} already taken.`);
+            }
+        }).catch(e => {
+            reject(e);
         });
     });
 }
@@ -161,10 +168,36 @@ function verifyCode (phone, code) {
     });
 }
 
+
+function verifyNumber (phone) {
+    console.log('~>' + API_URL + `-public/phone/verification`, phone);
+    return new Promise((fullfill, reject) => {
+        fetch(API_URL + '-public/phone/verification', {
+            method: 'POST',
+            body: JSON.stringify({phone}),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+        }).then(res => {
+            console.log(res);
+            if (res.status === 200){
+                // res.json().then(r => fullfill(r));
+                fullfill(res);
+            } else {
+                // res.json().then(r => reject(r));
+                reject(res);
+            }
+        }).catch(e => {reject(e);});
+    });
+
+}
+
 module.exports = {
-    findByUsernameOrEmail,
+    findByUsernameEmailOrPhone,
     register,
     register2,
+    verifyNumber,
     registerFromFB,
     verifyCode,
     sendCode: verifyCode,

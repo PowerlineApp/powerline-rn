@@ -54,6 +54,7 @@ function clearGroupsInCache(): ThunkAction {
 
 //User can create a new group. He is owner of group by default.
 function createGroup(token, groupData){
+    console.log(API_URL + '/v2/user/groups', token, groupData);
     return new Promise((resolve, reject) => {
         var payload = JSON.stringify(groupData);
         console.log(payload);
@@ -355,6 +356,7 @@ function loadFieldsToFillOnJoin(token, groupId){
 
 //User must be alerted to information shared with group when joining. User must accept to be joined.
 function getGroupPermissions(token, groupId){
+    console.log(API_URL + '/v2/groups/' + groupId + '/permission-settings');
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2/groups/' + groupId + '/permission-settings', {
             method: 'GET',

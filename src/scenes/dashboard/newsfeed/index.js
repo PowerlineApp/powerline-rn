@@ -262,6 +262,7 @@ class Newsfeed extends Component {
 
 
         let dataArray = this.state.dataArray;
+        console.log(dataArray);
 
         let conversationView = false;
         if (this.props.selectedGroup && this.props.selectedGroup.group !== 'all' && this.props.selectedGroup.conversationView){

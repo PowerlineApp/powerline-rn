@@ -183,12 +183,16 @@ function putSocialActivity(token, id, ignore){
 async function subscribeNotification(token: string, id: number, activityId: number, type: string): Promise<Action> {
     LOG('Subscribe to notification API', id, type);
     const response = await api.put(token, `/v2/user/${type}s/${id}`);
+    LOG(response)
     if (response.status === 204) {
         showToast('Subscribed to post');
         return {
             type: 'ACTIVITY_NOTIFICATION_SUBSCRIBE',
             data: { id: activityId, type }
         }
+    } else {
+        console.warn('FAILED TO UNSUBSCRIBE, DISPATCHING EMPTY ACTION')
+        return {type: ''}
     }
 }
 
@@ -201,6 +205,9 @@ async function unsubscribeNotification(token: string, id: number, activityId: nu
             type: 'ACTIVITY_NOTIFICATION_UNSUBSCRIBE',
             data: { id: activityId, type }
         }
+    } else {
+        console.warn('FAILED TO UNSUBSCRIBE, DISPATCHING EMPTY ACTION')
+        return {type: ''}
     }
 }
 

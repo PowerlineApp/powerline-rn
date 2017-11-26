@@ -77,9 +77,9 @@ class Profile extends Component{
             referal_code: null
         };
 
-        var { token, id } = this.props;
+        var { token, id, loggedUserId } = this.props;
 
-        loadUserProfileById(token,  id)
+        loadUserProfileById(token, id || loggedUserId)
         .then(data => {
             this.setState({
                 user: data
@@ -89,7 +89,7 @@ class Profile extends Component{
 
         });
 
-        loadActivitiesByUserId(token, 1, 20, null, id).then(data => {
+        loadActivitiesByUserId(token, 1, 20, null, id || loggedUserId).then(data => {
             // console.log('res ---', data);
             this.setState({
                 activities: data.payload
@@ -235,7 +235,9 @@ class Profile extends Component{
     }
     // It would appear that the below is the User Profile Screen GH44
     render(){
-        console.log('USER', this.state.user)
+        // console.log('USER', this.state.user)
+        let isOwnUser = !this.props.id;
+        // console.log(isOwnUser);
         return (
             <MenuContext customStyles={menuContextStyles}>
                 <Container style={styles.container}> 
@@ -259,7 +261,7 @@ class Profile extends Component{
                         <View style={{justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}>
                             { this.state.selected === "My Info"
                                 ? <View style={{position: 'absolute', borderRadius: 25, flex: 1, zIndex: 3,  }}>
-                                    <ImageSelector onConfirm={this.updateUserAvatar} iconSize={20} iconColor='#000' onError={err => console.log(err)}/>
+                                    <ImageSelector onConfirm={this.updateUserAvatar} iconSize={27} iconColor='#fff' onError={err => console.log(err)}/>
                                 </View> 
                                 : null
                             }
@@ -301,7 +303,11 @@ class Profile extends Component{
                     </View>: null}
                     {/*The user's posts should be displayed below the user profile information*/}
                     {/*This is driven by Activity API for specific user*/}
-                    <Filter options={OPTIONS} selected={this.state.selected} onSelection={item => this.setState({selected: item})}/>             
+                    {
+                        isOwnUser
+                        ? <Filter options={OPTIONS} selected={this.state.selected} onSelection={item => this.setState({selected: item})}/>             
+                        : null
+                    }
                     <Content>
                         {this.renderSelectedView()}
                     </Content>              
@@ -327,7 +333,8 @@ async function timeout(ms: number): Promise {
 
 const mapStateToProps = state => ({
     token: state.user.token,
-    id: state.user.profile.id,
+    loggedUserId: state.user.profile.id,
+    profile: state.user.profile,
     page: state.activities.page,
     totalItems: state.activities.totalItems,
     payload: state.activities.payload,

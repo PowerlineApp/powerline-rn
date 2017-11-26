@@ -53,7 +53,7 @@ class GroupJoin extends Component {
         "permissions_responses":"Responses"
       };
     componentDidMount() {
-        console.log('mounted');
+        console.log('mounted', this.props.data);
         if(this.props.data.fill_fields_required) {
             this.loadFields(); 
         }
@@ -67,7 +67,7 @@ class GroupJoin extends Component {
                 });
             }
         }).catch(err => {
-            console.log(err);
+            console.log('error on loading group permissions', err);
         });
     }
 

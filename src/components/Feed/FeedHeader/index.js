@@ -43,6 +43,7 @@ class FeedHeader extends Component {
     }
 
     subscribe(item) {
+        console.log(item.entity.type);
         this.props.dispatch(subscribeNotification(this.props.token, item.entity.id, item.id, item.entity.type));
         this.menu && this.menu.close();
     }
@@ -126,28 +127,29 @@ class FeedHeader extends Component {
 
     notify(item, cb) {
         let isUpvoted = false;
-        if (entity.upvotes_count > 0 || entity.responses_count > 0) {
-            let type = entity.entity.type;
+        console.log('notify => ', item);
+        if (item.upvotes_count > 0 || item.responses_count > 0) {
+            let type = item.entity.type;
             if (type === 'user-petition') {
                 type = 'user_petition';
             }
 
             let option = 'votes';
             let id = 'option';
-            if (entity.poll) {
+            if (item.poll) {
                 option = 'answers';
             }
 
-            if (entity.user_petition) {
+            if (item.user_petition) {
                 option = 'signatures';
                 id = 'option_id';
             }
 
             if (
-                entity[type] &&
-                entity[type][option] &&
-                entity[type][option].length > 0 &&
-                entity[type][option][0][id] === 1
+                item[type] &&
+                item[type][option] &&
+                item[type][option].length > 0 &&
+                item[type][option][0][id] === 1
             ) {
                 isUpvoted = true;
             }
@@ -187,7 +189,7 @@ class FeedHeader extends Component {
 
     onPressAuthor(item) {
         console.log('just pressed author');
-        Actions.profile({ id: item.owner.id });
+        Actions.profile({ id: item.user.id });
     }
 
     onPressGroup(item) {
@@ -216,7 +218,7 @@ class FeedHeader extends Component {
         let thumbnail = '';
         let title = '';
         const isBoosted = item.zone === 'prioritized';
-        const isAuthor = item.owner.id === this.props.userId;
+        const isAuthor = item.user.id === this.props.userId;
         const canUnfollow = item.user.follow_status === 'active';
         const canFollow = item.user.follow_status === null;
         let canInviteUpvoters = false;
@@ -375,4 +377,6 @@ const optionsStyles = {
     }
 };
 
-export default FeedHeader;
+const mapStateToProps = () => ({});
+
+export default connect(mapStateToProps)(FeedHeader);

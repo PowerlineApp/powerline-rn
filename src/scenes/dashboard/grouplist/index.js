@@ -133,7 +133,7 @@ class GroupList extends Component{
                             </Button>
                         </Left>
                         <Body>
-                            <Title>My Groups</Title>
+                            <Title style={{color: '#fff'}}>My Groups</Title>
                         </Body>
                         <Right>
                             {/*We need to make it easier for user to tap this button. Larger tappable area needed*/}

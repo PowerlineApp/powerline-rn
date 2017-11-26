@@ -28,14 +28,14 @@ class SearchGroups extends Component{
     }
 
     join(group){
-        console.log(group)
+        console.log('group', group);
         if(group.fill_fields_required || group.membership_control === 'passcode' || group.membership_control === 'approval' && !group.joined && !group.user_role) {
-            Actions.groupJoin({data: group})
+            Actions.groupJoin({data: group});
         } else {
             Alert.alert('Confirmation', 'Are you Sure?', [
                 {text: "Ok", onPress: () => this.doJoin(group.id)}, 
                 {text: "Cancel", onPress: () => console.log('Cancel pressed'), style: 'cancel'}
-            ])
+            ]);
         }
     }
     
@@ -48,7 +48,7 @@ class SearchGroups extends Component{
         })
         .catch(err => {
     
-        })
+        });
     }
 
     unjoin(group){        
@@ -67,7 +67,7 @@ class SearchGroups extends Component{
                     onPress: () => {
                         var { token } = this.props;
                         unJoinGroup(token, group.id).then(data => {
-                            this.forceUpdate()
+                            this.forceUpdate();
                         })
                         .catch(err => {
 
@@ -90,8 +90,8 @@ class SearchGroups extends Component{
                                     <ListItem style={styles.listItem} key={index} onPress={() => this.goToProfile(group)}>
                                         {
                                             group.avatar_file_path?
-                                            <Thumbnail square source={{uri: group.avatar_file_path+'&w=50&h=50&auto=compress,format,q=95'}}/>:
-                                            <View style={{width: 56, height: 56}}/>
+                                                <Thumbnail square source={{uri: group.avatar_file_path+'&w=50&h=50&auto=compress,format,q=95'}} />:
+                                            <View style={{width: 56, height: 56}} />
                                         }
                                         <Body>
                                             <Text style={styles.text1}>{group.official_name}</Text>
@@ -99,8 +99,8 @@ class SearchGroups extends Component{
                                         <Right>
                                             <Button transparent>
                                                 {   group.joined 
-                                                    ? <Icon active name="add-circle" style={{color: '#802000'}} onPress={() => this.unjoin(group)}/>
-                                                    : <Icon active name="add-circle" style={{color: '#11c1f3'}} onPress={() => this.join(group)}/>
+                                                    ? <Icon active name='add-circle' style={{color: '#802000'}} onPress={() => this.unjoin(group)} />
+                                                    : <Icon active name='add-circle' style={{color: '#11c1f3'}} onPress={() => this.join(group)} />
                                                 }
                                             </Button>
                                         </Right>

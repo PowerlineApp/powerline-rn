@@ -202,6 +202,30 @@ function unregisterDevice(token, id) {
   });
 }
 
+function sendRecoveryEmail(data){
+  return new Promise((resolve, reject) => {
+    fetch(API_URL + '/v2/security/recovery', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'      
+      },
+      body: JSON.stringify(data)
+    }).then(r => {
+      if (r.status === 200){
+        resolve(r)
+      }
+      else {
+        reject(r)
+      }
+    }).catch(e => {
+      console.log(e);
+      reject(e);
+    })
+  })
+}
+
+
 function logOut(token): ThunkAction {
   return (dispatch) => {
     FacebookSDK.logout();
@@ -250,4 +274,12 @@ function logOutWithPrompt(token): ThunkAction {
 }
 Mixpanel.sharedInstanceWithToken(MixpanelToken);
 
-module.exports = { logInManually, logInWithFacebook, forgotPassword, logOut, logOutWithPrompt };
+module.exports = { 
+  logInManually,
+  logInWithFacebook,
+  forgotPassword,
+  logOut,
+  logOutWithPrompt,
+  sendRecoveryEmail,
+  finishRecovery: sendRecoveryEmail
+};

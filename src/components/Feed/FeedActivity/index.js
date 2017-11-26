@@ -40,23 +40,26 @@ class FeedActivity extends Component {
     }
 
     _renderPostOrPetition(item) {
+        console.log(this.props.profile);
         return (
-            <GestureCard
-                onSwipeRight={(state) => this.onSwipeRight(item, state)}
-                onLongPress={(state) => this.onLongPress(item, state)}
-                config={{
-                    velocityThreshold: 0.3,
-                    directionalOffsetThreshold: 80,
-                    longPressDelay: 2000
-                }}
-            >
+            // <GestureCard
+            //     onSwipeRight={(state) => this.onSwipeRight(item, state)}
+            //     onLongPress={(state) => this.onLongPress(item, state)}
+            //     config={{
+            //         velocityThreshold: 0.3,
+            //         directionalOffsetThreshold: 80,
+            //         longPressDelay: 2000
+            //     }}
+            // >
+            <Card>
                 <FeedHeader ref={ref => { this.header = ref; }} item={item} token={this.props.token} userId={this.props.profile.id} />
                 <FeedDescription item={item} profile={this.props.profile} />
                 <FeedMetaData item={item} />
                 <View style={styles.borderContainer} />
                 <FeedFooter ref={ref => { this.footer = ref; }} item={item} profile={this.props.profile} token={this.props.token} showAnalytics={this.props.showAnalytics} />
                 <FeedCommentPreview item={item} />
-            </GestureCard>
+            </Card>
+            // </GestureCard>
         );
     }
 
@@ -77,11 +80,11 @@ class FeedActivity extends Component {
         let { item, displayCommentPreview } = this.props;
 
         switch (item.entity.type) {
-            case 'post':
-            case 'user-petition':
-                return this._renderPostOrPetition(item, displayCommentPreview);
-            default:
-                return this._renderGroupCard(item, displayCommentPreview);
+        case 'post':
+        case 'user-petition':
+            return this._renderPostOrPetition(item, displayCommentPreview);
+        default:
+            return this._renderGroupCard(item, displayCommentPreview);
         }
     }
 }

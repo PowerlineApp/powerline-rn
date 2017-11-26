@@ -64,6 +64,7 @@ export default class PLOverlayLoader extends Component {
       color: this.props.color,
       fontSize: this.props.messageFontSize
     };
+    return null;
     if (this.props.logo) {
       return (
         <Modal

@@ -85,6 +85,7 @@ function loadUserData(token) {
 }
 
 function loadUserProfileById(token, id) {
+    console.log(API_URL + '/v2/users/' + id);
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2/users/' + id, {
             method: 'GET',

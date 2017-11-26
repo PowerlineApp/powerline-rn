@@ -1,13 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { StyleSheet, View, Image, Text, Switch, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, Alert, View, Image, Text, Switch, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import {Button, Icon} from 'native-base';
 import LinearGradient from "react-native-linear-gradient";
 
 import PLButton from 'PLButton';
 import PLColors from 'PLColors';
 import PLConstants, { WINDOW_WIDTH } from 'PLConstants';
-import { logInManually, logInWithFacebook, verifyCode, sendCode }  from 'PLActions';
+import { logInManually, logInWithFacebook, verifyCode, sendCode, sendRecoveryEmail, finishRecovery }  from 'PLActions';
 
 import PhoneVerification from './PhoneVerification';
 
@@ -19,7 +20,12 @@ class Login extends React.Component {
     this.state = {
       isLoading: false,
       displayManualLogin: false,
-      countryCode: '+11'
+      countryCode: '+1',
+      showNewDevice: false,
+      recoveryStep: 0,
+      newDevice: {
+        token: new Date().getTime().toString().slice(-5)
+      }
     };
   }
 
@@ -170,25 +176,160 @@ class Login extends React.Component {
     })
 }
 
+  onChangeNewDeviceInfo(key, value){
+    let state = this.state;
+    state.newDevice[key] = value;
+    this.setState(state);
+  }
+
+  finishRecovery(){
+    this.setState({loading: true})
+    let {username, token} = this.state.newDevice;
+    finishRecovery(username, token).then(r => r.json()).then(r =>{
+      console.log(r);
+      if (r.token){
+        dispatch({ type: 'LOGGED_IN', data: r });
+      }
+      this.setState({loading: false})
+    }).catch(e => {
+      Alert.alert('Invalid data',
+        'Validation failed.',
+        [
+            {text: 'Ok', onPress: () => {
+                this.setState({isLoading: false})
+            }}
+        ],
+        {cancelable: false}
+        )
+    })
+  }
+
+  sendRecoveryEmail(){
+    console.log('hey');
+    let newDevice = this.state.newDevice;
+    this.setState({isLoading: true});
+
+    sendRecoveryEmail(newDevice).then(r => {
+      console.log(r);
+      Alert.alert('Email sent',
+      'An email was sent to your registered address.',
+      [
+          {text: 'Ok', onPress: () => {
+              this.setState({isLoading: false, recoveryStep: 1})
+          }}
+      ],
+      {cancelable: false}
+      )
+    }).catch(e => {
+      console.log(e);
+      Alert.alert('Invalid data',
+      'One of the given info is not correct. Please verify your contact details.',
+      [
+          {text: 'Ok', onPress: () => {
+              this.setState({isLoading: false})
+          }}
+      ],
+      {cancelable: false}
+      )
+    })
+  }
+
+  renderNewDevice(){
+    console.log('recoveryStep', this.state)
+    // username, phone, zip, token
+    // send, wait for response, tell to click on email link and hit login
+    return <ScrollView style={{flex: 1, margin: 20}}>
+        <Button transparent onPress={() => this.setState({showNewDevice: false, recoveryStep: 0, newDevice: {token: this.state.newDevice.token}})} style={{ width: 200, height: 50 }}  >
+            <Icon active name='arrow-back' style={{ color: '#6A6AD5' }} />
+        </Button>
+        {
+          this.state.recoveryStep === 1
+          ? <Text style={styles.titleText}>Please click on the link in your email and press "login"</Text>
+          : <Text style={styles.titleText}>Enter your contact details. We will use this information to send you an validation email.</Text>
+        }
+        {
+          this.state.recoveryStep !== 1 &&
+          <View>
+
+        <View style={styles.fieldContainer}>
+        <TextInput
+            placeholder="Username"
+            style={styles.textInput}
+            autoCorrect={false}
+            value={this.state.newDevice.username}
+            onChangeText={(v) => this.onChangeNewDeviceInfo('username', v)}
+            underlineColorAndroid={'transparent'}
+            />
+        </View>
+        <View style={styles.fieldContainer}>
+        <TextInput
+            placeholder="Old phone number"
+            style={styles.textInput}
+            keyboardType="numeric"
+            autoCorrect={false}
+            value={this.state.newDevice.phone}
+            onChangeText={(v) => this.onChangeNewDeviceInfo('phone', v)}
+            underlineColorAndroid={'transparent'}
+            />
+        </View>
+        <View style={styles.fieldContainer}>
+        <TextInput
+            placeholder="Zip Code"
+            style={styles.textInput}
+            autoCorrect={false}
+            keyboardType="numeric"            
+            value={this.state.newDevice.zip}
+            onChangeText={(v) => this.onChangeNewDeviceInfo('zip', v)}
+            underlineColorAndroid={'transparent'}
+            />
+        </View>
+        </View>
+          }
+        <View style={{flex: 1, alignItems: 'center', marginTop: 50}}>
+          <PLButton
+            caption={this.state.recoveryStep === 0 ? 'Send email' : 'Login'}
+            onPress={() => this.state.recoveryStep === 0 ? this.sendRecoveryEmail() : this.finishRecovery()}
+            />
+        </View>
+    </ScrollView>
+  }
+
   render() {
     if (this.state.displayManualLogin){
-      return(
-        <PhoneVerification
-          onRegister={() => this.register()}
-          onBack={() => this.setState({displayManualLogin: false})}
-          type='login'
-          onSendCode={() => this.sendCode()}   
-          onVerifycode={() => this.verifyCode()}
-          onChangeCode={(value) => {this.setState({code: value}, value.length === 4 ? () => this.verifyCode() : () => {});}}
-          code={this.state.code}
-          phone={this.state.phone}
-          onChangePhone={(value) => this.setState({phone: value})}
-          loading={this.state.loading}
-          enterCode={this.state.enterCode}
-          setCountryCode={(code) => this.setState({countryCode: '+' + code})}
-          resetForm={() => this.setState({code: '', phone: '', countryCode: '', enterCode: false})}
-        />
-      )
+      if (this.state.displayManualLogin && this.state.showNewDevice){
+        return (this.renderNewDevice())
+      }
+      else {
+        return(
+          <View style={{flexDirection: 'column'}}>
+          <View style={{flex: 1, minHeight: 400}}>
+            <PhoneVerification
+              onRegister={() => this.register()}
+              onBack={() => this.setState({displayManualLogin: false})}
+              type='login'
+              onSendCode={() => this.sendCode()}   
+              onVerifycode={() => this.verifyCode()}
+              onChangeCode={(value) => {this.setState({code: value}, value.length === 4 ? () => this.verifyCode() : () => {});}}
+              code={this.state.code}
+              phone={this.state.phone}
+              onChangePhone={(value) => this.setState({phone: value})}
+              loading={this.state.loading}
+              enterCode={this.state.enterCode}
+              setCountryCode={(code) => this.setState({countryCode: '+' + code})}
+              resetForm={() => this.setState({code: '', phone: '', countryCode: '', enterCode: false})}
+              />
+              </View>
+              <View style={{flex: 1, alignItems: 'center'}}>
+                <PLButton
+                  type='bordered'
+                  caption={'I have a new device'}
+                  onPress={() => this.setState({showNewDevice: true})}
+                  />
+              </View>
+            
+          </View>
+        )
+      }
     }
     return (
       <LinearGradient colors={['#afcbe6', '#fff', '#afcbe6']} style={styles.container}>
@@ -304,6 +445,31 @@ var styles = StyleSheet.create({
     width: 270,
     marginBottom: 10,
     alignSelf: "center"
+  },
+  fieldContainer: {
+    marginTop: 5,
+    height: 44,
+    borderRadius: 5,
+    borderWidth: 0.5,
+    borderColor: PLColors.textInputBorder,
+    justifyContent: "center",
+    paddingHorizontal: 10,
+    backgroundColor: PLColors.textInputBackground,
+    flexDirection: 'row'
+  },
+  textInput: {
+    height: 44,
+    fontSize: 14,
+    color: PLColors.lightText,
+    flex: 1,
+    margin: 0,
+    backgroundColor: 'transparent'
+  },
+  titleText: {
+    color: PLColors.actionText,
+    fontWeight: '400',
+    fontSize: 16,
+    textAlign: 'center'
   }
 });
 

@@ -98,7 +98,8 @@ class GroupSearch extends Component{
     }
 
     join(group){
-        Actions.gorupJoin({data: group});
+        console.log('group', group);
+        Actions.groupJoin({data: group});
     }
 
     render(){
@@ -111,7 +112,7 @@ class GroupSearch extends Component{
                         </Button>
                     </Left>
                     <Body>
-                        <Title>Group Search</Title>
+                        <Title style={{color: '#fff'}}>Group Search</Title>
                     </Body>
                     <Right>
                         <Button transparent onPress={() => this.onCreate()}>
@@ -146,7 +147,7 @@ class GroupSearch extends Component{
                                         </Body>
                                         {!group.joined?
                                             <Right>
-                                                <Icon name='add-circle' style={styles.joinBtn} onPress={() => this.join(group.id)} />
+                                                <Icon name='add-circle' style={styles.joinBtn} onPress={() => this.join(group)} />
                                             </Right>:null}
                                     </ListItem>
                                 );
@@ -202,7 +203,7 @@ class GroupSearch extends Component{
                                                 </Body>
                                                 {!group.joined?
                                                     <Right>
-                                                        <Icon name='add-circle' style={styles.joinBtn} onPress={() => this.join(group.id)} />
+                                                        <Icon name='add-circle' style={styles.joinBtn} onPress={() => this.join(group)} />
                                                     </Right>:null
                                                 }
                                             </ListItem>

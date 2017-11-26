@@ -101,7 +101,7 @@ class Representatives extends Component {
                             </Button>
                         </Left>
                         <Body>
-                            <Title>My Representatives</Title>
+                            <Title style={{color: '#fff'}}>My Representatives</Title>
                         </Body>
                     </Header>
                     <Content
