@@ -6,6 +6,7 @@ import {
   Label as NSLabel
 } from 'native-base';
 import { updateProfileSetup } from 'PLActions';
+import { showToast } from '../../../../utils/toast';
 
 import { Label, Input, PopupLabel } from '../components';
 import styles from '../styles';
@@ -37,7 +38,13 @@ class ProfileSetup extends Component {
   saveProfile = () => {
     const { token, dispatch, group: { id } } = this.props;
 
-    dispatch(updateProfileSetup(token, id, this.state));
+    updateProfileSetup(token, id, this.state).then(r => {
+      console.log(r)
+      showToast('Updated with success');
+    }).catch(e => {
+      console.log(e);
+      showToast('Something went wrong');
+    })
   }
 
   render() {

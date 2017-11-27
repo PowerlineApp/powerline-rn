@@ -40,7 +40,7 @@ class FeedActivity extends Component {
     }
 
     _renderPostOrPetition(item) {
-        console.log(this.props.profile);
+        // console.log(this.props.profile);
         return (
             // <GestureCard
             //     onSwipeRight={(state) => this.onSwipeRight(item, state)}

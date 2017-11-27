@@ -39,7 +39,7 @@ class CommunityView extends PureComponent {
             grouplist,
             onPress
         } = this.props;
-        return null;
+        console.log(grouplist);
         return (
             <Modal transparent>
                 <View style={styles.community_list_container}>
@@ -57,15 +57,15 @@ class CommunityView extends PureComponent {
                                         ? <Thumbnail square style={styles.thumbnail} source={{ uri: item.avatar_file_path + '&w=50&h=50&auto=compress,format,q=95'}} />
                                         : <View style={styles.thumbnail} />
                                     }
-                                    <Body>
+                                        <Body>
                                         <Text style={{ fontSize: 15, color: light ? 'gray' : 'white' }}>{item.official_name}</Text>
                                     </Body>
-                                    <Right>
+                                        <Right>
                                         <Icon name='ios-arrow-dropright' style={{ color: light ? 'gray' : 'white' }} />
                                     </Right>
-                                </ListItem>
-                            );
-                        })
+                                    </ListItem>
+                                );
+                            })
                     }
                         </List>
                     </ScrollView>

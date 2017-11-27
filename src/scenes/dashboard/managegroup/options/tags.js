@@ -25,10 +25,10 @@ class Tags extends Component {
 
     renderTags() {
         let data = this.props.data || [];
-        console.warn('data empty', this.props.data);
+        console.log(this.props.groupOwnTags, this.props.data);
         return data.map(item => {
             return (
-                <TouchableOpacity onPress={() => this.saveTags(item)} style={{justifyContent: 'center', padding: 5, backgroundColor: (this.props.groupOwnTags.includes(item) ? '#020860' : 'rgb(85,197,255)'), margin: 2}}>
+                <TouchableOpacity onPress={() => this.saveTags(item)} style={{justifyContent: 'center', padding: 2, backgroundColor: (this.props.groupOwnTags.map(i => i.id).includes(item.id) ? '#020860' : 'rgb(85,197,255)'), margin: 2}}>
                     <Text style={{color: 'white'}}>{item.name}</Text>
                 </TouchableOpacity>
             );

@@ -625,9 +625,9 @@ class Home extends Component {
         console.log('selected group ==> ', selectedGroup)
         this.bottomMenu.close();
         if (value === 'post'){
-            Actions.newpost();
+            Actions.newpost({group: selectedGroup.group});
         } else if (value === 'petition'){
-            Actions.newpetition();
+            Actions.newpetition({group: selectedGroup.group});
         } else {
             Actions.newleadercontent({contentType: value, group: selectedGroup.group});
         }

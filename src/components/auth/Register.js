@@ -18,6 +18,8 @@ import { connect } from 'react-redux';
 import PLOverlayLoader from 'PLOverlayLoader';
 import DeviceInfo from 'react-native-device-info';
 
+import {Button, Icon} from 'native-base';
+
 const {width} = Dimensions.get('window');
 import {
     NavigationActions
@@ -122,15 +124,15 @@ class Register extends React.Component{
 
     onConfirmEmail = () => {
         var {email} = this.state;
-        // Alert.alert(
-        //     'Is this e-mail right?',
-        //     email,
-        //     [
-        //         {text: 'Yes', onPress: () => {}},
-        //         {text: 'No', onPress: () => {this.setState({email: ''})}}            
-        //     ],
-        //     { cancelable: false }
-        // );
+        Alert.alert(
+            'Is this e-mail right?',
+            email,
+            [
+                {text: 'Yes', onPress: () => {}},
+                {text: 'No', onPress: () => {this.setState({email: ''})}}            
+            ],
+            { cancelable: false }
+        );
     }
 
     onBack = () => {
@@ -287,16 +289,18 @@ class Register extends React.Component{
                             placeholder="First Name"
                             style={styles.textInput}
                             autoCorrect={false}
+                            autoCapitalize
                             value={first_name}
                             onChangeText={this.onChangeFirstName}
                             underlineColorAndroid={'transparent'}
-                        />
+                            />
                     </View>
                     <View style={styles.fieldContainer}>
                         <TextInput
                             placeholder="Last Name"
                             style={styles.textInput}
                             autoCorrect={false}
+                            autoCapitalize
                             value={last_name}
                             onChangeText={this.onChangeLastName}
                             underlineColorAndroid={'transparent'}
@@ -322,7 +326,7 @@ class Register extends React.Component{
                             autoCorrect={false}
                             value={email}
                             onChangeText={this.onChangeEmail}
-                            // onEndEditing={this.onConfirmEmail}
+                            onEndEditing={this.onConfirmEmail}
                             underlineColorAndroid={'transparent'}
                         />
                         <View style={styles.iconContainer}>
@@ -390,27 +394,6 @@ class Register extends React.Component{
                         filterReverseGeocodingByTypes={['country']}
                         debounce={200}
                     />
-                    
-                    {/*<View style={styles.fieldContainer}>
-                        <TextInput
-                            placeholder="City"
-                            style={styles.textInput}
-                            autoCorrect={false}
-                            value={city}
-                            onChangeText={this.onChangeCity}
-                            underlineColorAndroid={'transparent'}
-                        />
-                    </View>
-                    <View style={styles.fieldContainer}>
-                        <TextInput
-                            placeholder="State"
-                            style={styles.textInput}
-                            autoCorrect={false}
-                            value={state}
-                            onChangeText={this.onChangeState}
-                            underlineColorAndroid={'transparent'}
-                        />
-                    </View> */}
 
 
                     <View style={styles.switchContainer}>
@@ -433,6 +416,7 @@ class Register extends React.Component{
     }
 
     async onRegister(){
+        this.setState({loading: true})
         if (this.state.registered) return;
         let { first_name, last_name, code, email, username, zip, country, phone, countryCode} = this.state;
         let { onLoggedIn, isFb, fbData, tour } = this.props;
@@ -482,7 +466,7 @@ class Register extends React.Component{
         this.setState({loading: true});
         try {
             let verified = await findByUsernameEmailOrPhone({phone});
-            console.log(verified);         
+            console.log('find', verified);         
             verifyNumber(phone).then(r => {
                 this.setState({loading: false, enterCode: true})
                 console.log('send code success', r);
@@ -495,7 +479,7 @@ class Register extends React.Component{
                 console.log(e);
             })
         } catch (error) {
-            console.log(error);
+            console.log('find', error);
             Alert.alert('Invalid data',
             error,
             [{text: 'Ok', onPress: () => {
@@ -535,10 +519,12 @@ class Register extends React.Component{
 
     renderPhoneVerification(){
         return <ScrollView style={styles.container}>
-        <Text style={styles.titleText}>Enter your contact details.</Text>
-        <Text style={styles.descriptionText}>You're almost done!</Text>
+                          <Button transparent onPress={() => this.onBack()} style={{ width: 200, height: 50 }}  >
+                          <Icon active name='arrow-back' style={{ color: '#6A6AD5' }} />
+                      </Button>
         <View style={styles.formContainer}>
             <PhoneVerification
+                onBack={() => this.onBack()}
                 onSendCode={() => this.sendCode()}   
                 onVerifycode={() => this.verifyCode()}
                 onVerifySuccess={() => this.verifySuccess()}
@@ -566,20 +552,18 @@ class Register extends React.Component{
     renderBottom(){
         var { position } = this.state;
         return (
+                position !== 2 &&
             <View style={styles.buttonContainer}>
                 <TouchableWithoutFeedback onPress={this.onBack}>
                     <View style={styles.button}>
                         <Text style={styles.buttonText}>Back</Text>
                     </View>
                 </TouchableWithoutFeedback>
-                {
-                    position !== 2 &&
                 <TouchableWithoutFeedback onPress={this.onNext}>
                     <View style={styles.button}>
                         <Text style={styles.buttonText}>{position > 2 ?'Register':'Next'}</Text>
                     </View>
                 </TouchableWithoutFeedback>
-                }
             </View>
         );
     }

@@ -16,6 +16,7 @@ import {
 
 import { Label, Input, PopupLabel } from '../components';
 import styles from '../styles';
+import { showToast } from '../../../../utils/toast';
 
 const membershipControlOptions = [
   { name: 'Public (Open to all)', value: 'public' },
@@ -72,7 +73,14 @@ class MembershipControl extends Component {
       return;
     }
   
-    dispatch(updateMembershipControl(token, id, control, passcode));
+    updateMembershipControl(token, id, control, passcode).then(r => {
+      console.log('r => ', r)
+      showToast('Updated with success')
+      // this.props.updateGroup();
+    }).catch(e => {
+      console.log(e);
+
+    });
   }
 
   setField = (newFieldName, id) => {

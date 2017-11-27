@@ -39,16 +39,19 @@ class Level extends PureComponent {
             <Text style={{color: 'white', textAlign: 'center'}}>{`$${price}/month`}</Text>
           </LinearGradient>
         </View>
+        <View>
+
         <View style={levelStyle.description}>
           <Label style={StyleSheet.flatten(levelStyle.titleText)}>{title}</Label>
           <Label style={StyleSheet.flatten(levelStyle.audienceSizeText)}>{`Audience: ${audience}`}</Label>
           <Label style={StyleSheet.flatten(levelStyle.audienceSizeText)}>{`Size: ${size}`}</Label>
+          </View>
           {!isSelected &&
-            <Button style={StyleSheet.flatten(levelStyle.selectButton)}>
+            <Button style={StyleSheet.flatten(levelStyle.selectButton)} onPress={() => onPress({name, audience, title, price})} >
               <Label style={{ color: 'white' }}>Select</Label>
             </Button>
           }
-        </View>
+          </View>
       </TouchableOpacity>
     );
   }
@@ -58,7 +61,7 @@ const levelStyle = StyleSheet.create({
   container: {
     flexDirection: 'row',
     marginTop: 8,
-    alignItems: 'center',
+    alignItems: 'center'
   },
   border: {
     width: width / 4,
@@ -76,19 +79,22 @@ const levelStyle = StyleSheet.create({
     backgroundColor: PLColors.main,
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 2,
+    // zIndex: 2,
   },
   description: {
-    zIndex: 0,
+    // zIndex: -3,
     backgroundColor: '#F0F8FF',
     height: width / 4 - 20,
     marginLeft: - width / 8,
     paddingLeft: width / 8,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: '#EAF0F4'
+    borderColor: '#EAF0F4',
+    overflow: 'visible'
   },
   selectButton: {
     backgroundColor: '#4ABEFF',
+    marginTop: -8,
+    height: 24
   },
   titleText: {
     color: '#000048',

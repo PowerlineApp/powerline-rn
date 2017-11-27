@@ -153,8 +153,16 @@ class Login extends React.Component {
         console.log(r);
         this.setState({loading: false, enterCode: true})
     }).catch(e => {
-        console.log(e)
-        this.setState({loading: false})
+        console.log(e);
+        Alert.alert('Invalid data',
+        'Validation failed.',
+        [
+            {text: 'Ok', onPress: () => {
+                this.setState({loading: false})
+            }}
+        ],
+        {cancelable: false}
+        )
     })
   }
   verifyCode(){
@@ -172,7 +180,15 @@ class Login extends React.Component {
         this.setState({loading: false})
     }).catch(e => {
         console.log(e);
-        this.setState({loading: false})
+        Alert.alert('Invalid data',
+        'Validation failed.',
+        [
+            {text: 'Ok', onPress: () => {
+                this.setState({loading: false})
+            }}
+        ],
+        {cancelable: false}
+        )
     })
 }
 
@@ -193,15 +209,15 @@ class Login extends React.Component {
       this.setState({loading: false})
     }).catch(e => {
       Alert.alert('Invalid data',
-        'Validation failed.',
-        [
-            {text: 'Ok', onPress: () => {
-                this.setState({isLoading: false})
-            }}
-        ],
-        {cancelable: false}
-        )
-    })
+      'Validation failed.',
+      [
+          {text: 'Ok', onPress: () => {
+              this.setState({isLoading: false})
+          }}
+      ],
+      {cancelable: false}
+      )
+  })
   }
 
   sendRecoveryEmail(){

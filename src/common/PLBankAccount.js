@@ -50,7 +50,7 @@ class PLBankAccount extends Component {
             token: null,
             dob: null,
             dobError: false,
-            address_line1: `${props.user.address1}`,
+            address_line1: (props.user.address1 ? `${props.user.address1}` : ''),
             address_line1Error: false,
             address_line2: (props.user.address2 ? `${props.user.address2}` : ''),
             city: `${props.user.city}`,
@@ -71,8 +71,8 @@ class PLBankAccount extends Component {
         this.save = this.save.bind(this);
     } 
 
-    inputChanged(key, prop) {
-        this.setState(state => {
+    async inputChanged(key, prop) {
+        await this.setState(state => {
             state[key] = prop;
             return state;
         });
@@ -93,7 +93,7 @@ class PLBankAccount extends Component {
             this.setState({
                 dobError: true
             });
-            Alert.alert('User age must be higher than 18 years old');
+            // Alert.alert('User age must be higher than 18 years old');
         } else {
             this.setState({dobError: false});
         }
@@ -161,34 +161,32 @@ class PLBankAccount extends Component {
         if(!this.checkNumber(this.state.accountNumber) && this.state.accountNumber.length >= 3) {
             this.setState({accountNumberValidated: false});
             this.setState({accountNumberErrorMessage: 'Invalid Account Number'});
+            console.log('1');
             return false;
         }
-
+        
         if(!this.checkNumber(this.state.routingNumber) && this.state.routingNumber.length !== 9) {
             this.setState({
                 routingNumberValidated: false,
                 routingNumberErrorMessage: 'Routing Number must have 9 digits'
             });
+            console.log('2');
             return false;
         }
-
+        
         if(this.state.dob && moment().diff(moment(this.state.dob).format(), 'year') < 18) {
             this.setState({
                 dobError: true
             });
+            console.log('3');
             return false;
         }
-        if(this.state.address_line1.length < 8) {
-            this.setState({
-                address_line1Error: true
-            });
-            return false;
-        }
-
+        
         if(this.state.postal_code.length < 5) {
             this.setState({
                 postal_codeError: true
             });
+            console.log('5');
             return false;
         }
         
@@ -210,15 +208,17 @@ class PLBankAccount extends Component {
                     }
                 })
                 .catch(error => {
-                    this.setState({stripeError: error, tokenLoading: false});
+                    this.setState({stripeError: error.message, tokenLoading: false});
                 });
         } else {
+            console.log('fields not validated');
             this.setState({saveError: true, tokenLoading: false});
         }
     }
 
     save(params) {
         const backendData = this.buildObject(params);
+        if (!backendData) return;
         this.props.onSave(backendData);
     }
 
@@ -242,6 +242,36 @@ class PLBankAccount extends Component {
         if(obj.type === 'company') {
             obj.business_name === params.business_name;
         }
+        console.log(obj);
+        let valid = true;
+        Object.keys(obj).map(key => {
+            console.log('key, value', key, obj[key]);
+            if (!obj[key] && key !== 'address_line2' ){
+                console.log('not valid => ', key, obj[key]);
+                valid = false;
+                let state = this.state;
+                state[key + 'Error'] = true;
+                this.setState({...state, stripeError: 'Please check all fields'});
+            } else {
+                let state = this.state;
+                state[key + 'Error'] = false;
+                this.setState(state, () => console.log('=>', this.state[key + 'Error']));
+            }
+        });
+        console.log(moment().diff(moment(obj.dob).format(), 'year'));
+        if(moment().diff(moment(obj.dob).format(), 'year') < 18) {
+            this.setState({
+                dobError: true
+            });
+            Alert.alert('User age must be higher than 18 years old');
+            valid = false;
+        }
+
+        if (!valid){
+            return false;
+        }
+        this.setState({stripeError: ''});
+
         return obj;
 
     }
@@ -277,52 +307,55 @@ class PLBankAccount extends Component {
                             format='YYYY-MM-DD'
                             customStyles={{dateInput: {borderWidth: 0, marginLeft: -50}, placeholderText: {color: 'grey', fontSize: 17, marginLeft: 20}, dateText: {fontSize: 17, marginLeft: 20}}}
                             onDateChange={date => this.inputChanged('dob', date)}
+                            date={this.state.dob}
                         />
                     </View>
                     <View style={{marginVertical: 5}}>
                         <Text style={styles.labelStyle}>Address Line 1</Text> 
                         <Item rounded success={!this.state.address_line1Error} error={this.state.address_line1Error}>
-                            <Input placeholder='Address Line 1' value={this.state.address_line1} onChangeText={text => this.inputChanged('address_line1', text)} />
+                            <Input placeholderTextColor={'#ccc'} placeholder='Address Line 1' value={this.state.address_line1} onChangeText={text => this.inputChanged('address_line1', text)} />
                         </Item>
                     </View>
                     <View style={{marginVertical: 5}}>
                         <Text style={styles.labelStyle}>Address Line 2</Text> 
                         <Item rounded>
-                            <Input placeholder='Address Line 2' value={this.state.address_line2} onChangeText={text => this.inputChanged('address_line2', text)} />
+                            <Input placeholderTextColor={'#ccc'} placeholder='Address Line 2' value={this.state.address_line2} onChangeText={text => this.inputChanged('address_line2', text)} />
                         </Item>
                     </View>
                     <View style={{marginVertical: 5}}>
                         <Text style={styles.labelStyle}>City</Text> 
-                        <Item rounded>
-                            <Input placeholder='City' value={this.state.city} onChangeText={text => this.inputChanged('city', text)} />
+                        <Item rounded success={!this.state.cityError} error={this.state.cityError} >
+                            <Input placeholderTextColor={'#ccc'} placeholder='City' value={this.state.city} onChangeText={text => this.inputChanged('city', text)} />
                         </Item>
                     </View>
                     <View style={{marginVertical: 5}}>
                         <Text style={styles.labelStyle}>State</Text> 
-                        <Item rounded>
-                            <Input placeholder='State' value={this.state.state} onChangeText={text => this.inputChanged('state', text)} />
+                        <Item rounded error={this.state.stateError} success={!this.state.stateError} >
+                            <Input placeholderTextColor={'#ccc'} placeholder='State' value={this.state.state} onChangeText={text => this.inputChanged('state', text)} />
                         </Item>
                     </View>
                     <View style={{marginVertical: 5}}>
                         <Text style={styles.labelStyle}>Postal Code</Text> 
                         <Item rounded success={!this.state.postal_codeError} error={this.state.postal_codeError}>
-                            <Input placeholder='Postal Code' value={this.state.postal_code} onChangeText={text => this.inputChanged('postal_code', text)} />
+                            <Input keyboardType='numeric' placeholderTextColor={'#ccc'} placeholder='Postal Code' value={this.state.postal_code} onChangeText={text => this.inputChanged('postal_code', text)} />
                         </Item>
                     </View>
                     <View style={{marginVertical: 5}}>
                         <Text style={styles.labelStyle}>Tax ID</Text> 
                         <Item rounded success={!this.state.tax_idError} error={this.state.tax_idError}>
-                            <Input placeholder='Tax ID' onChangeText={text => this.inputChanged('tax_id', text)} />
+                            <Input keyboardType='numeric' placeholderTextColor={'#ccc'} placeholder='Tax ID' onChangeText={text => this.inputChanged('tax_id', text)} />
                         </Item>
                     </View>
                     <View style={{marginVertical: 5}}>
-                        <Text style={styles.labelStyle}>SSN</Text> 
+                        <Text style={styles.labelStyle}>Last 4 SSN</Text> 
                         <Item rounded success={!this.state.ssn_last_4Error} error={this.state.ssn_last_4Error}>
-                            <Input placeholder='SSN' onChangeText={text =>this.inputChanged('ssn_last_4', text)} />
+                            <Input keyboardType='numeric' placeholderTextColor={'#ccc'} maxLength={4} placeholder='SSN' onChangeText={text =>this.inputChanged('ssn_last_4', text)} />
                         </Item>
                     </View>
                     
                     <Agreement />
+                    <Text style={styles.bottomError} >{this.state.stripeError}</Text>
+
                     <Button block style={styles.submitButtonContainer} onPress={() => this.save(this.state)}>
                         <Label style={{color: 'white'}}>Save</Label>
                     </Button>
@@ -333,6 +366,7 @@ class PLBankAccount extends Component {
 
     render() {
         console.log(this.props.user);
+        console.log(this.state.bankSaved);
         if(this.state.bankSaved) {
             return this._renderAditionalForm();
         } else {
@@ -352,7 +386,7 @@ class PLBankAccount extends Component {
                     <View style={{marginVertical: 5}}>
                         <Text style={styles.labelStyle}>Account Nickname</Text> 
                         <Item rounded>
-                            <Input placeholder='Account Nickname' onChangeText={text =>this.inputChanged('accountNickname', text)} />
+                            <Input placeholderTextColor={'#ccc'} placeholder='Account Nickname' onChangeText={text =>this.inputChanged('accountNickname', text)} />
                         </Item>
                     </View>
                     <View style={{marginVertical: 5}}>
@@ -428,7 +462,7 @@ class PLBankAccount extends Component {
                     <View style={{marginVertical: 5}}>
                         <Text style={styles.labelStyle}>Account Number</Text> 
                         <Item rounded success={this.state.accountNumberValidated} error={!this.state.accountNumberValidated}>
-                            <Input placeholder='Account Number' onChangeText={text => this.inputChanged('accountNumber', text)} />
+                            <Input keyboardType='numeric' placeholderTextColor={'#ccc'} placeholder='Account Number' onChangeText={text => this.inputChanged('accountNumber', text)} />
                         </Item>
                         {   this.state.accountNumberErrorMessage
                             ? <Text style={{color: 'red', fontSize: 12}}>{this.state.accountNumberErrorMessage}</Text>
@@ -438,7 +472,7 @@ class PLBankAccount extends Component {
                     <View style={{marginVertical: 5}}>
                         <Text style={styles.labelStyle}>Routing Number</Text> 
                         <Item rounded success={this.state.routingNumberValidated} error={!this.state.routingNumberValidated}>
-                            <Input type='number' placeholder='Routing Number' onChangeText={text => this.inputChanged('routingNumber', text)} />
+                            <Input keyboardType='numeric' placeholderTextColor={'#ccc'} type='number' placeholder='Routing Number' onChangeText={text => this.inputChanged('routingNumber', text)} />
                         </Item>
                         {   this.state.routingNumberErrorMessage
                             ? <Text style={{color: 'red', fontSize: 12}}>{this.state.routingNumberErrorMessage}</Text>
@@ -446,6 +480,7 @@ class PLBankAccount extends Component {
                         }
                     </View>
                     <Agreement />
+                    <Text style={styles.bottomError} >{this.state.stripeError}</Text>
                     {   !this.state.tokenLoading
                         ?   <Button block style={styles.submitButtonContainer} onPress={() => this.generateToken(this.state)}>
                             <Label style={{color: 'white'}}>Submit</Label>
@@ -469,6 +504,13 @@ const styles = {
         color: 'grey', 
         marginLeft: 5,
         marginVertical: 5
+    },
+    bottomError: {
+        fontSize: 16,
+        fontWeight: '200',
+        marginHorizontal: 20,
+        marginTop: 8,
+        color: '#D00'
     }
 };
 

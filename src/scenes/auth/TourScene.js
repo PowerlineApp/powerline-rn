@@ -22,22 +22,24 @@ import {
 } from 'react-navigation';
 import {Actions} from 'react-native-router-flux'
 
-var styles = StyleSheet.create({
+var styles = {
     container: {
+        backgroundColor: '#000',
         flex: 1,
         position: 'relative',
         justifyContent: 'flex-end'
     },
-    img: {
+    img: (visible) =>  ({
         position: 'absolute',
         left: 0,
         right: 0,
         top: 0,
         bottom: 0,
+        opacity: visible ? 1 : 0,
         width: width,
         height: height,
         resizeMode: 'cover'
-    },
+    }),
     bottomContainer: {
         marginBottom: 5,
         flexDirection: 'row'
@@ -84,7 +86,7 @@ var styles = StyleSheet.create({
         color: '#006',
         textAlignVertical: 'top'
     }
-});
+};
 
 class TourScene extends Component{
     static navigationOptions = {
@@ -126,13 +128,15 @@ class TourScene extends Component{
     }
 
     render(){
-        var {pos} = this.state;
-        let imgs = [<Image source={require('../../assets/1.png')} style={styles.img}/>,
-        <Image source={require('../../assets/2.png')} style={styles.img}/>,
-        <Image source={require('../../assets/3.png')} style={styles.img}/>,
-        <Image source={require('../../assets/4.png')} style={styles.img}/>,
-        <Image source={require('../../assets/5.png')} style={styles.img}/>,
-        <Image source={require('../../assets/6.png')} style={styles.img}/>]
+        let {pos} = this.state;
+        let imgs =     [
+            <Image source={require('../../assets/1.png')} style={styles.img(pos === 0)}/>,
+            <Image source={require('../../assets/2.png')} style={styles.img(pos === 1)}/>,
+            <Image source={require('../../assets/3.png')} style={styles.img(pos === 2)}/>,
+            <Image source={require('../../assets/4.png')} style={styles.img(pos === 3)}/>,
+            <Image source={require('../../assets/5.png')} style={styles.img(pos === 4)}/>,
+            <Image source={require('../../assets/6.png')} style={styles.img(pos === 5)}/>
+        ];
 
         return (
             <View style={styles.container}>     

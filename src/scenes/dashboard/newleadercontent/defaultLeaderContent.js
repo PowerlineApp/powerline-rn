@@ -745,7 +745,7 @@ class NewLeaderContent extends Component {
                             this.state.showCommunity &&
                             <CommunityView
                                 grouplist={this.state.grouplist}
-                                onPress={() => this.selectGroupList()}
+                                onPress={(i) => this.selectGroupList(i)}
                             />
                         }
                 </ScrollView>

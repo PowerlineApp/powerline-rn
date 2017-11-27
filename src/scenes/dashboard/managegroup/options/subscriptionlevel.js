@@ -5,10 +5,13 @@ import { View, Text, Alert } from 'react-native';
 import { exportReports } from 'PLActions';
 import { Actions } from 'react-native-router-flux';
 import { Label, Level, Input, PopupLabel } from '../components';
-import { groupGetSubscriptions, groupUpdateSubscriptions } from 'PLActions'
+import { groupGetSubscriptions, groupUpdateSubscriptions, groupGetCards } from 'PLActions';
+import moment from 'moment';
+
 import styles from '../styles';
 
 const subscriptionOptions = [{
+  price: 0,
   name: "Free",
   title: "Get Started",
   audience: "Unlimited",
@@ -35,7 +38,9 @@ const subscriptionOptions = [{
 
 class SubscriptionLevel extends Component {
   componentDidMount() {
-    this.props.getSubscription(this.props.group.id)
+    const { group, getCards } = this.props;
+    this.props.getSubscription(group.id)
+    this.props.getCards(group.id);
   }
   selectSubscription = (level) => {
     console.log(level)
@@ -50,7 +55,8 @@ class SubscriptionLevel extends Component {
   }
 
   render() {
-    console.log(this.props);
+    console.log('subscription level props', this.props);
+    let hasCard = this.props.cards && this.props.cards.length > 0;
     // if (this.props.subscription && this.props.subcription.code > 400) {
     //   return (
     //     <Label>You do not have permission to see this content</Label>
@@ -75,9 +81,18 @@ class SubscriptionLevel extends Component {
             />
           ))
         }
-        <Label>This group has no associated payment card.</Label>
+        {
+          hasCard
+          ? 
+          <View>
+            <Text style={styles.cardTitle}>
+            Your default card will be charged again on {moment(this.props.subscription.next_payment_at).format('MMMM Do YYYY')}
+            </Text>
+          </View>
+          : <Label>This group has no associated payment method yet.</Label>
+        }
         <Button block style={styles.submitButtonContainer} onPress={() => Actions.groupAddCardScene({group: this.props.group})}>
-          <NSLabel style={styles.submitButtonText}>Manage Payment Methods</NSLabel>
+          <NSLabel style={styles.submitButtonText}>{hasCard ? 'Manage Payment Methods' : 'Add a Payment Method'}</NSLabel>
         </Button>
       </View>
     );
@@ -85,10 +100,15 @@ class SubscriptionLevel extends Component {
 }
 
 const mapState = (state) => ({
+  cards: state.groupManagement.creditCards,
+  loadingCards: state.groupManagement.loadingCards,
   subscription: state.groupManagement.subscription
 })
 const mapActions = (dispatch) => ({
+  getCards: (id) => dispatch(groupGetCards(id)),
   getSubscription: (id) => dispatch(groupGetSubscriptions(id)),
   updateSubscription: (id, type) => dispatch(groupUpdateSubscriptions(id, type))
 })
+
+
 export default connect(mapState, mapActions)(SubscriptionLevel);

@@ -9,8 +9,8 @@ import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import * as Animatable from 'react-native-animatable';
 
-import RNFetchBlob from 'react-native-fetch-blob'
-const fs = RNFetchBlob.fs
+import RNFetchBlob from 'react-native-fetch-blob';
+const fs = RNFetchBlob.fs;
 
 import {
     Container,
@@ -86,7 +86,7 @@ class NewPost extends Component {
     componentDidMount() {
         // console.log('ONLOAD NEWPOST PROPS', this.props);
         
-        var { token } = this.props;
+        var { token, group } = this.props;
         loadUserData(token).then(data => {
             this.setState({
                 profile: data
@@ -96,9 +96,17 @@ class NewPost extends Component {
         });
         
         getGroups(token).then(ret => {
+            console.log('~=> ', group);
+            let showCommunity = true, selectedGroupIndex = -1;
+            if (group && group !== 'all'){
+                showCommunity = false;
+                selectedGroupIndex = ret.payload.map(grouObj => grouObj.id).indexOf(group);
+            }
             this.setState({
-                grouplist: ret.payload
+                grouplist: ret.payload,
+                showCommunity, selectedGroupIndex
             });
+
         }).catch(err => {
             
         });
@@ -108,16 +116,16 @@ class NewPost extends Component {
     }
 
     componentWillUnmount () {
-    this.keyboardDidShowListener.remove();
-    this.keyboardDidHideListener.remove();
+        this.keyboardDidShowListener.remove();
+        this.keyboardDidHideListener.remove();
     }
 
     _keyboardDidShow () {
-        this.setState({keyboard: false})
+        this.setState({keyboard: false});
     }
 
     _keyboardDidHide () {
-        this.setState({keyboard: true})
+        this.setState({keyboard: true});
     }
 
     async loadSharedData(data){
@@ -126,21 +134,21 @@ class NewPost extends Component {
             return;
         }
         if (data.type.split('/')[0] !== 'image' && data.type !== 'jpeg' && data.type !== 'png' && data.type !== 'jpg') {
-            this.setState({showCommunity: true, content: data.value})
+            this.setState({showCommunity: true, content: data.value});
             return;
         }
-        this.setState({content : JSON.stringify(data)})
+        this.setState({content : JSON.stringify(data)});
         fs.readFile(data.value, "base64").then(r => {
             this.setState({image: r, content: '', showCommunity: true});
         }).catch(e => {
             showToast('Error ocurred reading file.');
-            this.setState({showCommunity: true})
-        })
+            this.setState({showCommunity: true});
+        });
     }
 
 
     toggleCommunity() {
-        Keyboard.dismiss()
+        Keyboard.dismiss();
         this.setState({
             showCommunity: !this.state.showCommunity
         });
@@ -152,7 +160,7 @@ class NewPost extends Component {
             selectedGroupIndex: index,
             showCommunity: false
         });
-        this.postInputRef.focus()
+        this.postInputRef.focus();
 
         var { token } = this.props;
 
@@ -170,10 +178,10 @@ class NewPost extends Component {
     createPost() {
         var { token } = this.props;
         var groupId = null;
-        if (this.state.posts_remaining <= 0){
-            alert('You do not have any posts left in this group');
-            return;
-        }
+        // if (this.state.posts_remaining <= 0){
+        //     alert('You do not have any posts left in this group');
+        //     return;
+        // }
 
 
         if (this.state.selectedGroupIndex == -1) {
@@ -224,13 +232,18 @@ class NewPost extends Component {
 
     // tells us if user will share or not
     isShareSelected(social){
-        return this.state.share
+        return this.state.share;
         // return false;
     }
 
     // changes the selection if user will share or not
     setShareSelected(bool){
-        this.setState({share : bool})
+        this.setState({share : bool});
+        if (bool){
+            showToast('Create post to share');
+        } else {
+            showToast('Canceling poster creation');
+        }
     }
 
     onSelectionChange(event) {
@@ -279,7 +292,7 @@ class NewPost extends Component {
         });
     }
 
-    attachImage = () => {
+    attachImage () {
         if (this.state.image) {
             this.setState({ image: null });
         } else {
@@ -309,120 +322,133 @@ class NewPost extends Component {
             });
         }
     }
+
+    renderAttachments(){
+        let height = 30;
+        let width = 40;
+
+        return (
+            <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' }}>
+                <View>
+                    <Button transparent style={{ height: height, width: width }} onPress={() => this.attachImage()}>
+                        {
+                        this.state.image 
+                        ? <View style={{ flexDirection: 'row', width: width, height: height, alignItems: 'center', justifyContent: 'center' }}>
+                            <Image source={{ uri: `data:image/png;base64,${this.state.image}` }} resizeMode='cover' style={{ width: width, height: height }} />
+                            <View style={styles.deleteIconContainer}>
+                                <Icon name='md-close-circle' style={styles.deleteIcon} />
+                            </View>
+                        </View>
+                    : <Image source={require("img/upload_image.png")} resizeMode='contain' style={{ width: width, height: height, tintColor: 'gray' }} />
+                }
+                    </Button>
+                </View>
+                <View>
+                    <Button transparent style={{ height: width, width: width }} onPress={() => this.setShareSelected(!this.state.share)}>
+                        <View style={{ flexDirection: 'row', backgroundColor: this.state.share ? '#71c9f1' : '#ccc', borderRadius: 80, width: width, height: 40, alignItems: 'center', justifyContent: 'center' }} >
+                            <Image resizeMode='stretch' style={{width: height, height: height}} source={require('../../../assets/share_icon.png')} />
+                        </View>
+                    </Button>
+                </View>
+            </View>);
+    }
     
     render() {
         return (
-            <Animatable.View style={{flexDirection: 'row'}} animation={'fadeInUpBig'} duration={800} ref="animatedView"  >
-            <Container style={styles.container}>
-                <Header style={styles.header}>
-                    <Left>
-                        {
+            <Animatable.View style={{flexDirection: 'row'}} animation={'fadeInUpBig'} duration={800} ref='animatedView'  >
+                <Container style={styles.container}>
+                    <Header style={styles.header}>
+                        <Left>
+                            {
                             this.state.sharing
                             ? null
                             : <Button transparent onPress={() => Actions.pop()} style={{ width: 50, height: 50 }}  >
                                 <Icon active name='arrow-back' style={{ color: 'white' }} />
                             </Button>
                         }
-                    </Left>
-                    <Body>
-                        <Title style={{ color: 'white' }}>New Post</Title>
-                    </Body>
-                    <Right>
-                        <Button transparent onPress={() => { this.createPost(); Mixpanel.track("Sent Post"); }}>
-                            <Label style={{ color: 'white' }}>Send</Label>
-                        </Button>
-                    </Right>
-                </Header>
-                        <List>
-                            <ListItem style={styles.community_container} onPress={() => this.toggleCommunity()}>
-                                <View style={styles.avatar_container}>
-                                    <View style={styles.avatar_wrapper}>
-                                        <Thumbnail square style={styles.avatar_img} source={{ uri: this.state.profile.avatar_file_name + '&w=50&h=50&auto=compress,format,q=95' }} />
-                                    </View>
-                                    <View style={styles.avatar_subfix} />
+                        </Left>
+                        <Body>
+                            <Title style={{ color: 'white' }}>New Post</Title>
+                        </Body>
+                        <Right>
+                            <Button transparent onPress={() => { this.createPost(); Mixpanel.track("Sent Post"); }}>
+                                <Label style={{ color: 'white' }}>Send</Label>
+                            </Button>
+                        </Right>
+                    </Header>
+                    <List>
+                        <ListItem style={styles.community_container} onPress={() => this.toggleCommunity()}>
+                            <View style={styles.avatar_container}>
+                                <View style={styles.avatar_wrapper}>
+                                    <Thumbnail square style={styles.avatar_img} source={{ uri: this.state.profile.avatar_file_name + '&w=50&h=50&auto=compress,format,q=95' }} />
                                 </View>
+                                <View style={styles.avatar_subfix} />
+                            </View>
                             <Body style={styles.community_text_container}>
                                 <Text style={{color: 'white'}}>
                                     {this.state.selectedGroupIndex == -1 ? 'Select a community' : this.state.grouplist[this.state.selectedGroupIndex].official_name}
                                 </Text>
                             </Body>
                             <Right style={styles.communicty_icon_container}>
-                            {
+                                {
                                 this.state.sharing 
                                 ? <Text style={{color: '#fff'}}>{'[+]'}</Text>
                                 : <Icon name='md-create' style={{ color: 'white' }} />
                             }
-                        </Right>
+                            </Right>
                         </ListItem>
                     </List>
-                <ScrollView scrollEnabled={false} keyboardShouldPersistTaps={'handled'} style={styles.main_content} >
-                    {/* <S style={styles.main_content}> */}
+                    <ScrollView scrollEnabled={false} keyboardShouldPersistTaps={'handled'} style={styles.main_content} >
+                        {/* <S style={styles.main_content}> */}
 
-                    {
+                        {
                         this.state.displaySuggestionBox && this.state.suggestionList.length > 0
-                        ? <ScrollView style={{position: 'absolute', top: 20, zIndex: 3}} keyboardShouldPersistTaps="always"  >
+                        ? <ScrollView style={{position: 'absolute', top: 20, zIndex: 3}} keyboardShouldPersistTaps='always'  >
                             <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
                         </ScrollView>
                         : <ScrollView />
                     }
 
-                    <ScrollView style={{marginTop: 0}}  >
-                        <TextInput
-                            maxLength={POST_MAX_LENGTH}
-                            ref={(r) => this.postInputRef = r}
-                            onSelectionChange={this.onSelectionChange}
-                            placeholderTextColor='rgba(0,0,0,0.1)'
-                            style={styles.textarea}
-                            multiline
-                            placeholder={this.placeholderTitle}
-                            value={this.state.content}
-                            onChangeText={(text) => this.changeContent(text)}
+                        <ScrollView style={{marginTop: 0}}  >
+                            <TextInput
+                                maxLength={POST_MAX_LENGTH}
+                                ref={(r) => this.postInputRef = r}
+                                onSelectionChange={this.onSelectionChange}
+                                placeholderTextColor='rgba(0,0,0,0.1)'
+                                style={styles.textarea}
+                                multiline
+                                placeholder={this.placeholderTitle}
+                                value={this.state.content}
+                                onChangeText={(text) => this.changeContent(text)}
                         />
-                    </ScrollView>
+                        </ScrollView>
                         {
                             this.state.showCommunity &&
                             <CommunityView
                                 grouplist={this.state.grouplist}
-                                onPress={this.selectGroupList.bind(this)}
+                                onPress={(i) => this.selectGroupList(i)}
                             />
                         }
-                </ScrollView>
-                <KeyboardAvoidingView behavior={Platform.select({android:'height', ios: 'padding'})}>
-                    <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                        <Button transparent style={{ marginBottom: 10, height: 60 }} onPress={this.attachImage}>
-                            {
-                                this.state.image ?
-                                <View style={{ flexDirection: 'row', width: 90, height: 50, alignItems: 'center', justifyContent: 'center' }}>
-                                        <Image source={{ uri: `data:image/png;base64,${this.state.image}` }} resizeMode="cover" style={{ width: 90, height: 50 }} />
-                                        <View style={styles.deleteIconContainer}>
-                                            <Icon name="md-close-circle" style={styles.deleteIcon} />
-                                        </View>
-                                    </View>
-                                    :
-                                    <Image source={require("img/upload_image.png")} resizeMode="contain" style={{ width: 90, height: 50, tintColor: 'gray' }} />
-                            }
-                            </Button>
-                            <Button transparent style={{ marginBottom: 10, height: 60 }} onPress={() => this.setShareSelected(!this.state.share)}>
-                                <View style={{ flexDirection: 'row', backgroundColor: this.state.share ? '#71c9f1' : '#ccc', borderRadius: 30, width: 60, height: 60, alignItems: 'center', justifyContent: 'center' }} >
-                                    <Image resizeMode="cover" style={{width: 35, height: 35}} source={require('../../../assets/share_icon.png')} />
-                                </View>
-                            </Button>
-                    </View>
-                    <Footer style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: PLColors.main, paddingLeft: 10, paddingRight: 10 }}>
+                    </ScrollView>
+                    <KeyboardAvoidingView behavior={Platform.select({android:'height', ios: 'padding'})}>
                         {
+                            this.renderAttachments()
+                        }
+                        <Footer style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: PLColors.main, paddingLeft: 10, paddingRight: 10 }}>
+                            {
                             this.state.posts_remaining
                             ? <Label style={{ color: 'white', fontSize: 10 }}>
                                 You have <Label style={{ fontWeight: 'bold' }}>{this.state.posts_remaining}</Label> posts left in this group
                             </Label>
                             :<Label />
                         }
-                        {/* Related: GH 151 */}
-                        <Label style={{ color: 'white' }}>
-                            {(POST_MAX_LENGTH - this.state.content.length)}
-                        </Label>
-                    </Footer>
-                </KeyboardAvoidingView>
-            </Container>
+                            {/* Related: GH 151 */}
+                            <Label style={{ color: 'white' }}>
+                                {(POST_MAX_LENGTH - this.state.content.length)}
+                            </Label>
+                        </Footer>
+                    </KeyboardAvoidingView>
+                </Container>
             </Animatable.View >
         );
     }

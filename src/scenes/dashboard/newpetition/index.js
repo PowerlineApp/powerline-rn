@@ -73,7 +73,7 @@ class NewPetition extends Component {
     }
 
     componentDidMount() {
-        var { token } = this.props;
+        var { token, group } = this.props;
         loadUserData(token).then(data => {
             this.setState({
                 profile: data
@@ -84,23 +84,30 @@ class NewPetition extends Component {
             });
 
         getGroups(token).then(ret => {
+            console.log('~=> ', group);
+            let showCommunity = true, selectedGroupIndex = -1;
+            if (group && group !== 'all'){
+                showCommunity = false;
+                selectedGroupIndex = ret.payload.map(grouObj => grouObj.id).indexOf(group);
+            }
             this.setState({
-                grouplist: ret.payload
+                grouplist: ret.payload,
+                showCommunity, selectedGroupIndex
             });
-        })
-            .catch(err => {
-
-            });
+    
+        }).catch(err => {
+                
+        });
     }
 
     toggleCommunity() {
-        Keyboard.dismiss()        
+        Keyboard.dismiss();        
         this.setState({
             showCommunity: !this.state.showCommunity
         });
     }
 
-    onPetitionTitleRef = r => {
+    onPetitionTitleRef (r) {
         this.petitionTitleRef = r;
     }
 
@@ -117,7 +124,7 @@ class NewPetition extends Component {
                 this.setState({
                     petition_remaining: data.petitions_remaining
                 });
-                this.petitionTitleRef.focus()                
+                this.petitionTitleRef.focus();                
             })
             .catch(err => {
 
@@ -224,7 +231,7 @@ class NewPetition extends Component {
         });
     }
 
-    attachImage = () => {
+    attachImage () {
         if (this.state.image) {
             this.setState({ image: null });
         } else {
@@ -254,63 +261,98 @@ class NewPetition extends Component {
     }
 
     isSelected(social) {
-        return this.state.share
+        return this.state.share;
         // return false;
     }
 
     // changes the selection if user will share or not
     setShareSelected(bool) {
-        this.setState({ share: bool })
+        this.setState({ share: bool });
+        if (bool){
+            showToast('Create petition to share');
+        } else {
+            showToast('Canceling poster creation');
+        }
+    }
+
+    renderAttachments(){
+        let height = 30;
+        let width = 40;
+
+        return (
+            <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' }}>
+                <View>
+                    <Button transparent style={{ height: height, width: width }} onPress={() => this.attachImage()}>
+                        {
+                        this.state.image 
+                        ? <View style={{ flexDirection: 'row', width: width, height: height, alignItems: 'center', justifyContent: 'center' }}>
+                            <Image source={{ uri: `data:image/png;base64,${this.state.image}` }} resizeMode='cover' style={{ width: width, height: height }} />
+                            <View style={styles.deleteIconContainer}>
+                                <Icon name='md-close-circle' style={styles.deleteIcon} />
+                            </View>
+                        </View>
+                    : <Image source={require("img/upload_image.png")} resizeMode='contain' style={{ width: width, height: height, tintColor: 'gray' }} />
+                }
+                    </Button>
+                </View>
+                <View>
+                    <Button transparent style={{ height: width, width: width }} onPress={() => this.setShareSelected(!this.state.share)}>
+                        <View style={{ flexDirection: 'row', backgroundColor: this.state.share ? '#71c9f1' : '#ccc', borderRadius: 80, width: width, height: 40, alignItems: 'center', justifyContent: 'center' }} >
+                            <Image resizeMode='stretch' style={{width: height, height: height}} source={require('../../../assets/share_icon.png')} />
+                        </View>
+                    </Button>
+                </View>
+            </View>);
     }
 
     render () {
         return (
             <Container style={styles.container}>
-            <Header style={styles.header}>
-                <Left>
-                    {
+                <Header style={styles.header}>
+                    <Left>
+                        {
                         this.state.sharing
                         ? null
                         : <Button transparent onPress={() => Actions.pop()} style={{ width: 50, height: 50 }}  >
                             <Icon active name='arrow-back' style={{ color: 'white' }} />
                         </Button>
                     }
-                </Left>
-                <Body>
-                    <Title style={{ color: 'white' }}>New Petition</Title>
-                </Body>
-                <Right>
-                    <Button transparent onPress={() => this.createPetition()}>
-                        <Label style={{ color: 'white' }}>Send</Label>
-                    </Button>
-                </Right>
-            </Header>
-                    <List>
-                        <ListItem style={styles.community_container} onPress={() => this.toggleCommunity()}>
-                            <View style={styles.avatar_container}>
-                                <View style={styles.avatar_wrapper}>
-                                    <Thumbnail square style={styles.avatar_img} source={{ uri: this.state.profile.avatar_file_name + '&w=50&h=50&auto=compress,format,q=95' }} />
-                                </View>
-                                <View style={styles.avatar_subfix} />
+                    </Left>
+                    <Body>
+                        <Title style={{ color: 'white' }}>New Petition</Title>
+                    </Body>
+                    <Right>
+                        <Button transparent onPress={() => this.createPetition()}>
+                            <Label style={{ color: 'white' }}>Send</Label>
+                        </Button>
+                    </Right>
+                </Header>
+                <List>
+                    <ListItem style={styles.community_container} onPress={() => this.toggleCommunity()}>
+                        <View style={styles.avatar_container}>
+                            <View style={styles.avatar_wrapper}>
+                                <Thumbnail square style={styles.avatar_img} source={{ uri: this.state.profile.avatar_file_name + '&w=50&h=50&auto=compress,format,q=95' }} />
                             </View>
+                            <View style={styles.avatar_subfix} />
+                        </View>
                         <Body style={styles.community_text_container}>
                             <Text style={{color: 'white'}}>
                                 {this.state.selectedGroupIndex == -1 ? 'Select a community' : this.state.grouplist[this.state.selectedGroupIndex].official_name}
                             </Text>
                         </Body>
                         <Right style={styles.communicty_icon_container}>
-                        {
+                            {
                             this.state.sharing 
                             ? <Text style={{color: '#fff'}}>{'[+]'}</Text>
                             : <Icon name='md-create' style={{ color: 'white' }} />
                         }
-                    </Right>
+                        </Right>
                     </ListItem>
                 </List>
-            <ScrollView scrollEnabled={false} keyboardShouldPersistTaps={'handled'} style={styles.main_content} >
-                {
+                <ScrollView scrollEnabled={false} keyboardShouldPersistTaps={'handled'} style={styles.main_content} >
+                    {
                     this.state.displaySuggestionBox && this.state.suggestionList.length > 0
-                    ? <ScrollView style={{position: 'absolute', top: 20, zIndex: 3}} keyboardShouldPersistTaps="always"  >
+                    ? <ScrollView style={{position: 'absolute', top: 20, zIndex: 3}} keyboardShouldPersistTaps='always'  >
                         <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
                     </ScrollView>
                     : <ScrollView />
@@ -318,7 +360,7 @@ class NewPetition extends Component {
                     <ScrollView style={{ marginTop: 0 }}>
                         <TextInput
                             placeholder='Give a title to your petition here'
-                            ref={this.onPetitionTitleRef}
+                            ref={(r) => this.onPetitionTitleRef(r)}
                             style={styles.input_text}
                             autoCorrect={false}
                             value={this.state.title}
@@ -340,51 +382,29 @@ class NewPetition extends Component {
                         this.state.showCommunity &&
                         <CommunityView
                             grouplist={this.state.grouplist}
-                            onPress={this.selectGroupList.bind(this)}
+                            onPress={(i) => this.selectGroupList(i)}
                         />
                     }
-            </ScrollView>
-            <KeyboardAvoidingView behavior={Platform.select({android:'height', ios: 'padding'})}>
-                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                    <Button transparent style={{ marginBottom: 10, height: 60 }} onPress={this.attachImage}>
-                        {
-                            this.state.image ?
-                            <View style={{ flexDirection: 'row', width: 90, height: 50, alignItems: 'center', justifyContent: 'center' }}>
-                                    <Image source={{ uri: `data:image/png;base64,${this.state.image}` }} resizeMode="cover" style={{ width: 90, height: 50 }} />
-                                    <View style={styles.deleteIconContainer}>
-                                        <Icon name="md-close-circle" style={styles.deleteIcon} />
-                                    </View>
-                                </View>
-                                :
-                                <Image source={require("img/upload_image.png")} resizeMode="contain" style={{ width: 90, height: 50, tintColor: 'gray' }} />
-                        }
-                        </Button>
-                        <Button transparent style={{ marginBottom: 10, height: 60 }} onPress={() => this.setShareSelected(!this.state.share)}>
-                            <View style={{ flexDirection: 'row', backgroundColor: this.state.share ? '#71c9f1' : '#ccc', borderRadius: 30, width: 60, height: 60, alignItems: 'center', justifyContent: 'center' }} >
-                                <Image resizeMode="cover" style={{width: 35, height: 35}} source={require('../../../assets/share_icon.png')} />
-                            </View>
-                        </Button>
-                </View>
-                <Footer style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: PLColors.main, paddingLeft: 10, paddingRight: 10 }}>
+                </ScrollView>
+                <KeyboardAvoidingView behavior={Platform.select({android:'height', ios: 'padding'})}>
                     {
+                        this.renderAttachments()
+                    }
+                    <Footer style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: PLColors.main, paddingLeft: 10, paddingRight: 10 }}>
+                        {
                         this.state.petition_remaining
                         ? <Label style={{ color: 'white', fontSize: 10 }}>
                             You have <Label style={{ fontWeight: 'bold' }}>{this.state.petition_remaining}</Label> petitions left in this group
                         </Label>
                         :<Label />
                     }
-                    {/* Related: GH 151 */}
-                    <Label style={{ color: 'white' }}>
-                        {(PETITION_MAX_LENGTH - this.state.content.length)}
-                    </Label>
-                </Footer>
-            </KeyboardAvoidingView>
-        </Container>
-
-
-
-
-
+                        {/* Related: GH 151 */}
+                        <Label style={{ color: 'white' }}>
+                            {(PETITION_MAX_LENGTH - this.state.content.length)}
+                        </Label>
+                    </Footer>
+                </KeyboardAvoidingView>
+            </Container>
         );
     }
 }

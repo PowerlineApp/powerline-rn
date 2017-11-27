@@ -238,7 +238,10 @@ class Newsfeed extends Component {
 
     renderHeader(group){
         return (group && group.group != 'all' &&
-        <TouchableOpacity onPress={() => Actions.groupprofile({ id: this.props.selectedGroup.group })}>
+        <TouchableOpacity onPress={() => {
+            if (group.header !== 'local' && group.header !== 'state' && group.header !== 'country')
+            Actions.groupprofile({ id: this.props.selectedGroup.group })}
+            }>
             {
 
                 this.state.showAvatar
@@ -258,7 +261,7 @@ class Newsfeed extends Component {
         // code above is from Thiago, leaving it commented, for now conversationView is decided on hardcode
         // let conversationView = this.props.group != 'all' && this.props.payload.length <= this.props.groupLimit;
 
-        // console.log('selected group', this.props.selectedGroup)
+        // console.log('selected group', this.props)
 
 
         let dataArray = this.state.dataArray;
@@ -270,7 +273,7 @@ class Newsfeed extends Component {
             conversationView = false;
         }
 
-        // console.log('newsfeed render')
+        console.log('newsfeed render', this.props)
 
         return (
             <Container style={{flex: 1}}>
@@ -298,7 +301,7 @@ class Newsfeed extends Component {
                             inverts the list when in conversationView - this is necessary to make the refresh work on the bottom with the builtin listview onRefresh
                             which is impossible to make on android without any native code
                         */
-                        style={{  transform: [{ scaleY: conversationView ? -1 : 1 }] }}
+                        style={{ marginBottom: 48, transform: [{ scaleY: conversationView ? -1 : 1 }] }}
                         
 
                         onScroll={(event) => this.onScroll(event, conversationView)}
@@ -357,8 +360,8 @@ const mapStateToProps = state => ({
     count: state.activities.count,
     profile: state.user.profile,
     userId: state.user.id,
-    selectedGroup: state.activities.selectedGroup
-    // group: state.activities.group,
+    selectedGroup: state.activities.selectedGroup,
+    group: state.activities.group,
     // groupName: state.activities.groupName,
     // groupAvatar: state.activities.groupAvatar,
     // groupLimit: state.activities.groupLimit,

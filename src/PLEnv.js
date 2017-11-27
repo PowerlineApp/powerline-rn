@@ -9,8 +9,8 @@ module.exports = {
     testMenuEnabled: true,
     //We need to ask Igor if we should be using this API or the one at api-dev.powerlinegroups.com
     // API_URL: 'https://api.powerli.ne/api',
-    // API_URL: 'https://api-staging.powerli.ne/api',
-    API_URL: 'https://api-dev.powerli.ne/api',
+    API_URL: 'https://api-staging.powerli.ne/api',
+    // API_URL: 'https://api-dev.powerli.ne/api',
     version: 101,
     fontFamily: undefined,
     PER_PAGE: 20,

@@ -14,22 +14,22 @@ class CrowdfundingSwitch extends Component{
             mode: '',
             pickervisible: false,
             is_crowdfunding: false
-        }
+        };
     }
     openModal(mode){
-        this.setState({mode, pickervisible: true})
+        this.setState({mode, pickervisible: true});
     }
 
     formatDate(date){
         return date 
         ? moment(date).format('MMMM Do YYYY')
-        : 'Pick a date.'
+        : 'Pick a date.';
     }
     
     formatHour(date){
         return date 
         ? moment(date).format('hh:mm')
-        : 'Pick an hour.'
+        : 'Pick an hour.';
     }
 
     updateAnswer(key, value){
@@ -47,7 +47,7 @@ class CrowdfundingSwitch extends Component{
             goal: '',
             pickervisible: false,
             is_crowdfunding: bool
-        }, () => this.updateProps())
+        }, () => this.updateProps());
     }
 
     handlePicker(content){
@@ -84,22 +84,22 @@ class CrowdfundingSwitch extends Component{
                         <View style={styles.crowdfundingGoal}>
                             <Text>Crowdfunding goal:</Text>
                             <View style={styles.answerOptionContainer}>
-                            {[
-                                <TextInput
-                                    maxLength={10000}
-                                    keyboardType={'numeric'}
-                                    underlineColorAndroid='rgba(0,0,0,0)'
-                                    ref={(r) => this.descriptionRef = r}
-                                    onSelectionChange={this.onSelectionChange}
-                                    placeholderTextColor='rgba(0,0,0,0.1)'
-                                    style={styles.crowdfundingGoalInput}
-                                    value={this.state.goal}
-                                    onChangeText={(amount) => this.updateAnswer('goal', amount)}
+                                {[
+                                    <TextInput
+                                        maxLength={10000}
+                                        keyboardType={'numeric'}
+                                        underlineColorAndroid='rgba(0,0,0,0)'
+                                        ref={(r) => this.descriptionRef = r}
+                                        onSelectionChange={this.onSelectionChange}
+                                        placeholderTextColor='rgba(0,0,0,0.1)'
+                                        style={styles.crowdfundingGoalInput}
+                                        value={this.state.goal}
+                                        onChangeText={(amount) => this.updateAnswer('goal', amount)}
                                 />,
-                                <View style={styles.suffixContainer} >
-                                    <Text style={styles.suffix} >USD</Text>
-                                </View>
-                            ]}
+                                    <View style={styles.suffixContainer} >
+                                        <Text style={styles.suffix} >USD</Text>
+                                    </View>
+                                ]}
                             </View>
                         </View>
                         <View style={styles.crowdFundingDeadLine}>
@@ -123,7 +123,7 @@ class CrowdfundingSwitch extends Component{
                     </View>
                 }
             </View>
-        )
+        );
     }
 }
 

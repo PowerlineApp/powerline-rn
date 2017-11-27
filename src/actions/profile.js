@@ -10,8 +10,7 @@ import api from '../utils/api';
 // PROFILE SETUP
 async function updateProfileSetup(token: string, id: number, data: object): Promise<Action> {
   LOG('Update Profile API', id, data);
-  const response = await api.put(token, `/v2/groups/${id}`, data);
-  return response;
+  return api.put(token, `/v2/groups/${id}`, data);
 }
 
 // MEMBERSHIP CONTROL
@@ -95,9 +94,7 @@ async function updateGroupPermissions(token: string, id: number, permissions: st
     return;
   }
 
-  const response = await api.put(token, `/v2/groups/${id}/permission-settings`, { required_permissions: permissions });
-  LOG(response);
-  return response;
+  return api.put(token, `/v2/groups/${id}/permission-settings`, { required_permissions: permissions });
 }
 
 // GROUP INVITES

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, TextInput, TouchableOpacity } from 'react-native';
+import { View, TextInput, TouchableOpacity, Alert } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import { connect } from 'react-redux';
 import {
@@ -21,7 +21,7 @@ import {
     Card
 } from 'native-base';
 import PLColors from 'PLColors';
-import { updateUserProfile, loadUserProfileById, verifyCode, sendCode } from 'PLActions';
+import { findByUsernameEmailOrPhone, updateUserProfile, loadUserProfileById, verifyNumber, verifyCode, sendCode } from 'PLActions';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import ImageSelector from '../../common/PLImageSelector'
 import PLButton from 'PLButton';
@@ -57,9 +57,6 @@ class VerifyProfile extends Component {
 
     updateUser() {
         let {zip, address1, address2, city, state, email, country, phone} = this.state
-        // at this point, if user changed his phone, it is already done. it doesnt seem right, he should validate his phone first.
-        // this same logic should happen when registering: what happens if user types the wrong number??
-        // we need an endpoint just to send an sms!
         updateUserProfile(this.props.token, {zip, address1, address2, city, state, email, country, phone})
             .then(response => {
                 console.log(response)
@@ -132,36 +129,60 @@ class VerifyProfile extends Component {
         let {phone, code, countryCode} = this.state;
         countryCode = countryCode || '+1';    
         this.setState({code: ''})
-        verifyCode(countryCode + phone, code).then(r => r.json()).then(r => {
-            if (r.token){
-                // here validation worked.
-                this.setState({showPhoneScreen: false})
-            }
-            // what to do here??? user's phone was updated, but he did not validate it... change it back? and if he did not have a phone???
-            // ask Jesse/Igor.
-
-            this.setState({loading: false})
-        }).catch(e => {
-            // same as comment above.
-            this.setState({loading: false})
+        verifyCode(countryCode + phone, code).then(r => {
+            // user successfully validated his phone, so its a real deal.
+            this.setState({showPhoneScreen: false, loading: false, phone: countryCode + phone})
+        }).catch(error => {
+            Alert.alert('Invalid code',
+            '',
+            [{text: 'Ok', onPress: () => {
+                this.setState({loading: false, phone: '', showPhoneScreen: false, enterCode: false})
+            }}],
+            {cancelable: false})
         })
     }
 
     async sendCode(){
+        let {phone, countryCode} = this.state;
+        countryCode = countryCode || '+1';        
+        phone = countryCode + phone;
         this.setState({loading: true});
-        let {countryCode, phone} = this.state;
-        countryCode = countryCode || '+1';
+        try {
+            // check if number is available and send
+            let verified = await findByUsernameEmailOrPhone({phone});
+            console.log('find', verified);         
+            verifyNumber(phone).then(r => {
+                this.setState({loading: false, enterCode: true})
+                console.log('send code success', r);
+            }).catch(e => {
+                console.log('send code fail', e)
+                this.setState({loading: false})
+                setTimeout(() => {
+                    alert(e.message);
+                }, 200)
+                console.log(e);
+            })
+        } catch (error) {
+            Alert.alert('Invalid data',
+            error,
+            [{text: 'Ok', onPress: () => {
+                this.setState({loading: false})
+            }}],
+            {cancelable: false})
+        }
+        // this.setState({loading: true});
+        // let {countryCode, phone} = this.state;
+        // countryCode = countryCode || '+1';
         
-        // update user's phone
-        await updateUserProfile(this.props.token, {phone: phone});
-        // send code via sms
-        await sendCode(countryCode + phone);
-        this.setState({enterCode: true, loading: false})
+        // // update user's phone
+        // // await updateUserProfile(this.props.token, {phone: phone});
+        // // send code via sms
+        // await sendCode(countryCode + phone);
+        // this.setState({enterCode: true, loading: false})
     }
 
     renderPhoneScreen(){
         return <PhoneVerification
-        onRegister={() => this.register()}
         onBack={() => this.setState({showPhoneScreen: false})}
         type='login'
         onSendCode={() => this.sendCode()}   
@@ -179,16 +200,18 @@ class VerifyProfile extends Component {
 
 
     render() {
-        // console.log('this.state', this.state);
+        console.log('this.state', this.state);
         if (this.state.showPhoneScreen){
             return this.renderPhoneScreen();
         }
 
-
         let {zip, address1, address2, city, state, email, country, phone} = this.state
         console.log({zip, address1, address2, city, state, email, country, phone})
             return (
-            <Content contentContainerStyle={{alignItems: 'center'}}>
+            <Content contentContainerStyle={{alignItems: 'center', marginTop: 20}}>
+            <Button transparent onPress={() => Actions.pop()} style={{ width: 200, height: 50 }}  >
+                          <Icon active name='arrow-back' style={{ color: '#6A6AD5' }} />
+                      </Button>
                 <View style={{position: 'absolute', borderRadius: 25, flex: 1, zIndex: 3, marginTop: 16}}>
                     <ImageSelector onConfirm={(i) => this.updateUserAvatar(i)} iconSize={20} iconColor='#000' onError={err => console.log(err)}/>
                 </View> 

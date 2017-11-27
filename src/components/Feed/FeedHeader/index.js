@@ -228,7 +228,7 @@ class FeedHeader extends Component {
         case 'post':
         case 'user-petition':
             thumbnail = item.owner.avatar_file_path ? item.owner.avatar_file_path : '';
-            title = item.owner ? item.owner.first_name : '' + ' ' + item.owner ? item.owner.last_name : '';
+            title = item.user.full_name;//item.owner ? item.owner.first_name : '' + ' ' + item.owner ? item.owner.last_name : '';
             canInviteUpvoters = isBoosted;
             canSpam = true;
             break;

@@ -117,7 +117,7 @@ class GroupSelector extends Component {
     _renderStateGroup() {
         if (this.props.state !== 'State') {
             let group = this.props.groupList.find(group => group.official_name === this.props.state)
-            console.log('State', group)
+            // console.log('State', group)
             return (
                     <ListItem icon style={{ paddingVertical: 5 }} onPress={() => this.goToGroupFeed(group, 'state')} >
                     <Left>

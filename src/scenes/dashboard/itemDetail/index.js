@@ -47,6 +47,7 @@ import FeedActivity from '../../../components/Feed/FeedActivity';
 import Options from '../../../components/Feed/Options';
 
 import SuggestionBox from '../../../common/suggestionBox';
+import { showToast } from '../../../utils/toast';
 
 const { youTubeAPIKey } = require('PLEnv');
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
@@ -190,16 +191,17 @@ class ItemDetail extends Component {
     }
 
     async onShare(share, entity){
-        if (!share) return
-
+        if (!share) return;
+        
         // to avoid double clicks, etc
-        console.log(this.state.sharing);
+        // console.log(this.state.sharing);
         // WARN('aigmentity', entity);
         // console.log('sharing... 1');
         if (this.state.sharing) return;
-
+        
         // console.log('sharing... 2');
         this.setState({sharing: true});
+        showToast('Generating poster now...');
 
         let type = 'poll';
         if (entity.post) {
@@ -887,7 +889,7 @@ class ItemDetail extends Component {
     }
 
     _renderPostOrUserPetitionCard(item, state) {
-        console.log('got here')
+        // console.log('got here')
         return (
             <View>
                 {
@@ -944,7 +946,8 @@ class ItemDetail extends Component {
         //User can share anyone's post from a public (local/state/country) group, but can only share his own items from private groups
         if (item.group.group_type_label !== "local"
             && item.group.group_type_label !== "state"
-            && item.group.group_type_label !== "country")
+            && item.group.group_type_label !== "country"
+            && item.user.id !== this.props.profile.id)
             {
                 return null;
             }

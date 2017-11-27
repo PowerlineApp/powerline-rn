@@ -47,32 +47,32 @@ class GroupBankAccount extends Component {
 
     onSave(params) {
         const { group, createGroupAccounts } = this.props;
-        createGroupAccounts(group.id, params);    
+        createGroupAccounts(group.id, params, {delete: this.state.updating ? {id: this.state.removeId} : null});
+        this.setState({updating: false, removeId: null});
     }   
 
     listBankAccounts(array) {
         return array.map((item, index) => {
+            console.log(item);
             return (
                 <List key={index}>
                     <Item>
-                        <Card>
-                            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                                <View style={{flex: 2}}>
-                                    <View style={componentStyles.listItemStyle}>
-                                        <Label>Bank</Label>
-                                        <Text>{item.bank_name}</Text>
-                                    </View>
-                                    <View style={componentStyles.listItemStyle}>
-                                        <Label>Last 4 Digits</Label>
-                                        <Text>{item.last4}</Text>
-                                    </View>
+                        <Card style={{flexDirection: 'row', alignItems: 'center'}}>
+                            <View style={{flex: 2}}>
+                                <View style={componentStyles.listItemStyle}>
+                                    <Label>Bank</Label>
+                                    <Text>{item.bank_name}</Text>
                                 </View>
-                                <View style={{flex: 1}}>
-                                    <TouchableOpacity style={[componentStyles.listItemStyle, {alignItems: 'center'}]} onPress={() => this.props.deleteGroupAccounts(this.props.group.id, item.id)}>
-                                        <Icon name='trash' size={50} />
-                                        <Text style={{textAlign: 'center', fontSize: 12, color: 'grey'}}>Delete Account</Text>
-                                    </TouchableOpacity>
+                                <View style={componentStyles.listItemStyle}>
+                                    <Label>Last 4 Digits</Label>
+                                    <Text>{item.last4}</Text>
                                 </View>
+                            </View>
+                            <View style={{flex: 1}}>
+                                <TouchableOpacity style={[componentStyles.listItemStyle, {alignItems: 'center'}]} onPress={() => this.setState({updating: true, removeId: item.id })}>
+                                    <Icon name='trash' size={50} />
+                                    <Text style={{textAlign: 'center', fontSize: 12, color: 'grey'}}>Update Account</Text>
+                                </TouchableOpacity>
                             </View>
                         </Card>
                     </Item>
@@ -82,8 +82,9 @@ class GroupBankAccount extends Component {
     }
 
     renderAccountsOrForm() {
+        console.log(this.props.accounts);
         if(!this.props.loading) {
-            if(this.props.accounts && this.props.accounts.length >= 1 && !this.state.createNewOne) {
+            if(!this.state.updating && this.props.accounts && this.props.accounts.length >= 1 && !this.state.createNewOne) {
                 return this.listBankAccounts(this.props.accounts);
             } else {
                 return ( <PLBankAccount onSave={this.onSave} /> );
@@ -154,3 +155,4 @@ const componentStyles = {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(GroupBankAccount);
+

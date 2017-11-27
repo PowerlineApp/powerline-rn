@@ -77,10 +77,8 @@ async function register2(data){
         }).then(res => {
             console.log('res register', res);
             if (res.status === 200){
-                console.log('11');
                 res.json().then(r => fullfill(r));
             } else {
-                console.log('22');
                 res.json().then(r => reject(r));
             }
         }).catch(e => {console.log('hey'); reject(e);});

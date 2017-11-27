@@ -18,6 +18,7 @@ import {
 } from 'native-base';
 import { View, Text } from 'react-native';
 import { loadGroupPermissions, updateGroupPermissions } from 'PLActions';
+import { showToast } from '../../../../utils/toast';
 
 import { Label, Input, PopupLabel, CheckBoxItem } from '../components';
 import styles from '../styles';
@@ -75,7 +76,13 @@ class GroupPermissions extends Component {
       return result;
     }, []);
     
-    dispatch(updateGroupPermissions(token, groupId, permissionsArray));
+    updateGroupPermissions(token, groupId, permissionsArray).then(r => {
+    console.log(r)
+    showToast('Updated with success');
+    }).catch(e => {
+      console.log(e);
+      showToast('Update failed')
+    })
   }
 
   render() {

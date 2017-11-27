@@ -85,7 +85,6 @@ class GroupProfile extends Component{
         }
 
         var { token, id } = this.props;
-        console.log('ioddd', id);
         getGroupDetails(token, id).then(data => {
             this.setState({
                 data: data,

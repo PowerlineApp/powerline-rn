@@ -712,11 +712,14 @@ const groupRemoveTag = (groupId, tagId, dispatch, getState) =>  {
 }
 
 const groupSelectTag = (groupId, tag) => (dispatch, getState) => {
-    const tags = getState().groupManagement.groupOwnTags
-    if(tags.includes(tag)) {
+    const tags = getState().groupManagement.groupOwnTags;
+    console.log('H=~->', tags, tag);
+    if(tags.map(i => i.name).includes(tag.name)) {
+        console.log('~> going to remove tag')
         dispatch({type: ActionTypes.GROUP_DESELECT_TAG, payload: tag})
         groupRemoveTag(groupId, tag.id, dispatch, getState)
     } else {
+        console.log('~> going to add tag')
         dispatch({type: ActionTypes.GROUP_SELECT_TAG, payload: tag})
         groupSaveTag(groupId, tag.id, dispatch, getState)
     }
@@ -763,6 +766,8 @@ const groupCreateBankAccount = (groupId, data) => (dispatch, getState) => {
         } else {
             dispatch({type: ActionTypes.GROUP_POST_BANK_ACCOUNT_ERROR, payload: res})
         }
+
+        dispatch(groupGetBankAccounts(groupId))
     })
     .catch(err => {
         dispatch({type: ActionTypes.GROUP_POST_BANK_ACCOUNT_ERROR, payload: err})
@@ -782,7 +787,6 @@ const groupDeleteBankAccount = (groupId, accountId) => (dispatch, getState) => {
     })
     .then(response => response.json())
     .then(res => {
-        console.log(res)
         if(!res.code) {
             dispatch({type: ActionTypes.GROUP_DELETE_BANK_ACCOUNT_SUCCESS, payload: accountId})
             dispatch({type: ActionTypes.GROUP_DELETE_BANK_ACCOUNT_LOADING, payload: false})
