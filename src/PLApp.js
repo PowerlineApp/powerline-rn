@@ -23,10 +23,10 @@ var { StackNavigator } = require('react-navigation');
 var RegisterScene  = require('./scenes/auth/RegisterScene');
 var TourScene = require('./scenes/auth/TourScene');
 import OneSignal from 'react-native-onesignal';
+// console.log = () => {};
 
 var PLApp = React.createClass({
     displayName: 'PLApp',
-
     componentDidMount: function () { 
         Stripe.init({
             publishableKey: stripeAPIKey

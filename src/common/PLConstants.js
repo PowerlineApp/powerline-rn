@@ -9,7 +9,7 @@ var { width, height } = Dimensions.get('window');
 
 var termsOfService = [
     {
-        title: 'Effective Date: 2/11/2014',
+        title: 'Effective Date: 11/15/2017',
         desc: 'American Civix Technologies L3C d/b/a Powerline (hereinafter “Powerline,” “we” or “us”) provides the website www.powerli.ne (the “Website”) and the mobile application known as Powerline (the “App”), and the data, information, tools, updates and similar materials delivered or provided by Powerline (the “Services”), subject to your agreement to and compliance with the conditions set forth in this Terms and Conditions Agreement (the “Agreement”). This Agreement sets forth the legally binding terms and conditions governing your use of the Website and the Services. If you do not agree to these terms and conditions, you may not use the Website, the App or the Services. \n\n Powerline may revise or update the Terms and Conditions by posting an amended Agreement on the Website or through the App. Your continued use of the Website, App or Services after a change of which we make you aware signifies your agreement to the revised terms.',
     },
     {
@@ -84,7 +84,7 @@ var termsOfService = [
 
 var privacyPolicy = [
     {
-        title: 'Your Privacy Rights\nEffective Date: 2/11/2014',
+        title: 'Your Privacy Rights\nEffective Date: 11/15/2017',
         desc: 'This Privacy Policy describes the types of information American Civix Technologies L3C d/b/a Powerline (hereinafter “Powerline,” “we” or “us”) gathers, how we use it, with whom the information may be shared, what choices are available to you regarding collection, use and distribution of information and our efforts to protect the information you provide to us through our website at powerli.ne (the “Website”) and through our mobile application known as “Powerline” (the “App”). By using the Website or the App, and the functionality, data, information, updates, and similar materials delivered or provided through or by the Website or the App (the “Service”), you hereby consent to allow us to process information in accordance with this Policy. Please also refer to our [Terms of Use], which are incorporated as if fully recited herein.\n\nIf our information retention or usage practices change, we will let you know by posting the Privacy Policy changes on the Website or through the App. Please refer to the “Effective Date” above to see when this Policy was last updated.',
     },
     {

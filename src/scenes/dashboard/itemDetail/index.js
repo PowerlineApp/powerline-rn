@@ -609,7 +609,7 @@ class ItemDetail extends Component {
             <TouchableOpacity onPress={() => this._onAddComment()}>
                 <CardItem style={styles.commentAddField}>
                     <Left>
-                        <Thumbnail small source={thumbnail ? { uri: thumbnail + '&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                        <Thumbnail small source={thumbnail ? { uri: thumbnail + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                         <Body>
                             <Text style={styles.addCommentTitle}>Add your thoughts...</Text>
                             <Menu
@@ -628,7 +628,7 @@ class ItemDetail extends Component {
                                     </ScrollView>
                                     <CardItem>
                                         <Left>
-                                            <Thumbnail small source={thumbnail ? { uri: thumbnail + '&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                                            <Thumbnail small source={thumbnail ? { uri: thumbnail + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                                             <Body>
                                                 <TextInput
                                                     autoFocus
@@ -718,7 +718,7 @@ class ItemDetail extends Component {
         return (
             <CardItem style={style}>
                 <Left>
-                    <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail + '&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                    <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                     <Body style={{ alignSelf: 'flex-start' }}>
                         <TouchableOpacity onPress={() => this._onCommentBody(comment)}>
                             <Text style={styles.rootTitle}>{title}</Text>
@@ -865,7 +865,7 @@ class ItemDetail extends Component {
             imgURL = item.user_petition.image;
         }
         if (!imgURL) return;
-        
+        console.warn(imgURL)
         return (
                 <CardItem>
                     <Left>
@@ -877,7 +877,7 @@ class ItemDetail extends Component {
                                 <View style={styles.imageContainer}>
                                     <ImageLoad
                                         placeholderSource={require('img/empty_image.png')}
-                                        source={{ uri: imgURL + '&w=400&h=400&auto=compress,format,q=95' }}
+                                        source={{ uri: imgURL + '&w=500&h=500&auto=compress,q=95' }}
                                         style={styles.image}
                                     />
                                 </View>

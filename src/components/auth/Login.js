@@ -134,12 +134,9 @@ class Login extends React.Component {
       <View style={styles.signUpContainer}>
         <PLButton
           type="bordered"
-          caption="Sign Up With E-mail"
+          caption="Sign Up With Phone"
           onPress={this.onSignUp}
         />
-        <TouchableOpacity onPress={this.onForgotPassword}>
-          <Text style={styles.forgotText}>Forgot Password</Text>
-        </TouchableOpacity>
       </View>
     );
   };
@@ -199,15 +196,17 @@ class Login extends React.Component {
   }
 
   finishRecovery(){
+    let {dispatch} = this.props;
     this.setState({loading: true})
     let {username, token} = this.state.newDevice;
-    finishRecovery(username, token).then(r => r.json()).then(r =>{
+    finishRecovery({username, token}).then(r => r.json()).then(r =>{
       console.log(r);
       if (r.token){
         dispatch({ type: 'LOGGED_IN', data: r });
       }
       this.setState({loading: false})
     }).catch(e => {
+      console.warn(e);
       Alert.alert('Invalid data',
       'Validation failed.',
       [
@@ -338,7 +337,7 @@ class Login extends React.Component {
               <View style={{flex: 1, alignItems: 'center'}}>
                 <PLButton
                   type='bordered'
-                  caption={'I have a new device'}
+                  caption={'I have a new phone number'}
                   onPress={() => this.setState({showNewDevice: true})}
                   />
               </View>

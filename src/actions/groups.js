@@ -760,6 +760,7 @@ const groupCreateBankAccount = (groupId, data) => (dispatch, getState) => {
     })
     .then(response => response.json())
     .then(res => {
+        console.log('RES ON CREATING BANK ACCOUNT', res)
         if(!res.code) {
             dispatch({type: ActionTypes.GROUP_POST_BANK_ACCOUNT_SUCCESS, payload: res.bank_accounts[0]})
             dispatch({type: ActionTypes.GROUP_POST_BANK_ACCOUNT_LOADING, payload: false})

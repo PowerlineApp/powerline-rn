@@ -244,7 +244,7 @@ class FeedHeader extends Component {
                     <TouchableHighlight onPress={() => this.onPressThumbnail(item)} underlayColor={'#fff'}>
                         <View>
                             <Thumbnail small
-                                source={thumbnail ? { uri: thumbnail + '&w=50&h=50&auto=compress,format,q=95' } : require("img/blank_person.png")}
+                                source={thumbnail ? { uri: thumbnail + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")}
                                 defaultSource={require("img/blank_person.png")}
                             />
                         </View>

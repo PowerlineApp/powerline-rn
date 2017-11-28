@@ -144,7 +144,7 @@ class GroupMembers extends Component{
                     <List style={{marginTop: 17}}>
                         <ListItem style={{backgroundColor: 'white', marginLeft: 0, paddingLeft: 17}}>
                             {this.props.avatar_file_path?
-                            <Thumbnail style={styles.avatar} square source={{uri: this.props.avatar_file_path+'&w=50&h=50&auto=compress,format,q=95'}}/>:
+                            <Thumbnail style={styles.avatar} square source={{uri: this.props.avatar_file_path+'&w=150&h=150&auto=compress,format,q=95'}}/>:
                             <View style={styles.avatar}/>
                             }
                             <Body>
@@ -163,7 +163,7 @@ class GroupMembers extends Component{
                                 return (
                                     <ListItem key={index} style={{backgroundColor: 'white', marginLeft: 0, paddingLeft: 17}} >
                                         <TouchableOpacity onPress={() => this.goToProfile(user.id)} >
-                                            <Thumbnail square source={{uri: user.avatar_file_name+'&w=50&h=50&auto=compress,format,q=95'}}/>
+                                            <Thumbnail square source={{uri: user.avatar_file_name+'&w=150&h=150&auto=compress,format,q=95'}}/>
                                         </TouchableOpacity>
                                         <Body>
                                             <Text onPress={() => this.goToProfile(user.id)} >{user.username}</Text>

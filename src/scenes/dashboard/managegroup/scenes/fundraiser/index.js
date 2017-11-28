@@ -87,7 +87,7 @@ class GroupBankAccount extends Component {
             if(!this.state.updating && this.props.accounts && this.props.accounts.length >= 1 && !this.state.createNewOne) {
                 return this.listBankAccounts(this.props.accounts);
             } else {
-                return ( <PLBankAccount onSave={this.onSave} /> );
+                return ( <PLBankAccount onSave={this.onSave} loadingAccountCreation={this.props.loading} /> );
             }
         } else {
             return (

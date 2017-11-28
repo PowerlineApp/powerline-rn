@@ -203,6 +203,7 @@ function unregisterDevice(token, id) {
 }
 
 function sendRecoveryEmail(data){
+  console.log('=>', data);
   return new Promise((resolve, reject) => {
     fetch(API_URL + '/v2/security/recovery', {
       method: 'POST',

@@ -24,7 +24,7 @@ import {Actions} from 'react-native-router-flux'
 
 var styles = {
     container: {
-        backgroundColor: '#000',
+        backgroundColor: '#006',
         flex: 1,
         position: 'relative',
         justifyContent: 'flex-end'

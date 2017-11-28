@@ -43,9 +43,10 @@ import {
     Alert
 } from 'react-native';
 import { loadUserData, createGroup } from 'PLActions';
+import { showToast } from '../../../utils/toast';
 
 class CreateGroup extends Component{
-    typeList = ["Educational", "Non-Profit(Not Campaign)", "Non-Profit(Campaign)", "Business", "Cooperative/Union", "Other"];
+    typeList = ["Educational", "Non-Profit (Not Campaign)", "Non-Profit (Campaign)", "Business", "Cooperative/Union", "Other"];
 
     constructor(props){
         super(props);
@@ -110,10 +111,15 @@ class CreateGroup extends Component{
 
     onSend(){
         //Actions.groupprofile();
+        if (this.state.loading) return;
+        this.setState({loading: true});
         
+        showToast('Creating group...')
+
         var { token } = this.props;
         createGroup(token, this.state)
         .then(data => {
+            this.setState({loading: false})
             if(!data.message){
                 Alert.alert(
                     "Alert",
@@ -134,6 +140,7 @@ class CreateGroup extends Component{
             
         })
         .catch(err => {
+            this.setState({loading: false})
             alert(JSON.stringify(err));
         });
         

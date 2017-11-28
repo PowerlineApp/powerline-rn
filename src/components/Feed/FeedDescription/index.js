@@ -36,6 +36,7 @@ class FeedDescription extends Component {
   }
 
   _renderAttachedImage(item){
+    if (this.props.isInDetail) return null;
     // console.log(item);
     let imgURL;
     let blur;
@@ -52,9 +53,9 @@ class FeedDescription extends Component {
       blur = '1000';
     }
     return (
-      <View style={{width: 80, marginRight: 0, justifyContent: 'flex-end', alignItems: 'center', alignSelf: 'flex-end'}} >
+      <View style={{width: 80, marginRight: 0, justifyContent: 'flex-end', alignItems: 'center', alignSelf: 'flex-start'}} >
         <Thumbnail medium square
-            source={{uri: imgURL +`&w=400&h=400&blur=${blur}&auto=compress,format,q=95`}}
+            source={{uri: imgURL +`&w=150&h=150&blur=${blur}&auto=compress,format,q=95`}}
             />
       </View>);
     }

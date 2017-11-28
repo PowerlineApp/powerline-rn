@@ -236,7 +236,7 @@ class NewLeaderContent extends Component {
         let subject = state.content;
 
         if (type && petition_title && petition_body && subject)
-            return {type, petition_title, petition_body, subject}; // subject??? - ok
+            return {type, petition_title, petition_body, subject};
 
         if (!petition_title){
             alert("Please create a title for your petition");
@@ -673,7 +673,7 @@ class NewLeaderContent extends Component {
                     <ListItem style={styles.community_container} onPress={() => this.toggleCommunity()}>
                         <View style={styles.avatar_container}>
                             <View style={styles.avatar_wrapper}>
-                                <Thumbnail square style={styles.avatar_img} source={{ uri: this.state.profile.avatar_file_name + '&w=50&h=50&auto=compress,format,q=95' }} />
+                                <Thumbnail square style={styles.avatar_img} source={{ uri: this.state.profile.avatar_file_name + '&w=150&h=150&auto=compress,format,q=95' }} />
                             </View>
                             <View style={styles.avatar_subfix} />
                         </View>

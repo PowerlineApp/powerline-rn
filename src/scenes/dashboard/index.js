@@ -734,12 +734,12 @@ class Home extends Component {
         ]
         if (group && (group.group === 'all' || group.user_role === 'owner' || group.user_role === 'manager'))
         options.unshift(
-            <MenuOption value={'group_announcement'}>
-                <Button iconLeft transparent dark onPress={() => {this.selectNewItem('group_announcement'); Mixpanel.track("Opened New Announcement Form");}}>
-                    <Icon name="volume-up" style={styles.menuIcon} />
-                    <Text style={styles.menuText}>New Group Announcement</Text>
-                </Button>
-            </MenuOption>,
+            // <MenuOption value={'group_announcement'}>
+            //     <Button iconLeft transparent dark onPress={() => {this.selectNewItem('group_announcement'); Mixpanel.track("Opened New Announcement Form");}}>
+            //         <Icon name="volume-up" style={styles.menuIcon} />
+            //         <Text style={styles.menuText}>New Group Announcement</Text>
+            //     </Button>
+            // </MenuOption>,
             <MenuOption value={'group_fundraiser'}>
                 <Button iconLeft transparent dark onPress={() => {this.selectNewItem('group_fundraiser'); Mixpanel.track("Opened New Fundraiser Form");}}>
                     <Icon name="ios-cash" style={styles.menuIcon} />

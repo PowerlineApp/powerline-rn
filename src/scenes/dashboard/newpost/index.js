@@ -202,7 +202,7 @@ class NewPost extends Component {
                 this.refs.animatedView.fadeInDownBig(1000);
                 setTimeout(() => {
                     if (this.state.sharing) this.props.onPost();
-                    else Actions.itemDetail({ entityId: data.id, entityType: 'post', backTo: 'home', share: this.state.share });
+                    else Actions.itemDetail({ type:'replace' , entityId: data.id, entityType: 'post', backTo: 'home', share: this.state.share });
                 }, 200);
             })
             .catch(err => {
@@ -380,7 +380,7 @@ class NewPost extends Component {
                         <ListItem style={styles.community_container} onPress={() => this.toggleCommunity()}>
                             <View style={styles.avatar_container}>
                                 <View style={styles.avatar_wrapper}>
-                                    <Thumbnail square style={styles.avatar_img} source={{ uri: this.state.profile.avatar_file_name + '&w=50&h=50&auto=compress,format,q=95' }} />
+                                    <Thumbnail square style={styles.avatar_img} source={{ uri: this.state.profile.avatar_file_name + '&w=150&h=150&auto=compress,format,q=95' }} />
                                 </View>
                                 <View style={styles.avatar_subfix} />
                             </View>

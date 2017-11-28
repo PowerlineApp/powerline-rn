@@ -94,6 +94,7 @@ class SearchFollowing extends Component {
     }
 
     render() {
+        let users = this.state.users || [];
         return (
             <Container style={styles.container}>
                 <Header style={styles.header}>
@@ -113,11 +114,11 @@ class SearchFollowing extends Component {
                 <Content>
                     <List>
                         {
-                            this.state.users.map((user, index) => {
+                            users.map((user, index) => {
                                 return (
                                     <ListItem avatar onPress={() => this.goToProfile(user.id)} key={index}>
                                         <Left>
-                                            <Thumbnail source={{ uri: user.avatar_file_name + '&w=50&h=50&auto=compress,format,q=95' }} />
+                                            <Thumbnail source={{ uri: user.avatar_file_name + '&w=150&h=150&auto=compress,format,q=95' }} />
                                         </Left>
                                         <Body>
                                             <Text>{user.username}</Text>

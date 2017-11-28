@@ -117,7 +117,7 @@ class PLAddCard extends Component {
                     <View style={{marginVertical: 5}}>
                         <Text style={styles.labelStyle}>Credit Card</Text> 
                         <View style={{borderColor: 'grey', borderWidth: StyleSheet.hairlineWidth,  borderRadius: 25}}>
-                            <PaymentCardTextField style={{borderColor: 'black'}} onParamsChange={(valid, params) => this.handleFieldParamsChange()} />
+                            <PaymentCardTextField style={{borderColor: 'black'}} onParamsChange={(valid, params) => this.handleFieldParamsChange(valid, params)} />
                         </View>
                     </View>
                     <View style={{marginVertical: 5}}>

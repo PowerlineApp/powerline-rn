@@ -356,8 +356,8 @@ class PLBankAccount extends Component {
                     <Agreement />
                     <Text style={styles.bottomError} >{this.state.stripeError}</Text>
 
-                    <Button block style={styles.submitButtonContainer} onPress={() => this.save(this.state)}>
-                        <Label style={{color: 'white'}}>Save</Label>
+                    <Button disabled={this.props.loadingAccountCreation} block style={styles.submitButtonContainer} onPress={() => this.save(this.state)}>
+                        <Label style={{color: 'white'}}>{this.props.loadingAccountCreation ? 'Loading' : 'Save'}</Label>
                     </Button>
                 </Form>
             </Card>

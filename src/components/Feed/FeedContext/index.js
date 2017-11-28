@@ -23,10 +23,11 @@ class FeedContext extends Component {
         let {entry} = this.props;
 
         if (entry.type === "image") {
+            console.warn(entry.imageSrc);
             return (
                 <ImageLoad
                     placeholderSource={require('img/empty_image.png')}
-                    source={{ uri: entry.imageSrc + '&w=400&h=400&auto=compress,format,q=95' }}
+                    source={{ uri: entry.imageSrc + '&w=300&h=300&auto=compress,format,q=95' }}
                     style={styles.image}
                     />
             );

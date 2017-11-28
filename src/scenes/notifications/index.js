@@ -83,7 +83,7 @@ class Notifications extends Component{
                                 return (                                    
                                     <ListItem avatar key={index} onPress={() => this.itemDetail(value)}>
                                         <Left>
-                                            <Thumbnail source={{ uri: value.target.image+'&w=50&h=50&auto=compress,format,q=95' }} />
+                                            <Thumbnail source={{ uri: value.target.image+'&w=150&h=150&auto=compress,format,q=95' }} />
                                         </Left>
                                         <Body>
                                             <Text style={{color: PLColors.main}}>{this.showText(value.html_message)}</Text>

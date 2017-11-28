@@ -152,7 +152,7 @@ class NewPetition extends Component {
         createPetition(token, this.state.grouplist[this.state.selectedGroupIndex].id, this.state.title, this.state.content, this.state.image)
             .then(data => {
                 showToast('Petition Successful!');
-                Actions.itemDetail({ entityId: data.id, entityType: 'user-petition', backTo: 'home', share: this.state.share });
+                Actions.itemDetail({ type:'replace', entityId: data.id, entityType: 'user-petition', backTo: 'home', share: this.state.share });
             })
             .catch(err => {
             });
@@ -269,7 +269,7 @@ class NewPetition extends Component {
     setShareSelected(bool) {
         this.setState({ share: bool });
         if (bool){
-            showToast('Create petition to share');
+            showToast('Create poster to share');
         } else {
             showToast('Canceling poster creation');
         }
@@ -331,7 +331,7 @@ class NewPetition extends Component {
                     <ListItem style={styles.community_container} onPress={() => this.toggleCommunity()}>
                         <View style={styles.avatar_container}>
                             <View style={styles.avatar_wrapper}>
-                                <Thumbnail square style={styles.avatar_img} source={{ uri: this.state.profile.avatar_file_name + '&w=50&h=50&auto=compress,format,q=95' }} />
+                                <Thumbnail square style={styles.avatar_img} source={{ uri: this.state.profile.avatar_file_name + '&w=150&h=150&auto=compress,format,q=95' }} />
                             </View>
                             <View style={styles.avatar_subfix} />
                         </View>

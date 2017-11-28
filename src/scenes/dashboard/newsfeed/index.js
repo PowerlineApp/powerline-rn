@@ -245,7 +245,7 @@ class Newsfeed extends Component {
             {
 
                 this.state.showAvatar
-                ? this.renderFullHeader()
+                ? this.renderSmallHeader()
                 : this.renderSmallHeader()
             }
         </TouchableOpacity>)

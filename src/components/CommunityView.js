@@ -54,7 +54,7 @@ class CommunityView extends PureComponent {
                                 return (
                                     <ListItem key={index} onPress={() => onPress(index)}>
                                         { item.avatar_file_path
-                                        ? <Thumbnail square style={styles.thumbnail} source={{ uri: item.avatar_file_path + '&w=50&h=50&auto=compress,format,q=95'}} />
+                                        ? <Thumbnail square style={styles.thumbnail} source={{ uri: item.avatar_file_path + '&w=150&h=150&auto=compress,format,q=95'}} />
                                         : <View style={styles.thumbnail} />
                                     }
                                         <Body>

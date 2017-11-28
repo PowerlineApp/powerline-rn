@@ -9,7 +9,8 @@ import {
     ScrollView,
     Dimensions,
     Switch,
-    Alert
+    Alert,
+    AsyncStorage
 }  from 'react-native';
 import PLColors from 'PLColors';
 import PLConstants from 'PLConstants';
@@ -359,6 +360,7 @@ class Register extends React.Component{
                     <View style={styles.fieldContainer}>
                         <TextInput
                             placeholder="Country"
+                            maxLength="2"
                             style={styles.textInput}
                             autoCorrect={false}
                             value={country}
