@@ -65,7 +65,7 @@ class GroupMembers extends Component{
         // Need to add the number of users to the alert message
         Alert.alert(
             'Follow All',
-            'Do you want to want to follow all users in this group?',
+            'Are you sure? This means you will get notifications anytime any of these users creates a new post in any shared group (Not recommended!)',
             [
                 {
                     text: 'Cancel',

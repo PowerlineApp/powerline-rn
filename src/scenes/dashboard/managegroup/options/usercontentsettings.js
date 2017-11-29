@@ -68,7 +68,7 @@ class UserContentSettings extends Component {
 
     return (
       <View>
-        <Label small>Limit of user petitions and posts per month{'\n'}(choose value between 1 and 1000)</Label>
+        <Label small>Number of posts or petitions per user per month{'\n'}(choose value between 1 and 1000)</Label>
         <Input
           maxLength={3}
           keyboardType="numeric"
@@ -76,7 +76,7 @@ class UserContentSettings extends Component {
           onChangeText={petition_per_month => this.setState({ petition_per_month })}
         />
 
-        <Label small>Quorum percentage{'\n'}(choose value between 1 and 50)</Label>
+        <Label small>Auto-boosting percentage{'\n'}(choose value between 1 and 50)</Label>
         <Input
           maxLength={2}
           keyboardType="numeric"
@@ -84,7 +84,7 @@ class UserContentSettings extends Component {
           onChangeText={petition_percent => this.setState({ petition_percent })}
         />
 
-        <Label small>Quorum duration in days{'\n'}(choose value between 1 and 30)</Label>
+        <Label small>Post expiration in days{'\n'}(choose value between 1 and 30)</Label>
         <Input
           maxLength={2}
           keyboardType="numeric"

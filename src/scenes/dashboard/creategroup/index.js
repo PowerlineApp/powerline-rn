@@ -123,7 +123,7 @@ class CreateGroup extends Component{
             if(!data.message){
                 Alert.alert(
                     "Alert",
-                    "Way to go! You've created a new Powerline group. Invite your followers from the next screen or login via our website for group management features. Check your e-mail for more information.",
+                    "Way to go! You've created a new Powerline group. Invite all of your followers at once from the next screen, send invites from Manage Group screen, or tell people to search for your group using Search.",
                     [
                         {
                             text: 'OK',

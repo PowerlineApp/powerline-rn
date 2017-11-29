@@ -92,7 +92,7 @@ class MyInfo extends Component {
                         <ListItem>
                             <View style={{paddingHorizontal: 10, flexDirection: 'row'}}>
                                 <Icon name='contact' color={PLColors.main} style={{marginRight: 10}} />
-                                <Text style={{color: 'grey'}}>Referal Code:</Text>
+                                <Text style={{color: 'grey'}}>My Referral Code:</Text>
                             </View>
                             <Text>{this.props.referal_code}</Text>
                         </ListItem>

@@ -93,7 +93,7 @@ class PLBankAccount extends Component {
             this.setState({
                 dobError: true
             });
-            // Alert.alert('User age must be higher than 18 years old');
+            // Alert.alert('You must be at least 18 to setup a bank account');
         } else {
             this.setState({dobError: false});
         }
@@ -204,7 +204,7 @@ class PLBankAccount extends Component {
                     if(token.tokenId) {
                         this.setState({token: token.tokenId, bankSaved: true, tokenLoading: false});
                     } else {
-                        this.setState({tokenLoading: false, stripeError: 'Something Wrong Happened'});
+                        this.setState({tokenLoading: false, stripeError: 'Please make sure you entered all information correctly.'});
                     }
                 })
                 .catch(error => {
@@ -454,7 +454,7 @@ class PLBankAccount extends Component {
                     </View>
                     
                     <View style={{marginVertical: 5}}>
-                        <Text style={styles.labelStyle}>Holder's name</Text> 
+                        <Text style={styles.labelStyle}>Account Holder's Name</Text> 
                         <Item rounded>
                             <Input value={this.state.accountHolderName} placeholder="Holder's Name" onChangeText={text => this.inputChanged('accountHolderName', text)} />
                         </Item>
@@ -525,7 +525,7 @@ const Agreement = () => (
             <Text
                 style={{fontSize: 12, color: 'grey'}}
             >
-                By registering your account, you agree to our
+                By registering your bank account, you agree to our
                 <Text
                     style={{fontSize: 12, color: 'blue'}}
                     onPress={() => Linking.openURL('https://www.powerli.ne/terms')}

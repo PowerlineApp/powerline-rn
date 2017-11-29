@@ -131,7 +131,7 @@ class Profile extends Component{
         ActionSheet.show(
             {
                 options: ['1 hour', '8 hours', '24 hours'],
-                title: 'MUTE NOTIFICATIONS FOR THIS USER'
+                title: 'Temporarily mute notifications from this user'
             },
 
             buttonIndex => {

@@ -86,7 +86,7 @@ class ProfileSetup extends Component {
 
         <Label>Group Type</Label>
         <PopupLabel
-          options={["Educational", "Non-Profit(Not Campaign)", "Non-Profit(Campaign)", "Business", "Cooperative/Union", "Other"]}
+          options={["Educational", "Non-Profit (Not Campaign)", "Non-Profit (Campaign)", "Business", "Cooperative/Union", "Other"]}
           onPress={(official_type) => this.setState({ official_type })}
         >{official_type}</PopupLabel>
 

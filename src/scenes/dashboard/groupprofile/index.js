@@ -126,7 +126,7 @@ class GroupProfile extends Component{
     invite(){
         Alert.alert(
             'Confirm',
-            'Are you sure you want to invite all of your followers to join this group?',
+            'Are you sure you want to invite all of your followers to join this group? This cannot be undone.',
             [
                 {
                     text: 'Cancel',

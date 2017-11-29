@@ -81,7 +81,7 @@ class Answers extends Component {
                                         onChangeText={(amount) => this.updateAnswer('amount', amount, index)}
                                 />,
                                     <View style={styles.suffixContainer} >
-                                        <Text style={styles.suffix} >USD</Text>
+                                        <Text style={styles.suffix} >$ USD</Text>
                                     </View>
                                 ]
                         }

@@ -148,6 +148,7 @@ class Representatives extends Component {
                             }
                         </List>
                         {
+                            // The is_registration_complete is the wrong reference. Button should show to all users if verified.
                             this.props.is_registration_complete
                             ?   <View style={{padding: 20}}>
                                     <Button style={{width: '100%', justifyContent: 'center'}} onPress={Actions.electedLeadersForm} iconRight><Text>Create Representative</Text><Icon name='circle-plus'></Icon></Button>

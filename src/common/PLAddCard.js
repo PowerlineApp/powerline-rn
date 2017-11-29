@@ -95,7 +95,7 @@ class PLAddCard extends Component {
             Stripe.createTokenWithCard(options)
             .then(response => {
                 this.setState({loading: false, error: null});
-                showToast('Card was successfully added.');
+                showToast('Thanks! Your credit card was successfully added.');
                 this.props.onSave(response);
             })
             .catch(err => {
@@ -106,6 +106,7 @@ class PLAddCard extends Component {
             this.setState({loading: false, error: error.message});        
         }
     }
+ //Felipe - This should not be limited to just US
     render() {
         let countryList = [{label:'United States', value:'us'}];
         let currencyList = {
@@ -177,13 +178,13 @@ class PLAddCard extends Component {
                     <View style={{marginVertical: 5}}>
                         <Text style={styles.labelStyle}>Phone</Text> 
                         <Item rounded>
-                            <Input placeholderTextColor={'#ccc'} placeholder='12345678' value={this.state.phone} onChangeText={text => this.inputChanged('phone', text)} />
+                            <Input placeholderTextColor={'#ccc'} placeholder='5555551234' value={this.state.phone} onChangeText={text => this.inputChanged('phone', text)} />
                         </Item>
                     </View>
                     <View style={{marginVertical: 5}}>
-                        <Text style={styles.labelStyle}>Postalcode</Text> 
+                        <Text style={styles.labelStyle}>Postal Code</Text> 
                         <Item rounded>
-                            <Input placeholderTextColor={'#ccc'} placeholder='12345' value={this.state.addressZip} onChangeText={text => this.inputChanged('addressZip', text)} />
+                            <Input placeholderTextColor={'#ccc'} placeholder='90210' value={this.state.addressZip} onChangeText={text => this.inputChanged('addressZip', text)} />
                         </Item>
                     </View>
                     <Text style={styles.errorMessage}>{this.state.error}</Text>

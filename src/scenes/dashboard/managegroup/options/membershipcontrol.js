@@ -20,7 +20,7 @@ import { showToast } from '../../../../utils/toast';
 
 const membershipControlOptions = [
   { name: 'Public (Open to all)', value: 'public' },
-  { name: 'Approval (User is approved by group leader)', value: 'approval' },
+  { name: 'Approval (User is approved by a group leader)', value: 'approval' },
   { name: 'Passcode (User must provide correct passcode to enter)', value: 'passcode' }
 ];
 
@@ -106,7 +106,7 @@ class MembershipControl extends Component {
         fields: this.state.fields.filter(field => field.id !== id)
       });
     } else {
-      alert('Something wrong. Try again');
+      alert('Something was not right. Try again');
     }
   }
 
@@ -161,9 +161,9 @@ class MembershipControl extends Component {
         {
           fields.length === 0
             ?
-            <Label small>There are currently no fields users are required to fill in when joining this group.</Label>
+            <Label small>All users can be required to provide additional information to join the group (e.g. What's your favorite color?).</Label>
             :
-            <Label small>Users are required to answer these questions in order to join the group:</Label>
+            <Label small>Users will be required to answer these questions in order to join the group:</Label>
         }
         {
           fields.map(field => (

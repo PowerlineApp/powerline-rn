@@ -63,7 +63,7 @@ class GroupInvite extends Component {
         const { selectedGroupIndex } = this.state;
         let groupId = null;
         if (selectedGroupIndex == -1) {
-            alert('Please select Group.');
+            alert('Invite upvoters to which group?');
             return;
         }
         groupId = grouplist[selectedGroupIndex].id;

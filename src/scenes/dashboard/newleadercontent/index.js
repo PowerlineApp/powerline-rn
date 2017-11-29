@@ -25,7 +25,7 @@ class NewLeaderContent extends Component{
                 options = {
                     headerTitle: 'New Group Discussion',
                     hasDescription: true,
-                    descriptionPlaceHolder: 'Description Placeholder',
+                    descriptionPlaceHolder: 'Leading a discussion requires good framing, moderation, and follow-through...',
                     attachments: true
                 }
                 break;
@@ -40,9 +40,9 @@ class NewLeaderContent extends Component{
                 options = {
                     headerTitle: 'New Group Petition',
                     hasTitle: true,
-                    titlePlaceholder: 'Group Petition Title',
+                    titlePlaceholder: 'Title - Make it compelling',
                     hasDescription: true,
-                    descriptionPlaceHolder: 'Description Placeholder',
+                    descriptionPlaceHolder: 'Ask your group members to sign and to build support faster than ever...',
                     attachments: true
                 }
                 break;
@@ -50,9 +50,9 @@ class NewLeaderContent extends Component{
                 options = {
                     headerTitle: 'New Group Poll',
                     hasTitle: true,
-                    titlePlaceholder: 'Type question here',
+                    titlePlaceholder: 'Type your question here',
                     hasAnswers: true,
-                    answersPlaceholder: 'Type answer here',
+                    answersPlaceholder: 'Define an answer choice here',
                     addAnswersButton: 'Add answer',
                     answerType: 'poll',
                     attachments: true
@@ -62,14 +62,14 @@ class NewLeaderContent extends Component{
                 options = {
                     headerTitle: 'New Group Event',
                     hasTitle: true,
-                    titlePlaceholder: 'Event title',
+                    titlePlaceholder: 'Title - Make it clear',
                     hasDescription: true,
-                    descriptionPlaceHolder: 'Description Placeholder',
+                    descriptionPlaceHolder: 'All group members will be able to save this to their calendar...',
                     wrapDescription: true,
                     event: true,
                     hasAnswers: true,
                     addAnswersButton: 'Add RSVP Response',
-                    answersPlaceholder: 'Type answer here',
+                    answersPlaceholder: 'e.g. I will be there!',
                     answerType: 'event',
                     attachments: true
                 }
@@ -78,13 +78,13 @@ class NewLeaderContent extends Component{
                 options = {
                     headerTitle: 'New Group Fundraiser',
                     hasTitle: true,
-                    titlePlaceholder: 'Fundraiser title',
+                    titlePlaceholder: 'Title - Make it short',
                     hasDescription: true,
                     wrapDescription: true,                    
-                    descriptionPlaceHolder: 'Type your description here',
+                    descriptionPlaceHolder: 'Why do you need funding? What is your story? Donors will be able to pay with just a couple quick taps...',
                     hasAnswers: 'Add Answer',
                     addAnswersButton: 'Add option',
-                    answersPlaceholder: 'Option description',
+                    answersPlaceholder: 'Option description (e.g. T-Shirt)',
                     answerType: 'donation',
                     attachments: true
                 }

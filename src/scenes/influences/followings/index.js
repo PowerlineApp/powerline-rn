@@ -110,7 +110,7 @@ class Followings extends Component {
     return (
       <ContentPlaceholder
         empty={this.state.followings.length === 0}
-        title="Follow people who you respect!"
+        title="Follow people who you respect and who you want to get notifications from!"
         refreshControl={Platform.OS === 'android' &&
           <RefreshControl
             refreshing={false}

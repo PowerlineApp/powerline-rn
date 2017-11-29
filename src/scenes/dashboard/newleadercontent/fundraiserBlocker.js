@@ -21,8 +21,8 @@ class FundraiserBlocker extends Component {
         return <Modal transparent visible={this.state.visible} >
             <View style={styles.background} >
                 <View style={styles.prompt}>
-                    <Text style={styles.promptTitle} >This group does not have an Bank Account setup yet</Text>
-                    <Text style={styles.promptContent} >It seems that your group doesn't have any bank account registered. Please add a bank account to your group or ask the group owner to do so. </Text>
+                    <Text style={styles.promptTitle} >Missing Bank Account</Text>
+                    <Text style={styles.promptContent} >It seems that your group doesn't have any bank account registered. Please add a bank account to your group or ask the group owner to do so.</Text>
                     <View style={styles.buttonsRow}>
                         <Button style={styles.button} onPress={() => {this.setState({visible: false}); Actions.pop();}}>
                             <Text>Cancel</Text>

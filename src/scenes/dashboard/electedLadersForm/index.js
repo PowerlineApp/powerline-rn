@@ -48,7 +48,7 @@ class ElectedLeadersForm extends Component {
         if(!nextProps.loading && nextProps.representative) {
             Alert.alert(
                 `Success`,
-                `${this.state.official_title ? this.state.official_title : 'Your representative'} was added as a representative. It will be reviewed by a superuser`,
+                `${this.state.official_title ? this.state.official_title : 'Your representative'} was submitted for review. Approval pending.`,
                 [
                     {
                         text: 'Dismiss',
@@ -67,6 +67,7 @@ class ElectedLeadersForm extends Component {
         this.setState({avatar: image});
     }
 
+    //Felipe - Why is this limited to the US? This will work in any country. 
     grabDataFromForm (data) {
         if(data.country === "US" || data.country === 'us') {
             const obj = {

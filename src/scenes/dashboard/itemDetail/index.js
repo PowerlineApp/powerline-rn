@@ -421,7 +421,7 @@ class ItemDetail extends Component {
             this.loadComments();
             this.resetEditComment();
         } else {
-            alert(response.message ? response.message : 'Something went wrong to edit');
+            alert(response.message ? response.message : 'Something went wrong. Could not edit!');
             this.resetEditComment();
         }
         this.menuComment && this.menuComment.close();
@@ -432,7 +432,7 @@ class ItemDetail extends Component {
         if (response.status === 204 && response.ok) {
             this.loadComments();
         } else {
-            alert(response.message ? response.message : 'Something went wrong to delete');
+            alert(response.message ? response.message : 'Something went wrong. Could not delete!');
         }
         this.menuComment && this.menuComment.close();
     }

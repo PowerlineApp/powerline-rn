@@ -34,7 +34,7 @@ class FundRaiser extends Component {
             <View>
                 {
                     hasAccount === 0 && 
-                    <Text>In order to send fundraisers to your group you must provide a bank account first</Text>
+                    <Text>Setup a bank account to send fundraisers. We charge a small fee per transaction only on what you collect!</Text>
                 }
                 <Button block style={styles.submitButtonContainer} onPress={() => Actions.groupBankAccountScene({group: this.props.group})}>
                     <NSLabel style={styles.submitButtonText}>{ hasAccount ? 'Manage Bank Account' : 'Add Bank Account'}</NSLabel>
