@@ -290,7 +290,7 @@ class Register extends React.Component{
                             placeholder="First Name"
                             style={styles.textInput}
                             autoCorrect={false}
-                            autoCapitalize
+                            autoCapitalize={'words'}
                             value={first_name}
                             onChangeText={this.onChangeFirstName}
                             underlineColorAndroid={'transparent'}
@@ -301,7 +301,7 @@ class Register extends React.Component{
                             placeholder="Last Name"
                             style={styles.textInput}
                             autoCorrect={false}
-                            autoCapitalize
+                            autoCapitalize={'words'}
                             value={last_name}
                             onChangeText={this.onChangeLastName}
                             underlineColorAndroid={'transparent'}

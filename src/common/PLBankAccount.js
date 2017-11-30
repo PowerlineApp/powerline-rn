@@ -356,9 +356,13 @@ class PLBankAccount extends Component {
                     <Agreement />
                     <Text style={styles.bottomError} >{this.state.stripeError}</Text>
 
-                    <Button disabled={this.props.loadingAccountCreation} block style={styles.submitButtonContainer} onPress={() => this.save(this.state)}>
-                        <Label style={{color: 'white'}}>{this.props.loadingAccountCreation ? 'Loading' : 'Save'}</Label>
-                    </Button>
+                    {
+                          this.props.loading 
+                          ? <Spinner color={'blue'} />
+                          : <Button disabled={this.props.loading} block style={styles.submitButtonContainer} onPress={() => this.save(this.state)}>
+                              <Label style={{color: 'white'}}>Save</Label>
+                          </Button>
+                    }
                 </Form>
             </Card>
         );
@@ -485,7 +489,7 @@ class PLBankAccount extends Component {
                         ?   <Button block style={styles.submitButtonContainer} onPress={() => this.generateToken(this.state)}>
                             <Label style={{color: 'white'}}>Submit</Label>
                         </Button>
-                        :   <Spinner />
+                        :   <Spinner color={'blue'} />
                     }
                 </Form>
             </Card>
@@ -515,7 +519,8 @@ const styles = {
 };
 
 const mapStateToProps = (state) => ({
-    user: state.user.profile
+    user: state.user.profile,
+    loading: state.groupManagement.loading
 });
 export default connect(mapStateToProps)(PLBankAccount);
 

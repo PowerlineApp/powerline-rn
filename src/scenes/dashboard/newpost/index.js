@@ -178,10 +178,10 @@ class NewPost extends Component {
     createPost() {
         var { token } = this.props;
         var groupId = null;
-        // if (this.state.posts_remaining <= 0){
-        //     alert('You do not have any posts left in this group');
-        //     return;
-        // }
+        if (this.state.posts_remaining <= 0){
+            alert('You do not have any posts left in this group');
+            return;
+        }
 
 
         if (this.state.selectedGroupIndex == -1) {
@@ -354,6 +354,7 @@ class NewPost extends Component {
     }
     
     render() {
+        console.log(this.state.displaySuggestionBox, this.state.suggestionList);
         return (
             <Animatable.View style={{flexDirection: 'row'}} animation={'fadeInUpBig'} duration={800} ref='animatedView'  >
                 <Container style={styles.container}>

@@ -85,6 +85,9 @@ class ItemDetail extends Component {
         this.item = null;
         this.commentsCount = 0;
         this.nextCursor = null;
+
+        this.onChangeComment = this.onChangeComment.bind(this);
+        this.onSelectionChange = this.onSelectionChange.bind(this);
     }
 
     componentWillMount() {
@@ -512,16 +515,27 @@ class ItemDetail extends Component {
     }
 
     substitute(mention) {
+        console.log('----------------------------------------------------------------------------')
+        console.log('----------------------------------------------------------------------------')
+        console.log('----------------------------------------------------------------------------')
+        console.log('----------------------------------------------------------------------------')
+        console.log('----------------------------------------------------------------------------')
+        console.log('----------------------------------------------------------------------------')
         let { init, end } = this.state;
         let newContent = this.state.commentText;
         let initialLength = newContent.length;
-
+        
         let firstPart = newContent.substr(0, init);
         let finalPart = newContent.substr(end, initialLength);
-
+        
         let finalString = firstPart + mention + finalPart;
-
+        console.log(finalString)
+        
         this.setState({ commentText: finalString, displaySuggestionBox: false, lockSuggestionPosition: end });
+        this.addCommentInput.setNativeProps({text: finalString});// = finalString;
+        console.log(this.addCommentInput)
+        console.log('----------------------------------------------------------------------------')
+        // console.log(this.addCommentInput.value)
     }
 
     onSelectionChange(event) {
@@ -537,10 +551,6 @@ class ItemDetail extends Component {
             for (i = start - 1; i >= 0; i--) {
                 if (text.charAt(i) === ' ') break;
                 if (text.charAt(i) === '@' && (i === 0 || text.charAt(i - 1) === ' ')) {
-                    // if (text.slice(i, i + 9) === "@everyone" && userRole === 'owner' && userRole === 'manager') {
-                    //     alert("Are you sure you want to alert everyone in the group?");
-                    //     break;
-                    // }
                     if (text.charAt(i + 1) && text.charAt(i + 1) !== ' ' && text.charAt(i + 2) && text.charAt(i + 2) !== ' ') {
                         displayMention = true;
                         for (let j = start - 1; text.charAt(j) && text.charAt(j) !== ' '; j++) end = j + 1;
@@ -597,14 +607,16 @@ class ItemDetail extends Component {
         )
     }
 
-    //Above looks like duplicative of newsfeed / user profile
+    onChangeComment(text){
+        console.log('setting state => ', text)
+        this.setState({commentText: text}, () => console.log(this.state.commentText))
+    }
 
     //Adding a comment to an item
     _renderAddComment() {
         const { props: { profile } } = this;
-        var thumbnail: string = '';
-        thumbnail = profile.avatar_file_name ? profile.avatar_file_name : '';
-
+        let thumbnail = profile.avatar_file_name ? profile.avatar_file_name : '';
+        let {value} = this.state;
         return (
             <TouchableOpacity onPress={() => this._onAddComment()}>
                 <CardItem style={styles.commentAddField}>
@@ -621,10 +633,10 @@ class ItemDetail extends Component {
                                 <MenuOptions optionsContainerStyle={{
                                     backgroundColor: 'white',
                                     width: WINDOW_WIDTH,
-                                    minHeight: Platform.OS === 'android' ? 50 : WINDOW_HEIGHT / 2 + 50
+                                    minHeight: Platform.OS === 'android' ? 50 : ((WINDOW_HEIGHT / 2) + (this.props.displaySuggestionBox ? 40 : 0))
                                 }}>
-                                    <ScrollView keyboardShoulPersisTaps>
-                                        <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
+                                    <ScrollView keyboardShouldPersistTaps='always'>
+                                        <SuggestionBox horizontal substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox && this.state.suggestionList.length > 0} userList={this.state.suggestionList} />
                                     </ScrollView>
                                     <CardItem>
                                         <Left>
@@ -633,13 +645,15 @@ class ItemDetail extends Component {
                                                 <TextInput
                                                     autoFocus
                                                     keyboardShoulPersisTaps
+                                                    placeholder={this.state.placeholderTitle}
                                                     style={styles.commentInput}
-                                                    ref={this.onCommentInputRef} placeholder={this.state.placeholderTitle}
+                                                    ref={this.onCommentInputRef}
                                                     defaultValue={this.state.defaultInputValue}
-                                                    onChangeText={commentText => this.setState({ commentText })}
+                                                    onChangeText={this.onChangeComment}
                                                     onSelectionChange={(e) => this.onSelectionChange(e)}
                                                     multiline
-                                                    numberOfLines={3}
+                                                    onBlur={() => this.setState({displaySuggestionBox: false})}
+                                                    maxHeight={60}
                                                 />
                                             </Body>
                                             <Right style={{ flex: 0.3 }}>

@@ -747,7 +747,7 @@ const groupGetBankAccounts = (groupId) => (dispatch, getState) => {
     });
 }
 
-const groupCreateBankAccount = (groupId, data) => (dispatch, getState) => {
+const groupCreateBankAccount = (groupId, data, cb) => (dispatch, getState) => {
     const token = getState().user.token
     dispatch({type: ActionTypes.GROUP_POST_BANK_ACCOUNT_LOADING, payload: true})
     fetch(API_URL + '/v2/groups/' + groupId + '/bank-accounts', {
@@ -764,13 +764,16 @@ const groupCreateBankAccount = (groupId, data) => (dispatch, getState) => {
         if(!res.code) {
             dispatch({type: ActionTypes.GROUP_POST_BANK_ACCOUNT_SUCCESS, payload: res.bank_accounts[0]})
             dispatch({type: ActionTypes.GROUP_POST_BANK_ACCOUNT_LOADING, payload: false})
+            cb.onSuccess();
         } else {
-            dispatch({type: ActionTypes.GROUP_POST_BANK_ACCOUNT_ERROR, payload: res})
+            dispatch({type: ActionTypes.GROUP_POST_BANK_ACCOUNT_ERROR, payload: res});
+            cb.onError(res)
         }
 
         dispatch(groupGetBankAccounts(groupId))
     })
     .catch(err => {
+        console.log('error', err)
         dispatch({type: ActionTypes.GROUP_POST_BANK_ACCOUNT_ERROR, payload: err})
         dispatch({type: ActionTypes.GROUP_POST_BANK_ACCOUNT_LOADING, payload: false})
         
