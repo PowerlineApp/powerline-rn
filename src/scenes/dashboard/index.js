@@ -193,18 +193,24 @@ class Home extends Component {
         // console.log('Im here...');
         // await AsyncStorage.setItem('freshRegister', 'true'); // for testing.
         AsyncStorage.getItem('freshRegister').then(item => {
-            // if (item === 'true'){
+            if (item === 'true'){
                 Alert.alert('Verify now?', 'Your profile is only 50% complete.', [
                     // missing: configure action buttons for these.
                     {text: "Verify", onPress: () => Actions.verifyProfile()}, 
                     {text: "Later", onPress: () => {
                         let h_48 = (48 * 1000 * 60 * 60);
                         OneSignal.postNotification({
-                            'en': 'Finish your registration!'
-                        }, {send_after: (new Date().getTime() + (48 * 1000 * 60 * 60) )}, data.userId)
+                            'en': 'Remember to finish your registration!'
+                        },
+                        [],
+                        data.userId,
+                        {
+                            send_after: new Date(new Date().getTime() + h_48)
+                        },
+                        )
                     }}
                 ])
-            // }
+            }
         });
         AsyncStorage.setItem('freshRegister', 'false');
     }

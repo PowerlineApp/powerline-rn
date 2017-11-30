@@ -129,7 +129,7 @@ class GroupList extends Component{
                     <Header style={styles.header}>
                         <Left>
                             <Button transparent onPress={this.props.openDrawer}>
-                                <Icon active name="menu" style={{color: 'white'}}/>
+                                <Icon active name='menu' style={{color: 'white'}} />
                             </Button>
                         </Left>
                         <Body>
@@ -138,16 +138,16 @@ class GroupList extends Component{
                         <Right>
                             {/*We need to make it easier for user to tap this button. Larger tappable area needed*/}
                             <Button transparent onPress={() => this.goToSearch()}>
-                                <Icon active name="add-circle" style={{color: 'white'}}/>
+                                <Icon active name='add-circle' style={{color: 'white'}} />
                             </Button>
                         </Right>
                     </Header>
                     <Content padder
-                        refreshControl={Platform.OS === 'android' &&
-                            <RefreshControl
-                            refreshing={this.state.refreshing}
-                            onRefresh={this._onRefresh.bind(this)}
-                        />}
+                        refreshControl={Platform.OS === 'android'
+                        ? <RefreshControl
+                                refreshing={this.state.refreshing}
+                                onRefresh={this._onRefresh.bind(this)}
+                        /> : null}
                         onScroll={(e) => {
                             var offset = e.nativeEvent.contentOffset.y;
                             if (Platform.OS === 'ios' && offset < -3) {
@@ -168,14 +168,14 @@ class GroupList extends Component{
                                                     return (
                                                         <ListItem style={styles.listItem}  key={index2} onPress={() => this.goToProfile(item)}>
                                                             {item.avatar_file_path?
-                                                            <Thumbnail square source={{uri: item.avatar_file_path+'&w=150&h=150&auto=compress,format,q=95'}}/>:
-                                                            <View style={{width: 56, height: 56}}/>
+                                                                <Thumbnail square source={{uri: item.avatar_file_path+'&w=150&h=150&auto=compress,format,q=95'}} />:
+                                                                <View style={{width: 56, height: 56}} />
                                                             }
                                                             <Body>
                                                                 <Text style={styles.text1}>{item.official_name}</Text>
                                                             </Body>
                                                         </ListItem>
-                                                    )                                                    
+                                                    );                                                    
                                                 })
                                             }
                                         </View>
@@ -184,18 +184,18 @@ class GroupList extends Component{
                             }                           
                         </List>
                     </Content>
-                        {/* Turning off Pulse Loader until we can stabilize its performance
+                    {/* Turning off Pulse Loader until we can stabilize its performance
                     <PLOverlayLoader visible={this.state.refreshing} logo />
                         */}
                 </Container>
             </MenuContext>
-        )
+        );
     }
 }
 
 const menuContextStyles = {
-  menuContextWrapper: styles.container,
-  backdrop: styles.backdrop,
+    menuContextWrapper: styles.container,
+    backdrop: styles.backdrop,
 };
 
 const mapStateToProps = state => ({
