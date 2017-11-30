@@ -129,6 +129,13 @@ export default {
     cardDescription: {
         fontSize: 14
     },
+    referral: {
+        backgroundColor: 'ddd',
+        borderColor: 'silver',
+        borderWidth: 1,
+        height: 40,
+        textAlign: 'center'
+    },
 
     submitButtonText: { color: 'white' },
 

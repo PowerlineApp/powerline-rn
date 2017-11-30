@@ -193,7 +193,7 @@ class Home extends Component {
         // console.log('Im here...');
         // await AsyncStorage.setItem('freshRegister', 'true'); // for testing.
         AsyncStorage.getItem('freshRegister').then(item => {
-            if (item === 'true'){
+            // if (item === 'true'){
                 Alert.alert('Verify now?', 'Your profile is only 50% complete.', [
                     // missing: configure action buttons for these.
                     {text: "Verify", onPress: () => Actions.verifyProfile()}, 
@@ -204,7 +204,7 @@ class Home extends Component {
                         }, {send_after: (new Date().getTime() + (48 * 1000 * 60 * 60) )}, data.userId)
                     }}
                 ])
-            }
+            // }
         });
         AsyncStorage.setItem('freshRegister', 'false');
     }
@@ -795,6 +795,7 @@ class Home extends Component {
         //           </Header>
         //           </Container>
         //       );
+        
         return (
             <MenuContext customStyles={menuContextStyles}>
                 <Container>

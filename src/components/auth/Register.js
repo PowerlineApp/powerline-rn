@@ -52,7 +52,7 @@ class Register extends React.Component{
             last_name: isFb? fbData.last_name: "",
             username: isFb? fbData.username: "",
             zip: isFb? fbData.zip: "",
-            country: isFb? fbData.country: DeviceInfo.getDeviceCountry(),
+            country: isFb? fbData.country ? fbData.country :  DeviceInfo.getDeviceCountry() : '',
             email: isFb? fbData.email: "",
             countryCode: '+1',
             is_over_13: false,
@@ -231,6 +231,7 @@ class Register extends React.Component{
                     this.setState({
                         isLoading: false
                     });
+                    AsyncStorage.setItem('freshRegister', 'true');                
                     
                     tour(() => {
                         onLoggedIn(ret);
@@ -360,7 +361,7 @@ class Register extends React.Component{
                     <View style={styles.fieldContainer}>
                         <TextInput
                             placeholder="Country"
-                            maxLength="2"
+                            maxLength={2}
                             style={styles.textInput}
                             autoCorrect={false}
                             value={country}

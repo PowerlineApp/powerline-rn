@@ -6,127 +6,127 @@ import variables from '../../../../../../native-base-theme/variables/platform';
 const { width } = Dimensions.get('window');
 
 export default {
-  container: {
-    backgroundColor: '#e2e7ea',
-    flex: 1,
-  },
-
-  menuContextStyles: {
-    menuContextWrapper: {
-      backgroundColor: '#e2e7ea',
-      flex: 1,
+    container: {
+        backgroundColor: '#e2e7ea',
+        flex: 1,
     },
-    backdrop: {
-      backgroundColor: 'black',
-      opacity: 0.5,
-    }
-  },
 
-  optionContainter: {
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: PLColors.lightText,
-  },
+    menuContextStyles: {
+        menuContextWrapper: {
+            backgroundColor: '#e2e7ea',
+            flex: 1,
+        },
+        backdrop: {
+            backgroundColor: 'black',
+            opacity: 0.5,
+        }
+    },
 
-  header: {
-    backgroundColor: PLColors.main,
-  },
+    optionContainter: {
+        borderWidth: StyleSheet.hairlineWidth,
+        borderColor: PLColors.lightText,
+    },
 
-  groupHeaderContainer: {
-    backgroundColor: 'white',
-    marginLeft: 0,
-    paddingLeft: 17
-  },
+    header: {
+        backgroundColor: PLColors.main,
+    },
 
-  avatar: {
-    width: 80,
-    height: 80
-  },
+    groupHeaderContainer: {
+        backgroundColor: 'white',
+        marginLeft: 0,
+        paddingLeft: 17
+    },
 
-  list: {
-    marginLeft: 17,
-    marginTop: 17,
-    marginRight: 17,
-    marginBottom: 17,
-  },
+    avatar: {
+        width: 80,
+        height: 80
+    },
 
-  borderList: {
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: PLColors.lightText,
-  },
+    list: {
+        marginLeft: 17,
+        marginTop: 17,
+        marginRight: 17,
+        marginBottom: 17,
+    },
 
-  listItem: {
-    backgroundColor: 'white',
-    marginLeft: 0,
-  },
+    borderList: {
+        borderWidth: StyleSheet.hairlineWidth,
+        borderColor: PLColors.lightText,
+    },
 
-  sectionText: {
-    fontSize: 18,
-    color: PLColors.darkGreyText,
-  },
+    listItem: {
+        backgroundColor: 'white',
+        marginLeft: 0,
+    },
 
-  contentItem: {
-    backgroundColor: 'white',
-    paddingLeft: 8,
-    paddingRight: 8,
-    paddingBottom: 8,
-    borderBottomWidth: (1 / PixelRatio.getPixelSizeForLayoutSize(1)),
-    borderColor: '#c9c9c9',
-  },
+    sectionText: {
+        fontSize: 18,
+        color: PLColors.darkGreyText,
+    },
 
-  dashLine: {
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: '#c9c9c9',
-    borderStyle: 'dashed',
-  },
+    contentItem: {
+        backgroundColor: 'white',
+        paddingLeft: 8,
+        paddingRight: 8,
+        paddingBottom: 8,
+        borderBottomWidth: (1 / PixelRatio.getPixelSizeForLayoutSize(1)),
+        borderColor: '#c9c9c9',
+    },
 
-  inputText: {
-    color: PLColors.darkGreyText,
-    fontSize: 18,
-    fontWeight: '300'
-  },
+    dashLine: {
+        borderWidth: StyleSheet.hairlineWidth,
+        borderColor: '#c9c9c9',
+        borderStyle: 'dashed',
+    },
 
-  inputContainer: {
-    height: variables.inputHeightBase,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: PLColors.darkGreyText,
-    borderStyle: 'dashed',
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
+    inputText: {
+        color: PLColors.darkGreyText,
+        fontSize: 18,
+        fontWeight: '300'
+    },
 
-  popupText: {
-    color: PLColors.darkGreyText,
-    fontSize: 18,
-    marginHorizontal: 6,
-    fontWeight: '300',
-  },
+    inputContainer: {
+        height: variables.inputHeightBase,
+        borderWidth: StyleSheet.hairlineWidth,
+        borderColor: PLColors.darkGreyText,
+        borderStyle: 'dashed',
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
 
-  popupIcon: {
-    color: PLColors.blueArrow,
-    marginRight: 6,
-  },
+    popupText: {
+        color: PLColors.darkGreyText,
+        fontSize: 18,
+        marginHorizontal: 6,
+        fontWeight: '300',
+    },
 
-  optionsContainer: {
+    popupIcon: {
+        color: PLColors.blueArrow,
+        marginRight: 6,
+    },
+
     optionsContainer: {
-      backgroundColor: '#fafafa',
-      width
-    }
-  },
+        optionsContainer: {
+            backgroundColor: '#fafafa',
+            width
+        }
+    },
 
-  menuText: { color: '#293f53' },
+    menuText: { color: '#293f53' },
 
-  submitButtonContainer: {
-    backgroundColor: PLColors.main,
-    marginTop: 20,
-    marginBottom: 12
-  },
+    submitButtonContainer: {
+        backgroundColor: PLColors.main,
+        marginTop: 20,
+        marginBottom: 12
+    },
 
-  submitButtonText: { color: 'white' },
+    submitButtonText: { color: 'white' },
 
-  membershipInputContainer: { marginTop: 8, flexDirection: 'row', backgroundColor: '#F2F2F2', justifyContent: 'center' },
-  membershipDeleteIcon: { fontSize: 20, color: 'red' },
-  membershipInput: { flex: 1, borderWidth: 0 },
-  memebershipAddContainer: { marginTop: 8, flexDirection: 'row', justifyContent: 'center' },
-  membershipAddIcon: { fontSize: 24, color: PLColors.main }
+    membershipInputContainer: { marginTop: 8, flexDirection: 'row', backgroundColor: '#F2F2F2', justifyContent: 'center' },
+    membershipDeleteIcon: { fontSize: 20, color: 'red' },
+    membershipInput: { flex: 1, borderWidth: 0 },
+    memebershipAddContainer: { marginTop: 8, flexDirection: 'row', justifyContent: 'center' },
+    membershipAddIcon: { fontSize: 24, color: PLColors.main }
 };
