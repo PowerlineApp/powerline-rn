@@ -13,7 +13,7 @@ import { Actions } from 'react-native-router-flux';
 import { ActionSheet, Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, ListItem, Thumbnail, List, Card, CardItem, Label, Footer } from 'native-base';
 import { ScrollView, FlatList, View, RefreshControl, TouchableOpacity, Image, WebView, Platform, Share } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
-import { loadActivities, resetActivities, votePost, editFollowers, loadActivityByEntityId, createPostToGroup, deletePost, deletePetition } from 'PLActions';
+import { loadActivities, resetActivities, votePost, editFollowers, loadActivityByEntityId, createPostToGroup, deletePost, deletePetition, getGroups } from 'PLActions';
 import styles, { sliderWidth, itemWidth } from './styles';
 import TimeAgo from 'react-native-timeago';
 import ImageLoad from 'react-native-image-placeholder';
@@ -132,6 +132,16 @@ class Newsfeed extends Component {
     _onRefresh() {
         this.props.dispatch(resetActivities());
         this.loadInitialActivities();
+        getGroups(this.props.token)
+        .then(data => {
+            this.props.dispatch([{
+                type: 'LOADED_GROUPS',
+                data: { payload: data.payload }
+            }, {
+                type: 'SET_NEWSFEED_COUNT',
+                count: data.payload.reduce((a, b) => a += b.priority_item_count, 0),
+            }]);
+        });
     }
 
     _onEndReached() {

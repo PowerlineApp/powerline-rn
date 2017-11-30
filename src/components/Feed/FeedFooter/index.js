@@ -1,4 +1,6 @@
 import React, {Component} from 'react';
+import { connect } from 'react-redux';
+
 import {View} from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import { Button, Icon, Left, CardItem, Label } from 'native-base';
@@ -36,11 +38,7 @@ class FeedFooter extends Component {
         // poll/fundraiser/event is ANSWERED - marked as read
         if (item.read) return;
         if (item.zone === 'prioritized'){
-            markAsRead(this.props.token, item.id).then(r => {
-                console.log(r);
-            }).catch(e => {
-                console.log(e);
-            });
+            this.props.markAsRead(this.props.token, item.id);
         }
     }
 
@@ -545,5 +543,4 @@ class FeedFooter extends Component {
 }
 
 
-
-export default FeedFooter;
+export default connect(() => ({}), {markAsRead})(FeedFooter);

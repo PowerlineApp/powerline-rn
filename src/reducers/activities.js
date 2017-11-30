@@ -64,6 +64,12 @@ function activities(state: State = initialState, action: Action): State {
             newsfeedUnreadCount: action.count,
         }
     }
+    if (action.type === 'DECREASE_NEWSFEED_COUNT') {
+        return {
+            ...state,
+            newsfeedUnreadCount: (state.newsfeedUnreadCount -1),
+        }
+    }
 
     if (action.type === 'LOGGED_OUT') {
         payloadStack = [];

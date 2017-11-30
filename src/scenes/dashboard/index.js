@@ -790,6 +790,7 @@ class Home extends Component {
     }
     
     render() {
+        console.log(this.props.newsfeedUnreadCount)
         let {selectedGroup} = this.props;
         //       return (
             // <Container>

@@ -43,10 +43,9 @@ async function loadActivities(token: string, page: ?number = 0, perPage: ?number
     }
 }
 
-async function markAsRead(token, id){
+const markAsRead = (token, id) => (dispatch, state) => {
     console.log('---------------\n----------\n------------------\nmarking as read', `${API_URL}/v2/activities`,[{id: id, read: true}] )
-    try {
-        let response = await fetch(`${API_URL}/v2/activities`,
+        fetch(`${API_URL}/v2/activities`,
         {
           method: 'PATCH',
           headers: {
@@ -54,12 +53,12 @@ async function markAsRead(token, id){
               'Content-Type': 'application/json',
           },
           body: JSON.stringify({activities: [{id: id, read: true}]})
-        });
-        console.log('response', response)
-        return response.json();
-    } catch (error) {
-        
-    }
+        }).then(r => {
+            console.log('response', r)
+            dispatch({type: 'DECREASE_NEWSFEED_COUNT'})
+        }).catch(e => {
+            console.log('error', e)
+        })
 }
 
 

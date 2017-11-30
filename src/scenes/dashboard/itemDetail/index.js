@@ -118,17 +118,13 @@ class ItemDetail extends Component {
         if (item.zone === 'prioritized'){
             // boosted post/petition
             if (item.entity.type === 'post' || item.entity.type === 'user-petition'){
-                markAsRead(this.props.token, item.id).then(r => {
-                    console.log(r);
-                });
+                this.props.markAsRead(this.props.token, item.id);
             }
         }
 
         // discussion
         if (item.entity.type === 'leader-news'){
-            markAsRead(this.props.token, item.id).then(r => {
-                console.log(r)
-            })
+            this.props.markAsRead(this.props.token, item.id);
         }
     }
 
@@ -1093,4 +1089,4 @@ const mapStateToProps = state => ({
     userId: state.user.id,
 });
 
-export default connect(mapStateToProps)(ItemDetail);
+export default connect(mapStateToProps, {markAsRead})(ItemDetail);

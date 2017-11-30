@@ -1,4 +1,6 @@
 import React, {Component} from 'react';
+import { connect } from 'react-redux';
+
 import {View, ScrollView, Text, KeyboardAvoidingView, Platform, Modal} from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import moment from 'moment';
@@ -78,11 +80,7 @@ class Options extends Component {
     markAsRead(item){
         // poll/fundraiser/event is ANSWERED - marked as read
         if (item.read) return;
-        markAsRead(this.props.token, item.id).then(r => {
-            console.log(r);
-        }).catch(e => {
-            console.log(e);
-        });
+        this.props.markAsRead(this.props.token, item.id);
     }
 
 
@@ -126,8 +124,8 @@ class Options extends Component {
     async sendAnswer(token, id, answerId, answerAmount){
         // console.log('sending another answer...', token, id, answerId, answerAmount);
         this.setState({voting: true});
+        this.markAsRead(this.props.item);
         let r = await answerPoll(token, id , answerId, answerAmount);
-        this.markAsRead(item);
         
         // console.log('res => ', r);
         return new Promise((resolve, reject) => 
@@ -231,4 +229,4 @@ const styles = {
 };
 
 
-export default Options;
+export default connect(() => ({}), {markAsRead})(Options);
