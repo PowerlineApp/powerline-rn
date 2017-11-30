@@ -606,7 +606,7 @@ class Home extends Component {
 
     // JC: I believe this loads to the group feed when a group is selected from Group Selector More menu
     selectGroup(group){
-        console.log('SELECTED GROUP', group)
+        // console.log('SELECTED GROUP', group)
         var { token, dispatch } = this.props;
         if (group == 'all') {
             dispatch({ type: 'RESET_ACTIVITIES' });
@@ -615,7 +615,7 @@ class Home extends Component {
         } else {
             let groupObj = this.props.groupList.find(groupObj => groupObj.group_type_label === group);
             if (!groupObj) return;
-            console.log('SELECTED GROUP', groupObj)
+            // console.log('SELECTED GROUP', groupObj)
             
 
             let {id, official_name, avatar_file_path, conversation_view_limit, total_members, user_role} = groupObj;
@@ -628,7 +628,7 @@ class Home extends Component {
     // This is the menu to create new content (GH8)
     selectNewItem(value) {
         let {selectedGroup} = this.props;
-        console.log('selected group ==> ', selectedGroup)
+        // console.log('selected group ==> ', selectedGroup)
         this.bottomMenu.close();
         if (value === 'post'){
             Actions.newpost({group: selectedGroup.group});
@@ -723,7 +723,7 @@ class Home extends Component {
     }
 
     renderMenuOptions(group){
-        console.log('SELECTED GROUP', group);
+        // console.log('SELECTED GROUP', group);
         let options = [
             <MenuOption value={'petition'}>
                 <Button iconLeft transparent dark onPress={() => {this.selectNewItem('petition'); Mixpanel.track("Opened New User Petition Form");}}>

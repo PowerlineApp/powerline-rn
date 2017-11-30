@@ -181,9 +181,10 @@ class GroupSelector extends Component {
         let {id, official_name, avatar_file_path, conversation_view_limit, total_members, user_role} = group;
         // console.log(groupId, groupName, avatar, limit)     
         var { dispatch, token } = this.props;
-        dispatch({type: 'SET_GROUP', data: {header, user_role, id, name: official_name, avatar: avatar_file_path, limit: conversation_view_limit, totalMembers: total_members, conversationView: total_members < conversation_view_limit}});
-        
-        dispatch(loadActivities(token, 0, 20, id));
+        if (this.props.selectedGroupId !== id){
+            dispatch({type: 'SET_GROUP', data: {header, user_role, id, name: official_name, avatar: avatar_file_path, limit: conversation_view_limit, totalMembers: total_members, conversationView: total_members < conversation_view_limit}});
+            // dispatch(loadActivities(token, 0, 20, id));
+        }
         Actions.pop();        
         
     }
@@ -265,7 +266,8 @@ const mapStateToProps = state => ({
     town: state.groups.town,
     state: state.groups.state,
     country: state.groups.country,
-    groupList: state.groups.payload
+    groupList: state.groups.payload,
+    selectedGroupId: state.activities.group.group
 });
 
 

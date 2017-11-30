@@ -35,7 +35,7 @@ const initialState = {
 const payloadStack: Array<Object> = [];
 
 function activities(state: State = initialState, action: Action): State {
-    // console.log('action(activities):', action);
+    console.log('action(activities):', action);
     if (action.type === 'LOADED_ACTIVITIES') {
         payloadStack = payloadStack.concat(action.data.payload);
         return {

@@ -90,11 +90,11 @@ class Newsfeed extends Component {
         const { props: { token, dispatch, page } } = this;
         // console.log('to fetch: ', this.props.selectedGroup)
         const group = nextProps ? nextProps.selectedGroup.group : this.props.selectedGroup.group;
+        console.log('about to load more -------------- loadInitialActivities')
         try {
-            await Promise.race([
-                dispatch(loadActivities(token, 0, 20, group)),
-                timeout(15000),
-            ]);
+            let activities = await loadActivities(token, 0, 20, group);
+            console.log('loaded: ', activities)
+            dispatch(activities);
         } catch (e) {
             this.setState({ isRefreshing: false });
             
@@ -108,6 +108,7 @@ class Newsfeed extends Component {
     }
 
     async loadNextActivities() {
+        console.log('about to load more -------------- loadNextActivities')
         this.setState({ isLoadingTail: true });
         const { props: { token, page, dispatch } } = this;
         const {group} = this.props.selectedGroup;

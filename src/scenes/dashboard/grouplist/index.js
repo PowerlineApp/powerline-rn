@@ -145,8 +145,8 @@ class GroupList extends Component{
                     <Content padder
                         refreshControl={Platform.OS === 'android'
                         ? <RefreshControl
-                                refreshing={this.state.refreshing}
-                                onRefresh={this._onRefresh.bind(this)}
+                            refreshing={this.state.refreshing}
+                            onRefresh={this._onRefresh.bind(this)}
                         /> : null}
                         onScroll={(e) => {
                             var offset = e.nativeEvent.contentOffset.y;
