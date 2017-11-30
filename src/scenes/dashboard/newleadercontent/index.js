@@ -18,81 +18,81 @@ import DefaultLeaderContent from './defaultLeaderContent';
 
 class NewLeaderContent extends Component{
     render(){
-        console.log('!!!!!!!!!!!!!!!!!!!!!')
+        console.log('!!!!!!!!!!!!!!!!!!!!!');
         let options = {};
         switch(this.props.contentType){
-            case 'group_discussion':
-                options = {
-                    headerTitle: 'New Group Discussion',
-                    hasDescription: true,
-                    descriptionPlaceHolder: 'Description Placeholder',
-                    attachments: true
-                }
-                break;
-            case 'group_announcement':
-                options = {
-                    headerTitle: 'New Group Announcement',
-                    hasDescription: true,
-                    descriptionPlaceHolder: 'Description Placeholder',
-                }
-                break;
-            case 'group_petition':
-                options = {
-                    headerTitle: 'New Group Petition',
-                    hasTitle: true,
-                    titlePlaceholder: 'Group Petition Title',
-                    hasDescription: true,
-                    descriptionPlaceHolder: 'Description Placeholder',
-                    attachments: true
-                }
-                break;
-            case 'group_poll':
-                options = {
-                    headerTitle: 'New Group Poll',
-                    hasTitle: true,
-                    titlePlaceholder: 'Type question here',
-                    hasAnswers: true,
-                    answersPlaceholder: 'Type answer here',
-                    addAnswersButton: 'Add answer',
-                    answerType: 'poll',
-                    attachments: true
-                }
-                break;
-            case 'group_event':
-                options = {
-                    headerTitle: 'New Group Event',
-                    hasTitle: true,
-                    titlePlaceholder: 'Event title',
-                    hasDescription: true,
-                    descriptionPlaceHolder: 'Description Placeholder',
-                    wrapDescription: true,
-                    event: true,
-                    hasAnswers: true,
-                    addAnswersButton: 'Add RSVP Response',
-                    answersPlaceholder: 'Type answer here',
-                    answerType: 'event',
-                    attachments: true
-                }
-                break;
-            case 'group_fundraiser':
-                options = {
-                    headerTitle: 'New Group Fundraiser',
-                    hasTitle: true,
-                    titlePlaceholder: 'Fundraiser title',
-                    hasDescription: true,
-                    wrapDescription: true,                    
-                    descriptionPlaceHolder: 'Type your description here',
-                    hasAnswers: 'Add Answer',
-                    addAnswersButton: 'Add option',
-                    answersPlaceholder: 'Option description',
-                    answerType: 'donation',
-                    attachments: true
-                }
-                break;
-            default:
+        case 'group_discussion':
+            options = {
+                headerTitle: 'New Group Discussion',
+                hasDescription: true,
+                descriptionPlaceHolder: 'Description Placeholder',
+                attachments: true
+            };
+            break;
+        case 'group_announcement':
+            options = {
+                headerTitle: 'New Group Announcement',
+                hasDescription: true,
+                descriptionPlaceHolder: 'Description Placeholder',
+            };
+            break;
+        case 'group_petition':
+            options = {
+                headerTitle: 'New Group Petition',
+                hasTitle: true,
+                titlePlaceholder: 'Group Petition Title',
+                hasDescription: true,
+                descriptionPlaceHolder: 'Description Placeholder',
+                attachments: true
+            };
+            break;
+        case 'group_poll':
+            options = {
+                headerTitle: 'New Group Poll',
+                hasTitle: true,
+                titlePlaceholder: 'Type question here',
+                hasAnswers: true,
+                answersPlaceholder: 'Type answer here',
+                addAnswersButton: 'Add answer',
+                answerType: 'poll',
+                attachments: true
+            };
+            break;
+        case 'group_event':
+            options = {
+                headerTitle: 'New Group Event',
+                hasTitle: true,
+                titlePlaceholder: 'Event title',
+                hasDescription: true,
+                descriptionPlaceHolder: 'Description Placeholder',
+                wrapDescription: true,
+                event: true,
+                hasAnswers: true,
+                addAnswersButton: 'Add RSVP Response',
+                answersPlaceholder: 'Type answer here',
+                answerType: 'event',
+                attachments: true
+            };
+            break;
+        case 'group_fundraiser':
+            options = {
+                headerTitle: 'New Group Fundraiser',
+                hasTitle: true,
+                titlePlaceholder: 'Fundraiser title',
+                hasDescription: true,
+                wrapDescription: true,                    
+                descriptionPlaceHolder: 'Type your description here',
+                hasAnswers: 'Add Answer',
+                addAnswersButton: 'Add option',
+                answersPlaceholder: 'Option description',
+                answerType: 'donation',
+                attachments: true
+            };
+            break;
+        default:
         }
         // console.log('options', options)
-        return <DefaultLeaderContent token={this.props.token} group={this.props.group} options={options} type={this.props.contentType} />
+        return <DefaultLeaderContent token={this.props.token} group={this.props.group} options={options} type={this.props.contentType} />;
     }
 }
 

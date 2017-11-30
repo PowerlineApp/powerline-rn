@@ -85,7 +85,7 @@ class SubscriptionLevel extends Component {
         console.log('subscription level props', this.props);
         let hasCard = this.props.cards && this.props.cards.length > 0;
 
-        console.log('~>', this.props.subscription.package_type);
+        // console.log('~>', this.props.subscription.package_type);
         return (
             <View>
                 {
@@ -96,7 +96,7 @@ class SubscriptionLevel extends Component {
                 {
                   subscriptionOptions.map((level, index) => (
                       <Level
-                          isSelected={level.name.toUpperCase() === (this.state.nextLevel || this.props.subscription.package_type || '').toUpperCase()}
+                          isSelected={level.name.toUpperCase() === (this.state.nextLevel || (this.props.subscription && this.props.subscription.package_type) || '').toUpperCase()}
                           name={level.name}
                           price={level.price}
                           title={`${level.title} - ${level.name}`}
@@ -107,7 +107,7 @@ class SubscriptionLevel extends Component {
                   ))
                 }
                 {
-                  (this.state.nextLevel && this.state.nextLevel.toUpperCase() !== this.props.subscription.package_type.toUpperCase()) &&
+                  (this.state.nextLevel && this.state.nextLevel.toUpperCase() !== (this.props.subscription && this.props.subscription.package_type).toUpperCase()) &&
                   <View>
                       <TextInput style={styles.referral} value={this.state.referral} placeholder='Enter referral/coupon' placeholderTextColor='#ddd' onChange={(v) => this.setState({referral: v})} />
                       {

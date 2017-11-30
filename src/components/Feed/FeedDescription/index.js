@@ -107,7 +107,7 @@ class FeedDescription extends Component {
                     { pattern: /#(\w+)/, style: styles.hashtag, onPress: this.handleHashtagPress },
                   ]
                 }
-                numberOfLines={5}
+                numberOfLines={this.props.isInDetail ? null : 5}
                 childrenProps={{ allowFontScaling: false }}
               >
                 {item.description}

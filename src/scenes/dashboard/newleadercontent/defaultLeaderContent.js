@@ -268,8 +268,8 @@ class NewLeaderContent extends Component {
             return false;
         }
         
-        if (options.length <= 0){
-            alert("You need to add at least one option for your poll!");
+        if (options.length < 2){
+            alert("You need to add at least two options for your poll!");
             return false;
         }
         
@@ -309,8 +309,8 @@ class NewLeaderContent extends Component {
             alert("Please create a content for your event");            
             return false;
         }
-        if (options.length < 1){
-            alert('Please insert at least one RSPV answer');
+        if (options.length < 2){
+            alert('Please insert at least two RSPV answer');
             return false;
         }
         if (!initDate){
@@ -366,16 +366,16 @@ class NewLeaderContent extends Component {
         }
 
         if (!title){
-            alert('Please provide a title for your ' + crowdfunding.is_crowdfunding ? 'crowdfunding' : 'fundraiser');
+            alert('Please provide a title for your ' + (crowdfunding.is_crowdfunding ? 'crowdfunding' : 'fundraiser'));
             return false;
         }
         
         if (!content){
-            alert('Please provide a content for your ' + crowdfunding.is_crowdfunding ? 'crowdfunding' : 'fundraiser');
+            alert('Please provide a content for your ' + (crowdfunding.is_crowdfunding ? 'crowdfunding' : 'fundraiser'));
             return false;    
         }
-        if (options.length <= 0){
-            alert('Please provide at least one option for your ' + crowdfunding.is_crowdfunding ? 'crowdfunding' : 'fundraiser');
+        if (options.length < 2){
+            alert('Please provide at least two options for your ' + (crowdfunding.is_crowdfunding ? 'crowdfunding' : 'fundraiser'));
             return false;    
         }
 
@@ -457,7 +457,7 @@ class NewLeaderContent extends Component {
                     console.warn(r);
                     this.sendAttachmentsAndPublish(r, attachments).then((r) => {
                         console.log('published: ', r);
-                        Actions.itemDetail({entityType: 'poll', entityId: r.id});
+                        Actions.itemDetail({type: 'replace', entityType: 'poll', entityId: r.id});
                     }).catch(e => {
                         console.log('failure', e);
                     });

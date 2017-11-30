@@ -21,6 +21,11 @@ class Answers extends Component {
             this.setState({answers});
             this.props.setAnswer(answers);
         }
+        if (this.props.answerType === 'donation'){
+            let answers = [{amount: '0', value: 'No donation right now.', is_user_amount: false, deletable: false}];
+            this.setState({answers});
+            this.props.setAnswer(answers);
+        }
     }
 
     updateAnswer(key, value, index){
@@ -50,7 +55,7 @@ class Answers extends Component {
             <View style={styles.answerMainContainer}>
                 {this.state.allowUserAmount && answers.length > 0 && <Text style={{alignSelf: 'flex-start'}}>Custom?</Text>}
                 {
-                    answers.map(({value, amount, is_user_amount}, index)=>
+                    answers.map(({value, amount, is_user_amount, deletable}, index)=>
                         <View key={index} style={styles.answerOptionContainer}>
                             {
                             this.state.allowUserAmount &&
@@ -96,9 +101,12 @@ class Answers extends Component {
                                 value={value}
                                 onChangeText={(text) => this.updateAnswer('value', text, index)}
                             />
-                            <Button transparent style={styles.answersRemoveOptionButton} onPress={() => this.removeAnswer(index)}>
-                                <Icon name='md-close-circle' style={styles.answersRemoveOptionIcon} />
-                            </Button>
+                            {   deletable !== false &&
+                                <Button transparent style={styles.answersRemoveOptionButton} onPress={() => this.removeAnswer(index)}>
+                                    <Icon name='md-close-circle' style={styles.answersRemoveOptionIcon} />
+                                </Button>
+                            }
+                            
                         </View>)
                 }
             </View>);
