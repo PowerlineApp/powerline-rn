@@ -8,9 +8,7 @@ import _ from 'lodash';
 import { showToast } from 'PLToast';
 import AnimatedButton from './animatedButton';
 
-
-var { MixpanelToken } = require('../../../PLEnv');
-var Mixpanel = require('react-native-mixpanel');
+import {Mixpanel} from 'PLEnv';
 
 class FeedFooter extends Component {
     constructor (props) {
@@ -532,5 +530,4 @@ class FeedFooter extends Component {
 
 
 
-Mixpanel.sharedInstanceWithToken(MixpanelToken);
 export default FeedFooter;

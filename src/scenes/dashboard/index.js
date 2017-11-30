@@ -51,8 +51,8 @@ const { SlideInMenu } = renderers;
 import ShareExtension from 'react-native-share-extension';
 import OneSignal from 'react-native-onesignal';
 var DeviceInfo = require('react-native-device-info');
-var { MixpanelToken } = require('../../PLEnv');
-var Mixpanel = require('react-native-mixpanel');
+import {Mixpanel} from '../../PLEnv';
+
 
 const isIOS = Platform.OS === 'ios';
 
@@ -135,6 +135,14 @@ class Home extends Component {
         this.onOpened = this.onOpened.bind(this);
         this.onReceived = this.onReceived.bind(this);
         this.onRegistered = this.onRegistered.bind(this);
+    }
+
+    componentWillReceiveProps(nextProps){
+        console.log('nextProps', nextProps);
+        if (nextProps.shouldResetHome){
+            this.props.dispatch({type: 'HOME_WAS_RESET'})
+            this.setState({tab1: true, tab2: false, tab3: false, tab4: false})
+        }
     }
 
     componentWillMount() {
@@ -950,8 +958,8 @@ const mapStateToProps = state => ({
     country: state.groups.country,
     newsfeedUnreadCount: state.activities.newsfeedUnreadCount,
     groupList: state.groups.payload,
-    selectedGroup: state.activities.selectedGroup
+    selectedGroup: state.activities.selectedGroup,
+    shouldResetHome: state.drawer.shouldResetHome
 });
 
-Mixpanel.sharedInstanceWithToken(MixpanelToken);
 export default connect(mapStateToProps, bindAction)(Home);

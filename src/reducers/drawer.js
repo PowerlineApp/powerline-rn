@@ -28,6 +28,20 @@ export default function (state:State = initialState, action:Action): State {
       drawerDisabled: false
     };
   }
+  
+  if (action.type === 'REACT_NATIVE_ROUTER_FLUX_RESET' && action.key === 'home') {
+    return {
+      ...state,
+      shouldResetHome: true
+    };
+  }
+  if (action.type === 'HOME_WAS_RESET') {
+    return {
+      ...state,
+      shouldResetHome: action.payload
+    };
+  }
+
 
   return state;
 }

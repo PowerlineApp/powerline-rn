@@ -34,8 +34,8 @@ import { openDrawer, searchGroup, searchForUsersFollowableByCurrentUser, searchP
 import SearchGroups from './groups';
 import SearchUsers from './users';
 import SearchHashtags from './hashtags';
-var { MixpanelToken } = require('../../PLEnv');
-var Mixpanel = require('react-native-mixpanel');
+import {Mixpanel} from 'PLEnv';
+
 
 class Search extends Component {
     static defaultProps = {
@@ -158,5 +158,4 @@ const mapDispatchToProps = dispatch => ({
     openDrawer: () => dispatch(openDrawer())
 });
 
-Mixpanel.sharedInstanceWithToken(MixpanelToken);
 export default connect(mapStateToProps, mapDispatchToProps)(Search);

@@ -50,7 +50,7 @@ export default {
     },
     subtitle: {
         color: '#8694ab',
-        fontSize: 14
+        fontSize: 12,
     },
     description: {
         color: '#21354a',
@@ -150,6 +150,10 @@ export default {
     },
     menuIcon: {
         color: '#223549',
+        width: 25,
+        height: 25,
+    },
+    img: {
         width: 25,
         height: 25,
     },

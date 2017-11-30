@@ -53,8 +53,8 @@ import randomPlaceholder from '../../../utils/placeholder';
 import CommunityView from '../../../components/CommunityView';
 // import { setTimeout } from 'timers';
 const POST_MAX_LENGTH = 5000;
-var { MixpanelToken } = require('../../../PLEnv');
-var Mixpanel = require('react-native-mixpanel');
+import {Mixpanel} from 'PLEnv';
+
 
 
 
@@ -386,7 +386,7 @@ class NewPost extends Component {
                                 <View style={styles.avatar_subfix} />
                             </View>
                             <Body style={styles.community_text_container}>
-                                <Text style={{color: 'white'}}>
+                                <Text style={styles.community_text}>
                                     {this.state.selectedGroupIndex == -1 ? 'Select a community' : this.state.grouplist[this.state.selectedGroupIndex].official_name}
                                 </Text>
                             </Body>
@@ -459,5 +459,4 @@ const mapStateToProps = state => ({
     token: state.user.token
 });
 
-Mixpanel.sharedInstanceWithToken(MixpanelToken);
 export default connect(mapStateToProps)(NewPost);
