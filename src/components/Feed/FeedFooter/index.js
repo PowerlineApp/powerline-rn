@@ -3,7 +3,7 @@ import {View} from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import { Button, Icon, Left, CardItem, Label } from 'native-base';
 import styles from '../styles';
-import { votePost, loadActivityByEntityId, signUserPetition, unsignUserPetition, signLeaderPetition, undoVotePost } from 'PLActions';
+import { votePost, loadActivityByEntityId, signUserPetition, unsignUserPetition, signLeaderPetition, undoVotePost, markAsRead } from 'PLActions';
 import _ from 'lodash';
 import { showToast } from 'PLToast';
 import AnimatedButton from './animatedButton';
@@ -32,8 +32,24 @@ class FeedFooter extends Component {
         Actions[scene]({ entityType: type, entityId: item.entity.id, ...options, postId: item.id, text: scene === 'analyticsView' ? item.description : null });
     }
 
+    markAsRead(item){
+        // poll/fundraiser/event is ANSWERED - marked as read
+        if (item.read) return;
+        if (item.zone === 'prioritized'){
+            markAsRead(this.props.token, item.id).then(r => {
+                console.log(r);
+            }).catch(e => {
+                console.log(e);
+            });
+        }
+    }
+
     // changes the upvote/downvote color to indicate selection, sets the upvote/downvote number before the response comes. if the requisition fails, undo all
     async vote (item, option, cb) {
+        // boosted/post and VOTED - marked as read
+        this.markAsRead(item);
+
+
         // uses lodash.cloneDeep to avoid keeping references
         let originalItem = _.cloneDeep(this.state.item);
         let newItem = _.cloneDeep(this.state.item);

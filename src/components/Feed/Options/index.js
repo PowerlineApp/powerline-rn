@@ -3,7 +3,7 @@ import {View, ScrollView, Text, KeyboardAvoidingView, Platform, Modal} from 'rea
 import {Actions} from 'react-native-router-flux';
 import moment from 'moment';
 import PLAddCard from '../../../common/PLAddCard';
-import { answerPoll, loadUserCards, userAddCard, answerPollPut } from 'PLActions';
+import { answerPoll, loadUserCards, userAddCard, answerPollPut, markAsRead } from 'PLActions';
 import {presentNewCalendarEventDialog} from 'react-native-add-calendar-event';
 import {
     Container,
@@ -75,6 +75,18 @@ class Options extends Component {
         });
     }
 
+    markAsRead(item){
+        // poll/fundraiser/event is ANSWERED - marked as read
+        if (item.read) return;
+        markAsRead(this.props.token, item.id).then(r => {
+            console.log(r);
+        }).catch(e => {
+            console.log(e);
+        });
+    }
+
+
+
     setChecked(index, amount) {
         // console.log(index, amount);
         if (this.state.voting) return;
@@ -112,10 +124,12 @@ class Options extends Component {
     }
 
     async sendAnswer(token, id, answerId, answerAmount){
-        console.log('sending another answer...', token, id, answerId, answerAmount);
+        // console.log('sending another answer...', token, id, answerId, answerAmount);
         this.setState({voting: true});
         let r = await answerPoll(token, id , answerId, answerAmount);
-        console.log('res => ', r);
+        this.markAsRead(item);
+        
+        // console.log('res => ', r);
         return new Promise((resolve, reject) => 
             r.status == 200 ? resolve(r) : reject(r)
         );

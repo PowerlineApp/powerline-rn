@@ -114,14 +114,17 @@ class ItemDetail extends Component {
     markAsRead(item){
         console.log(item.zone, item.entity.type)
         if (item.read) return;
+        // petition or discussion or boosted post/petition is OPENED
         if (item.zone === 'prioritized'){
-            if (item.entity.type === 'post' || item.entity.type === 'user-petition' || item.entity.type === 'leader-petition'){
+            // boosted post/petition
+            if (item.entity.type === 'post' || item.entity.type === 'user-petition'){
                 markAsRead(this.props.token, item.id).then(r => {
                     console.log(r);
                 });
             }
         }
-        
+
+        // discussion
         if (item.entity.type === 'leader-news'){
             markAsRead(this.props.token, item.id).then(r => {
                 console.log(r)

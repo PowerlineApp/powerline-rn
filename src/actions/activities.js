@@ -44,7 +44,7 @@ async function loadActivities(token: string, page: ?number = 0, perPage: ?number
 }
 
 async function markAsRead(token, id){
-    console.log('marking as read', `${API_URL}/v2/activities`,[{id: id, read: true}] )
+    console.log('---------------\n----------\n------------------\nmarking as read', `${API_URL}/v2/activities`,[{id: id, read: true}] )
     try {
         let response = await fetch(`${API_URL}/v2/activities`,
         {
