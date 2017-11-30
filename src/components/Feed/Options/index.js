@@ -58,7 +58,7 @@ class Options extends Component {
         let {token, item} = this.props;
         loadUserCards(this.props.token).then(r => {
             console.log('CARDS => ', r);
-            let shouldAddCard =  !r.length >= 1;
+            let shouldAddCard =  !r.length >= 1 && this.state.options[this.state.checked].amount !== '0';
             if (!shouldAddCard){
                 this.sendAnswer(token, item.entity.id , this.state.options[this.state.checked].id, this.state.options[this.state.checked].is_user_amount ? this.state.amount : null ).then(r => {
                     this.alertMessage();
