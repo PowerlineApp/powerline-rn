@@ -25,8 +25,8 @@ import { getFollowers, unFollowers, acceptFollowers } from 'PLActions';
 import styles from './styles';
 import ContentPlaceholder from '../../../components/ContentPlaceholder';
 import PLOverlayLoader from 'PLOverlayLoader';
-var { MixpanelToken } = require('../../../PLEnv');
-var Mixpanel = require('react-native-mixpanel');
+import {Mixpanel} from 'PLEnv';
+
 
 class Followers extends Component {
   static propTypes = {
@@ -202,5 +202,4 @@ const mapStateToProps = state => ({
   token: state.user.token
 });
 
-Mixpanel.sharedInstanceWithToken(MixpanelToken);
 export default connect(mapStateToProps)(Followers);

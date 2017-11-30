@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity, Alert } from 'react-native';
 import {
     Container,
     Content,
@@ -27,6 +27,7 @@ import Stripe from 'tipsi-stripe';
 import { connect } from 'react-redux';
 import PLBankAccount from '../../../../../common/PLBankAccount';
 import { groupGetBankAccounts, groupCreateBankAccount, groupDeleteBankAccount } from 'PLActions';
+import { showToast } from '../../../../../utils/toast';
 
 class GroupBankAccount extends Component {
     constructor(props) {
@@ -45,10 +46,19 @@ class GroupBankAccount extends Component {
         getGroupAccounts(group.id);
     }
 
+    onCreateSuccess(){
+        showToast('Account registered');
+        this.setState({updating: false, removeId: null});
+    }
+
+    onCreateFail(e){
+        Alert.alert(`Failed to create bank account. Try again later.`);
+        Actions.pop();
+    }
+
     onSave(params) {
         const { group, createGroupAccounts } = this.props;
-        createGroupAccounts(group.id, params, {delete: this.state.updating ? {id: this.state.removeId} : null});
-        this.setState({updating: false, removeId: null});
+        createGroupAccounts(group.id, params, {onSuccess: () => this.onCreateSuccess(), onError: (e) => this.onCreateFail(e)});
     }   
 
     listBankAccounts(array) {
@@ -145,7 +155,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
     getGroupAccounts: (groupId) => dispatch(groupGetBankAccounts(groupId)),
-    createGroupAccounts: (groupId, body) => dispatch(groupCreateBankAccount(groupId, body)),
+    createGroupAccounts: (groupId, body, cb) => dispatch(groupCreateBankAccount(groupId, body, cb)),
     deleteGroupAccounts: (groupId, accountId) => dispatch(groupDeleteBankAccount(groupId, accountId)),
 });
 const componentStyles = {

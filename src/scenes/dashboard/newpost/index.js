@@ -53,8 +53,8 @@ import randomPlaceholder from '../../../utils/placeholder';
 import CommunityView from '../../../components/CommunityView';
 // import { setTimeout } from 'timers';
 const POST_MAX_LENGTH = 5000;
-var { MixpanelToken } = require('../../../PLEnv');
-var Mixpanel = require('react-native-mixpanel');
+import {Mixpanel} from 'PLEnv';
+
 
 
 
@@ -330,7 +330,7 @@ class NewPost extends Component {
         return (
             <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' }}>
                 <View>
-                    <Button transparent style={{ height: height, width: width }} onPress={() => this.attachImage()}>
+                    <Button transparent style={{ height: height }} onPress={() => this.attachImage()}>
                         {
                         this.state.image 
                         ? <View style={{ flexDirection: 'row', width: width, height: height, alignItems: 'center', justifyContent: 'center' }}>
@@ -339,14 +339,16 @@ class NewPost extends Component {
                                 <Icon name='md-close-circle' style={styles.deleteIcon} />
                             </View>
                         </View>
-                    : <Image source={require("img/upload_image.png")} resizeMode='contain' style={{ width: width, height: height, tintColor: 'gray' }} />
+                    : <View style={{ height: height, width: width }} >
+                        <Image source={require("img/upload_image.png")} resizeMode='cover' style={{ width: width, height: height, tintColor: 'gray' }} />
+                    </View>
                 }
                     </Button>
                 </View>
                 <View>
-                    <Button transparent style={{ height: width, width: width }} onPress={() => this.setShareSelected(!this.state.share)}>
-                        <View style={{ flexDirection: 'row', backgroundColor: this.state.share ? '#71c9f1' : '#ccc', borderRadius: 80, width: width, height: 40, alignItems: 'center', justifyContent: 'center' }} >
-                            <Image resizeMode='stretch' style={{width: height, height: height}} source={require('../../../assets/share_icon.png')} />
+                    <Button transparent style={{ height: width }} onPress={() => this.setShareSelected(!this.state.share)}>
+                        <View style={{ flexDirection: 'row', backgroundColor: this.state.share ? '#71c9f1' : '#ccc', borderRadius: width/2, width: width, height: width, alignItems: 'center', justifyContent: 'center' }} >
+                            <Image resizeMode='contain' style={{width: height, height: height, margin: 8}} source={require('../../../assets/share_icon.png')} />
                         </View>
                     </Button>
                 </View>
@@ -354,6 +356,7 @@ class NewPost extends Component {
     }
     
     render() {
+        console.log(this.state.displaySuggestionBox, this.state.suggestionList);
         return (
             <Animatable.View style={{flexDirection: 'row'}} animation={'fadeInUpBig'} duration={800} ref='animatedView'  >
                 <Container style={styles.container}>
@@ -385,7 +388,7 @@ class NewPost extends Component {
                                 <View style={styles.avatar_subfix} />
                             </View>
                             <Body style={styles.community_text_container}>
-                                <Text style={{color: 'white'}}>
+                                <Text style={styles.community_text}>
                                     {this.state.selectedGroupIndex == -1 ? 'Select a community' : this.state.grouplist[this.state.selectedGroupIndex].official_name}
                                 </Text>
                             </Body>
@@ -458,5 +461,4 @@ const mapStateToProps = state => ({
     token: state.user.token
 });
 
-Mixpanel.sharedInstanceWithToken(MixpanelToken);
 export default connect(mapStateToProps)(NewPost);

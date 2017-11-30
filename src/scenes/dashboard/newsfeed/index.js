@@ -13,7 +13,7 @@ import { Actions } from 'react-native-router-flux';
 import { ActionSheet, Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, ListItem, Thumbnail, List, Card, CardItem, Label, Footer } from 'native-base';
 import { ScrollView, FlatList, View, RefreshControl, TouchableOpacity, Image, WebView, Platform, Share } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
-import { loadActivities, resetActivities, votePost, editFollowers, loadActivityByEntityId, createPostToGroup, deletePost, deletePetition } from 'PLActions';
+import { loadActivities, resetActivities, votePost, editFollowers, loadActivityByEntityId, createPostToGroup, deletePost, deletePetition, getGroups } from 'PLActions';
 import styles, { sliderWidth, itemWidth } from './styles';
 import TimeAgo from 'react-native-timeago';
 import ImageLoad from 'react-native-image-placeholder';
@@ -90,11 +90,11 @@ class Newsfeed extends Component {
         const { props: { token, dispatch, page } } = this;
         // console.log('to fetch: ', this.props.selectedGroup)
         const group = nextProps ? nextProps.selectedGroup.group : this.props.selectedGroup.group;
+        console.log('about to load more -------------- loadInitialActivities')
         try {
-            await Promise.race([
-                dispatch(loadActivities(token, 0, 20, group)),
-                timeout(15000),
-            ]);
+            let activities = await loadActivities(token, 0, 20, group);
+            console.log('loaded: ', activities)
+            dispatch(activities);
         } catch (e) {
             this.setState({ isRefreshing: false });
             
@@ -108,6 +108,7 @@ class Newsfeed extends Component {
     }
 
     async loadNextActivities() {
+        console.log('about to load more -------------- loadNextActivities')
         this.setState({ isLoadingTail: true });
         const { props: { token, page, dispatch } } = this;
         const {group} = this.props.selectedGroup;
@@ -131,6 +132,16 @@ class Newsfeed extends Component {
     _onRefresh() {
         this.props.dispatch(resetActivities());
         this.loadInitialActivities();
+        getGroups(this.props.token)
+        .then(data => {
+            this.props.dispatch([{
+                type: 'LOADED_GROUPS',
+                data: { payload: data.payload }
+            }, {
+                type: 'SET_NEWSFEED_COUNT',
+                count: data.payload.reduce((a, b) => a += b.priority_item_count, 0),
+            }]);
+        });
     }
 
     _onEndReached() {

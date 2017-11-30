@@ -50,7 +50,8 @@ const othersStack: Array<Object> = [];
 function groups(state: State = initialState, action: Action): State {
     if (action.type === 'LOADED_GROUPS') {
         const titles = {};
-        payloadStack = payloadStack.concat(action.data.payload);
+        payloadStack = (action.data.payload);
+        othersStack = [];
         action.data.payload.forEach(group => {
             if (group.group_type_label === "local") {
                 titles.town = group.official_name;

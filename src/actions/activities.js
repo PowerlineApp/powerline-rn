@@ -9,7 +9,7 @@ async function loadActivities(token: string, page: ?number = 0, perPage: ?number
     // console.log(`${API_URL}/v2/activities?_format=json&user=${user}&group=${group}&page=${page + 1}&per_page=${perPage}&followed=${followed}`);
     // '/api/v2/activities?user=all&group=all&page=1&per_page=20&followed=true'
     // '/api/v2/activities?user=all&group=all&followed=true&page=0&per_page=20'
-    console.log('API -> ', token, page, perPage, group, user, followed)
+    console.log('loadActivities API -> ', token, page, perPage, group, user, followed)
     try {
         var response = await fetch(`${API_URL}/v2/activities?_format=json&user=${user}&group=${group}&followed=${followed}&page=${page + 1}&per_page=${perPage}`, {
             method: 'GET',
@@ -19,9 +19,6 @@ async function loadActivities(token: string, page: ?number = 0, perPage: ?number
             }
         });
         var json = await response.json();
-
-        // const statistics = await api.get(token, '/v2/user/statistics');
-        // const { priority_item_count } = await statistics.json();
 
         if (json.totalItems) {
             const action = {
@@ -46,10 +43,9 @@ async function loadActivities(token: string, page: ?number = 0, perPage: ?number
     }
 }
 
-async function markAsRead(token, id){
-    console.log('marking as read', `${API_URL}/v2/activities`,[{id: id, read: true}] )
-    try {
-        let response = await fetch(`${API_URL}/v2/activities`,
+const markAsRead = (token, id) => (dispatch, state) => {
+    console.log('---------------\n----------\n------------------\nmarking as read', `${API_URL}/v2/activities`,[{id: id, read: true}] )
+        fetch(`${API_URL}/v2/activities`,
         {
           method: 'PATCH',
           headers: {
@@ -57,12 +53,12 @@ async function markAsRead(token, id){
               'Content-Type': 'application/json',
           },
           body: JSON.stringify({activities: [{id: id, read: true}]})
-        });
-        console.log('response', response)
-        return response.json();
-    } catch (error) {
-        
-    }
+        }).then(r => {
+            console.log('response', r)
+            dispatch({type: 'DECREASE_NEWSFEED_COUNT'})
+        }).catch(e => {
+            console.log('error', e)
+        })
 }
 
 
@@ -103,6 +99,7 @@ async function loadFriendsActivities(token: string, page: ?number = 0, perPage: 
 
 function resetActivities(): ThunkAction {
     return (dispatch) => {
+        console.warn('RESETING ACTIVITIES -----------')
         return dispatch({
             type: 'RESET_ACTIVITIES',
         });

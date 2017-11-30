@@ -35,7 +35,7 @@ const initialState = {
 const payloadStack: Array<Object> = [];
 
 function activities(state: State = initialState, action: Action): State {
-    // console.log('action(activities):', action);
+    console.log('action(activities):', action);
     if (action.type === 'LOADED_ACTIVITIES') {
         payloadStack = payloadStack.concat(action.data.payload);
         return {
@@ -62,6 +62,12 @@ function activities(state: State = initialState, action: Action): State {
         return {
             ...state,
             newsfeedUnreadCount: action.count,
+        }
+    }
+    if (action.type === 'DECREASE_NEWSFEED_COUNT') {
+        return {
+            ...state,
+            newsfeedUnreadCount: (state.newsfeedUnreadCount -1),
         }
     }
 

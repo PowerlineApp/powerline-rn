@@ -1,9 +1,11 @@
 import React, {Component} from 'react';
+import { connect } from 'react-redux';
+
 import {View, ScrollView, Text, KeyboardAvoidingView, Platform, Modal} from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import moment from 'moment';
 import PLAddCard from '../../../common/PLAddCard';
-import { answerPoll, loadUserCards, userAddCard, answerPollPut } from 'PLActions';
+import { answerPoll, loadUserCards, userAddCard, answerPollPut, markAsRead } from 'PLActions';
 import {presentNewCalendarEventDialog} from 'react-native-add-calendar-event';
 import {
     Container,
@@ -75,6 +77,14 @@ class Options extends Component {
         });
     }
 
+    markAsRead(item){
+        // poll/fundraiser/event is ANSWERED - marked as read
+        if (item.read) return;
+        this.props.markAsRead(this.props.token, item.id);
+    }
+
+
+
     setChecked(index, amount) {
         // console.log(index, amount);
         if (this.state.voting) return;
@@ -112,10 +122,12 @@ class Options extends Component {
     }
 
     async sendAnswer(token, id, answerId, answerAmount){
-        console.log('sending another answer...', token, id, answerId, answerAmount);
+        // console.log('sending another answer...', token, id, answerId, answerAmount);
         this.setState({voting: true});
+        this.markAsRead(this.props.item);
         let r = await answerPoll(token, id , answerId, answerAmount);
-        console.log('res => ', r);
+        
+        // console.log('res => ', r);
         return new Promise((resolve, reject) => 
             r.status == 200 ? resolve(r) : reject(r)
         );
@@ -217,4 +229,4 @@ const styles = {
 };
 
 
-export default Options;
+export default connect(() => ({}), {markAsRead})(Options);

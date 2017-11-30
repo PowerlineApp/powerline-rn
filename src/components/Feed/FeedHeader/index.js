@@ -253,7 +253,7 @@ class FeedHeader extends Component {
                         <Text style={styles.title} onPress={() => this.onPressAuthor(item)}>{title}</Text>
                         <Text note style={styles.subtitle} onPress={() => this.onPressGroup(item)}>{item.group.official_name} • <TimeAgo time={item.sent_at} hideAgo /></Text>
                     </Body>
-                    <Right style={{ flex: 0.1 }}>
+                    <Right style={{ flex: 0.05 }}>
                         <Menu ref={(ref) => { this.menu = ref; }}>
                             <MenuTrigger>
                                 <Icon name='md-more' style={styles.dropDownIcon} />
@@ -271,9 +271,9 @@ class FeedHeader extends Component {
                                     :
                                         <MenuOption onSelect={() => this.unsubscribe(item)}>
                                             <Button iconLeft transparent dark onPress={() => this.unsubscribe(item)}>
-                                            <Icon name='md-notifications-off' style={styles.menuIcon} />
-                                            <Text style={styles.menuText}>Unsubscribe to Notifications</Text>
-                                        </Button>
+                                                <Icon name='md-notifications-off' style={styles.menuIcon} />
+                                                <Text style={styles.menuText}>Unsubscribe to Notifications</Text>
+                                            </Button>
                                         </MenuOption>
                                 }
                                 {

@@ -10,8 +10,8 @@ import { logOut, logOutWithPrompt } from 'PLActions';
 import styles from './style';
 import OneSignal from 'react-native-onesignal';
 import { AsyncStorage, Keyboard } from 'react-native';
-var { MixpanelToken } = require('../../PLEnv');
-var Mixpanel = require('react-native-mixpanel');
+import {Mixpanel} from 'PLEnv';
+
 
 const datas = [
   {
@@ -19,6 +19,7 @@ const datas = [
     route: 'home',
     icon: 'home',
     bg: '#C5F442',
+    option: {type: 'reset'}
   },
   {
     name: 'Search',
@@ -118,7 +119,7 @@ class SideBar extends Component {
     this.props.navigateTo(route, 'home');
   }
 
-  onSelectItem(route: string) {
+  onSelectItem(route: string, option) {
     console.log('onSelectItem', route)
     if (route == 'logout') {
       var { token } = this.props;
@@ -126,7 +127,7 @@ class SideBar extends Component {
       Mixpanel.track("Logout via Menu");
              
     } else if(typeof route === 'string') {
-      Actions[route]()
+      Actions[route](option)
     } else{
       Keyboard.dismiss();
       Actions['home']();
@@ -140,7 +141,7 @@ class SideBar extends Component {
         <Content>
           <List
             dataArray={datas} renderRow={data =>
-              <ListItem button noBorder onPress={() => this.onSelectItem(data.route)} >
+              <ListItem button noBorder onPress={() => this.onSelectItem(data.route, data.option)} >
                 <Left>
                   <Icon active name={data.icon} style={{ color: 'white', fontSize: 26, width: 30 }} />
                   <Text style={styles.text}>{data.name}</Text>
@@ -174,5 +175,4 @@ const mapStateToProps = state => ({
   pushId: state.user.pushId
 });
 
-Mixpanel.sharedInstanceWithToken(MixpanelToken);
 export default connect(mapStateToProps, bindAction)(SideBar);

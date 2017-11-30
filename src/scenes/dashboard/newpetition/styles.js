@@ -55,7 +55,11 @@ export default {
 
     community_text_container: {
         paddingTop: 10,
-        paddingBottom: 10
+        paddingBottom: 10,
+    },
+    community_text: {
+        fontSize: 14,
+        color: '#fff'
     },
 
     communicty_icon_container: {

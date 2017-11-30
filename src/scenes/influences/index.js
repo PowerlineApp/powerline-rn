@@ -21,8 +21,7 @@ import styles from './styles';
 import { openDrawer } from 'PLActions';
 import Followings from './followings';
 import Followers from './followers';
-var { MixpanelToken } = require('../../PLEnv');
-var Mixpanel = require('react-native-mixpanel');
+import {Mixpanel} from 'PLEnv';
 
 
 class Influences extends Component {
@@ -86,5 +85,4 @@ const mapDispatchToProps = dispatch => ({
     openDrawer: () => dispatch(openDrawer())
 });
 
-Mixpanel.sharedInstanceWithToken(MixpanelToken);
 export default connect(mapStateToProps, mapDispatchToProps)(Influences);

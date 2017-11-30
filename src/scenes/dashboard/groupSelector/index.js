@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, ListItem, Thumbnail, List, Badge } from 'native-base';
 import { View, RefreshControl, Platform } from 'react-native';
-import { loadUserGroups, clearGroupsInCache, loadActivities,resetActivities } from 'PLActions';
+import { loadUserGroups, clearGroupsInCache, loadActivities, resetActivities, searchGroup } from 'PLActions';
 import PLOverlayLoader from 'PLOverlayLoader';
 
 import styles from './styles';
@@ -19,19 +19,38 @@ const PLColors = require('PLColors');
 const { WINDOW_HEIGHT } = require('PLConstants');
 
 class GroupSelector extends Component {
-
-    static propTypes = {
-        token: React.PropTypes.string,
-    }
-
-
     constructor(props) {
         super(props);
         this.state = {
             isLoading: false,
-            // isLoadingTail: false,
+            searching: false,
+            searchTerm: '',
+            searchResults: []
         };
     }
+
+    onChangeSearch(searchTerm){
+        let {token} = this.props;
+        if (!searchTerm){
+            // if user erases his search, goes back to showing his groups
+            this.setState({searchTerm: '', searching: false, searchResults: []})
+            return;
+        }        
+        
+        this.setState({searchTerm});
+        searchGroup(token, searchTerm).then(data => {
+            console.log(data);
+            this.setState({
+                searchResults: data.payload,
+                searching: true
+            });
+        })
+        .catch(err => {
+
+        });
+        
+    }
+
 
 
     //Shows user's joined groups, including town/state/country groups
@@ -156,12 +175,12 @@ class GroupSelector extends Component {
         }
     }
 
-    renderGroupItem(group){
+    renderGroupItem(group, isOwnGroup){
         return (
-            <ListItem avatar style={{ paddingVertical: 5 }} onPress={() => this.goToGroupFeed(group, 'more')} badge>                                
+            <ListItem avatar style={{ paddingVertical: 5 }} onPress={() => isOwnGroup ? this.goToGroupFeed(group, 'more') : Actions.groupprofile({id: group.id}) } badge>                                
                 <Left style={{position: 'relative'}}>                                
                     <Thumbnail small source={group.avatar_file_path ? { uri: group.avatar_file_path+'&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} style={styles.thumbnail} />
-                    {group.priority_item_count!=0?
+                    {isOwnGroup && group.priority_item_count!=0?
                     <Badge style={{position: 'absolute', bottom: 0, right: -5, height: 18, paddingLeft: 3, paddingRight: 3, paddingTop: 1.7, paddingBottom: 1.7}}>
                         <Text style={{fontSize: 11, lineHeight: 14, textAlign: 'center'}}>
                         {group.priority_item_count}
@@ -181,9 +200,10 @@ class GroupSelector extends Component {
         let {id, official_name, avatar_file_path, conversation_view_limit, total_members, user_role} = group;
         // console.log(groupId, groupName, avatar, limit)     
         var { dispatch, token } = this.props;
-        dispatch({type: 'SET_GROUP', data: {header, user_role, id, name: official_name, avatar: avatar_file_path, limit: conversation_view_limit, totalMembers: total_members, conversationView: total_members < conversation_view_limit}});
-        
-        dispatch(loadActivities(token, 0, 20, id));
+        if (this.props.selectedGroupId !== id){
+            dispatch({type: 'SET_GROUP', data: {header, user_role, id, name: official_name, avatar: avatar_file_path, limit: conversation_view_limit, totalMembers: total_members, conversationView: total_members < conversation_view_limit}});
+            // dispatch(loadActivities(token, 0, 20, id));
+        }
         Actions.pop();        
         
     }
@@ -196,6 +216,7 @@ class GroupSelector extends Component {
     render() {
         console.log(this.props.groupList, this.props)
         const { isLoading, isRefreshing } = this.state;
+        console.log('---------',this.state,'---------');
         return (
             <Container style={styles.container}>
                 <Header searchBar rounded style={styles.header}>
@@ -205,7 +226,7 @@ class GroupSelector extends Component {
                         </Button>
                     </Left>
                     <Item style={styles.searchBar}>
-                        <Input style={styles.searchInput} placeholder="Search for groups" />
+                        <Input onChangeText={(v) => this.onChangeSearch(v)} style={styles.searchInput} placeholder="Search for groups" />
                         <Icon active name="search" />
                     </Item>
                 </Header>
@@ -235,12 +256,21 @@ class GroupSelector extends Component {
                             </Button>
                         </Right>
                     </ListItem>
-                    {this._renderTownGroup()}
-                    {this._renderStateGroup()}
-                    {this._renderCountryGroup()}
-                    <List
-                        dataArray={this.props.others} renderRow={(group) => this.renderGroupItem(group)}>
-                    </List>
+                    {
+                        this.state.searching
+                        ? <List
+                            dataArray={this.state.searchResults} renderRow={(group) => this.renderGroupItem(group, false)}>
+                        </List>
+                        : <View>
+                            {this._renderTownGroup()}
+                            {this._renderStateGroup()}
+                            {this._renderCountryGroup()}
+                            <List
+                                dataArray={this.props.others} renderRow={(group) => this.renderGroupItem(group, true)}>
+                            </List>
+                        </View>
+                    }
+                    
                 </Content>
                 {/* Turning of Pulse Loader until we can stabilize its performance
                 <PLOverlayLoader visible={isLoading || isRefreshing} logo />
@@ -265,7 +295,8 @@ const mapStateToProps = state => ({
     town: state.groups.town,
     state: state.groups.state,
     country: state.groups.country,
-    groupList: state.groups.payload
+    groupList: state.groups.payload,
+    selectedGroupId: state.activities.group.group
 });
 
 

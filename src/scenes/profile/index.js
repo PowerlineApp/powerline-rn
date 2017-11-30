@@ -250,11 +250,26 @@ class Profile extends Component{
                                 </Button>                           
                             </View>
                             {
-                                this.state.following_status === 'active' &&
-                                <View>
+                                // this.state.following_status === 'active' &&
+                                <View style={{flexDirection: 'row', width: 100}}>
                                     <Button transparent onPress={() => this.mute()}>
                                         <Icon active name="md-volume-off" style={{ color: 'white' }} />
                                     </Button>
+                                    <Button transparent onPress={() => this.follow()}>                              
+                                        <View  style={{flexDirection: 'row', backgroundColor: 'white', padding: 1, width: 28, height: 28, borderRadius: 24, borderWidth: 1, borderColor: '#11c1f3'}}>
+                                            {this.state.following_status == 'pending'?
+                                            <Icon name="ios-person" style={{marginLeft: 5, fontSize: 20, color: PLColors.lightText}}/> 
+                                            :
+                                            <Icon name="ios-person" style={{marginLeft: 5,fontSize: 20, color: '#11c1f3'}}/>   
+                                            } 
+                                            {this.state.following_status == 'active'?                                            
+                                            <Icon name="remove-circle" style={{marginLeft: -3,fontSize: 8, color: PLColors.lightText, marginTop: 13}}/>:
+                                            this.state.following_status == 'pending'?
+                                            <Icon name="ios-clock-outline" style={{marginLeft: -3,fontSize: 8, color: '#11c1f3', marginTop: 13}}/>:
+                                            <Icon name="add-circle" style={{marginLeft: -3,fontSize: 8, color: PLColors.lightText, marginTop: 13}}/>
+                                            }
+                                        </View>                  
+                                    </Button>  
                                 </View>
                             }
                         </View> 
@@ -267,22 +282,7 @@ class Profile extends Component{
                             }
                             <Thumbnail source={{uri: this.state.user.avatar_file_name}} style={{marginBottom: 8, borderRadius: 25}}>
                                 
-                            </Thumbnail>  
-                            <TouchableWithoutFeedback onPress={() => this.follow()}>                              
-                                <View  style={{flexDirection: 'row', backgroundColor: 'white', padding: 1, marginTop: 30, marginLeft: -15, width: 28, height: 28, borderRadius: 24, borderWidth: 1, borderColor: '#11c1f3'}}>
-                                    {this.state.following_status == 'pending'?
-                                    <Icon name="ios-person" style={{marginLeft: 5,fontSize: 20, color: PLColors.lightText}}/> 
-                                    :
-                                    <Icon name="ios-person" style={{marginLeft: 5,fontSize: 20, color: '#11c1f3'}}/>   
-                                    } 
-                                    {this.state.following_status == 'active'?                                            
-                                    <Icon name="remove-circle" style={{marginLeft: -3,fontSize: 8, color: PLColors.lightText, marginTop: 13}}/>:
-                                    this.state.following_status == 'pending'?
-                                    <Icon name="ios-clock-outline" style={{marginLeft: -3,fontSize: 8, color: '#11c1f3', marginTop: 13}}/>:
-                                    <Icon name="add-circle" style={{marginLeft: -3,fontSize: 8, color: PLColors.lightText, marginTop: 13}}/>
-                                    }
-                                </View>                  
-                            </TouchableWithoutFeedback>         
+                            </Thumbnail>       
                         </View>
                         <View style={{justifyContent: 'center', alignItems: 'center'}}>
                             <Text style={{color: 'white', fontSize: 16, fontWeight: 'bold'}}>{this.state.user.first_name} {this.state.user.last_name}</Text>

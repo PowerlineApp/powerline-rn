@@ -51,8 +51,8 @@ const { SlideInMenu } = renderers;
 import ShareExtension from 'react-native-share-extension';
 import OneSignal from 'react-native-onesignal';
 var DeviceInfo = require('react-native-device-info');
-var { MixpanelToken } = require('../../PLEnv');
-var Mixpanel = require('react-native-mixpanel');
+import {Mixpanel} from '../../PLEnv';
+
 
 const isIOS = Platform.OS === 'ios';
 
@@ -137,6 +137,14 @@ class Home extends Component {
         this.onRegistered = this.onRegistered.bind(this);
     }
 
+    componentWillReceiveProps(nextProps){
+        console.log('nextProps', nextProps);
+        if (nextProps.shouldResetHome){
+            this.props.dispatch({type: 'HOME_WAS_RESET'})
+            this.setState({tab1: true, tab2: false, tab3: false, tab4: false})
+        }
+    }
+
     componentWillMount() {
         const { props: { profile, token, dispatch } } = this;
         
@@ -200,8 +208,14 @@ class Home extends Component {
                     {text: "Later", onPress: () => {
                         let h_48 = (48 * 1000 * 60 * 60);
                         OneSignal.postNotification({
-                            'en': 'Finish your registration!'
-                        }, {send_after: (new Date().getTime() + (48 * 1000 * 60 * 60) )}, data.userId)
+                            'en': 'Remember to finish your registration!'
+                        },
+                        [],
+                        data.userId,
+                        {
+                            send_after: new Date(new Date().getTime() + h_48)
+                        },
+                        )
                     }}
                 ])
             }
@@ -600,7 +614,7 @@ class Home extends Component {
 
     // JC: I believe this loads to the group feed when a group is selected from Group Selector More menu
     selectGroup(group){
-        console.log('SELECTED GROUP', group)
+        // console.log('SELECTED GROUP', group)
         var { token, dispatch } = this.props;
         if (group == 'all') {
             dispatch({ type: 'RESET_ACTIVITIES' });
@@ -609,7 +623,7 @@ class Home extends Component {
         } else {
             let groupObj = this.props.groupList.find(groupObj => groupObj.group_type_label === group);
             if (!groupObj) return;
-            console.log('SELECTED GROUP', groupObj)
+            // console.log('SELECTED GROUP', groupObj)
             
 
             let {id, official_name, avatar_file_path, conversation_view_limit, total_members, user_role} = groupObj;
@@ -622,7 +636,7 @@ class Home extends Component {
     // This is the menu to create new content (GH8)
     selectNewItem(value) {
         let {selectedGroup} = this.props;
-        console.log('selected group ==> ', selectedGroup)
+        // console.log('selected group ==> ', selectedGroup)
         this.bottomMenu.close();
         if (value === 'post'){
             Actions.newpost({group: selectedGroup.group});
@@ -717,7 +731,7 @@ class Home extends Component {
     }
 
     renderMenuOptions(group){
-        console.log('SELECTED GROUP', group);
+        // console.log('SELECTED GROUP', group);
         let options = [
             <MenuOption value={'petition'}>
                 <Button iconLeft transparent dark onPress={() => {this.selectNewItem('petition'); Mixpanel.track("Opened New User Petition Form");}}>
@@ -776,6 +790,7 @@ class Home extends Component {
     }
     
     render() {
+        console.log(this.props.newsfeedUnreadCount)
         let {selectedGroup} = this.props;
         //       return (
             // <Container>
@@ -795,6 +810,7 @@ class Home extends Component {
         //           </Header>
         //           </Container>
         //       );
+        
         return (
             <MenuContext customStyles={menuContextStyles}>
                 <Container>
@@ -943,8 +959,8 @@ const mapStateToProps = state => ({
     country: state.groups.country,
     newsfeedUnreadCount: state.activities.newsfeedUnreadCount,
     groupList: state.groups.payload,
-    selectedGroup: state.activities.selectedGroup
+    selectedGroup: state.activities.selectedGroup,
+    shouldResetHome: state.drawer.shouldResetHome
 });
 
-Mixpanel.sharedInstanceWithToken(MixpanelToken);
 export default connect(mapStateToProps, bindAction)(Home);
