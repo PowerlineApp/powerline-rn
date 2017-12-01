@@ -31,10 +31,12 @@ var PLApp = React.createClass({
         Stripe.init({
             publishableKey: stripeAPIKey
         });
-        if (Platform.OS === 'android') {
-            SplashScreen.hide();
+        // if (Platform.OS === 'android') {
+        //     SplashScreen.hide();
       
-        }
+        // }
+        SplashScreen.hide();
+        // alert('yoiyoyo');
 
         AppState.addEventListener('change', this.handleAppStateChange);
     },
