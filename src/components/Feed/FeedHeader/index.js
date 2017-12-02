@@ -253,8 +253,8 @@ class FeedHeader extends Component {
                         <Text style={styles.title} onPress={() => this.onPressAuthor(item)}>{title}</Text>
                         <Text note style={styles.subtitle} onPress={() => this.onPressGroup(item)}>{item.group.official_name} • <TimeAgo time={item.sent_at} hideAgo /></Text>
                     </Body>
-                    <Right style={{ flex: 0.05 }}>
-                        <Menu ref={(ref) => { this.menu = ref; }}>
+                    <Right style={{ flex: 0.08 }}>
+                        <Menu style={{ width: '100%'}} ref={(ref) => { this.menu = ref; }}>
                             <MenuTrigger>
                                 <Icon name='md-more' style={styles.dropDownIcon} />
                             </MenuTrigger>

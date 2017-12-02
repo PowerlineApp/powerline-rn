@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.powerline"
+    package="ne.powerli"
     android:versionCode="6"
     android:versionName="1.0">
 
