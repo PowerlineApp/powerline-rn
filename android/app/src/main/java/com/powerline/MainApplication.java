@@ -1,4 +1,4 @@
-package com.powerline;
+package ne.powerli;
 
 import android.app.Application;
 
