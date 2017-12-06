@@ -38,3 +38,11 @@ public class ShareApplication extends Application implements ReactApplication {
      return mReactNativeHost;
  }
 }
+
+
+
+
+
+
+
+

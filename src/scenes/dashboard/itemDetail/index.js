@@ -510,7 +510,7 @@ class ItemDetail extends Component {
     }
 
     _renderHeader(item) {
-        return <FeedHeader item={item} />
+        return <FeedHeader userId={this.props.userId} item={item} />
     }
 
     substitute(mention) {
@@ -596,7 +596,7 @@ class ItemDetail extends Component {
                     </TouchableOpacity>
                 </View>
                 <Textarea
-                    maxLength={300}
+                    maxLength={5000}
                     placeholderTextColor="rgba(0,0,0,0.1)"
                     style={styles.textarea}
                     value={state.inputDescription}
@@ -907,7 +907,7 @@ class ItemDetail extends Component {
             <View>
                 {
                     state.isEditMode
-                    ? this.renderEditableDescription(item)
+                    ? this.renderEditableDescription(item, state)
                     : <FeedDescription item={item} profile={this.props.profile} isInDetail />
                 }
                 <FeedMetaData item={item} />

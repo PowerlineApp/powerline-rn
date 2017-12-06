@@ -39,6 +39,9 @@ class FeedHeader extends Component {
         } else if (item.user_petition) {
             type = 'petition';
         }
+        // if (scene === 'itemDetail'){
+        //     Actions
+        // }
         Actions[scene]({ entityType: type, entityId: item.entity.id, ...options });
     }
 
@@ -116,6 +119,7 @@ class FeedHeader extends Component {
     }
 
     followAuthor(item) {
+        console.log('follow', item);
         this.props.dispatch(putFollowings(this.props.token, item.owner.id, item.id));
         this.menu && this.menu.close();
     }
@@ -223,6 +227,8 @@ class FeedHeader extends Component {
         const canFollow = item.user.follow_status === null;
         let canInviteUpvoters = false;
         let canSpam = false;
+
+        console.log(this.props, isAuthor, item.user.id, this.props.userId, item.user.id === this.props.userId);
 
         switch (item.entity.type) {
         case 'post':

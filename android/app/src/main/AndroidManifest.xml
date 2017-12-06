@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ne.powerli"
-    android:versionCode="6"
-    android:versionName="1.0">
+    android:versionCode="20107"
+    android:versionName="3.1.4">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
@@ -11,10 +11,11 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <uses-sdk
         android:minSdkVersion="16"
-        android:targetSdkVersion="22" />
+        android:targetSdkVersion="23" />
 
     <application
       android:name=".MainApplication"
@@ -60,9 +61,6 @@
             android:name="io.fabric.ApiKey"
             android:value="ce0340efb3aa30e519403d7c29e9c50cd087684d" />
         <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
-        <meta-data 
-            android:name="com.google.android.gms.wallet.api.enabled"
-            android:value="true" />
 
     </application>
 
