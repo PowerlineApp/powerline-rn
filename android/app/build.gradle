@@ -186,6 +186,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-android-sms-listener')
     compile('com.stripe:stripe-android:6.0.0'){
         force = true
     }

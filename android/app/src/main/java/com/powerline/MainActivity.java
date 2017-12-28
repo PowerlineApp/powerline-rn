@@ -2,7 +2,7 @@ package com.powerline;
 
 import android.os.Bundle;
 import com.facebook.react.ReactActivity;
-import com.cboy.rn.splashscreen.SplashScreen;
+import org.devio.rn.splashscreen.SplashScreen; // here
 import android.content.Intent;
 
 public class MainActivity extends ReactActivity {

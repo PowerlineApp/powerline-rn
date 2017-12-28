@@ -6,6 +6,7 @@ import com.facebook.react.ReactInstanceManager;
 
 import com.crashlytics.android.Crashlytics;
 import com.facebook.react.ReactApplication;
+import com.centaurwarchief.smslistener.SmsListenerPackage;
 import com.kevinejohn.RNMixpanel.RNMixpanel;
 import com.vonovak.AddCalendarEventPackage;
 import com.gettipsi.stripe.StripeReactPackage;
@@ -30,7 +31,7 @@ import io.fabric.sdk.android.Fabric;
 import java.util.Arrays;
 import java.util.List;
 
-import com.cboy.rn.splashscreen.SplashScreenReactPackage;
+import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import com.BV.LinearGradient.LinearGradientPackage;
 
 public class MainApplication extends Application implements ReactApplication {
@@ -51,6 +52,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
         new MainReactPackage(),
+            new SmsListenerPackage(),
         new RNMixpanel(),
         new AddCalendarEventPackage(),
         new StripeReactPackage(),
