@@ -124,7 +124,7 @@ class SubscriptionLevel extends Component {
                   hasCard
                   ? <View>
                       <Text style={styles.cardTitle}>
-                          {this.props.subscription.next_payment_at ? `Your default card will be charged again on ${moment(this.props.subscription.next_payment_at).format('MMMM Do YYYY')}.` : ''}
+                          {this.props.subscription && this.props.subscription.next_payment_at ? `Your default card will be charged again on ${moment(this.props.subscription.next_payment_at).format('MMMM Do YYYY')}.` : ''}
                       </Text>
                   </View>
                   : <Label>This group has no associated payment method yet.</Label>

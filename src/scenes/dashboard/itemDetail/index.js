@@ -663,7 +663,6 @@ class ItemDetail extends Component {
                                             </Right>
                                         </Left>
                                     </CardItem>
-
                                 </MenuOptions>
                             </Menu>
                         </Body>
@@ -888,11 +887,12 @@ class ItemDetail extends Component {
                                 style={styles.attachedImage}
                                 onPress={() => { }}>
                                 <View style={styles.imageContainer}>
-                                    <ImageLoad
-                                        placeholderSource={require('img/empty_image.png')}
-                                        source={{ uri: imgURL + '&w=500&h=500&auto=compress,q=95' }}
-                                        style={styles.image}
-                                    />
+                                    <Image 
+                                    placeholderSource={require('img/empty_image.png')}
+                                    source={{ uri: imgURL + '&w=500&h=500&auto=compress,q=95' }}
+                                    style={styles.image} />
+                                    {/* <ImageLoad
+                                    /> */}
                                 </View>
                             </TouchableOpacity>
                         </Body>

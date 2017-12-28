@@ -56,9 +56,6 @@ import CommunityView from '../../../components/CommunityView';
 const POST_MAX_LENGTH = 5000;
 import {Mixpanel} from 'PLEnv';
 
-
-
-
 class NewPost extends Component {
     constructor(props) {
         super(props);

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import ImageLoad from 'react-native-image-placeholder';
-import { WebView, Platform } from 'react-native';
+import { WebView, Platform, Image } from 'react-native';
 import YouTube from 'react-native-youtube';
 import styles from '../styles';
 import { youTubeAPIKey } from 'PLEnv';
@@ -25,7 +25,7 @@ class FeedContext extends Component {
         if (entry.type === "image") {
             console.warn(entry.imageSrc);
             return (
-                <ImageLoad
+                <Image
                     placeholderSource={require('img/empty_image.png')}
                     source={{ uri: entry.imageSrc + '&w=300&h=300&auto=compress,format,q=95' }}
                     style={styles.image}

@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "babel-preset-react-native-stage-0": "^1.0.1",
+    "color": "^2.0.1",
     "eslint": "^3.19.0",
     "eslint-config-standard-react": "^5.0.0",
     "eslint-plugin-react": "^7.4.0",
@@ -21,10 +22,10 @@
     "immutability-helper": "^2.4.0",
     "lodash": "4.17.4",
     "moment": "^2.19.1",
-    "native-base": "2.1.4",
-    "prop-types": "^15.6.0",
-    "react": "16.0.0-alpha.6",
-    "react-native": "0.44.0",
+    "native-base": "^2.3.5",
+    "prop-types": "15.6.0",
+    "react": "16.0.0-alpha.12",
+    "react-native": "0.50.0",
     "react-native-activity-indicator-ios": "1.0.4",
     "react-native-add-calendar-event": "^0.3.0",
     "react-native-android-sms-listener": "^0.5.0",
@@ -83,7 +84,7 @@
     "babel-preset-react-native": "1.9.1",
     "flow-bin": "0.42.0",
     "jest": "19.0.2",
-    "react-test-renderer": "16.0.0-alpha.6"
+    "react-test-renderer": "16.0.0-alpha.12"
   },
   "jest": {
     "preset": "react-native"

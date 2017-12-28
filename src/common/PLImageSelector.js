@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { TouchableOpacity, Modal, View, Text, Image } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
-import { Icon } from 'native-base';
+import { Icon, Thumbnail } from 'native-base';
 const INITIAL_STATE = {
     showConfirmationModal: false,
     image: null
@@ -41,10 +41,16 @@ class PLImageSelector extends Component {
     }
 
     render() {
+        console.log('=>', this.props);
         return (
             <TouchableOpacity transparent onPress={this.selectImage}>
                 {/* <Icon name='camera'  /> */}
-                <Icon name='camera' style={{color: this.props.iconColor, backgroundColor: 'rgba(0,0,0,0)', fontSize: this.props.iconSize}} />
+                <Thumbnail source={{uri: this.props.image}} square />
+                <View style={{position: 'absolute', height: '100%', width: '100%'}}>
+                    <View style={{ width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center'}}>
+                        <Icon name='camera' style={{color: this.props.iconColor, backgroundColor: 'rgba(0,0,0,0)', fontSize: this.props.iconSize}} />
+                    </View>
+                </View>
                 <Modal visible={this.state.showConfirmationModal} presentationStyle='pageSheet' transparent>
                     <View style={{flex: 1, backgroundColor: rgb(0,0,0,0.7), alignItems: 'center', justifyContent: 'center'}}>
                         <View style={{height: '60%', width: '90%', backgroundColor: 'white'}}>

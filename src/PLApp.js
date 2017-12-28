@@ -22,6 +22,7 @@ var { version, stripeAPIKey } = require('./PLEnv.js');
 var { StackNavigator } = require('react-navigation');
 var RegisterScene  = require('./scenes/auth/RegisterScene');
 var TourScene = require('./scenes/auth/TourScene');
+import {Root} from 'native-base';
 import OneSignal from 'react-native-onesignal';
 // console.log = () => {};
 
@@ -51,10 +52,13 @@ var PLApp = React.createClass({
     },
 
     render: function () {
-        if (!this.props.isLoggedIn) {
-            return <LoginStack />;
-        }
-        return <PLNavigator />;
+        return <Root>
+            {
+                !this.props.isLoggedIn
+                ? <LoginStack />
+                : <PLNavigator />
+            }
+        </Root>;
     },
 
 });
