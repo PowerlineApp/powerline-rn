@@ -16,8 +16,7 @@ allprojects {
     repositories {
         // Add jitpack repository (added by tipsi-stripe)
         maven { url "https://jitpack.io" }
-        maven { url 'https://maven.google.com' }
-
+        maven { url "https://maven.google.com" }
         mavenLocal()
         jcenter()
         maven {
@@ -32,7 +31,7 @@ subprojects {
         if (project.hasProperty("android")) {
             android {
                 compileSdkVersion 26
-                buildToolsVersion '25.0.0'
+                buildToolsVersion '26.0.1'
             }
         }
     }

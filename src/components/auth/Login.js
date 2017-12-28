@@ -176,7 +176,7 @@ class Login extends React.Component {
         }
         this.setState({loading: false})
     }).catch(e => {
-        console.log(e);
+        console.log('\n------------------------------', e);
         Alert.alert('Invalid data',
         'Validation failed.',
         [

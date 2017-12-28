@@ -1,7 +1,7 @@
 // your package you defined in ShareActivity
-package ne.powerli.share;
+package com.powerline.share;
 // import build config
-import ne.powerli.BuildConfig;
+import com.powerline.BuildConfig;
 
 import com.alinz.parkerdan.shareextension.SharePackage;
 
@@ -38,11 +38,3 @@ public class ShareApplication extends Application implements ReactApplication {
      return mReactNativeHost;
  }
 }
-
-
-
-
-
-
-
-

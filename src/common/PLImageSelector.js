@@ -43,12 +43,12 @@ class PLImageSelector extends Component {
     render() {
         return (
             <TouchableOpacity transparent onPress={this.selectImage}>
-                <Image source={{uri: (this.state.image ? this.state.image.path : null)}} style={{height: '85%', width: '95%', alignSelf: 'center', marginTop: 5}}>
-                    <Icon name='camera' style={{color: '#000', backgroundColor: 'rgba(0,0,0,0)', fontSize: this.props.iconSize}} />
-                </Image>
+                {/* <Icon name='camera'  /> */}
+                <Icon name='camera' style={{color: this.props.iconColor, backgroundColor: 'rgba(0,0,0,0)', fontSize: this.props.iconSize}} />
                 <Modal visible={this.state.showConfirmationModal} presentationStyle='pageSheet' transparent>
                     <View style={{flex: 1, backgroundColor: rgb(0,0,0,0.7), alignItems: 'center', justifyContent: 'center'}}>
                         <View style={{height: '60%', width: '90%', backgroundColor: 'white'}}>
+                            <Image source={{uri: (this.state.image ? this.state.image.path : null)}} style={{height: '85%', width: '95%', alignSelf: 'center', marginTop: 5}} />
                             <View style={styles.buttonsWrapper}>
                                 <TouchableOpacity style={styles.button} onPress={this.onModalConfirm}>
                                     <Text style={styles.buttonText}>Confirm</Text>

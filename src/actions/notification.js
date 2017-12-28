@@ -31,6 +31,7 @@ async function sharePost(token: string, postId: number, cb): Promise<Action> {
     try {        
         showAlertYesNo('Instantly notify all of your followers in this group about this post? You can only do this once every hour.', async () => {
             const response = await api.put(token, `/v2/user/shared-posts/${postId}`);
+            console.log('response', response)
             if (response.status === 204) { cb && cb(); }
             const responseJson = await response.json();
             alert(responseJson.message);

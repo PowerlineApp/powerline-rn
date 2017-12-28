@@ -90,7 +90,14 @@ class ManageGroup extends Component {
                   </Text>
                 </Body>
                 <Right>
-                  <PLImageSelector onConfirm={this.updateGroupBanner} iconSize={20} iconColor='#000' onError={err => console.log(err)} />
+                {this.props.group.banner ?
+                  <Thumbnail style={styles.banner} square source={{ uri: (this.state.newBanner ? this.state.newBanner : this.props.group.banner) }}>
+                    <View style={{justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%'}}>
+                     <PLImageSelector onConfirm={this.updateGroupBanner} iconSize={20} iconColor='#000' onError={err => console.log(err)} />
+                     </View>
+                  </Thumbnail> :
+                  <View style={styles.banner} />
+                }
                 </Right>
               </ListItem>
             </List>

@@ -1,4 +1,4 @@
-package ne.powerli;
+package com.powerline;
 
 import android.os.Bundle;
 import com.facebook.react.ReactActivity;

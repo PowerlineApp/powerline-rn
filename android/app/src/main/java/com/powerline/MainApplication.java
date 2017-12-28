@@ -1,4 +1,4 @@
-package ne.powerli;
+package com.powerline;
 
 import android.app.Application;
 
@@ -6,7 +6,6 @@ import com.facebook.react.ReactInstanceManager;
 
 import com.crashlytics.android.Crashlytics;
 import com.facebook.react.ReactApplication;
-import com.centaurwarchief.smslistener.SmsListenerPackage;
 import com.kevinejohn.RNMixpanel.RNMixpanel;
 import com.vonovak.AddCalendarEventPackage;
 import com.gettipsi.stripe.StripeReactPackage;
@@ -52,7 +51,6 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
         new MainReactPackage(),
-            new SmsListenerPackage(),
         new RNMixpanel(),
         new AddCalendarEventPackage(),
         new StripeReactPackage(),
