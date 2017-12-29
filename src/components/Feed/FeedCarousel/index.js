@@ -30,7 +30,7 @@ class FeedCarousel extends Component {
                     </TouchableOpacity>
                 );
             });
-            if (slides.length < 0){ return null}
+            if (slides.length < 0){ return null;}
             return (
                 <CardItem cardBody>
                     <Carousel
@@ -47,8 +47,9 @@ class FeedCarousel extends Component {
                         showsHorizontalScrollIndicator={false}
                         snapOnAndroid
                         removeClippedSubviews={false}
+                        data={slides}
                     >
-                        {slides}
+                        {/* {slides} */}
                     </Carousel>
                 </CardItem>
             );

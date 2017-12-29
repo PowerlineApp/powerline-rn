@@ -513,8 +513,8 @@ class NewLeaderContent extends Component {
                 return ImagePicker.openCamera({
                     cropping: true,
                     includeBase64: true,
-                    height: '1280',
-                    width: '1280'
+                    height: 1280,
+                    width: 1280
                 }).then(image => {
                     let {attachments} = this.state;
                     attachments.push({type: 'image', content: image.data});
@@ -525,8 +525,8 @@ class NewLeaderContent extends Component {
                 return ImagePicker.openPicker({
                     cropping: true,
                     includeBase64: true,
-                    height: '1280',
-                    width: '1280'
+                    height: 1280,
+                    width: 1280
                 }).then(image => {
                     // console.log(image);
                     let {attachments} = this.state;

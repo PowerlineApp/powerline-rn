@@ -300,25 +300,25 @@ class NewPost extends Component {
             this.setState({ image: null });
         } else {
             ActionSheet.show({
-                options: ["Take photo", "Choose from gallery"],
+                options: ["Take photo", "Choose from gallery", "Cancel"],
                 title: "Attach image"
             }, buttonIndex => {
-                if (buttonIndex == 0) {
+                if (buttonIndex == 0 || buttonIndex == '0') {
                     ImagePicker.openCamera({
                         cropping: true,
-                        height: '1280',
-                        width: '1280',
+                        height: 1280,
+                        width: 1280,
                         includeBase64: true
                     }).then(image => {
                         this.setState({ image: image.data });
                     }).catch(v => alert(JSON.stringify(v)));
                 }
                 
-                if (buttonIndex == 1) {
+                if (buttonIndex == 1 || buttonIndex == '1') {
                     ImagePicker.openPicker({
                         cropping: true,
-                        height: '1280',
-                        width: '1280',
+                        height: 1280,
+                        width: 1280,
                         includeBase64: true
                     }).then(image => {
                         console.log(image);
