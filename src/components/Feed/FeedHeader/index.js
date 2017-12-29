@@ -39,6 +39,9 @@ class FeedHeader extends Component {
         } else if (item.user_petition) {
             type = 'petition';
         }
+        // if (scene === 'itemDetail'){
+        //     Actions
+        // }
         Actions[scene]({ entityType: type, entityId: item.entity.id, ...options });
     }
 
@@ -116,6 +119,7 @@ class FeedHeader extends Component {
     }
 
     followAuthor(item) {
+        console.log('follow', item);
         this.props.dispatch(putFollowings(this.props.token, item.owner.id, item.id));
         this.menu && this.menu.close();
     }
@@ -224,6 +228,8 @@ class FeedHeader extends Component {
         let canInviteUpvoters = false;
         let canSpam = false;
 
+        // console.log(this.props, isAuthor, item.user.id, this.props.userId, item.user.id === this.props.userId);
+
         switch (item.entity.type) {
         case 'post':
         case 'user-petition':
@@ -253,8 +259,8 @@ class FeedHeader extends Component {
                         <Text style={styles.title} onPress={() => this.onPressAuthor(item)}>{title}</Text>
                         <Text note style={styles.subtitle} onPress={() => this.onPressGroup(item)}>{item.group.official_name} • <TimeAgo time={item.sent_at} hideAgo /></Text>
                     </Body>
-                    <Right style={{ flex: 0.05 }}>
-                        <Menu ref={(ref) => { this.menu = ref; }}>
+                    <Right style={{ flex: 0.08 }}>
+                        <Menu style={{ width: '100%'}} ref={(ref) => { this.menu = ref; }}>
                             <MenuTrigger>
                                 <Icon name='md-more' style={styles.dropDownIcon} />
                             </MenuTrigger>
@@ -295,7 +301,7 @@ class FeedHeader extends Component {
                                     canInviteUpvoters &&
                                     <MenuOption onSelect={() => this.inviteUpvoters(item)}>
                                         <Button iconLeft transparent dark onPress={() => this.inviteUpvoters(item)}>
-                                            <Image source={require("img/invite_upvoters.png")} style={[styles.menuIcon, { marginLeft: -2, marginRight: 12 }]} />
+                                            <Image source={require("img/invite_upvoters.png")} style={[styles.upvotersIcon]} />
                                             <Text style={styles.menuText}>Invite Upvoters to a Group</Text>
                                         </Button>
                                     </MenuOption>
@@ -355,7 +361,7 @@ class FeedHeader extends Component {
                                     canSpam &&
                                     <MenuOption onSelect={() => this.spam(item)}>
                                         <Button iconLeft transparent dark onPress={() => this.spam(item)}>
-                                            <Image source={require("img/spam.png")} style={[styles.menuIcon, { marginLeft: -2, marginRight: 12 }]} />
+                                            <Image source={require("img/spam.png")} style={styles.upvotersIcon} />
                                             <Text style={styles.menuText}>Report As Spam</Text>
                                         </Button>
                                     </MenuOption>

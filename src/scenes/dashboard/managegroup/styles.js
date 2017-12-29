@@ -41,6 +41,11 @@ export default {
         width: 80,
         height: 80
     },
+    banner: {
+        width: 60,
+        height: 60,
+        alignSelf: 'flex-start'
+    },
 
     list: {
         marginLeft: 17,

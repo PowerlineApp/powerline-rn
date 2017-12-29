@@ -5,13 +5,13 @@
  */
 
 'use strict';
-var React = require('React');
-var Platform = require('Platform');
-var BackAndroid = require('BackAndroid');
-var StyleSheet = require('StyleSheet');
-var { Router, Scene } = require('react-native-router-flux');
-var { connect } = require('react-redux');
-var { StatusBar } = require('react-native');
+import React, {Component} from 'React';
+import Platform from 'Platform';
+import BackAndroid from 'BackAndroid';
+import StyleSheet from 'StyleSheet';
+import { Router, Scene } from 'react-native-router-flux';
+import { connect } from 'react-redux';
+import { StatusBar, View, Text } from 'react-native';
 
 import { Drawer } from 'native-base';
 import { closeDrawer } from './actions/drawer';
@@ -58,25 +58,25 @@ class PLNavigator extends React.Component {
     closeDrawer: React.PropTypes.func,
   }
 
-  componentDidUpdate() {
-    if (this.props.drawerState === 'opened') {
-      this.openDrawer();
-    }
+  // componentDidUpdate() {
+  //   if (this.props.drawerState === 'opened') {
+  //     this.openDrawer();
+  //   }
 
-    if (this.props.drawerState === 'closed') {
-      this._drawer._root.close();
-    }
-  }
+  //   if (this.props.drawerState === 'closed') {
+  //     // this._drawer._root.close();
+  //   }
+  // }
 
-  openDrawer() {
-    this._drawer._root.open();
-  }
+  // openDrawer() {
+  //   // this._drawer._root.open();
+  // }
 
-  closeDrawer() {
-    if (this.props.drawerState === 'opened') {
-      this.props.closeDrawer();
-    }
-  }
+  // closeDrawer() {
+  //   // if (this.props.drawerState === 'opened') {
+  //     this.props.closeDrawer();
+  //   // }
+  // }
 
   _renderScene(props) { // eslint-disable-line class-methods-use-this
     switch (props.scene.route.key) {
@@ -104,12 +104,13 @@ class PLNavigator extends React.Component {
       <StyleProvider style={getTheme((this.props.themeState === 'material') ? material : undefined)}>
         <Drawer
           ref={(ref) => { this._drawer = ref; }}
+          open={this.props.drawerState === 'opened'}
           type="overlay"
           tweenDuration={150}
           content={<SideBar />}
           tapToClose
           acceptPan={false}
-          onClose={() => this.closeDrawer()}
+          onClose={() => this.props.closeDrawer()}
           openDrawerOffset={0.3}
           panCloseMask={0.2}
           styles={{
@@ -119,7 +120,7 @@ class PLNavigator extends React.Component {
               shadowRadius: 3,
             },
           }}
-          tweenHandler={(ratio) => {  //eslint-disable-line
+          tweenHandler={(ratio) => {
             return {
               drawer: { shadowRadius: ratio < 0.2 ? ratio * 5 * 5 : 5 },
               main: {
@@ -129,8 +130,22 @@ class PLNavigator extends React.Component {
           }}
           negotiatePan
         >
-          <RouterWithRedux>
-            <Scene key="root">
+          <MyRouter />
+        </Drawer>
+      </StyleProvider>
+    );
+  }
+}
+
+class MyRouter extends Component {
+  shouldComponentUpdate () {
+    // so we keep our state when opening the drawer!!!
+    return false;
+  }
+  render (){
+    return (
+          <RouterWithRedux key="router">
+            <Scene key="root" hideNavBar>
               <Scene key="analyticsView" component={AnalyticsView} hideNavBar/>
               <Scene key="home" component={Home} initial hideNavBar />
               <Scene key="groupSelector" component={GroupSelector} />
@@ -163,9 +178,7 @@ class PLNavigator extends React.Component {
               <Scene key="userAddCardScene" component={UserAddCard} />
             </Scene>
           </RouterWithRedux>
-        </Drawer>
-      </StyleProvider>
-    );
+    )
   }
 }
 

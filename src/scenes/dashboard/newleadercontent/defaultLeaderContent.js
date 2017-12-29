@@ -4,7 +4,7 @@
 // https://api-dev.powerli.ne/api-doc#post--api-v2.2-groups-{group}-posts
 
 import React, { Component } from 'react';
-import {TextInput, Keyboard, Platform, KeyboardAvoidingView, Modal, Alert} from 'react-native';
+import {TextInput, Keyboard, Platform, KeyboardAvoidingView, Modal, Alert, ActivityIndicator} from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import moment from 'moment';
@@ -184,10 +184,12 @@ class NewLeaderContent extends Component {
 
     preCreateContent() {
         let groupId = null;
+        if (this.state.sending) return;
+        this.setState({sending: true});
 
         if (this.state.selectedGroupIndex == -1) {
-            this.state.sharing ? showToast('Please select Group.')
-            : alert('Please select Group.');
+            alert('Please select Group.');
+            this.setState({sending: false});
             return;
         }
         
@@ -200,7 +202,7 @@ class NewLeaderContent extends Component {
             `Are you sure you want to send this ${this.props.options.headerTitle} to all ${group.total_members} group members?`,
             [
               {text: "Yes, I'm sure", onPress: () => this.createContent()},
-              {text: 'Cancel', onPress: () => {}, style: 'cancel'},
+                {text: 'Cancel', onPress: () => {this.setState({sending: false});}, style: 'cancel'},
             ],
             { cancelable: false }
           );
@@ -467,7 +469,9 @@ class NewLeaderContent extends Component {
                 console.warn(JSON.parse(e));
             });
 
+        } else {
         }
+        this.setState({sending: false});
     }
 
     changeTitle(text) {
@@ -506,9 +510,11 @@ class NewLeaderContent extends Component {
             switch(buttonIndex){
             case 0:
             case '0':
-                ImagePicker.openCamera({
+                return ImagePicker.openCamera({
                     cropping: true,
-                    includeBase64: true
+                    includeBase64: true,
+                    height: 1280,
+                    width: 1280
                 }).then(image => {
                     let {attachments} = this.state;
                     attachments.push({type: 'image', content: image.data});
@@ -516,9 +522,11 @@ class NewLeaderContent extends Component {
                 }).catch(v => alert(JSON.stringify(v)));
             case 1:
             case '1':
-                ImagePicker.openPicker({
+                return ImagePicker.openPicker({
                     cropping: true,
-                    includeBase64: true
+                    includeBase64: true,
+                    height: 1280,
+                    width: 1280
                 }).then(image => {
                     // console.log(image);
                     let {attachments} = this.state;
@@ -665,7 +673,11 @@ class NewLeaderContent extends Component {
                     </Body>
                     <View style={{alignSelf: 'flex-end'}}>
                         <Button transparent onPress={() => this.preCreateContent()}>
-                            <Label style={{ color: 'white' }}>Send</Label>
+                            {
+                                this.state.sending 
+                                ? <ActivityIndicator color={'#fff'} animating={this.state.sending} /> 
+                                : <Label style={{ color: 'white' }}>Send</Label>
+                            }   
                         </Button>
                     </View>
                 </Header>

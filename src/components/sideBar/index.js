@@ -57,18 +57,18 @@ const datas = [
    icon: 'contact',
    bg: '#3591FA',
   },
-  //{
-  //  name: 'Favorites',
-  //  route: 'favorites',
-  //  icon: 'star',
-  //  bg: '#EB6B23',
-  //},
   {
    name: 'My Profile',
    route: 'profile',
    icon: 'contact',
    bg: '#3591FA',
   },
+  //{
+  //  name: 'Favorites',
+  //  route: 'favorites',
+  //  icon: 'star',
+  //  bg: '#EB6B23',
+  //},
   //{
   //  name: 'Settings',
   //  route: 'settings',
@@ -136,9 +136,10 @@ class SideBar extends Component {
   }
 
   render() {
+    console.log('drawer rendering')
     return (
       <Container style={styles.sidebar}>
-        <Content>
+        {/* <Content> */}
           <List
             dataArray={datas} renderRow={data =>
               <ListItem button noBorder onPress={() => this.onSelectItem(data.route, data.option)} >
@@ -157,7 +158,7 @@ class SideBar extends Component {
                 }
               </ListItem>}
           />
-        </Content>
+        {/* </Content> */}
       </Container>
     );
   }
@@ -172,6 +173,7 @@ function bindAction(dispatch) {
 
 const mapStateToProps = state => ({
   token: state.user.token,
+  is_verified: state.user.profile && state.user.profile.is_verified,
   pushId: state.user.pushId
 });
 

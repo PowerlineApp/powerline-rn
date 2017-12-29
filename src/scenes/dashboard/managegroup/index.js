@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View, FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import {
@@ -77,11 +77,11 @@ class ManageGroup extends Component {
             <List style={styles.list}>
               <ListItem style={styles.groupHeaderContainer}>
                 {this.props.group.avatar_file_path ?
-                  <Thumbnail style={styles.avatar} square source={{ uri: (this.state.newAvatar ? this.state.newAvatar : this.props.group.avatar_file_path) }}>
+                  <View style={styles.avatar}>
                     <View style={{justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%'}}>
-                        <PLImageSelector onConfirm={this.updateGroupAvatar} iconSize={20} iconColor='#000' onError={err => console.log(err)} />
+                        <PLImageSelector image={(this.state.newAvatar ? this.state.newAvatar : this.props.group.avatar_file_path)} onConfirm={this.updateGroupAvatar} iconSize={20} iconColor='#000' onError={err => console.log(err)} />
                      </View>
-                  </Thumbnail> :
+                   </View> :
                   <View style={styles.avatar} />
                 }
                 <Body>
@@ -90,7 +90,14 @@ class ManageGroup extends Component {
                   </Text>
                 </Body>
                 <Right>
-                  <PLImageSelector onConfirm={this.updateGroupBanner} iconSize={20} iconColor='#000' onError={err => console.log(err)} />
+                {this.props.group.banner ?
+                   <View style={styles.banner}>
+                    <View style={{justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%'}}>
+                     <PLImageSelector image={(this.state.newBanner ? this.state.newBanner : this.props.group.banner)} onConfirm={this.updateGroupBanner} iconSize={20} iconColor='#000' onError={err => console.log(err)} />
+                     </View>
+                   </View> :
+                  <View style={styles.banner} />
+                }
                 </Right>
               </ListItem>
             </List>

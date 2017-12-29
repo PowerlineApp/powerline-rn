@@ -615,7 +615,7 @@ class Home extends Component {
     // JC: I believe this loads to the group feed when a group is selected from Group Selector More menu
     selectGroup(group){
         // console.log('SELECTED GROUP', group)
-        var { token, dispatch } = this.props;
+        let { token, dispatch } = this.props;
         if (group == 'all') {
             dispatch({ type: 'RESET_ACTIVITIES' });
             dispatch({type: 'SET_GROUP', data: {id: 'all', header: 'all'}})
@@ -733,13 +733,13 @@ class Home extends Component {
     renderMenuOptions(group){
         // console.log('SELECTED GROUP', group);
         let options = [
-            <MenuOption value={'petition'}>
+            <MenuOption key="petition" value={'petition'}>
                 <Button iconLeft transparent dark onPress={() => {this.selectNewItem('petition'); Mixpanel.track("Opened New User Petition Form");}}>
                     <Icon name="ios-clipboard" style={styles.menuIcon} />
                     <Text style={styles.menuText}>New Petition</Text>
                 </Button>
             </MenuOption>,
-            <MenuOption value={'post'}>
+            <MenuOption key="post" value={'post'}>
                 <Button iconLeft transparent dark onPress={() => {this.selectNewItem('post'); Mixpanel.track("Opened New Post Form");}}>
                     <Icon name="ios-flag" style={styles.menuIcon} />
                     <Text style={styles.menuText}>New Post</Text>
@@ -754,31 +754,31 @@ class Home extends Component {
             //         <Text style={styles.menuText}>New Group Announcement</Text>
             //     </Button>
             // </MenuOption>,
-            <MenuOption value={'group_fundraiser'}>
+            <MenuOption key="group_fundraiser" value={'group_fundraiser'}>
                 <Button iconLeft transparent dark onPress={() => {this.selectNewItem('group_fundraiser'); Mixpanel.track("Opened New Fundraiser Form");}}>
                     <Icon name="ios-cash" style={styles.menuIcon} />
                     <Text style={styles.menuText}>New Group Fundraiser</Text>
                 </Button>
             </MenuOption>,
-            <MenuOption value={'group_event'}>
+            <MenuOption key="group_event" value={'group_event'}>
                 <Button iconLeft transparent dark onPress={() => {this.selectNewItem('group_event'); Mixpanel.track("Opened New Event Form");}}>
                     <Icon name="ios-calendar" style={styles.menuIcon} />
                     <Text style={styles.menuText}>New Group Event</Text>
                 </Button>
             </MenuOption>,
-            <MenuOption value={'group_petition'}>
+            <MenuOption key="group_petition" value={'group_petition'}>
                 <Button iconLeft transparent dark onPress={() => {this.selectNewItem('group_petition'); Mixpanel.track("Opened New Group Petition Form");}}>
                     <Icon name="ios-clipboard" style={styles.menuIcon} />
                     <Text style={styles.menuText}>New Group Petition</Text>
                 </Button>
             </MenuOption>,
-            <MenuOption value={'group_discussion'}>
+            <MenuOption key="group_discussion" value={'group_discussion'}>
                 <Button iconLeft transparent dark onPress={() => {this.selectNewItem('group_discussion'); Mixpanel.track("Opened New Discussion Form");}}>
                     <Icon name="ios-chatbubbles" style={styles.menuIcon} />
                     <Text style={styles.menuText}>New Group Discussion</Text>
                 </Button>
             </MenuOption>,
-            <MenuOption value={'group_poll'}>
+            <MenuOption key="group_poll" value={'group_poll'}>
                 <Button iconLeft transparent dark onPress={() => {this.selectNewItem('group_poll'); Mixpanel.track("Opened New Poll Form");}}>
                     <Icon name="ios-stats" style={styles.menuIcon} />
                     <Text style={styles.menuText}>New Group Poll</Text>
@@ -790,7 +790,7 @@ class Home extends Component {
     }
     
     render() {
-        console.log(this.props.newsfeedUnreadCount)
+        // console.log(this.props.newsfeedUnreadCount)
         let {selectedGroup} = this.props;
         //       return (
             // <Container>
@@ -940,6 +940,7 @@ function bindAction(dispatch) {
     return {
         openDrawer: () => { Keyboard.dismiss(); dispatch(openDrawer()); },
         loadUserGroups: (token) => dispatch(loadUserGroups(token)),
+        dispatch: (a) => dispatch(a)
     };
 }
 

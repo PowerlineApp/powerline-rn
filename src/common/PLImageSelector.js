@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { TouchableOpacity, Modal, View, Text, Image } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
-import { Icon } from 'native-base';
+import { Icon, Thumbnail } from 'native-base';
 const INITIAL_STATE = {
     showConfirmationModal: false,
     image: null
@@ -41,14 +41,24 @@ class PLImageSelector extends Component {
     }
 
     render() {
+        console.log('=>', this.props);
         return (
             <TouchableOpacity transparent onPress={this.selectImage}>
-                <Image source={{uri: (this.state.image ? this.state.image.path : null)}} style={{height: '85%', width: '95%', alignSelf: 'center', marginTop: 5}}>
-                    <Icon name='camera' style={{color: '#000', backgroundColor: 'rgba(0,0,0,0)', fontSize: this.props.iconSize}} />
-                </Image>
+                {/* <Icon name='camera'  /> */}
+                <View style={styles.imageContainer}>
+                    <Thumbnail source={{uri: this.props.image}} square />
+                    <View style={styles.iconContainer}>
+                        <Icon name='camera' style={{
+                            color: this.props.iconColor,
+                            backgroundColor: 'rgba(0,0,0,0)',
+                            fontSize: this.props.iconSize
+                        }} />
+                    </View>
+                </View>
                 <Modal visible={this.state.showConfirmationModal} presentationStyle='pageSheet' transparent>
-                    <View style={{flex: 1, backgroundColor: rgb(0,0,0,0.7), alignItems: 'center', justifyContent: 'center'}}>
-                        <View style={{height: '60%', width: '90%', backgroundColor: 'white'}}>
+                    <View style={styles.confirmationContainer}>
+                        <View style={styles.confirmationContent}>
+                            <Image source={{uri: (this.state.image ? this.state.image.path : null)}} style={styles.confirmationImage} />
                             <View style={styles.buttonsWrapper}>
                                 <TouchableOpacity style={styles.button} onPress={this.onModalConfirm}>
                                     <Text style={styles.buttonText}>Confirm</Text>
@@ -68,6 +78,31 @@ class PLImageSelector extends Component {
 export default PLImageSelector;
 
 const styles = {
+    confirmationContainer: {
+        height: '85%', width: '95%', alignSelf: 'center', marginTop: 5
+    },
+    confirmationContainer: {
+        flex: 1,
+        backgroundColor: rgb(0,0,0,0.7),
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    confirmationContent: {
+        height: '60%',
+        width: '90%', 
+        backgroundColor: 'white'
+    },
+    imageContainer: {
+        height: '100%',
+        width: '100%'
+    },
+    iconContainer: {
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
     button: {
         backgroundColor: '#020860',
         height: 30,

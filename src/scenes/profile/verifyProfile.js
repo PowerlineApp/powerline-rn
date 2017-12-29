@@ -108,7 +108,7 @@ class VerifyProfile extends Component {
                 this.state.address1 +=" " + address_components[i].long_name;
             }
         }
-        // this.state.autoAddress.setAddressText(this.state.address1);
+        this.state.autoAddress.setAddressText(this.state.address1);
     }
 
     onChange(value, key){
@@ -209,13 +209,20 @@ class VerifyProfile extends Component {
         console.log({zip, address1, address2, city, state, email, country, phone})
             return (
             <Content contentContainerStyle={{alignItems: 'center', marginTop: 20}}>
-            <Button transparent onPress={() => Actions.pop()} style={{ width: 200, height: 50 }}  >
-                          <Icon active name='arrow-back' style={{ color: '#6A6AD5' }} />
-                      </Button>
-                <View style={{position: 'absolute', borderRadius: 25, flex: 1, zIndex: 3, marginTop: 16}}>
-                    <ImageSelector onConfirm={(i) => this.updateUserAvatar(i)} iconSize={20} iconColor='#000' onError={err => console.log(err)}/>
-                </View> 
-                <Thumbnail source={{uri: this.state.user.avatar_file_name}} style={{marginBottom: 4, borderRadius: 25}} />
+                <View style={{flexDirection: 'row', justifyContent: 'space-around', justifyContent: 'center'}}>
+                    <View style={{flex: 8}}>
+                        <Button transparent onPress={() => Actions.pop()} style={{ width: 200, height: 50 }}  >
+                            <Icon active name='arrow-back' style={{ color: '#6A6AD5' }} />
+                        </Button>
+                    </View>
+                    <View style={{flex: 10}}>
+                        <Thumbnail source={{uri: this.state.user.avatar_file_name}} style={{marginTop: 8, borderRadius: 25}}>
+                            <View style={{position: 'absolute', alignSelf:'center', borderRadius: 25, flex: 1, zIndex: 3, marginTop: 16}}>
+                                <ImageSelector onConfirm={(i) => this.updateUserAvatar(i)} iconSize={20} iconColor='#000' onError={err => console.log(err)}/>
+                            </View> 
+                        </Thumbnail>
+                    </View>
+                </View>
                 <Card>
                     <List style={{alignItems: 'center', justifyContent: 'center'}}>
                         <View style={{padding: 20}}>
@@ -230,10 +237,12 @@ class VerifyProfile extends Component {
                             listViewDisplayed='auto'
                             fetchDetails
                             renderDescription={(row) => row.description}  
-                            onPress={this.onAutoComplete}                      
+                            onPress={this.onAutoComplete}    
+                            getDefaultValue={() => address1}
                             query={{
                                 key: 'AIzaSyBQOJDsIGt-XxuSNI7Joe1KRpAOJwDAEQE',
-                                language: 'en'
+                                language: 'en',
+                                components: country ? `country:${country}` : ''                                
                             }}
                             ref={(addressobj) => {
                                 this.state.autoAddress = addressobj;

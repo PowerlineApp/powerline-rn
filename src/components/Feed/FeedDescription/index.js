@@ -19,12 +19,12 @@ class FeedDescription extends Component {
       Actions[scene]({ entityType: type, entityId: item.entity.id, ...options });
   }
 
-    _renderTitle (item) {
-        if (item.title) {
-            return (<Text style={styles.descriptionTitle}>{item.title}</Text>);
-        } else {
-            return null;
-        }
+  _renderTitle (item) {
+    if (item.title) {
+        return (<Text style={styles.descriptionTitle}>{item.title}</Text>);
+    } else {
+        return null;
+    }
   }
   // The priority zone counter lists the count of total priority zone items in the newsfeed
   _renderZoneIcon(item) {
@@ -53,7 +53,7 @@ class FeedDescription extends Component {
       blur = '1000';
     }
     return (
-      <View style={{width: 80, marginRight: 0, justifyContent: 'flex-end', alignItems: 'center', alignSelf: 'flex-start'}} >
+      <View style={styles.attachedImage} >
         <Thumbnail medium square
             source={{uri: imgURL +`&w=150&h=150&blur=${blur}&auto=compress,format,q=95`}}
             />
@@ -91,10 +91,10 @@ class FeedDescription extends Component {
     return (
       <CardItem style={{ paddingLeft: 5, paddingRight: 15 }}>
         <Left>
-          <View style={styles.descLeftContainer}>
+          {/* <View style={styles.descLeftContainer}>
             {this._renderZoneIcon(item)}
             <Label style={styles.commentCount}>{item.responses_count}</Label>
-          </View>
+          </View> */}
           <Body style={styles.descBodyContainer}>
             <TouchableOpacity onPress={() => this.redirect(item)}>
               {this._renderTitle(item)}

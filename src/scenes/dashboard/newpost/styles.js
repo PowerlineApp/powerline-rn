@@ -71,19 +71,25 @@ export default {
     main_content: {
         width: width, 
         height: height - 55 - variables.toolbarHeight,
+        backgroundColor: '#fff',
         position: 'relative',
     },
 
-    textarea: {
-        paddingTop: 0,
-        marginTop: 0,
-        textAlignVertical: 'top',
-        width: width, 
-        height: height - 185,
+    textarea: (definedHeight) => ({
+        // flex: 1,
+        // paddingTop: 70,
+        // // height: 200,
+        // marginTop: 0,
+        // textAlignVertical: 'top',
+        // width: width, 
+        // // height: '100%',
+        height: definedHeight,
+        flex: 1,
         fontSize: 18, 
         color: 'rgba(0,0,0,0.6)',
+        textAlignVertical:'top',
         zIndex: 5,
-    },
+    }),
 
     deleteIconContainer: {
         position: 'absolute',

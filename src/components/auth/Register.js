@@ -10,8 +10,10 @@ import {
     Dimensions,
     Switch,
     Alert,
-    AsyncStorage
+    AsyncStorage,
+    PermissionsAndroid
 }  from 'react-native';
+
 import PLColors from 'PLColors';
 import PLConstants from 'PLConstants';
 import PLButton from 'PLButton';
@@ -52,7 +54,7 @@ class Register extends React.Component{
             last_name: isFb? fbData.last_name: "",
             username: isFb? fbData.username: "",
             zip: isFb? fbData.zip: "",
-            country: isFb? fbData.country ? fbData.country :  DeviceInfo.getDeviceCountry() : '',
+            country: isFb? fbData.country : '',
             email: isFb? fbData.email: "",
             countryCode: '+1',
             is_over_13: false,
@@ -65,10 +67,30 @@ class Register extends React.Component{
     }
 
     componentDidMount(){
-        getZipCode(googlePlacesKey).then(r => {
-            this.setState({googleZip: r})
-        })
+        // getZipCode(googlePlacesKey).then(r => {
+        //     this.setState({googleZip: r})
+        // })
+        this.requestLocation()
+
+
     }
+
+    async requestLocation() {
+        try {
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            {
+              'title': 'We need your location'
+            }
+          )
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            this.setState({country: this.state.country || DeviceInfo.getDeviceCountry()})
+          } else {
+          }
+        } catch (err) {
+          console.warn(err)
+        }
+      }
     
 
     register(isFb, data){
@@ -373,14 +395,20 @@ class Register extends React.Component{
                         placeholder='Zipcode'
                         minLength={2}
                         autoFocus={false}
+                        getDefaultValue={() => this.state.zip}
+                        textInputProps={{
+                            onChangeText: (text) => {this.onChangeZip(text); this.setState({listViewDisplayed: true})},
+                            onBlur: () => {this.setState({listViewDisplayed: false})}
+                        }}
                         returnKeyType={'Done'}
-                        listViewDisplayed='auto'
+                        listViewDisplayed={this.state.listViewDisplayed}
                         fetchDetails={true}
                         renderDescription={(row) => row.description}  
                         onPress={this.onAutoComplete}                      
                         query={{
                             key: googlePlacesKey,
-                            language: 'en'
+                            language: 'en',
+                            components: this.state.country ? `country:${this.state.country}` : ''
                         }}
                         ref={(zipobj) => {
                             this.state.autoZip = zipobj;

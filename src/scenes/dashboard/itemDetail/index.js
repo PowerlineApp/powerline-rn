@@ -510,16 +510,16 @@ class ItemDetail extends Component {
     }
 
     _renderHeader(item) {
-        return <FeedHeader item={item} />
+        return <FeedHeader userId={this.props.userId} item={item} />
     }
 
     substitute(mention) {
-        console.log('----------------------------------------------------------------------------')
-        console.log('----------------------------------------------------------------------------')
-        console.log('----------------------------------------------------------------------------')
-        console.log('----------------------------------------------------------------------------')
-        console.log('----------------------------------------------------------------------------')
-        console.log('----------------------------------------------------------------------------')
+        // console.log('----------------------------------------------------------------------------')
+        // console.log('----------------------------------------------------------------------------')
+        // console.log('----------------------------------------------------------------------------')
+        // console.log('----------------------------------------------------------------------------')
+        // console.log('----------------------------------------------------------------------------')
+        // console.log('----------------------------------------------------------------------------')
         let { init, end } = this.state;
         let newContent = this.state.commentText;
         let initialLength = newContent.length;
@@ -533,7 +533,7 @@ class ItemDetail extends Component {
         this.setState({ commentText: finalString, displaySuggestionBox: false, lockSuggestionPosition: end });
         this.addCommentInput.setNativeProps({text: finalString});// = finalString;
         console.log(this.addCommentInput)
-        console.log('----------------------------------------------------------------------------')
+        // console.log('----------------------------------------------------------------------------')
         // console.log(this.addCommentInput.value)
     }
 
@@ -596,7 +596,7 @@ class ItemDetail extends Component {
                     </TouchableOpacity>
                 </View>
                 <Textarea
-                    maxLength={300}
+                    maxLength={5000}
                     placeholderTextColor="rgba(0,0,0,0.1)"
                     style={styles.textarea}
                     value={state.inputDescription}
@@ -663,7 +663,6 @@ class ItemDetail extends Component {
                                             </Right>
                                         </Left>
                                     </CardItem>
-
                                 </MenuOptions>
                             </Menu>
                         </Body>
@@ -888,11 +887,12 @@ class ItemDetail extends Component {
                                 style={styles.attachedImage}
                                 onPress={() => { }}>
                                 <View style={styles.imageContainer}>
-                                    <ImageLoad
-                                        placeholderSource={require('img/empty_image.png')}
-                                        source={{ uri: imgURL + '&w=500&h=500&auto=compress,q=95' }}
-                                        style={styles.image}
-                                    />
+                                    <Image 
+                                    placeholderSource={require('img/empty_image.png')}
+                                    source={{ uri: imgURL + '&w=500&h=500&auto=compress,q=95' }}
+                                    style={styles.image} />
+                                    {/* <ImageLoad
+                                    /> */}
                                 </View>
                             </TouchableOpacity>
                         </Body>
@@ -907,7 +907,7 @@ class ItemDetail extends Component {
             <View>
                 {
                     state.isEditMode
-                    ? this.renderEditableDescription(item)
+                    ? this.renderEditableDescription(item, state)
                     : <FeedDescription item={item} profile={this.props.profile} isInDetail />
                 }
                 <FeedMetaData item={item} />

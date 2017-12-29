@@ -176,7 +176,7 @@ class Login extends React.Component {
         }
         this.setState({loading: false})
     }).catch(e => {
-        console.log(e);
+        console.log('\n------------------------------', e);
         Alert.alert('Invalid data',
         'Validation failed.',
         [
@@ -300,7 +300,7 @@ class Login extends React.Component {
         </View>
         </View>
           }
-        <View style={{flex: 1, alignItems: 'center', marginTop: 50}}>
+        <View style={styles.login}>
           <PLButton
             caption={this.state.recoveryStep === 0 ? 'Send email' : 'Login'}
             onPress={() => this.state.recoveryStep === 0 ? this.sendRecoveryEmail() : this.finishRecovery()}
@@ -367,6 +367,11 @@ async function timeout(ms: number): Promise {
 var styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  login: {
+    flex: 1,
+     alignItems: 'center',
+     marginTop: 50
   },
   imgLogo: {
     marginTop: 30,

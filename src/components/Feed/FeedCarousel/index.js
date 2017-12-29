@@ -30,7 +30,9 @@ class FeedCarousel extends Component {
                     </TouchableOpacity>
                 );
             });
-            if (slides.length < 0){ return null}
+            if (slides.length < 1){ return null;}
+            return null;
+            console.log('=>', slides);
             return (
                 <CardItem cardBody>
                     <Carousel
@@ -47,9 +49,9 @@ class FeedCarousel extends Component {
                         showsHorizontalScrollIndicator={false}
                         snapOnAndroid
                         removeClippedSubviews={false}
-                    >
-                        {slides}
-                    </Carousel>
+                        data={slides}
+                        renderItem={({item}) => (item)}
+                    />
                 </CardItem>
             );
         } else {

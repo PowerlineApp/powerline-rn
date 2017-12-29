@@ -56,14 +56,17 @@ class Newsfeed extends Component {
         };
         lastScrollPosition: null
     }
-
+    
     componentWillMount() {
-        this.props.dispatch(resetActivities());
-        this.loadInitialActivities();
+        // console.log('willmount')
+        // this.props.dispatch(resetActivities());
+            this.props.dispatch(resetActivities());
+            this.loadInitialActivities();
     }
     
     componentWillReceiveProps(nextProps) {
         if (this.props.selectedGroup.group !== nextProps.selectedGroup.group){
+            console.log('componentWillReceiveProps', this.props)
             this.props.dispatch(resetActivities());
             this.loadInitialActivities(nextProps);
         }
@@ -90,10 +93,10 @@ class Newsfeed extends Component {
         const { props: { token, dispatch, page } } = this;
         // console.log('to fetch: ', this.props.selectedGroup)
         const group = nextProps ? nextProps.selectedGroup.group : this.props.selectedGroup.group;
-        console.log('about to load more -------------- loadInitialActivities')
+        // console.log('about to load more -------------- loadInitialActivities')
         try {
             let activities = await loadActivities(token, 0, 20, group);
-            console.log('loaded: ', activities)
+            // console.log('loaded: ', activities)
             dispatch(activities);
         } catch (e) {
             this.setState({ isRefreshing: false });
@@ -130,6 +133,7 @@ class Newsfeed extends Component {
     }
 
     _onRefresh() {
+        console.log('onRefresh')
         this.props.dispatch(resetActivities());
         this.loadInitialActivities();
         getGroups(this.props.token)
@@ -151,13 +155,6 @@ class Newsfeed extends Component {
             this.loadNextActivities();
         }
     }
-
-    // Felipe - unnused method. commenting...
-    // _onBeginReached() {
-    //     this.props.dispatch(resetActivities());
-
-    //     this.loadInitialActivities();
-    // }
 
     onChangeText(text) {
         this.setState({
@@ -276,7 +273,7 @@ class Newsfeed extends Component {
 
 
         let dataArray = this.state.dataArray;
-        console.log(dataArray);
+        // console.log(dataArray);
 
         let conversationView = false;
         if (this.props.selectedGroup && this.props.selectedGroup.group !== 'all' && this.props.selectedGroup.conversationView){
@@ -284,7 +281,7 @@ class Newsfeed extends Component {
             conversationView = false;
         }
 
-        console.log('newsfeed render', this.props)
+        // console.log('newsfeed render', this.props)
 
         return (
             <Container style={{flex: 1}}>
@@ -373,6 +370,7 @@ const mapStateToProps = state => ({
     userId: state.user.id,
     selectedGroup: state.activities.selectedGroup,
     group: state.activities.group,
+    drawerState: state.drawer.drawerState
     // groupName: state.activities.groupName,
     // groupAvatar: state.activities.groupAvatar,
     // groupLimit: state.activities.groupLimit,

@@ -4,7 +4,7 @@
 // https://api-dev.powerli.ne/api-doc#post--api-v2.2-groups-{group}-posts
 
 import React, { Component } from 'react';
-import {TextInput, Keyboard, Platform, KeyboardAvoidingView} from 'react-native';
+import { TextInput, Keyboard, Platform, KeyboardAvoidingView, ActivityIndicator} from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import * as Animatable from 'react-native-animatable';
@@ -31,6 +31,7 @@ import {
     ListItem,
     Thumbnail,
     ActionSheet,
+    Input,
     Toast
 } from 'native-base';
 const PLColors = require('PLColors');
@@ -54,9 +55,6 @@ import CommunityView from '../../../components/CommunityView';
 // import { setTimeout } from 'timers';
 const POST_MAX_LENGTH = 5000;
 import {Mixpanel} from 'PLEnv';
-
-
-
 
 class NewPost extends Component {
     constructor(props) {
@@ -182,15 +180,19 @@ class NewPost extends Component {
         //     alert('You do not have any posts left in this group');
         //     return;
         // }
-
-
+        if (this.state.sending) return;
+        this.setState({sending: true});
+        
+        
         if (this.state.selectedGroupIndex == -1) {
             this.state.sharing ? showToast('Please select Group.')
             : alert('Please select Group.');
+            this.setState({sending: false});
             return;
         } else if (this.state.content == "" || this.state.content.trim() == '') {
             this.state.sharing ? showToast('Please type post content.')
             : alert("Please type post content");
+            this.setState({sending: false});
             return;
         }
 
@@ -206,6 +208,7 @@ class NewPost extends Component {
                 }, 200);
             })
             .catch(err => {
+                this.setState({sending: false});
             });
     }
 
@@ -297,21 +300,25 @@ class NewPost extends Component {
             this.setState({ image: null });
         } else {
             ActionSheet.show({
-                options: ["Take photo", "Choose from gallery"],
+                options: ["Take photo", "Choose from gallery", "Cancel"],
                 title: "Attach image"
             }, buttonIndex => {
-                if (buttonIndex == 0) {
+                if (buttonIndex == 0 || buttonIndex == '0') {
                     ImagePicker.openCamera({
                         cropping: true,
+                        height: 1280,
+                        width: 1280,
                         includeBase64: true
                     }).then(image => {
                         this.setState({ image: image.data });
                     }).catch(v => alert(JSON.stringify(v)));
                 }
-
-                if (buttonIndex == 1) {
+                
+                if (buttonIndex == 1 || buttonIndex == '1') {
                     ImagePicker.openPicker({
                         cropping: true,
+                        height: 1280,
+                        width: 1280,
                         includeBase64: true
                     }).then(image => {
                         console.log(image);
@@ -365,7 +372,7 @@ class NewPost extends Component {
                             {
                             this.state.sharing
                             ? null
-                            : <Button transparent onPress={() => Actions.pop()} style={{ width: 50, height: 50 }}  >
+                            : <Button transparent onPress={() => {Keyboard.dismiss(); Actions.pop();}} style={{ width: 50, height: 50 }}  >
                                 <Icon active name='arrow-back' style={{ color: 'white' }} />
                             </Button>
                         }
@@ -375,7 +382,11 @@ class NewPost extends Component {
                         </Body>
                         <Right>
                             <Button transparent onPress={() => { this.createPost(); Mixpanel.track("Sent Post"); }}>
-                                <Label style={{ color: 'white' }}>Send</Label>
+                                {
+                                    this.state.sending 
+                                    ? <ActivityIndicator color={'#fff'} animating={this.state.sending} /> 
+                                    : <Label style={{ color: 'white' }}>Send</Label>
+                                }
                             </Button>
                         </Right>
                     </Header>
@@ -401,7 +412,7 @@ class NewPost extends Component {
                             </Right>
                         </ListItem>
                     </List>
-                    <ScrollView scrollEnabled={false} keyboardShouldPersistTaps={'handled'} style={styles.main_content} >
+                    <ScrollView onLayout={(e) => this.setState({contentHeight: e.nativeEvent.layout.height})} scrollEnabled={false} keyboardShouldPersistTaps={'handled'} style={styles.main_content} >
                         {/* <S style={styles.main_content}> */}
 
                         {
@@ -411,20 +422,23 @@ class NewPost extends Component {
                         </ScrollView>
                         : <ScrollView />
                     }
-
-                        <ScrollView style={{marginTop: 0}}  >
-                            <TextInput
-                                maxLength={POST_MAX_LENGTH}
-                                ref={(r) => this.postInputRef = r}
-                                onSelectionChange={this.onSelectionChange}
-                                placeholderTextColor='rgba(0,0,0,0.1)'
-                                style={styles.textarea}
-                                multiline
-                                placeholder={this.placeholderTitle}
-                                value={this.state.content}
-                                onChangeText={(text) => this.changeContent(text)}
-                        />
-                        </ScrollView>
+                        <View style={{flex: 1, height: '100%', backgroundColor: '006'}}  >
+                            <ScrollView style={{flex: 1, height: '100%'}}>
+                                <TextInput
+                                    maxLength={POST_MAX_LENGTH}
+                                    ref={(r) => this.postInputRef = r}
+                                    onSelectionChange={this.onSelectionChange}
+                                    placeholderTextColor='rgba(0,0,0,0.1)'
+                                    style={styles.textarea(this.state.contentHeight || 200)}
+                                    multiline
+                                    keyboardType={'default'}
+                                    scrollEnabled={false}
+                                    placeholder={this.placeholderTitle}
+                                    value={this.state.content}
+                                    onChangeText={(text) => this.changeContent(text)}
+                                />
+                            </ScrollView>
+                        </View>
                         {
                             this.state.showCommunity &&
                             <CommunityView
@@ -433,7 +447,9 @@ class NewPost extends Component {
                             />
                         }
                     </ScrollView>
-                    <KeyboardAvoidingView behavior={Platform.select({android:'height', ios: 'padding'})}>
+                    <KeyboardAvoidingView
+                        keyboardVerticalOffset={32}
+                        behavior={Platform.select({android:'padding', ios: 'padding'})}>
                         {
                             this.renderAttachments()
                         }

@@ -16,12 +16,15 @@ var StyleSheet = require('StyleSheet');
 var PLNavigator = require('PLNavigator');
 var View = require('View');
 var StatusBar = require('StatusBar');
-var SplashScreen = require('react-native-splash-screen');
+// var SplashScreen = require('react-native-splash-screen');
+import SplashScreen from 'react-native-splash-screen';
+
 var { connect } = require('react-redux');
 var { version, stripeAPIKey } = require('./PLEnv.js');
 var { StackNavigator } = require('react-navigation');
 var RegisterScene  = require('./scenes/auth/RegisterScene');
 var TourScene = require('./scenes/auth/TourScene');
+import {Root} from 'native-base';
 import OneSignal from 'react-native-onesignal';
 // console.log = () => {};
 
@@ -35,6 +38,7 @@ var PLApp = React.createClass({
         //     SplashScreen.hide();
       
         // }
+        console.log('=>', SplashScreen);
         SplashScreen.hide();
         // alert('yoiyoyo');
 
@@ -51,10 +55,13 @@ var PLApp = React.createClass({
     },
 
     render: function () {
-        if (!this.props.isLoggedIn) {
-            return <LoginStack />;
-        }
-        return <PLNavigator />;
+        return <Root>
+            {
+                !this.props.isLoggedIn
+                ? <LoginStack />
+                : <PLNavigator />
+            }
+        </Root>;
     },
 
 });

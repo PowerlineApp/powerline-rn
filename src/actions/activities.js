@@ -9,7 +9,7 @@ async function loadActivities(token: string, page: ?number = 0, perPage: ?number
     // console.log(`${API_URL}/v2/activities?_format=json&user=${user}&group=${group}&page=${page + 1}&per_page=${perPage}&followed=${followed}`);
     // '/api/v2/activities?user=all&group=all&page=1&per_page=20&followed=true'
     // '/api/v2/activities?user=all&group=all&followed=true&page=0&per_page=20'
-    console.log('loadActivities API -> ', token, page, perPage, group, user, followed)
+    // console.log('loadActivities API -> ', token, page, perPage, group, user, followed)
     try {
         var response = await fetch(`${API_URL}/v2/activities?_format=json&user=${user}&group=${group}&followed=${followed}&page=${page + 1}&per_page=${perPage}`, {
             method: 'GET',
@@ -54,7 +54,7 @@ const markAsRead = (token, id) => (dispatch, state) => {
           },
           body: JSON.stringify({activities: [{id: id, read: true}]})
         }).then(r => {
-            console.log('response', r)
+            // console.log('response', r)
             dispatch({type: 'DECREASE_NEWSFEED_COUNT'})
         }).catch(e => {
             console.log('error', e)
@@ -99,7 +99,7 @@ async function loadFriendsActivities(token: string, page: ?number = 0, perPage: 
 
 function resetActivities(): ThunkAction {
     return (dispatch) => {
-        console.warn('RESETING ACTIVITIES -----------')
+        // console.warn('RESETING ACTIVITIES -----------')
         return dispatch({
             type: 'RESET_ACTIVITIES',
         });
@@ -118,7 +118,7 @@ function loadActivitiesByUserId(token, page = 0, per_page = 20, group = 'all', u
         })
             .then((res) => res.json())
             .then(data => {
-                console.log("Load Activities by User Id API success", data);
+                // console.log("Load Activities by User Id API success", data);
                 resolve(data);
             })
             .catch(err => {
@@ -130,7 +130,7 @@ function loadActivitiesByUserId(token, page = 0, per_page = 20, group = 'all', u
 
 //Should be for loading public groups (Town/state/country) or by public groups (e.g. Save the Whales)
 function loadActivityByEntityId(token, entityType, entityId) {
-    console.log('about to fetch => ' + '/v2/activities?_format=json&' + entityType + '_id=' + entityId + '&page=1&per_page=20');
+    // console.log('about to fetch => ' + '/v2/activities?_format=json&' + entityType + '_id=' + entityId + '&page=1&per_page=20');
     // /api/v2/activities?petition_id=349&page=1&per_page=20
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2/activities?_format=json&' + entityType + '_id=' + entityId + '&page=1&per_page=20', {
@@ -142,7 +142,7 @@ function loadActivityByEntityId(token, entityType, entityId) {
         })
             .then((res) => {console.log('res', res); return res.json()})
             .then(data => {
-                console.log("Load Activity by Entity Id API success", data);
+                // console.log("Load Activity by Entity Id API success", data);
                 resolve(data);
             })
             .catch(err => {
@@ -167,7 +167,7 @@ function putSocialActivity(token, id, ignore){
         })
         .then((res) => res.json())
         .then(data => {
-            console.log("Put Social Activity API Success", data);
+            // console.log("Put Social Activity API Success", data);
             resolve(data);
         })
         .catch(err => {

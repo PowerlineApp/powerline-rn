@@ -97,25 +97,25 @@ class GroupMembers extends Component{
         var { token } = this.props;
     
         Alert.alert("Confirm", "Do you want to stop following " + this.state.members[index].username + " ?", [
-          {
-            text: 'Cancel'
-          },
-          {
-            text: 'OK',
-            onPress: () => {
-                unFollowings(token, this.state.members[index].id)
+            {
+                text: 'Cancel'
+            },
+            {
+                text: 'OK',
+                onPress: () => {
+                    unFollowings(token, this.state.members[index].id)
                 .then((ret) => {
                     this.getMembers();        
                 })
                 .catch(err => {
     
                 });
+                }
             }
-          }
         ]);
     }
     
-      follow(index){
+    follow(index){
         var { token } = this.props;
         putFollowings(token, this.state.members[index].id)
         .then(() => {
@@ -133,7 +133,7 @@ class GroupMembers extends Component{
                 <Header style={styles.header}>
                     <Left>
                         <Button transparent onPress={() => Actions.pop()} style={{width: 50, height: 50 }}  >
-                            <Icon active name="arrow-back" style={{color: 'white'}}/>
+                            <Icon active name='arrow-back' style={{color: 'white'}} />
                         </Button>
                     </Left>
                     <Body>
@@ -142,51 +142,51 @@ class GroupMembers extends Component{
                 </Header>
                 <Content padder>
                     <List style={{marginTop: 17}}>
-                        <ListItem style={{backgroundColor: 'white', marginLeft: 0, paddingLeft: 17}}>
+                        <ListItem style={styles.listItem}>
                             {this.props.avatar_file_path?
-                            <Thumbnail style={styles.avatar} square source={{uri: this.props.avatar_file_path+'&w=150&h=150&auto=compress,format,q=95'}}/>:
-                            <View style={styles.avatar}/>
+                                <Thumbnail style={styles.avatar} square source={{uri: this.props.avatar_file_path+'&w=150&h=150&auto=compress,format,q=95'}} />:
+                                <View style={styles.avatar} />
                             }
                             <Body>
                                 <Text style={{color: PLColors.main}}>{this.props.official_name}</Text>
-                                <Button block style={styles.followBtn} onPress={this.followAllBtn.bind(this)}>
+                                <Button block style={styles.followBtn} onPress={() => this.followAllBtn()}>
                                     <Label style={{color: 'white'}}>Follow All</Label>
                                 </Button>
                             </Body>
                         </ListItem>
                         <ListItem style={{height: 25}}>
-                            <Text></Text>
+                            <Text />
                         </ListItem>
                         {
                             this.state.members.map((user, index) => {
-                                console.log('user', user)
+                                console.log('user', user);
                                 return (
-                                    <ListItem key={index} style={{backgroundColor: 'white', marginLeft: 0, paddingLeft: 17}} >
+                                    <ListItem key={index} style={styles.listItem} >
                                         <TouchableOpacity onPress={() => this.goToProfile(user.id)} >
-                                            <Thumbnail square source={{uri: user.avatar_file_name+'&w=150&h=150&auto=compress,format,q=95'}}/>
+                                            <Thumbnail square source={{uri: user.avatar_file_name+'&w=150&h=150&auto=compress,format,q=95'}} />
                                         </TouchableOpacity>
                                         <Body>
                                             <Text onPress={() => this.goToProfile(user.id)} >{user.username}</Text>
                                             <Text note onPress={() => this.goToProfile(user.id)} >{user.first_name} {user.last_name}</Text>
                                         </Body>
-                                            {
+                                        {
                                                 user.following 
                                                 ?   <TouchableOpacity onPress={() => this.removeFollowing(index)}>
-                                                        <View style={styles.followButtonContainer}>
-                                                            <Icon name="ios-person" style={styles.activeIconLarge} />
-                                                            <Icon name="remove-circle" style={styles.activeIconSmall} />
-                                                        </View>
-                                                    </TouchableOpacity>
+                                                    <View style={styles.followButtonContainer}>
+                                                        <Icon name='ios-person' style={styles.activeIconLarge} />
+                                                        <Icon name='remove-circle' style={styles.activeIconSmall} />
+                                                    </View>
+                                                </TouchableOpacity>
                                                 :   <TouchableOpacity onPress={() => this.follow(index)}>
-                                                        <View style={styles.followButtonContainer}>
-                                                            <Icon name="ios-person" style={styles.activeIconLarge} />
-                                                            <Icon name="add-circle" style={styles.activeIconSmall} />
-                                                        </View>
-                                                    </TouchableOpacity>
+                                                    <View style={styles.followButtonContainer}>
+                                                        <Icon name='ios-person' style={styles.activeIconLarge} />
+                                                        <Icon name='add-circle' style={styles.activeIconSmall} />
+                                                    </View>
+                                                </TouchableOpacity>
                                                     
                                             }
                                     </ListItem>
-                                )
+                                );
                             })
                         }                        
                     </List>

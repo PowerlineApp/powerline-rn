@@ -35,7 +35,7 @@ const initialState = {
 const payloadStack: Array<Object> = [];
 
 function activities(state: State = initialState, action: Action): State {
-    console.log('action(activities):', action);
+    // console.log('action(activities):', action);
     if (action.type === 'LOADED_ACTIVITIES') {
         payloadStack = payloadStack.concat(action.data.payload);
         return {
@@ -49,7 +49,7 @@ function activities(state: State = initialState, action: Action): State {
     }
 
     if (action.type === 'RESET_ACTIVITIES') {
-        console.log('RESET_ACTIVITIES', action);
+        // console.log('RESET_ACTIVITIES', action);
         payloadStack = [];
         return {
             ...initialState,
@@ -77,7 +77,7 @@ function activities(state: State = initialState, action: Action): State {
     }
 
     if (action.type === 'SET_GROUP') {
-        console.log('SET_GROUP', action);
+        // console.log('SET_GROUP', action);
         payloadStack = [];
         return {
             ...state,

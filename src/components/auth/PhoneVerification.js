@@ -103,11 +103,13 @@ export default class PhoneVerification extends Component {
                 callingCode: '1'
             }
         };
-        let subscription = SmsListener.addListener(message => {
-            let code = message.body.match(/[\d]{6}/)[0];
-            props.onChangeCode(code);
-            subscription.remove();
-        });
+        // if (Platform.OS === 'android'){
+        //     let subscription = SmsListener.addListener(message => {
+        //         let code = message.body.match(/[\d]{6}/)[0];
+        //         props.onChangeCode(code);
+        //         // subscription.remove();
+        //     });
+        // }
     }
 
     componentDidMount(){

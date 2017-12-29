@@ -20,25 +20,31 @@ export const itemWidth = slideWidth + itemHorizontalMargin * 2;
 //
 const optionStyles = {
     optionTouchable: {
-      underlayColor: 'red',
-      activeOpacity: 40,
+        underlayColor: 'red',
+        activeOpacity: 40,
     },
     optionWrapper: {
-      backgroundColor: 'pink',
-      margin: 5,
+        backgroundColor: 'pink',
+        margin: 5,
     },
     optionText: {
-      color: 'black',
+        color: 'black',
     },
-  };
+};
 //
 
 export default {
+    // this contains the whole thing
+    container: {
+        backgroundColor: '#fff',
+    },
+    // this is the author name
     title: {
         color: '#21354a',
         fontSize: 16,
         fontWeight: 'bold'
     },
+
     commentTitle: {
         color: '#21354a',
         fontSize: 14,
@@ -46,16 +52,18 @@ export default {
     },
     commentPreviewText: {
         color: '#21354a',
-        fontSize: 14,
+        fontSize: 14
     },
     subtitle: {
         color: '#8694ab',
         fontSize: 12,
     },
+    // this is the main content of post/petition/etc
     description: {
         color: '#21354a',
         fontSize: 16
     },
+    // this is the title of post/peititon/etc
     descriptionTitle: {
         color: '#21354a',
         fontSize: 16,
@@ -153,6 +161,12 @@ export default {
         width: 25,
         height: 25,
     },
+    upvotersIcon: {
+        width: 25,
+        height: 25,
+        marginLeft: -2,
+        marginRight: 12
+    },
     img: {
         width: 25,
         height: 25,
@@ -193,4 +207,11 @@ export default {
         marginTop: 15,
         marginRight: 12
     },
+    attachedImage: {
+        width: 80,
+        marginRight: 0,
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        alignSelf: 'flex-start'
+    }
 };

@@ -1,71 +1,66 @@
 import React from 'react';
-import { View, StyleSheet, Animated, Easing, Dimensions, Platform } from 'react-native';
+import { View, StyleSheet, Animated, Easing, Dimensions } from 'react-native';
 
 const { height, width } = Dimensions.get('window');
-// https://github.com/mastermoo/react-native-pulse-loader/blob/master/Pulse.js - this is original credits, greg made changes based on this one
-// https://github.com/MrVisitor/react-native-pulse-loader/commit/538c9beec8364844e60cb6d178663b40dbe6322d we should use this one
+
 export default class Pulse extends React.Component {
-  constructor(props) {
-    super(props);
+    constructor(props) {
+        super(props);
 
-    this.anim = new Animated.Value(0);
-  }
-
-  componentDidMount() {
-    Animated.timing(this.anim, {
-      toValue: 1,
-      duration: this.props.interval,
-      easing: Easing.in,
-    }).start();
-  }
-
-  render() {
-    const { size, small, padder, pulseMaxSize, borderColor, position, backgroundColor, getStyle } = this.props;
-    let max = pulseMaxSize;
-    if (small) {
-      max = pulseMaxSize / 3;
+        this.anim = new Animated.Value(0);
     }
 
-    const isCenter = position === 'center';
-    const top = { top: height / 2, marginTop: -max / 2 };
+    componentDidMount() {
+        Animated.timing(this.anim, {
+            toValue: 1,
+            duration: this.props.interval,
+            easing: Easing.in,
+            useNativeDriver: true
+        })
+		.start();
+    }
 
-    return (
-      <View style={[{
-        justifyContent: 'center',
-        alignItems: 'center',
-        position: 'absolute',
-        left: (width / 2) - padder,
-        width: max,
-        height: max,
-        marginLeft: -max / 2,
-      }, Platform.OS === 'android' && { top: 18 }, isCenter && top]}>
-        <Animated.View
-          style={[styles.circle, {
-            borderColor,
-            backgroundColor,
-            width: this.anim.interpolate({
-              inputRange: [0, 1],
-              outputRange: [isCenter ? size : 50, max]
-            }),
-            height: this.anim.interpolate({
-              inputRange: [0, 1],
-              outputRange: [isCenter ? size : 50, max]
-            }),
-            borderRadius: max / 2,
-            opacity: this.anim.interpolate({
-              inputRange: [0, 1],
-              outputRange: [1, 0]
-            })
-          }, getStyle && getStyle(this.anim)]}
-        />
-      </View>
-    );
-  }
+    render() {
+        const { size, pulseMaxSize, borderColor, backgroundColor, getStyle } = this.props;
+        const maxTransform = pulseMaxSize / size;
+        return (
+            <View style={[styles.circleWrapper, {
+                width: pulseMaxSize,
+                height: pulseMaxSize,
+                marginLeft: -pulseMaxSize/2,
+                marginTop: -pulseMaxSize/2,
+            }]}>
+                <Animated.View
+                    style={[styles.circle, {
+                        borderColor,
+                        backgroundColor,
+                        width: size,
+                        height: size,
+                        transform: [
+                          {scale: this.anim.interpolate({inputRange: [0,1], outputRange: [1, maxTransform]})}
+                        ],
+                        borderRadius: pulseMaxSize/2,
+                        opacity: this.anim.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [1, 0]
+                        })
+                    }, getStyle && getStyle(this.anim)]}
+				/>
+            </View>
+        );
+    }
 }
 
 
 const styles = StyleSheet.create({
-  circle: {
-    borderWidth: 4 * StyleSheet.hairlineWidth,
-  },
+    circleWrapper: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'absolute',
+        left: width/2,
+        top: height/2,
+    },
+    circle: {
+        borderWidth: 4 * StyleSheet.hairlineWidth,
+    },
 });

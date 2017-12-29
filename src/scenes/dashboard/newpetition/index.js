@@ -4,7 +4,7 @@
 // https://api-dev.powerli.ne/api-doc#post--api-v2.2-groups-{group}-user-petitions
 
 import React, { Component } from 'react';
-import {TextInput, Keyboard, Platform, KeyboardAvoidingView} from 'react-native';
+import {TextInput, Keyboard, Platform, KeyboardAvoidingView, ActivityIndicator} from 'react-native';
 
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
@@ -132,30 +132,37 @@ class NewPetition extends Component {
     }
 
     createPetition() {
+        if (this.state.sending) return;
+        this.setState({sending: true});
         if (this.state.petition_remaining <= 0){
             alert('You do not have any petition left in this group');
+            this.setState({sending: false});
             return;
         }
-
+        
         if (this.state.selectedGroupIndex == -1) {
             alert('Where do you want to post this? Select a group');
+            this.setState({sending: false});
             return;
         } else if (this.state.title == '' || this.state.title.trim() == '') {
             alert("Please create a title for your petition");
+            this.setState({sending: false});
             return;
         } else if (this.state.content == '' || this.state.content.trim() == '') {
             alert("Whoops! Looks like you forgot to write your petition down!");
+            this.setState({sending: false});
             return;
         }
-
+        
         var { token } = this.props;
         createPetition(token, this.state.grouplist[this.state.selectedGroupIndex].id, this.state.title, this.state.content, this.state.image)
-            .then(data => {
-                showToast('Petition Successful!');
-                Actions.itemDetail({ type:'replace', entityId: data.id, entityType: 'user-petition', backTo: 'home', share: this.state.share });
-            })
-            .catch(err => {
-            });
+        .then(data => {
+            showToast('Petition Successful!');
+            Actions.itemDetail({ type:'replace', entityId: data.id, entityType: 'user-petition', backTo: 'home', share: this.state.share });
+        })
+        .catch(err => {
+            this.setState({sending: false});
+        });
     }
 
     changeContent(text) {
@@ -236,21 +243,26 @@ class NewPetition extends Component {
             this.setState({ image: null });
         } else {
             ActionSheet.show({
-                options: ["Take photo", "Choose from gallery"],
+                options: ["Take photo", "Choose from gallery", "Cancel"],
                 title: "Attach image"
             }, buttonIndex => {
-                if (buttonIndex == 0) {
+                if (buttonIndex == 0 || buttonIndex == '0') {
                     ImagePicker.openCamera({
                         cropping: true,
+                        height: 1280,
+                        width: 1280,
                         includeBase64: true
+
                     }).then(image => {
                         this.setState({ image: image.data });
                     });
                 }
 
-                if (buttonIndex == 1) {
+                if (buttonIndex == 1 || buttonIndex == '1') {
                     ImagePicker.openPicker({
                         cropping: true,
+                        height: 1280,
+                        width: 1280,
                         includeBase64: true
                     }).then(image => {
                         this.setState({ image: image.data });
@@ -315,7 +327,7 @@ class NewPetition extends Component {
                         {
                         this.state.sharing
                         ? null
-                        : <Button transparent onPress={() => Actions.pop()} style={{ width: 50, height: 50 }}  >
+                        : <Button transparent onPress={() => {Keyboard.dismiss(); Actions.pop();}} style={{ width: 50, height: 50 }}  >
                             <Icon active name='arrow-back' style={{ color: 'white' }} />
                         </Button>
                     }
@@ -325,7 +337,11 @@ class NewPetition extends Component {
                     </Body>
                     <Right>
                         <Button transparent onPress={() => this.createPetition()}>
-                            <Label style={{ color: 'white' }}>Send</Label>
+                            {
+                            this.state.sending 
+                            ? <ActivityIndicator color={'#fff'} animating={this.state.sending} /> 
+                            : <Label style={{ color: 'white' }}>Send</Label>
+                        }                        
                         </Button>
                     </Right>
                 </Header>
@@ -351,7 +367,7 @@ class NewPetition extends Component {
                         </Right>
                     </ListItem>
                 </List>
-                <ScrollView scrollEnabled={false} keyboardShouldPersistTaps={'handled'} style={styles.main_content} >
+                <ScrollView onLayout={(e) => this.setState({contentHeight: e.nativeEvent.layout.height})} scrollEnabled={false} keyboardShouldPersistTaps={'handled'} style={styles.main_content} >
                     {
                     this.state.displaySuggestionBox && this.state.suggestionList.length > 0
                     ? <ScrollView style={{position: 'absolute', top: 20, zIndex: 3}} keyboardShouldPersistTaps='always'  >
@@ -359,27 +375,29 @@ class NewPetition extends Component {
                     </ScrollView>
                     : <ScrollView />
                 }
-                    <ScrollView style={{ marginTop: 0 }}>
-                        <TextInput
-                            placeholder='Give a title to your petition here'
-                            ref={(r) => this.onPetitionTitleRef(r)}
-                            style={styles.input_text}
-                            autoCorrect={false}
-                            value={this.state.title}
-                            onChangeText={(text) => this.changeTitle(text)}
-                            underlineColorAndroid={'transparent'}
+                    <View style={{flex: 1, height: '100%'}}  >
+                        <ScrollView style={{flex: 1, height: '100%'}}>
+                            <TextInput
+                                placeholder='Give a title to your petition here'
+                                ref={(r) => this.onPetitionTitleRef(r)}
+                                style={styles.input_text}
+                                autoCorrect={false}
+                                value={this.state.title}
+                                onChangeText={(text) => this.changeTitle(text)}
+                                underlineColorAndroid={'transparent'}
+                            />
+                            <TextInput
+                                maxLength={PETITION_MAX_LENGTH}
+                                onSelectionChange={this.onSelectionChange}
+                                placeholderTextColor='rgba(0,0,0,0.1)'
+                                style={styles.textarea(this.state.contentHeight - 40)}
+                                multiline
+                                placeholder={this.placeholderTitle}
+                                value={this.state.content}
+                                onChangeText={(text) => this.changeContent(text)}
                         />
-                        <Textarea
-                            maxLength={PETITION_MAX_LENGTH}
-                            onSelectionChange={this.onSelectionChange}
-                            placeholderTextColor='rgba(0,0,0,0.1)'
-                            style={styles.textarea}
-                            multiline
-                            placeholder={this.placeholderTitle}
-                            value={this.state.content}
-                            onChangeText={(text) => this.changeContent(text)}
-                        />
-                    </ScrollView>
+                        </ScrollView>
+                    </View>
                     {
                         this.state.showCommunity &&
                         <CommunityView

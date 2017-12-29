@@ -73,14 +73,16 @@ export default {
         position: 'relative'
     },
 
-    textarea: {
+    textarea:(definedHeight) =>  ({
         width: width, 
-        height: (height - 185), 
+        height: (definedHeight), 
         fontSize: 14, 
         color: 'rgba(0,0,0,0.6)', 
         zIndex: 5,
-        marginTop: 0
-    },
+        marginTop: 0,
+        textAlign: 'left',
+        textAlignVertical:'top'
+    }),
 
     community_list_container: {
         position: 'absolute',

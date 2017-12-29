@@ -1,5 +1,5 @@
 
-import type { Action } from '../actions/types';
+import { Action } from '../actions/types';
 import { OPEN_DRAWER, CLOSE_DRAWER } from '../actions/drawer';
 
 export type State = {

@@ -249,12 +249,11 @@ class Profile extends Component{
                                     <Icon active name="arrow-back" style={{color: 'white'}}/>
                                 </Button>                           
                             </View>
-                            {
-                                // this.state.following_status === 'active' &&
                                 <View style={{flexDirection: 'row', width: 100}}>
+                                {this.state.following_status === 'active' &&
                                     <Button transparent onPress={() => this.mute()}>
                                         <Icon active name="md-volume-off" style={{ color: 'white' }} />
-                                    </Button>
+                                    </Button>}
                                     <Button transparent onPress={() => this.follow()}>                              
                                         <View  style={{flexDirection: 'row', backgroundColor: 'white', padding: 1, width: 28, height: 28, borderRadius: 24, borderWidth: 1, borderColor: '#11c1f3'}}>
                                             {this.state.following_status == 'pending'?
@@ -271,7 +270,6 @@ class Profile extends Component{
                                         </View>                  
                                     </Button>  
                                 </View>
-                            }
                         </View> 
                         <View style={{justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}>
                             { this.state.selected === "My Info"

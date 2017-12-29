@@ -24,7 +24,7 @@ class ConversationActivity extends Component {
         let {item, token, profile} = this.props; 
 
         return (
-            <ListItem onPress={() => this.redirect(item)} avatar key={item.index} style={{backgroundColor: 'white', marginLeft: 0, paddingLeft: 15}}>
+            <ListItem onPress={() => this.redirect(item)} avatar key={item.index} style={styles.conversationItem}>
                 <Left>
                     <Thumbnail small source={{uri: item.user.avatar_file_name+'&w=200&h=200&auto=compress,format,q=95'}}/>
                 </Left>

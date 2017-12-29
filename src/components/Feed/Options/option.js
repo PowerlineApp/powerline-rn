@@ -23,7 +23,7 @@ class Option extends Component{
                 checkedColor={'#183E63'} 
                 containerStyle={styles.optionContainer(opt)} 
                 title={
-                    <View style={{flex: 1, paddingLeft: 20, height: '100%'}}>
+                    <View style={styles.checkboxTitle}>
                         <Text style={styles.mainText}>{opt.value}</Text>
                     </View>}
             />
@@ -39,7 +39,7 @@ class Option extends Component{
                 checkedColor={'#183E63'} 
                 containerStyle={styles.optionContainer(opt)} 
                 title={
-                    <View style={{flex: 1, paddingLeft: 20, height: '100%'}}>
+                    <View style={styles.checkboxTitle}>
                         <Text style={styles.mainText}>{opt.value}</Text>
                     </View>}
         />
@@ -56,7 +56,7 @@ class Option extends Component{
                 checkedColor={'#183E63'} 
                 containerStyle={styles.optionContainer(opt)} 
                 title={
-                    <View style={{flex: 1, flexDirection: 'row', paddingLeft: 20, height: '100%'}}>
+                    <View style={[{flexDirection: 'row'}, {...styles.checkboxTitle}]}>
                         <Text style={styles.dolarSign}>$</Text>
                         {opt.is_user_amount 
                             ? <TextInput 
