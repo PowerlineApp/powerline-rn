@@ -39,6 +39,9 @@ export default class PLLoader extends React.Component {
     }
 
     render() {
+        // comment this line if you want to see the pulseloader. leave it uncommented if it's bothering you!
+        // return null;
+
         const { position, size, avatar, avatarBackgroundColor, padder, interval } = this.props;
         const isCenter = position === 'center';
         let containerStyle = {};
