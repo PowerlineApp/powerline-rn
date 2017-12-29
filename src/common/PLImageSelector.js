@@ -57,7 +57,7 @@ class PLImageSelector extends Component {
                 </View>
                 <Modal visible={this.state.showConfirmationModal} presentationStyle='pageSheet' transparent>
                     <View style={styles.confirmationContainer}>
-                        <View style={confirmationContent}>
+                        <View style={styles.confirmationContent}>
                             <Image source={{uri: (this.state.image ? this.state.image.path : null)}} style={styles.confirmationImage} />
                             <View style={styles.buttonsWrapper}>
                                 <TouchableOpacity style={styles.button} onPress={this.onModalConfirm}>

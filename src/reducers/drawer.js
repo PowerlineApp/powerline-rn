@@ -16,7 +16,7 @@ export default function (state:State = initialState, action:Action): State {
   if (action.type === OPEN_DRAWER) {
     return {
       ...state,
-      drawerState: state.drawerState === 'opened' ? 'closed' : 'opened',
+      drawerState: 'opened',
       drawerDisabled: false
     };
   }
@@ -24,7 +24,7 @@ export default function (state:State = initialState, action:Action): State {
   if (action.type === CLOSE_DRAWER) {
     return {
       ...state,
-      drawerState: state.drawerState === 'opened' ? 'closed' : 'opened',
+      drawerState: 'closed',
       drawerDisabled: false
     };
   }

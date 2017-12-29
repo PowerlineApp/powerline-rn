@@ -51,7 +51,7 @@ class FeedActivity extends Component {
             //         longPressDelay: 2000
             //     }}
             // >
-            <Card>
+            <Card style={styles.container}>
                 <FeedHeader ref={ref => { this.header = ref; }} item={item} token={this.props.token} userId={this.props.profile.id} />
                 <FeedDescription item={item} profile={this.props.profile} />
                 <FeedMetaData item={item} />
@@ -65,7 +65,7 @@ class FeedActivity extends Component {
 
     _renderGroupCard(item) {
         return (
-            <Card>
+            <Card style={styles.container}>
                 <FeedHeader item={item} token={this.props.token} />
                 <FeedDescription item={item} profile={this.props.profile} />
                 <FeedCarousel item={item} />

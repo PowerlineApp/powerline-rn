@@ -34,11 +34,17 @@ const optionStyles = {
 //
 
 export default {
+    // this contains the whole thing
+    container: {
+        backgroundColor: '#fff',
+    },
+    // this is the author name
     title: {
         color: '#21354a',
         fontSize: 16,
         fontWeight: 'bold'
     },
+
     commentTitle: {
         color: '#21354a',
         fontSize: 14,
@@ -46,16 +52,18 @@ export default {
     },
     commentPreviewText: {
         color: '#21354a',
-        fontSize: 14,
+        fontSize: 14
     },
     subtitle: {
         color: '#8694ab',
         fontSize: 12,
     },
+    // this is the main content of post/petition/etc
     description: {
         color: '#21354a',
         fontSize: 16
     },
+    // this is the title of post/peititon/etc
     descriptionTitle: {
         color: '#21354a',
         fontSize: 16,
