@@ -228,7 +228,7 @@ class FeedHeader extends Component {
         let canInviteUpvoters = false;
         let canSpam = false;
 
-        console.log(this.props, isAuthor, item.user.id, this.props.userId, item.user.id === this.props.userId);
+        // console.log(this.props, isAuthor, item.user.id, this.props.userId, item.user.id === this.props.userId);
 
         switch (item.entity.type) {
         case 'post':
@@ -301,7 +301,7 @@ class FeedHeader extends Component {
                                     canInviteUpvoters &&
                                     <MenuOption onSelect={() => this.inviteUpvoters(item)}>
                                         <Button iconLeft transparent dark onPress={() => this.inviteUpvoters(item)}>
-                                            <Image source={require("img/invite_upvoters.png")} style={[styles.menuIcon, { marginLeft: -2, marginRight: 12 }]} />
+                                            <Image source={require("img/invite_upvoters.png")} style={[styles.upvotersIcon]} />
                                             <Text style={styles.menuText}>Invite Upvoters to a Group</Text>
                                         </Button>
                                     </MenuOption>
@@ -361,7 +361,7 @@ class FeedHeader extends Component {
                                     canSpam &&
                                     <MenuOption onSelect={() => this.spam(item)}>
                                         <Button iconLeft transparent dark onPress={() => this.spam(item)}>
-                                            <Image source={require("img/spam.png")} style={[styles.menuIcon, { marginLeft: -2, marginRight: 12 }]} />
+                                            <Image source={require("img/spam.png")} style={styles.upvotersIcon} />
                                             <Text style={styles.menuText}>Report As Spam</Text>
                                         </Button>
                                     </MenuOption>

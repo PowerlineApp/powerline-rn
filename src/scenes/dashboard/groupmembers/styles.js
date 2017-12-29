@@ -13,6 +13,12 @@ export default {
         backgroundColor: PLColors.main
     },
 
+    listItem: {
+        backgroundColor: 'white',
+        marginLeft: 0,
+        paddingLeft: 17
+    },
+
     avatar: {
         width: 80,
         height: 80
@@ -55,4 +61,4 @@ export default {
     followButtonContainer: {
         flexDirection: 'row'
     },
-}
+};

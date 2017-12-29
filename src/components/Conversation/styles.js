@@ -23,6 +23,11 @@ export default {
             android: { marginBottom: -20 }
         })
     },
+    conversationItem: {
+        backgroundColor: 'white',
+        marginLeft: 0,
+        paddingLeft: 15
+    },
     title: {
         color: '#21354a',
         fontSize: 12,
@@ -177,4 +182,4 @@ export default {
         color: 'rgba(0,0,0,0.4)',
         marginTop: 5
     }
-}
+};

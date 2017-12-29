@@ -58,11 +58,11 @@ class CommunityView extends PureComponent {
                                         : <View style={styles.thumbnail} />
                                     }
                                         <Body>
-                                        <Text style={{ fontSize: 15, color: light ? 'gray' : 'white' }}>{item.official_name}</Text>
-                                    </Body>
+                                            <Text style={{ fontSize: 15, color: light ? 'gray' : 'white' }}>{item.official_name}</Text>
+                                        </Body>
                                         <Right>
-                                        <Icon name='ios-arrow-dropright' style={{ color: light ? 'gray' : 'white' }} />
-                                    </Right>
+                                            <Icon name='ios-arrow-dropright' style={{ color: light ? 'gray' : 'white' }} />
+                                        </Right>
                                     </ListItem>
                                 );
                             })

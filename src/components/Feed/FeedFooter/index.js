@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
 
-import {View} from 'react-native';
+import {View, Text} from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import { Button, Icon, Left, CardItem, Label } from 'native-base';
 import styles from '../styles';
@@ -215,6 +215,26 @@ class FeedFooter extends Component {
         }
     }
 
+    _renderZoneIcon(item) {
+        if (item.zone === 'prioritized') {
+          return (<Icon active name='ios-flash' style={styles.zoneIcon} />);
+        } else {
+          return null;
+        }
+      }
+
+    renderFirstRow(item){
+        return <CardItem footer style={{ height: 35 }}>
+            <Left style={{ justifyContent: 'space-between' }}>
+                <View style={{flexDirection: 'row', width: 50, justifyContent: 'space-around'}}>
+                    {this._renderZoneIcon(item)}
+                    <Label style={styles.commentCount}>{item.responses_count}</Label>
+                </View>
+                <Text onPress={() => this.redirect(item)} style={styles.footerText}>{item.comments_count ? item.comments_count : 0} comments</Text>
+            </Left>
+        </CardItem>
+    }
+
     // on this one we need this to control upvote / downvote before a response comes from the API
     _renderPostFooter (item, showAnalytics) {
         // console.log(item);
@@ -253,21 +273,12 @@ class FeedFooter extends Component {
                             animateEffect={'tada'}
                             />
 
-                        {/* <Button iconLeft transparent style={styles.footerButton} onPress={() => {this.vote(item, 'upvote'); Mixpanel.track("Upvoted post");}}>
-                            <Icon name='md-arrow-dropup' style={isVotedUp ? styles.footerIconBlue : styles.footerIcon} />
-                            <Label style={isVotedUp ? styles.footerTextBlue : styles.footerText}>Upvote {item.upvotes_count ? item.upvotes_count : 0}</Label>
-                        </Button> */}
-
                         <AnimatedButton onPress={() => { this.vote(item, 'downvote'); Mixpanel.track("Downvoted post"); }} 
                             iconName={'md-arrow-dropdown'} 
                             label={'Downvote ' + (item.downvotes_count ? item.downvotes_count : 0)}
                             labelStyle={isVotedDown ? styles.footerTextBlue : styles.footerText}
                             animateEffect={'shake'}
                         />
-                        {/* <Button iconLeft transparent style={styles.footerButton} onPress={() => {this.vote(item, 'downvote'); Mixpanel.track("Downvoted post");}}>
-                            <Icon active name='md-arrow-dropdown' style={isVotedDown ? styles.footerIconBlue : styles.footerIcon} />
-                            <Label style={isVotedDown ? styles.footerTextBlue : styles.footerText}>Downvote {item.downvotes_count ? item.downvotes_count : 0}</Label>
-                        </Button> */}
                         {
                             this.props.isInDetail &&
                             <Button iconLeft transparent style={styles.footerButton} onPress={() => {this.redirect(item, null, 'analyticsView'); Mixpanel.track("Viewed Post Analytics");}} >
@@ -278,17 +289,6 @@ class FeedFooter extends Component {
                             </Button>
                         }
                         {!this.props.isInDetail && this.ReplyButton({item})}
-                        {/* <AnimatedButton onPress={() => this.redirect(item, {commenting: true})} 
-                            iconName={'ios-undo'} 
-                            label={'Reply ' + (item.comments_count ? item.comments_count : 0)} 
-                        /> */}
-                        {/* <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, {commenting: true})} >
-                            <Icon active name='ios-undo' style={styles.footerIcon} />
-                            <Label style={styles.footerText} >
-                                {'Reply '}
-                                {item.comments_count ? item.comments_count : 0}
-                            </Label>
-                        </Button> */}
                     </Left>
                 </CardItem>
             );
@@ -499,7 +499,7 @@ class FeedFooter extends Component {
     ReplyButton = ({item}) => 
         <AnimatedButton onPress={() => this.redirect(item, {commenting: true})}
             iconName={'ios-undo'} 
-            label={'Reply ' + (item.comments_count ? item.comments_count : 0)}
+            label={'Reply '}
             animateEffect={'flash'}
         />;
 
@@ -536,7 +536,9 @@ class FeedFooter extends Component {
         }
         return (
             <View style={{backgroundColor: '#ff0'}} >
-                {footer}
+                {this.renderFirstRow(item)}
+                <View style={styles.borderContainer} />
+                {!this.props.isInDetail && footer}
             </View>
         );
     }

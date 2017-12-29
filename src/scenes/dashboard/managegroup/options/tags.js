@@ -28,7 +28,7 @@ class Tags extends Component {
         console.log(this.props.groupOwnTags, this.props.data);
         return data.map(item => {
             return (
-                <TouchableOpacity onPress={() => this.saveTags(item)} style={{justifyContent: 'center', padding: 2, backgroundColor: (this.props.groupOwnTags.map(i => i.id).includes(item.id) ? '#020860' : 'rgb(85,197,255)'), margin: 2}}>
+                <TouchableOpacity onPress={() => this.saveTags(item)} style={{justifyContent: 'center', padding: 2, backgroundColor: ((this.props.groupOwnTags || []).map(i => i.id).includes(item.id) ? '#020860' : 'rgb(85,197,255)'), margin: 2}}>
                     <Text style={{color: 'white'}}>{item.name}</Text>
                 </TouchableOpacity>
             );

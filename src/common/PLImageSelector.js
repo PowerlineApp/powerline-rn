@@ -45,16 +45,20 @@ class PLImageSelector extends Component {
         return (
             <TouchableOpacity transparent onPress={this.selectImage}>
                 {/* <Icon name='camera'  /> */}
-                <Thumbnail source={{uri: this.props.image}} square />
-                <View style={{position: 'absolute', height: '100%', width: '100%'}}>
-                    <View style={{ width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center'}}>
-                        <Icon name='camera' style={{color: this.props.iconColor, backgroundColor: 'rgba(0,0,0,0)', fontSize: this.props.iconSize}} />
+                <View style={styles.imageContainer}>
+                    <Thumbnail source={{uri: this.props.image}} square />
+                    <View style={styles.iconContainer}>
+                        <Icon name='camera' style={{
+                            color: this.props.iconColor,
+                            backgroundColor: 'rgba(0,0,0,0)',
+                            fontSize: this.props.iconSize
+                        }} />
                     </View>
                 </View>
                 <Modal visible={this.state.showConfirmationModal} presentationStyle='pageSheet' transparent>
-                    <View style={{flex: 1, backgroundColor: rgb(0,0,0,0.7), alignItems: 'center', justifyContent: 'center'}}>
-                        <View style={{height: '60%', width: '90%', backgroundColor: 'white'}}>
-                            <Image source={{uri: (this.state.image ? this.state.image.path : null)}} style={{height: '85%', width: '95%', alignSelf: 'center', marginTop: 5}} />
+                    <View style={styles.confirmationContainer}>
+                        <View style={confirmationContent}>
+                            <Image source={{uri: (this.state.image ? this.state.image.path : null)}} style={styles.confirmationImage} />
                             <View style={styles.buttonsWrapper}>
                                 <TouchableOpacity style={styles.button} onPress={this.onModalConfirm}>
                                     <Text style={styles.buttonText}>Confirm</Text>
@@ -74,6 +78,31 @@ class PLImageSelector extends Component {
 export default PLImageSelector;
 
 const styles = {
+    confirmationContainer: {
+        height: '85%', width: '95%', alignSelf: 'center', marginTop: 5
+    },
+    confirmationContainer: {
+        flex: 1,
+        backgroundColor: rgb(0,0,0,0.7),
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    confirmationContent: {
+        height: '60%',
+        width: '90%', 
+        backgroundColor: 'white'
+    },
+    imageContainer: {
+        height: '100%',
+        width: '100%'
+    },
+    iconContainer: {
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
     button: {
         backgroundColor: '#020860',
         height: 30,

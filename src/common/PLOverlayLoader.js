@@ -64,7 +64,6 @@ export default class PLOverlayLoader extends Component {
       color: this.props.color,
       fontSize: this.props.messageFontSize
     };
-    return null;
     if (this.props.logo) {
       return (
         <Modal
@@ -76,12 +75,15 @@ export default class PLOverlayLoader extends Component {
             evt => this.setState({ currentOrientation: evt.nativeEvent.orientation })
           }
         >
+          {
+            this.props.visible &&
           <View style={{
             backgroundColor: 'rgba(0, 0, 0, 0.5)',
             flex: 1,
           }}>
             <PLLoader position="center" />
           </View>
+        }
         </Modal>
       );
     } else {

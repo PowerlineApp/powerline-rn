@@ -139,7 +139,7 @@ class SideBar extends Component {
     console.log('drawer rendering')
     return (
       <Container style={styles.sidebar}>
-        <Content>
+        {/* <Content> */}
           <List
             dataArray={datas} renderRow={data =>
               <ListItem button noBorder onPress={() => this.onSelectItem(data.route, data.option)} >
@@ -158,7 +158,7 @@ class SideBar extends Component {
                 }
               </ListItem>}
           />
-        </Content>
+        {/* </Content> */}
       </Container>
     );
   }
