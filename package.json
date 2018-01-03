@@ -78,7 +78,8 @@
     "redux-logger": "3.0.1",
     "redux-persist": "4.8.0",
     "redux-thunk": "2.2.0",
-    "tipsi-stripe": "^4.5.4"
+    "tipsi-stripe": "^4.5.4",
+    "uglify-es": "^3.2.2"
   },
   "devDependencies": {
     "babel-jest": "19.0.0",
