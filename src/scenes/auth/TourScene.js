@@ -24,7 +24,7 @@ import {Actions} from 'react-native-router-flux'
 
 var styles = {
     container: {
-        backgroundColor: '#006',
+        backgroundColor: '#55C5FF',
         flex: 1,
         position: 'relative',
         justifyContent: 'flex-end'
@@ -117,17 +117,18 @@ class TourScene extends Component{
     }
 
     onSkip = () =>{
-        var { navigation } = this.props;        
-        if(navigation){
-            var { state, dispatch } = navigation;
-             var { params } = state;
-            params.callback();
-        }else{
-           Actions.pop();
-        }      
+        // var { navigation } = this.props;        
+        // if(navigation){
+        //     var { state, dispatch } = navigation;
+        //     var { params } = state;
+        //     params.callback();
+        // }else{
+           Actions.home();
+        // }      
     }
 
     render(){
+        console.log(this.props);
         let {pos} = this.state;
         let imgs =     [
             <Image source={require('../../assets/1.png')} style={styles.img(pos === 0)}/>,

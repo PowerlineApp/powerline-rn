@@ -63,7 +63,7 @@ class Notifications extends Component{
         .then(data => {
             this.setState({
                 invites: data.payload
-            })
+            });
         })
         .catch(err => {
 
@@ -89,8 +89,8 @@ class Notifications extends Component{
             );
         }else{
             return (
-                <Text style={styles.text1}/>
-            )
+                <Text style={styles.text1} />
+            );
         }
     }
 //When a user gets a follow request from another user
@@ -203,17 +203,17 @@ class Notifications extends Component{
         console.log(notification);
 
         switch(notification.type){
-            case 'join-to-group-approved':
-                Actions.groupprofile({id: notification.group.id});
-                break;
-            case 'comment-mentioned':
-            case 'post-mentioned':
-            case 'own-post-commented':
-            case 'own-user-petition-signed':
-                this.itemDetail(notification);
-                break;
-            case 'follow-request':
-                Actions.myInfluences()
+        case 'join-to-group-approved':
+            Actions.groupprofile({id: notification.group.id});
+            break;
+        case 'comment-mentioned':
+        case 'post-mentioned':
+        case 'own-post-commented':
+        case 'own-user-petition-signed':
+            this.itemDetail(notification);
+            break;
+        case 'follow-request':
+            Actions.myInfluences();
         }        
     }
 
@@ -224,22 +224,22 @@ class Notifications extends Component{
     renderIcon(notification){
         let icon;
         switch(notification.type){
-            case('comment-mentioned'):
-            case('post-mentioned'):
-                icon = <Icon name="chatboxes" style={styles.icon}/>
-                break;
-            case('own-post-commented'):
-                icon = <Icon name="podium" style={styles.icon}/>;
-                break;
-            case('follow-request'):
-                icon = <Icon name="contact" style={styles.icon}/>
-            default:
-                icon = <Icon name="people" style={styles.icon}/>;
+        case('comment-mentioned'):
+        case('post-mentioned'):
+            icon = <Icon name='chatboxes' style={styles.icon} />;
+            break;
+        case('own-post-commented'):
+            icon = <Icon name='podium' style={styles.icon} />;
+            break;
+        case('follow-request'):
+            icon = <Icon name='contact' style={styles.icon} />;
+        default:
+            icon = <Icon name='people' style={styles.icon} />;
         }
 
         return <Text note style={styles.text2}>
-             {icon}<TimeAgo time={notification.created_at} />
-        </Text>
+            {icon}<TimeAgo time={notification.created_at} />
+        </Text>;
     }
 
  
@@ -252,7 +252,7 @@ class Notifications extends Component{
                     !this.state.refreshing && 
                     this.props.notifications.length === 0
                 }
-                title="Seems quiet a bit quiet in here. Are you following anyone?"
+                title='Seems quiet a bit quiet in here. Are you following anyone?'
                 refreshControl={Platform.OS === 'android' &&
                     <RefreshControl
                         refreshing={false}
@@ -277,14 +277,14 @@ class Notifications extends Component{
                                 <ListItem avatar key={index} style={styles.listItem}>
                                     <Left>
                                         {value.avatar_file_path?
-                                        <Thumbnail small source={{uri: value.avatar_file_path+'&w=150&h=150&auto=compress,format,q=95'}}/>:
-                                        <Thumbnail small source={require('img/blank_person.png')}/>
+                                            <Thumbnail small source={{uri: value.avatar_file_path+'&w=150&h=150&auto=compress,format,q=95'}} />:
+                                            <Thumbnail small source={require('img/blank_person.png')} />
                                         }
                                     </Left>
                                     <Body style={styles.listItemBody}>
                                         <Text style={styles.text1}>You were invited you a group: <Text style={styles.text3}>{value.official_name}</Text></Text>
                                         <Text note style={styles.text2}>
-                                            <Icon name="people" style={styles.icon}/> <TimeAgo time={value.created_at} />
+                                            <Icon name='people' style={styles.icon} /> <TimeAgo time={value.created_at} />
                                         </Text>
                                     </Body>
                                     <Right style={styles.inviteRightItem}>
@@ -301,16 +301,16 @@ class Notifications extends Component{
                     }
                     {
                         this.props.notifications.map((value, index)=> {
-                            console.log(value);
+                            // console.log(value);
                             if (
                                 value.type == 'comment-mentioned' 
                                 || value.type == 'post-mentioned' 
                                 || value.type == 'own-post-commented' 
                                 || value.type == 'follow-request' 
                                 || value.type == 'own-user-petition-signed') {
-                                    return (
-                                        <ListItem avatar key={index} style={styles.listItem} onPress={() => this.navigate(value)} >
-                                            {value.target.image?
+                                return (
+                                    <ListItem avatar key={index} style={styles.listItem} onPress={() => this.navigate(value)} >
+                                        {value.target.image?
                                             <Left>
                                                 <Thumbnail small source={{ uri: value.target.image+'&w=150&h=150&auto=compress,format,q=95' }} />
                                             </Left>:
@@ -318,35 +318,35 @@ class Notifications extends Component{
                                                 <Thumbnail small source={require('img/blank_person.png')} />
                                             </Left>
                                             }
-                                            <Body style={styles.listItemBody}>
-                                                {this.showText(value.html_message)}
-                                                {
+                                        <Body style={styles.listItemBody}>
+                                            {this.showText(value.html_message)}
+                                            {
                                                     this.renderIcon(value)
                                                 }
-                                            </Body>
-                                            {value.type == 'follow-request' && value.ignore == null?
+                                        </Body>
+                                        {value.type == 'follow-request' && value.ignore == null?
                                             <Right style={styles.listItemRight}>
                                                 <TouchableOpacity onPress={() => this.acceptFollower(value.target, index, value.id)}>
-                                                    <Icon name="checkmark" style={styles.acceptIcon}/>
+                                                    <Icon name='checkmark' style={styles.acceptIcon} />
                                                 </TouchableOpacity>
                                                 <TouchableOpacity onPress={() => this.unFollowers(value.target, index, value.id)}>
-                                                    <Icon name="close" style={styles.rejectIcon}/>
+                                                    <Icon name='close' style={styles.rejectIcon} />
                                                 </TouchableOpacity>
                                             </Right>
                                             :null}
-                                        </ListItem>);                            
-                                }else if(value.type === 'join-to-group-approved'){
-                                    return (
-                                        <ListItem avatar key={index} style={{height: 95}} onPress={() => this.navigate(value)}>
+                                    </ListItem>);                            
+                            }else if(value.type === 'join-to-group-approved'){
+                                return (
+                                    <ListItem avatar key={index} style={{height: 95}} onPress={() => this.navigate(value)}>
                                         <Left>
                                             <Thumbnail small source={{uri : (value.group.avatar_file_path)}} />
                                         </Left>
                                         <Body>
                                             <Text style={{color: PLColors.main}}>{this.showText(value.html_message)}</Text>
-                                            <Text note style={{color: PLColors.lightText}}><Icon name="people" style={styles.icon}/> <TimeAgo time={value.created_at} /></Text>
+                                            <Text note style={{color: PLColors.lightText}}><Icon name='people' style={styles.icon} /> <TimeAgo time={value.created_at} /></Text>
                                         </Body>
                                     </ListItem>);
-                                }
+                            }
                         })
                     }
                 </List>

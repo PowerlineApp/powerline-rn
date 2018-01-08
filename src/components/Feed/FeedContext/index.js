@@ -23,7 +23,7 @@ class FeedContext extends Component {
         let {entry} = this.props;
 
         if (entry.type === "image") {
-            console.warn(entry.imageSrc);
+            // console.warn(entry.imageSrc);
             return (
                 <Image
                     placeholderSource={require('img/empty_image.png')}

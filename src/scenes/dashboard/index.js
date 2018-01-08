@@ -21,6 +21,7 @@ import styles from './styles';
 import {
     loadUserProfile,
     loadActivities,
+    setGroup,
     registerDevice,
     acceptFollowers,
     unFollowers,
@@ -55,6 +56,7 @@ import {Mixpanel} from '../../PLEnv';
 
 
 const isIOS = Platform.OS === 'ios';
+
 
 const FooterTabButton = ({ badge = 0, active, onPress, name, title }) => {
     const buttonProps = {
@@ -135,10 +137,11 @@ class Home extends Component {
         this.onOpened = this.onOpened.bind(this);
         this.onReceived = this.onReceived.bind(this);
         this.onRegistered = this.onRegistered.bind(this);
+        // this.selectGroup = this.selectGroup.bind(this);
     }
 
     componentWillReceiveProps(nextProps){
-        console.log('nextProps', nextProps);
+        console.warn('componentWillReceiveProps at dashboard');
         if (nextProps.shouldResetHome){
             this.props.dispatch({type: 'HOME_WAS_RESET'})
             this.setState({tab1: true, tab2: false, tab3: false, tab4: false})
@@ -613,24 +616,30 @@ class Home extends Component {
     }
 
     // JC: I believe this loads to the group feed when a group is selected from Group Selector More menu
-    selectGroup(group){
-        // console.log('SELECTED GROUP', group)
-        let { token, dispatch } = this.props;
+    async selectGroup(group){
+            console.warn('TIME INITIAL', new Date().getTime())
+            let init = new Date().getTime();
+            let { token, dispatch } = this.props;
         if (group == 'all') {
-            dispatch({ type: 'RESET_ACTIVITIES' });
-            dispatch({type: 'SET_GROUP', data: {id: 'all', header: 'all'}})
+            let data =  {id: 'all', group: 'all', header: 'all'};
+            this.props.setGroup(data, token, 'all')
             // dispatch(loadActivities(token, 0, 20, 'all'));
-        } else {
-            let groupObj = this.props.groupList.find(groupObj => groupObj.group_type_label === group);
-            if (!groupObj) return;
-            // console.log('SELECTED GROUP', groupObj)
-            
+            // dispatch({type: 'SAVE_OFFSET', payload: 0})
 
+        } else {
+            // return;
+            let groupObj = this.props.groupList.find(groupObj => groupObj.group_type_label === group);
+            // let groupObj = this.props.groupList[0];
+            if (!groupObj) return;
+            // console.warn('SELECTED GROUP', groupObj)
+            
+            
             let {id, official_name, avatar_file_path, conversation_view_limit, total_members, user_role} = groupObj;
-            dispatch({type: 'SET_GROUP', data: {header: group, user_role, id, name: official_name, avatar: avatar_file_path, limit: conversation_view_limit, totalMembers: total_members, conversationView: total_members < conversation_view_limit}});
-            // dispatch(loadActivities(token, 0, 20, id));
+            let data = {header: group, user_role,id, group: id, groupName: official_name, groupAvatar: avatar_file_path, groupLimit: conversation_view_limit, groupMembers: total_members, conversationView: total_members < conversation_view_limit};
+            this.props.setGroup(data, token, id);
         }
-        this.setState({ group: group });
+        console.warn('===>', (new Date()).getTime() - init, init)
+        // this.setState({ group: group });
     }
 
     // This is the menu to create new content (GH8)
@@ -675,9 +684,9 @@ class Home extends Component {
 
     // Tapping the "More" button should open the Group Selector which lists all groups the user is joined to
     goToGroupSelector() {
-        this.setState({
-            group: 'more'
-        });
+        // this.setState({
+        //     group: 'more'
+        // });
         Actions.groupSelector();
     }
 
@@ -788,32 +797,14 @@ class Home extends Component {
 
         return  options;
     }
-    
+
     render() {
-        // console.log(this.props.newsfeedUnreadCount)
+        console.warn('render at dashboard')
         let {selectedGroup} = this.props;
-        //       return (
-            // <Container>
-            //           <Header searchBar rounded style={styles.header}>
-        //             <Left style={{ flex: 0.1 }}>
-        //               <Button transparent onPress={this.props.openDrawer}>
-        //                 <Icon active name="menu" style={{ color: 'white' }} />
-        //               </Button>
-        //             </Left>
-        //             {this.state.tab2!=true && this.state.tab4!=true?
-        //             //We need to make this placeholder text a little brighter/whiter
-        //             <Item style={styles.searchBar}>
-        //               <Input style={styles.searchInput} placeholder="Search groups, people, topics" autoCorrect={false} spellCheck={false} /*onEndEditing={() => this.onSearch()}*/ onChangeText={(text) => this.onChangeText(text)}/>
-        //               <Icon active name="search" onPress={() => this.onSearch(this.state.search)} />
-        //             </Item>:
-        //             null}
-        //           </Header>
-        //           </Container>
-        //       );
         
         return (
             <MenuContext customStyles={menuContextStyles}>
-                <Container>
+                {/* <Container> */}
                     <Header searchBar rounded style={styles.header}>
                         <Left style={{ flex: 0.1 }}>
                             <Button transparent onPress={this.props.openDrawer}>
@@ -844,10 +835,10 @@ class Home extends Component {
                                         <Text style={styles.iconText} onPress={() => { Keyboard.dismiss(); this.selectGroup('all'); }}>All</Text>
                                     </Col>
                                     <Col style={styles.col}>
-                                        <Button style={selectedGroup.header == 'local' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('local'); Mixpanel.track("Town Feed Loaded from Home"); }}>
+                                        <Button id="local" style={selectedGroup.header == 'local' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('local'); Mixpanel.track("Town Feed Loaded from Home");}}>
                                             <Icon active name="pin" style={styles.icon} />
                                         </Button>
-                                        <Text style={styles.iconText} numberOfLines={1} onPress={() => { Keyboard.dismiss(); this.selectGroup('town'); }}>{this.props.town}</Text>
+                                        <Text style={styles.iconText} numberOfLines={1}>{this.props.town}</Text>
                                     </Col>
                                     <Col style={styles.col}>
                                         <Button style={selectedGroup.header == 'state' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.selectGroup('state'); Mixpanel.track("State Feed Loaded from Home");}}>
@@ -862,7 +853,7 @@ class Home extends Component {
                                         <Text style={styles.iconText} numberOfLines={1} onPress={() => { Keyboard.dismiss(); this.selectGroup('country'); }}>{this.props.country}</Text>
                                     </Col>
                                     <Col style={styles.col}>
-                                        <Button style={selectedGroup.header == 'more' ? styles.iconActiveButton : styles.iconButton} onPress={() => { Keyboard.dismiss(); this.goToGroupSelector();}}>
+                                        <Button style={selectedGroup.header == 'more' ? styles.iconActiveButton : styles.iconButton} onPress={this.goToGroupSelector}>
                                             <Icon active name="more" style={styles.icon} />
                                         </Button>
                                         <Text style={styles.iconText} onPress={() => { Keyboard.dismiss(); this.goToGroupSelector(); }}>More</Text>
@@ -918,8 +909,8 @@ class Home extends Component {
                             />
                         </FooterTab>
                     </Footer>
-                </Container>
-            </MenuContext >
+                {/* </Container> */}
+             </MenuContext >
         );
     }
 }
@@ -940,7 +931,8 @@ function bindAction(dispatch) {
     return {
         openDrawer: () => { Keyboard.dismiss(); dispatch(openDrawer()); },
         loadUserGroups: (token) => dispatch(loadUserGroups(token)),
-        dispatch: (a) => dispatch(a)
+        dispatch: (a) => dispatch(a),
+        setGroup: (data, token, id) => dispatch(setGroup(data, token, id))
     };
 }
 
@@ -954,12 +946,14 @@ const mapStateToProps = state => ({
     token: state.user.token,
     profile: state.user.profile,
     activities: state.activities.payload,
+    // activities: [],
     pushId: state.user.pushId,
     town: state.groups.town,
     state: state.groups.state,
     country: state.groups.country,
     newsfeedUnreadCount: state.activities.newsfeedUnreadCount,
     groupList: state.groups.payload,
+    // selectedGroup: {},
     selectedGroup: state.activities.selectedGroup,
     shouldResetHome: state.drawer.shouldResetHome
 });

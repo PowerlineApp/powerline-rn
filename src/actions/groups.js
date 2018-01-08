@@ -95,10 +95,15 @@ function getGroups(token){
                 'token': token,
                 'Content-Type': 'application/json'
             }
+        }).then(response => {
+            if (!response.ok) {
+                reject(response.statusText)
+            }
+            return response;
         })
         .then((res) => res.json())
         .then(data => {
-            console.log("Get My Groups API Success", data);
+            // console.log("Get My Groups API Success", data);
             resolve(data);
         })
         .catch(err => {
@@ -119,7 +124,7 @@ function getGroupsBySort(token, sort){
         })
         .then((res) => res.json())
         .then(data => {
-            console.log("Get Groups By sort API Success", data);
+            // console.log("Get Groups By sort API Success", data);
             resolve(data);
         })
         .catch(err => {
@@ -140,7 +145,7 @@ function searchGroup(token, query){
         })
         .then((res) => res.json())
         .then(data => {
-            console.log("Search Group API Success", data);
+            // console.log("Search Group API Success", data);
             resolve(data);
         })
         .catch(err => {
@@ -169,7 +174,7 @@ function getGroupDetails(token, id){
         })
         .then((res) => res.json())
         .then(data => {
-            console.log("Get Group profile API Success", data);
+            // console.log("Get Group profile API Success", data);
             resolve(data);
         })
         .catch(err => {
@@ -193,7 +198,7 @@ function getGroupRequiredFields(token, id){
         })
         .then((res) => res.json())
         .then(data => {
-            console.log("Get Group fields Success", data);
+            // console.log("Get Group fields Success", data);
             resolve(data);
         })
         .catch(err => {
@@ -215,7 +220,7 @@ function getGroupMembers(token, id){
         })
         .then((res) => res.json())
         .then(data => {
-            console.log("Get Group Members API Success", data);
+            // console.log("Get Group Members API Success", data);
             resolve(data);
         })
         .catch(err => {
@@ -239,7 +244,7 @@ function inviteAllFollowers(token, id, users){
             })
         })
         .then(data => {
-            console.log("InviteAllFollowers API Success", data);
+            // console.log("InviteAllFollowers API Success", data);
             resolve(data);
         })
         .catch(err => {
@@ -260,7 +265,7 @@ function followAllMembers(token, id){
             }
         })
         .then(data => {
-            console.log("Group Followers API Success", data);
+            // console.log("Group Followers API Success", data);
             resolve(data);
         })
         .catch(err => {
@@ -281,7 +286,7 @@ function unJoinGroup(token, id){
         })
         
         .then(data => {
-            console.log("UnJoin Group API Success", data);
+            // console.log("UnJoin Group API Success", data);
             resolve(data);
         })
         .catch(err => {
@@ -322,7 +327,7 @@ function joinGroup(token, id, passcode, answeredFields){
         })
         .then((res) => res.json())
         .then(data => {
-            console.log("Join Group API Success", data);
+            // console.log("Join Group API Success", data);
             resolve(data);
         })
         .catch(err => {
@@ -344,7 +349,7 @@ function loadFieldsToFillOnJoin(token, groupId){
         })
         .then((res) => res.json())
         .then(data => {
-            console.log("loadFieldsToFillOnJoin API Success", data);
+            // console.log("loadFieldsToFillOnJoin API Success", data);
             resolve(data);
         })
         .catch(err => {
@@ -367,7 +372,7 @@ function getGroupPermissions(token, groupId){
         })
         .then((res) => res.json())
         .then(data => {
-            console.log("get Group Permission API Success", data);
+            // console.log("get Group Permission API Success", data);
             resolve(data);
         })
         .catch(err => {
@@ -445,7 +450,7 @@ function updateGroupBanner(token, groupId, image) {
         .then((res) => res.json())
         .then(data => {
             
-            console.log("updateGroupBanner API Success", data);
+            // console.log("updateGroupBanner API Success", data);
             resolve(data);
         })
         .catch(err => {

@@ -49,6 +49,11 @@ import GroupAddCardScene from './scenes/dashboard/managegroup/scenes/subscriptio
 import ElectedLeadersForm from './scenes/dashboard/electedLadersForm'
 import Modal from './components/Modal'
 import UserAddCard from './scenes/profile/userAddCard.js';
+
+
+import Share from './PLShare';
+import {Actions} from 'react-native-router-flux';
+
 var RouterWithRedux = connect()(Router);
 
 class PLNavigator extends React.Component {
@@ -57,6 +62,10 @@ class PLNavigator extends React.Component {
     drawerState: React.PropTypes.string,
     closeDrawer: React.PropTypes.func,
   }
+
+  // componentDidMount(){
+  //   Actions.share();
+  // }
 
   // componentDidUpdate() {
   //   if (this.props.drawerState === 'opened') {
@@ -176,6 +185,7 @@ class MyRouter extends Component {
               <Scene key='formModal' hideNavBar={false} component={Modal} direction='vertical' rightTitle='Save'/>
               <Scene key="electedLeadersForm" component={ElectedLeadersForm} hideNavBar />
               <Scene key="userAddCardScene" component={UserAddCard} />
+              <Scene key="share" component={Share} />
             </Scene>
           </RouterWithRedux>
     )

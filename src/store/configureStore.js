@@ -18,13 +18,13 @@ var { AsyncStorage } = require('react-native');
 
 var isDebuggingInChrome = __DEV__ && !!window.navigator.userAgent;
 
-var logger = createLogger({
-  predicate: (getState, action) => isDebuggingInChrome,
-  collapsed: true,
-  duration: true,
-});
+// var logger = createLogger({
+//   predicate: (getState, action) => isDebuggingInChrome,
+//   collapsed: true,
+//   duration: true,
+// });
 
-var createPLStore = applyMiddleware(thunk, promise, array, analytics, logger)(createStore);
+var createPLStore = applyMiddleware(thunk, promise, array, analytics)(createStore);
 
 function configureStore(onComplete: ?() => void) {
   // TODO(frantic): reconsider usage of redux-persist, maybe add cache breaker

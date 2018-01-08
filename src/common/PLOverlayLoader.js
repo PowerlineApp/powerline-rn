@@ -68,6 +68,7 @@ export default class PLOverlayLoader extends Component {
       return (
         <Modal
           animationType={'fade'}
+          onRequestClose={() => this.close()}
           transparent={true}
           visible={this.props.visible}
           supportedOrientations={['portrait', 'landscape']}

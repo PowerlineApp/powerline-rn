@@ -6,7 +6,7 @@ import { showToast } from 'PLToast';
 
 //Newsfeed activities can be loaded by All, by Group (town/state/country/group), by Friends, by Specific user, or by Favorites
 async function loadActivities(token: string, page: ?number = 0, perPage: ?number = PER_PAGE, group: ?string = 'all', user: ?string = 'all', followed = 'all'): Promise<Action> {
-    // console.log(`${API_URL}/v2/activities?_format=json&user=${user}&group=${group}&page=${page + 1}&per_page=${perPage}&followed=${followed}`);
+    console.log(`${API_URL}/v2/activities?_format=json&user=${user}&group=${group}&page=${page + 1}&per_page=${perPage}&followed=${followed}`);
     // '/api/v2/activities?user=all&group=all&page=1&per_page=20&followed=true'
     // '/api/v2/activities?user=all&group=all&followed=true&page=0&per_page=20'
     // console.log('loadActivities API -> ', token, page, perPage, group, user, followed)
@@ -31,6 +31,7 @@ async function loadActivities(token: string, page: ?number = 0, perPage: ?number
                     // newsfeedUnreadCount: priority_item_count,
                 },
             };
+            console.log('load activities', json)
             return Promise.resolve(action);
         }
         else {
@@ -213,6 +214,23 @@ async function markAsSpam(token: string, id: number, type: string): Promise<Acti
     const response = await api.post(token, `/v2/${type}s/${id}/spam`);
 }
 
+const saveOffSet = (pos) => (dispatch) => {
+    console.log('===>', pos)
+    dispatch({type: 'SAVE_OFFSET', payload: pos})
+}
+
+const setGroup = (data, token, id) => (dispatch) => {
+    console.log('setgroup', data, token, id)
+    dispatch({ type: 'RESET_ACTIVITIES' });
+    dispatch({type: 'SET_LOADING', payload: true})
+    dispatch({type: 'SET_GROUP', data});
+    dispatch(loadActivities(token, 0, 20, id));
+    dispatch({type: 'SAVE_OFFSET', payload: 0})
+    setTimeout(() => {
+        dispatch({type: 'SET_LOADING', payload: false})
+    }, 15000)
+}
+
 module.exports = {
     loadActivities,
     resetActivities,
@@ -223,5 +241,7 @@ module.exports = {
     subscribeNotification,
     unsubscribeNotification,
     markAsSpam,
+    saveOffSet,
+    setGroup,
     markAsRead
 }

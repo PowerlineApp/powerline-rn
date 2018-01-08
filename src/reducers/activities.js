@@ -7,10 +7,12 @@ export type State = {
     payload: Array<Object>;
     items: number;
     totalItems: number;
+    loading: boolean;
     group: string;
     groupName: string;
     groupAvatar: string;
     groupLimit: number;
+    selectedGrouo: object;
     savedGroup: object;
     newsfeedUnreadCount: number;
 };
@@ -21,6 +23,7 @@ const initialState = {
     items: 0,
     totalItems: 0,
     group: 'all',
+    loading: false,
     groupName: '',
     groupAvatar: '',
     groupLimit: 10,
@@ -35,12 +38,25 @@ const initialState = {
 const payloadStack: Array<Object> = [];
 
 function activities(state: State = initialState, action: Action): State {
-    // console.log('action(activities):', action);
-    if (action.type === 'LOADED_ACTIVITIES') {
+    console.warn('action(activities):', action.type);
+    switch (action.type) {
+
+    case 'SAVE_OFFSET': {
+        return {...state, lastOffset: action.payload}
+    }
+
+    case 'SET_LOADING': {
+        console.log('=z==zz=z=z=>', action, {...state, loading: action.payload})
+        return {...state, loading: action.payload}
+    }
+    
+    case 'LOADED_ACTIVITIES': {
+        console.log('=z==zz=z=z=>', action.type)
         payloadStack = payloadStack.concat(action.data.payload);
         return {
             ...state,
             page: action.data.page,
+            loading: false,
             items: action.data.items,
             totalItems: action.data.totalItems,
             payload: payloadStack,
@@ -48,7 +64,7 @@ function activities(state: State = initialState, action: Action): State {
         };
     }
 
-    if (action.type === 'RESET_ACTIVITIES') {
+    case ('RESET_ACTIVITIES'): {
         // console.log('RESET_ACTIVITIES', action);
         payloadStack = [];
         return {
@@ -58,44 +74,35 @@ function activities(state: State = initialState, action: Action): State {
         };
     }
 
-    if (action.type === 'SET_NEWSFEED_COUNT') {
+    case ('SET_NEWSFEED_COUNT'): {
         return {
             ...state,
             newsfeedUnreadCount: action.count,
         }
     }
-    if (action.type === 'DECREASE_NEWSFEED_COUNT') {
+    case ('DECREASE_NEWSFEED_COUNT'): {
         return {
             ...state,
             newsfeedUnreadCount: (state.newsfeedUnreadCount -1),
         }
     }
 
-    if (action.type === 'LOGGED_OUT') {
+    case ('LOGGED_OUT'): {
         payloadStack = [];
         return initialState;
     }
 
-    if (action.type === 'SET_GROUP') {
-        // console.log('SET_GROUP', action);
-        payloadStack = [];
+    case ('SET_GROUP'): {
+        // return {...state}
+        // payloadStack = [];
         return {
             ...state,
             payload: [],
-            selectedGroup: {
-                group: action.data ? action.data.id : null,
-                groupName: action.data ? action.data.name : null,
-                groupAvatar: action.data ? action.data.avatar : null,
-                conversationView: action.data ? action.data.conversationView : null,
-                groupMembers: action.data ? action.data.totalMembers : null,
-                groupLimit: action.data ? action.data.limit : null,
-                user_role: action.data ? action.data.user_role : null,
-                header: action.data ? action.data.header : 'more'
-            },
+            selectedGroup: action.data
         }
     }
 
-    if (action.type === 'DELETE_ACTIVITIES') {
+    case ('DELETE_ACTIVITIES'): {
         payloadStack = [];
         return {
             ...state,
@@ -103,7 +110,7 @@ function activities(state: State = initialState, action: Action): State {
         }
     }
 
-    if (action.type === 'DELETE_ACTIVITY') {
+    case ('DELETE_ACTIVITY'): {
         payloadStack = state.payload.filter(activity => activity.id !== action.id);
         return {
             ...state,
@@ -112,7 +119,7 @@ function activities(state: State = initialState, action: Action): State {
         }
     }
 
-    if (action.type === 'CHANGE_ACTIVITY_DESCRIPTION') {
+    case ('CHANGE_ACTIVITY_DESCRIPTION'): {
         payloadStack = state.payload.map(activity => {
             if (activity.id === action.data.id) {
                 return {
@@ -129,7 +136,7 @@ function activities(state: State = initialState, action: Action): State {
         }
     }
 
-    if (action.type === 'BOOST_ACTIVITY') {
+    case ( 'BOOST_ACTIVITY'): {
         payloadStack = state.payload.map(activity => {
             if (activity.id === action.id) {
                 return {
@@ -146,7 +153,7 @@ function activities(state: State = initialState, action: Action): State {
         }
     }
 
-    if (action.type === 'CHANGE_FOLLOW_STATUS') {
+    case ('CHANGE_FOLLOW_STATUS'): {
         const { follow_status, id } = action.data;
         payloadStack = state.payload.map(activity => {
             if (activity.id === id) {
@@ -167,7 +174,7 @@ function activities(state: State = initialState, action: Action): State {
         }
     }
 
-    if (action.type === 'ACTIVITY_NOTIFICATION_SUBSCRIBE') {
+    case ('ACTIVITY_NOTIFICATION_SUBSCRIBE'): {
         let { type, id } = action.data;
         if (type === 'user-petition') {
             type = 'user_petition';
@@ -191,7 +198,7 @@ function activities(state: State = initialState, action: Action): State {
         }
     }
 
-    if (action.type === 'ACTIVITY_NOTIFICATION_UNSUBSCRIBE') {
+    case ('ACTIVITY_NOTIFICATION_UNSUBSCRIBE'): {
         let { type, id } = action.data;
         if (type === 'user-petition') {
             type = 'user_petition';
@@ -214,8 +221,10 @@ function activities(state: State = initialState, action: Action): State {
             payload: payloadStack,
         }
     }
-
+    default: 
     return state;
+}
+    
 }
 
 module.exports = activities;

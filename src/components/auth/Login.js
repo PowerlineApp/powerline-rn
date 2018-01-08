@@ -170,11 +170,12 @@ class Login extends React.Component {
     countryCode = countryCode || '+1';    
     this.setState({code: ''})
     verifyCode(countryCode + phone, code).then(r => r.json()).then(r => {
-        console.log(r);
-        if (r.token){
-          dispatch({ type: 'LOGGED_IN', data: r });
-        }
-        this.setState({loading: false})
+        console.log('verify code res', r);
+        this.setState({loading: false}, () => {
+          if (r.token){
+            dispatch({ type: 'LOGGED_IN', data: r });
+          }
+        })
     }).catch(e => {
         console.log('\n------------------------------', e);
         Alert.alert('Invalid data',

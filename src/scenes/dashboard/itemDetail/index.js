@@ -248,9 +248,14 @@ class ItemDetail extends Component {
             // remove the file from storage
             return fs.unlink(imagePath)
         }).catch(e => {
-            alert('Failed to load image');
-            // allow user to hit share again
-            this.setState({sharing: false}) 
+            console.log(e, entity, imgURL)
+            if (!imgURL) {
+                alert('Something went wrong loading poster')
+            } else {
+                alert('Failed to load poster');
+                // allow user to hit share again
+                this.setState({sharing: false}) 
+            }
         })
     }
 

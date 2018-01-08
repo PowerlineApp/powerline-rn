@@ -26,7 +26,8 @@ import {
     Platform,
     StyleSheet,
     ScrollView,
-    Modal
+    Modal,
+    TouchableHighlight
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
@@ -37,7 +38,8 @@ class CommunityView extends PureComponent {
         const {
             light,
             grouplist,
-            onPress
+            onPress,
+            onCancel
         } = this.props;
         console.log(grouplist);
         return (
@@ -48,11 +50,18 @@ class CommunityView extends PureComponent {
                         backgroundColor: light ? 'transparent': 'black',
                         opacity: light ? 1 : 0.4,
                     }} />
+                    <TouchableHighlight style={styles.cancelButton} onPress={() => onCancel()} >
+                        <Label style={{color: '#fff', fontWeight: '800'}} >X</Label>
+                    </TouchableHighlight>
                     <ScrollView style={{flex: 1}}>
                         <List style={{width: 250}}>
                             { grouplist.map((item, index) => {
                                 return (
-                                    <ListItem key={index} onPress={() => onPress(index)}>
+                                    <ListItem 
+                                        style={{
+                                            backgroundColor: 'transparent',
+                                        }}
+                                        key={index} onPress={() => onPress(index)}>
                                         { item.avatar_file_path
                                         ? <Thumbnail square style={styles.thumbnail} source={{ uri: item.avatar_file_path + '&w=150&h=150&auto=compress,format,q=95'}} />
                                         : <View style={styles.thumbnail} />
@@ -85,6 +94,11 @@ const styles = {
         zIndex: 10,
         paddingLeft: (width - 250)/ 2,
         paddingTop: 100,
+    },
+
+    cancelButton: {
+        position: 'absolute',
+        padding: 20
     },
 
     community_list_back: {

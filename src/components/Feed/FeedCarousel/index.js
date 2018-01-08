@@ -6,8 +6,23 @@ import {CardItem} from 'native-base';
 import FeedContext from '../FeedContext';
 
 class FeedCarousel extends Component {
+
     _renderContext (entry) {
         return <FeedContext entry={entry} />;
+    }
+    _renderItem ({item, index}) {
+        return (
+            <TouchableOpacity
+                key={`entry-${index}`}
+                activeOpacity={0.7}
+                style={styles.slideInnerContainer}
+            >
+                <View style={[styles.imageContainer, (index + 1) % 2 === 0 ? styles.imageContainerEven : {}]}>
+                    <FeedContext entry={item} />
+                    <View style={[styles.radiusMask, (index + 1) % 2 === 0 ? styles.radiusMaskEven : {}]} />
+                </View>
+            </TouchableOpacity>
+        );   
     }
 
     render () {
@@ -16,23 +31,23 @@ class FeedCarousel extends Component {
         let {item} = this.props;
 
         if (item.poll) {
-            const slides = item.poll.educational_context.map((entry, index) => {
-                return (
-                    <TouchableOpacity
-                        key={`entry-${index}`}
-                        activeOpacity={0.7}
-                        style={styles.slideInnerContainer}
-                    >
-                        <View style={[styles.imageContainer, (index + 1) % 2 === 0 ? styles.imageContainerEven : {}]}>
-                            {this._renderContext(entry)}
-                            <View style={[styles.radiusMask, (index + 1) % 2 === 0 ? styles.radiusMaskEven : {}]} />
-                        </View>
-                    </TouchableOpacity>
-                );
-            });
-            if (slides.length < 1){ return null;}
-            return null;
-            console.log('=>', slides);
+            // const slides = item.poll.educational_context.map((entry, index) => {
+            //     return (
+            //         <TouchableOpacity
+            //             key={`entry-${index}`}
+            //             activeOpacity={0.7}
+            //             style={styles.slideInnerContainer}
+            //         >
+            //             <View style={[styles.imageContainer, (index + 1) % 2 === 0 ? styles.imageContainerEven : {}]}>
+            //                 {this._renderContext(entry)}
+            //                 <View style={[styles.radiusMask, (index + 1) % 2 === 0 ? styles.radiusMaskEven : {}]} />
+            //             </View>
+            //         </TouchableOpacity>
+            //     );
+            // });
+            if (item.poll.educational_context.length < 1){ return null;}
+            // return null;
+            // console.log('=>', slides);
             return (
                 <CardItem cardBody>
                     <Carousel
@@ -49,8 +64,8 @@ class FeedCarousel extends Component {
                         showsHorizontalScrollIndicator={false}
                         snapOnAndroid
                         removeClippedSubviews={false}
-                        data={slides}
-                        renderItem={({item}) => (item)}
+                        data={item.poll.educational_context}
+                        renderItem={this._renderItem}
                     />
                 </CardItem>
             );

@@ -87,6 +87,7 @@ class FeedDescription extends Component {
 
   render() {
     let { item } = this.props;
+    // console.log(item)
 //Priority Zone, Comment, Counter, and Main Text Body
     return (
       <CardItem style={{ paddingLeft: 5, paddingRight: 15 }}>
@@ -107,7 +108,7 @@ class FeedDescription extends Component {
                     { pattern: /#(\w+)/, style: styles.hashtag, onPress: this.handleHashtagPress },
                   ]
                 }
-                numberOfLines={this.props.isInDetail ? null : 5}
+                numberOfLines={this.props.isInDetail ? null : item.entity.type === 'post' ? 5 : 4}
                 childrenProps={{ allowFontScaling: false }}
               >
                 {item.description}

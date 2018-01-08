@@ -51,6 +51,7 @@ class FriendActivity extends Component {
     }
 
     componentWillMount() {
+        this.props.dispatch({type: 'SET_GROUP', data: {}});
         this.props.dispatch(resetActivities());
         this.loadInitialActivities();
     }

@@ -29,6 +29,7 @@ var initialState = {
 function user(state: State = initialState, action: Action): State {
   // console.log('STATE', state)
   if (action.type === 'LOGGED_IN') {
+    console.warn('=====<<<>>>>====', action)
     let { id, username, token } = action.data;
     return {
       ...state,

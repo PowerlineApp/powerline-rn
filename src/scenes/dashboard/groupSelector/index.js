@@ -201,8 +201,11 @@ class GroupSelector extends Component {
         // console.log(groupId, groupName, avatar, limit)     
         var { dispatch, token } = this.props;
         if (this.props.selectedGroupId !== id){
-            dispatch({type: 'SET_GROUP', data: {header, user_role, id, name: official_name, avatar: avatar_file_path, limit: conversation_view_limit, totalMembers: total_members, conversationView: total_members < conversation_view_limit}});
-            // dispatch(loadActivities(token, 0, 20, id));
+
+            dispatch({ type: 'RESET_ACTIVITIES' });
+            dispatch({type: 'SET_GROUP', data: {header, user_role,group: id,  id, groupName: official_name, groupAvatar: avatar_file_path, limit: conversation_view_limit, totalMembers: total_members, conversationView: total_members < conversation_view_limit}});
+            dispatch(loadActivities(token, 0, 20, id));
+            dispatch({type: 'SAVE_OFFSET', payload: 0})
         }
         Actions.pop();        
         

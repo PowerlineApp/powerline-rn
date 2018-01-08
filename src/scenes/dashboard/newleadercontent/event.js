@@ -3,7 +3,6 @@ import {View, Text, Picker, Platform, TouchableOpacity} from 'react-native';
 import moment from 'moment';
 
 import DateTimePicker from 'react-native-modal-datetime-picker';
-console.log('MOMENT', moment);
 
 class Event extends Component {
     constructor(props){

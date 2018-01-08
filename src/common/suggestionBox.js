@@ -30,7 +30,8 @@ const styles = {
     boxStyle: {
         backgroundColor: '#fff',
         flexDirection: 'column',
-        padding: 8
+        // padding: 8,
+        flex: 1,
     },
     divider:(horizontal) =>  ({
         width: horizontal ? 1 : '100%',
@@ -41,12 +42,14 @@ const styles = {
     itemStyle:(horizontal) =>  ({
         flexDirection: horizontal ? 'row' : 'column',
         backgroundColor: '#fff',
-        height: horizontal ? 20 : 40,
-        justifyContent: 'flex-start',
+        height: horizontal ? 40 : 40,
         alignItems: 'center'
     }),
     textStyle: {
-        color: '#030747'
+        color: '#030747',
+        backgroundColor: '#fff',
+        textAlignVertical: 'center',
+        textAlign: 'center'
     }
 };
 

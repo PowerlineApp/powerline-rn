@@ -25,22 +25,26 @@ var { StackNavigator } = require('react-navigation');
 var RegisterScene  = require('./scenes/auth/RegisterScene');
 var TourScene = require('./scenes/auth/TourScene');
 import {Root} from 'native-base';
-import OneSignal from 'react-native-onesignal';
-// console.log = () => {};
+import { RNSKBucket } from 'react-native-swiss-knife';
+
+
+// import OneSignal from 'react-native-onesignal';
+console.log = () => {};
+console.warn = () => {};
 
 var PLApp = React.createClass({
     displayName: 'PLApp',
     componentDidMount: function () { 
+        console.log('===========================, COMPONENT DID MOUNT ON PLAPP.JS');
         Stripe.init({
             publishableKey: stripeAPIKey
         });
-        // if (Platform.OS === 'android') {
-        //     SplashScreen.hide();
-      
-        // }
         console.log('=>', SplashScreen);
         SplashScreen.hide();
-        // alert('yoiyoyo');
+
+        const myGroup = 'group.ne.powerline.share';
+        RNSKBucket.set('token', this.props.token, myGroup);
+
 
         AppState.addEventListener('change', this.handleAppStateChange);
     },
@@ -55,11 +59,12 @@ var PLApp = React.createClass({
     },
 
     render: function () {
+        console.log('===>>><<<===', this.props);
         return <Root>
             {
-                !this.props.isLoggedIn
-                ? <LoginStack />
-                : <PLNavigator />
+                this.props.isLoggedIn
+                ? <PLNavigator />
+                : <LoginStack />
             }
         </Root>;
     },
@@ -92,7 +97,8 @@ TermsPolicyScene.navigationOptions = props => {
 };
 
 const mapStateToProps = state => ({
-    isLoggedIn: state.user.isLoggedIn
+    isLoggedIn: state.user.isLoggedIn,
+    token: state.user.token
 });
 
 module.exports = connect(mapStateToProps)(PLApp);

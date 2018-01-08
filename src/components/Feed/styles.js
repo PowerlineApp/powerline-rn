@@ -141,6 +141,7 @@ export default {
     },
     descBodyContainer: {
         alignSelf: 'flex-start',
+        minHeight: 50
     },
     metaContainer: {
         height: metaHeight,

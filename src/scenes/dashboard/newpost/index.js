@@ -41,7 +41,8 @@ import styles from './styles';
 import {
     Dimensions,
     ScrollView,
-    Image
+    Image,
+    Animated
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import { showToast } from 'PLToast';
@@ -75,10 +76,13 @@ class NewPost extends Component {
             sharing: !!props.data
         };
 
+        this.paddingInput = new Animated.Value(0);
+
         this.placeholderTitle = randomPlaceholder('post');
 
         this.toggleCommunity = this.toggleCommunity.bind(this);
         this.onSelectionChange = this.onSelectionChange.bind(this);
+    
     }
 
     componentDidMount() {
@@ -109,22 +113,16 @@ class NewPost extends Component {
             
         });
         this.loadSharedData(this.props.data);
-        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => this._keyboardDidShow);
-        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => this._keyboardDidHide);
+        // this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (e) => this._keyboardDidShow(e));
+        // this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', (e) => this._keyboardDidHide(e));
     }
 
     componentWillUnmount () {
-        this.keyboardDidShowListener.remove();
-        this.keyboardDidHideListener.remove();
+        // this.keyboardDidShowListener.remove();
+        // this.keyboardDidHideListener.remove();
     }
 
-    _keyboardDidShow () {
-        this.setState({keyboard: false});
-    }
 
-    _keyboardDidHide () {
-        this.setState({keyboard: true});
-    }
 
     async loadSharedData(data){
         if (!data) {
@@ -414,14 +412,6 @@ class NewPost extends Component {
                     </List>
                     <ScrollView onLayout={(e) => this.setState({contentHeight: e.nativeEvent.layout.height})} scrollEnabled={false} keyboardShouldPersistTaps={'handled'} style={styles.main_content} >
                         {/* <S style={styles.main_content}> */}
-
-                        {
-                        this.state.displaySuggestionBox && this.state.suggestionList.length > 0
-                        ? <ScrollView style={{position: 'absolute', top: 20, zIndex: 3}} keyboardShouldPersistTaps='always'  >
-                            <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
-                        </ScrollView>
-                        : <ScrollView />
-                    }
                         <View style={{flex: 1, height: '100%', backgroundColor: '006'}}  >
                             <ScrollView style={{flex: 1, height: '100%'}}>
                                 <TextInput
@@ -444,18 +434,20 @@ class NewPost extends Component {
                             <CommunityView
                                 grouplist={this.state.grouplist}
                                 onPress={(i) => this.selectGroupList(i)}
+                                onCancel={() => this.selectGroupList(this.state.selectedGroupIndex)}
                             />
                         }
+                        
                     </ScrollView>
                     <KeyboardAvoidingView
-                        keyboardVerticalOffset={32}
+                        keyboardVerticalOffset={Platform.select({android: 20, ios: 0})}
                         behavior={Platform.select({android:'padding', ios: 'padding'})}>
                         {
                             this.renderAttachments()
                         }
-                        <Footer style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: PLColors.main, paddingLeft: 10, paddingRight: 10 }}>
+                        <Footer style={{ maxHeight: 64, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: PLColors.main, paddingLeft: 10, paddingRight: 10 }}>
                             {
-                            this.state.posts_remaining
+                                this.state.posts_remaining
                             ? <Label style={{ color: 'white', fontSize: 10 }}>
                                 You have <Label style={{ fontWeight: 'bold' }}>{this.state.posts_remaining}</Label> posts left in this group
                             </Label>
@@ -465,6 +457,17 @@ class NewPost extends Component {
                             <Label style={{ color: 'white' }}>
                                 {(POST_MAX_LENGTH - this.state.content.length)}
                             </Label>
+                            {
+                                this.state.displaySuggestionBox && this.state.suggestionList.length > 0
+                                ? <ScrollView style={{ height: 40, bottom: 0, backgroundColor: '#fff', position: 'absolute', zIndex: 3}} keyboardShouldPersistTaps='always'>
+                                    {/* <KeyboardAvoidingView behavior='padding' style={{flex: 1}}> */}
+                                    {/* <Animated.View style={{marginBottom: 0}}> */}
+                                    <SuggestionBox horizontal substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
+                                    {/* </Animated.View> */}
+                                    {/* </KeyboardAvoidingView> */}
+                                </ScrollView>
+                                : <ScrollView style={{ position: 'absolute', zIndex: 3}} />
+                            }
                         </Footer>
                     </KeyboardAvoidingView>
                 </Container>

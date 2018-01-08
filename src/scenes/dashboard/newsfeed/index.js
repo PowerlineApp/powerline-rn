@@ -13,7 +13,7 @@ import { Actions } from 'react-native-router-flux';
 import { ActionSheet, Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, ListItem, Thumbnail, List, Card, CardItem, Label, Footer } from 'native-base';
 import { ScrollView, FlatList, View, RefreshControl, TouchableOpacity, Image, WebView, Platform, Share } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
-import { loadActivities, resetActivities, votePost, editFollowers, loadActivityByEntityId, createPostToGroup, deletePost, deletePetition, getGroups } from 'PLActions';
+import { setGroup, loadActivities, resetActivities, votePost, editFollowers, loadActivityByEntityId, createPostToGroup, deletePost, deletePetition, getGroups, saveOffSet } from 'PLActions';
 import styles, { sliderWidth, itemWidth } from './styles';
 import TimeAgo from 'react-native-timeago';
 import ImageLoad from 'react-native-image-placeholder';
@@ -51,52 +51,75 @@ class Newsfeed extends Component {
             isLoading: false,
             dataArray: [],
             text: "",
-            showAvatar: true,
-            lastOffset: 0,
+            showAvatar: true
         };
         lastScrollPosition: null
     }
+
+    shouldComponentUpdate(nextProps, nextState){
+        console.warn('should component update', nextProps)
+        if (this.state !== nextState){
+            return true;
+        }
+        if (this.props.selectedGroup !== nextProps.selectedGroup) {
+            return true;
+        }
+        if (this.props.loadingActions !== nextProps.loadingActions) {
+            console.log('here => ', this.props.loadingActions, nextProps.loadingActions)
+            return true;
+        }
+        if (this.props.payload !== nextProps.payload){
+            return true;
+        }
+        console.log('????????????????????????')
+        return false;
+        // if (this.props.lastOffset !== nextProps.lastOffset){
+        //     return false;
+        // }
+    }
+
+    componentWillMount(){
+        if (!!this.props.selectedGroup){
+            let data = {id: 'all', group: 'all', header: 'all'};
+            this.props.setGroup(data, this.props.token, 'all');
+
+            // this.props.dispatch({ type: 'RESET_ACTIVITIES' });
+            // this.props.dispatch({type: 'SET_GROUP', data: {id: 'all', group: 'all', header: 'all'}})
+            // this.props.dispatch(loadActivities(this.props.token, 0, 20, 'all'));
+            // this.props.dispatch({type: 'SAVE_OFFSET', payload: 0})
+        }
+    }
     
-    componentWillMount() {
-        // console.log('willmount')
-        // this.props.dispatch(resetActivities());
-            this.props.dispatch(resetActivities());
-            this.loadInitialActivities();
+    componentDidMount() {
+        // this.flatListRef.scrollToOffset({offset: this.props.lastOffset, animated: false})
+        // console.warn('componentDidMount', this.props.payload.length)
+        console.warn('last offset: ====>', this.props.lastOffset, this.props.payload.length)
+        setTimeout(() => {
+            this.flatListRef.scrollToOffset({offset: this.props.lastOffset, animated: true})
+        }, 1000)       
+
     }
     
     componentWillReceiveProps(nextProps) {
-        if (this.props.selectedGroup.group !== nextProps.selectedGroup.group){
-            console.log('componentWillReceiveProps', this.props)
-            this.props.dispatch(resetActivities());
-            this.loadInitialActivities(nextProps);
-        }
+        // console.warn('componentWillReceiveProps at newsfeed', this.props.selectedGroup.group, nextProps.selectedGroup.group)
+        // if (this.props.selectedGroup.group !== nextProps.selectedGroup.group){
+        //     this.props.saveOffSet(0);
+        //     this.props.dispatch(resetActivities());
+        //     this.loadInitialActivities(nextProps);
+        // }
         this.setState({
             dataArray: nextProps.payload,
         });
     }
-
-    //JC I'm unclear on what this actually is 
-    // Felipe - me too. will leave this commented! 
-
-    // subscribe(item) {
-    //     Share.share({
-    //         message: item.description,
-    //         title: ""
-    //     });
-    // }
-
 
     // these two functions :loadInitialActivities: and :loadNextActivities: are almost identical...
     // TODO:  how to make them only one function, with different behaviors based on parameters ?
     async loadInitialActivities(nextProps) {
         this.setState({ isRefreshing: true });
         const { props: { token, dispatch, page } } = this;
-        // console.log('to fetch: ', this.props.selectedGroup)
         const group = nextProps ? nextProps.selectedGroup.group : this.props.selectedGroup.group;
-        // console.log('about to load more -------------- loadInitialActivities')
         try {
             let activities = await loadActivities(token, 0, 20, group);
-            // console.log('loaded: ', activities)
             dispatch(activities);
         } catch (e) {
             this.setState({ isRefreshing: false });
@@ -196,34 +219,38 @@ class Newsfeed extends Component {
      * @param {boolean} conversation - tell us if we are in conversation or feed view
      */
     onScroll(event, conversation) {
-        let {showAvatar} = this.state.showAvatar;
-        let lastScrollPosition = this.lastScrollPosition;
+
+        // console.log('onScroll')
+        // let {showAvatar} = this.state.showAvatar;
+        // let lastScrollPosition = this.lastScrollPosition;
         const scrollPosition = event && event.nativeEvent && event.nativeEvent.contentOffset && event.nativeEvent.contentOffset.y;
-        if (!lastScrollPosition) this.lastScrollPosition= scrollPosition
+        // if (!lastScrollPosition) this.lastScrollPosition= scrollPosition
 
-        // only update header changes on a 20pixel step
-        if (Math.abs(scrollPosition - this.lastScrollPosition) > 20 ){
-
-
-            // since conversationView is literally the feedview backwards, we need to treat the scroll differently
-            if (conversation){
-                if (scrollPosition > this.lastScrollPosition){
-                    if (!this.state.showAvatar) this.setState({showAvatar: true})
-                }
-                if (scrollPosition < this.lastScrollPosition){
-                    if (this.state.showAvatar) this.setState({showAvatar: false})
-                }
+        // // only update header changes on a 20pixel step
+        // if (Math.abs(scrollPosition - this.lastScrollPosition) > 20 ){
+        //     // since conversationView is literally the feedview backwards, we need to treat the scroll differently
+        //     if (conversation){
+        //         if (scrollPosition > this.lastScrollPosition){
+        //             if (!this.state.showAvatar) this.setState({showAvatar: true})
+        //         }
+        //         if (scrollPosition < this.lastScrollPosition){
+        //             if (this.state.showAvatar) this.setState({showAvatar: false})
+        //         }
                 
-            } else {
-                if (scrollPosition < this.lastScrollPosition){
-                    if (!this.state.showAvatar) this.setState({showAvatar: true})
-                }
-                if (scrollPosition > this.lastScrollPosition){
-                    if (this.state.showAvatar) this.setState({showAvatar: false})
-                }
-            }
-            this.lastScrollPosition = scrollPosition;
-        }
+        //     } else {
+        //         if (scrollPosition < this.lastScrollPosition){
+        //             if (!this.state.showAvatar) this.setState({showAvatar: true})
+        //         }
+        //         if (scrollPosition > this.lastScrollPosition){
+        //             if (this.state.showAvatar) this.setState({showAvatar: false})
+        //         }
+        //     }
+        //     this.lastScrollPosition = scrollPosition;
+        // }
+        // console.log('onScroll', scrollPosition, this.props.saveOffSet)
+        this.props.dispatch({type: 'SAVE_OFFSET', payload: scrollPosition})
+
+        // this.props.saveOffSet(scrollPosition)
     }
 
     // the two Header rendering functions. only diff on the size of the icon and it's position
@@ -259,6 +286,44 @@ class Newsfeed extends Component {
         </TouchableOpacity>)
     }
 
+    getHeight(item){
+        // basico
+        // considerando height 50 para descricao
+        let height = 200;
+        // comentario
+        // se tiver comentario, somar 62
+        let hasComment = false;
+        let previewData = {comments: []};
+        if (item.poll) {
+            previewData = item.poll;
+        } else if (item.post) {
+            previewData = item.post;
+        } else if (item.user_petition) {
+            previewData = item.user_petition;
+        }
+        // console.log(previewData, item)
+        hasComment = !!previewData.comments[0];
+        
+        if (hasComment) height += 62;
+
+
+        if (item.metadata && item.metadata.image) {
+            height += 180;
+        }
+
+        if (item.poll && item.poll.educational_context.length > 0){
+            height += 180;
+        }
+        // foto (e nao eh post nem peticao)
+        // 180
+        // console.log(item)
+        return height;
+    }
+
+    renderActivity = (item) => (
+         <FeedActivity key={item.id} item={item.item} token={this.props.token} profile={this.props.profile} />
+    )
+
 
 
     render() {
@@ -272,16 +337,16 @@ class Newsfeed extends Component {
         // console.log('selected group', this.props)
 
 
-        let dataArray = this.state.dataArray;
+        let dataArray = this.props.payload;
         // console.log(dataArray);
 
-        let conversationView = false;
+        this.conversationView = false;
         if (this.props.selectedGroup && this.props.selectedGroup.group !== 'all' && this.props.selectedGroup.conversationView){
             // hardcore here to test view -- value should be true
-            conversationView = false;
+            this.conversationView = false;
         }
 
-        // console.log('newsfeed render', this.props)
+        console.log('newsfeed render', this.props.loadingActions)
 
         return (
             <Container style={{flex: 1}}>
@@ -297,35 +362,20 @@ class Newsfeed extends Component {
                      * some performance using FlatList (as recommended on the docs)
                      */}
                     <FlatList 
-                        bounces
+                        // bounces
                         data={dataArray}
-                        extraData={dataArray}
-                        scrollEventThrottle={16}
+                        scrollEventThrottle={100}
                         refreshing={false}
                         onRefresh={() => this._onRefresh()}
                         onEndReachedThreshold={0.8}
-
-                        /*
-                            inverts the list when in conversationView - this is necessary to make the refresh work on the bottom with the builtin listview onRefresh
-                            which is impossible to make on android without any native code
-                        */
-                        style={{ marginBottom: 48, transform: [{ scaleY: conversationView ? -1 : 1 }] }}
-                        
-
-                        onScroll={(event) => this.onScroll(event, conversationView)}
+                        initialNumToRender={3}
+                        ref={(ref) => this.flatListRef = ref}
+                        style={{ marginBottom: 48 }}
+                        onScroll={(event) => this.onScroll(event)}
                         onEndReached={() => this._onEndReached()}
-
-                        renderItem={item => {
-                            return (
-                                conversationView 
-                                ? <View style={{  transform: [{ scaleY: -1 }] }}>
-                                    {/** the transform: scale Y = -1 is necessary to make each item appear correctly*/}
-                                    <ConversationActivity key={item.id} item={item.item} token={this.props.token} profile={this.props.profile} />
-                                </View>
-                                : <FeedActivity key={item.id} item={item.item} token={this.props.token} profile={this.props.profile} />
-                            )
-                        }} />
-                    <PLOverlayLoader visible={isLoading || isLoadingTail || isRefreshing} logo />
+                        renderItem={(item) => <FeedActivity key={item.id} item={item.item} token={this.props.token} profile={this.props.profile} />}
+                    /> 
+                    <PLOverlayLoader visible={this.props.loadingActions  || isLoading || isLoadingTail || isRefreshing} logo />
                     {
                         /**
                          * if we are in conversation view, we have a textinput on the bottom, that creates posts
@@ -333,7 +383,7 @@ class Newsfeed extends Component {
                          * the <KeyboardAvoidingView> above should make it work, but for some reason it doesnt --to be fixed
                          * // Felipe
                          */
-                        conversationView
+                        this.conversationView
                         ?
                         <KeyboardAvoidingView behavior={Platform.select({android:'height', ios: 'padding'})}>
                         <Footer style={styles.CFooter}>
@@ -360,16 +410,24 @@ async function timeout(ms: number): Promise {
     });
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = state => 
+
+{
+    console.log('activities state', state.activities)
+    return ({
     token: state.user.token,
     page: state.activities.page,
     totalItems: state.activities.totalItems,
+    // totalItems: 5,
     payload: state.activities.payload,
+    loadingActions: state.activities.loading,
     count: state.activities.count,
     profile: state.user.profile,
     userId: state.user.id,
     selectedGroup: state.activities.selectedGroup,
-    group: state.activities.group,
+    lastOffset: state.activities.lastOffset,
+    // selectedGroup: {},
+    // group: state.activities.group,
     drawerState: state.drawer.drawerState
     // groupName: state.activities.groupName,
     // groupAvatar: state.activities.groupAvatar,
@@ -377,6 +435,8 @@ const mapStateToProps = state => ({
     // groupMembers: state.activities.groupMembers,
     // conversationView: state.activities.conversationView,
     // chooseGroup: state.groups.others
-});
+})
+}
+;
 
-export default connect(mapStateToProps)(Newsfeed);
+export default connect(mapStateToProps, (dispatch) => ({saveOffSet, dispatch, setGroup}))(Newsfeed);

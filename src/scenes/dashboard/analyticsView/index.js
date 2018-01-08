@@ -48,7 +48,7 @@ class AnalyticsView extends Component {
     }
 
     componentWillReceiveProps (nextProps) {
-        console.log('componentWillReceiveProps', nextProps);
+        // console.log('componentWillReceiveProps', nextProps);
         if(nextProps.error) {
             Alert.alert('Error',
                 'Could not fetch analytics for this post', [
