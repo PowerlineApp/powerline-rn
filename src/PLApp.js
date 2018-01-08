@@ -5,25 +5,25 @@
 
 'use strict';
 
-var React = require('React');
+import React, {Component} from 'React';
+import {View, Text} from 'react-native';
 import Stripe from 'tipsi-stripe';
-var AppState = require('AppState');
-var Platform = require('Platform');
-var LoginScene = require('./scenes/auth/LoginScene');
-var TermsPolicyScene = require('./scenes/auth/TermsPolicyScene');
-var ForgotPasswordScene = require('./scenes/auth/ForgotPasswordScene');
-var StyleSheet = require('StyleSheet');
-var PLNavigator = require('PLNavigator');
-var View = require('View');
-var StatusBar = require('StatusBar');
-// var SplashScreen = require('react-native-splash-screen');
+import AppState from 'AppState';
+import Platform from 'Platform';
+import LoginScene from './scenes/auth/LoginScene';
+import TermsPolicyScene from './scenes/auth/TermsPolicyScene';
+import ForgotPasswordScene from './scenes/auth/ForgotPasswordScene';
+import StyleSheet from 'StyleSheet';
+import PLNavigator from 'PLNavigator';
+import StatusBar from 'StatusBar';
+// import SplashScreen from 'react-native-splash-screen';
 import SplashScreen from 'react-native-splash-screen';
 
-var { connect } = require('react-redux');
-var { version, stripeAPIKey } = require('./PLEnv.js');
-var { StackNavigator } = require('react-navigation');
-var RegisterScene  = require('./scenes/auth/RegisterScene');
-var TourScene = require('./scenes/auth/TourScene');
+import { connect } from 'react-redux';
+import { version, stripeAPIKey } from './PLEnv.js';
+import { StackNavigator } from 'react-navigation';
+import RegisterScene  from './scenes/auth/RegisterScene';
+import TourScene from './scenes/auth/TourScene';
 import {Root} from 'native-base';
 import { RNSKBucket } from 'react-native-swiss-knife';
 
@@ -32,9 +32,19 @@ import { RNSKBucket } from 'react-native-swiss-knife';
 console.log = () => {};
 console.warn = () => {};
 
-var PLApp = React.createClass({
-    displayName: 'PLApp',
-    componentDidMount: function () { 
+class PLApp extends Component {
+    constructor(){
+        super();
+        this.state = {
+            splash: true
+        };
+    }
+    // displayName: 'PLApp',
+    componentDidMount () {
+        setTimeout( () => {
+            this.setState({splash: false});
+        },1000);
+
         console.log('===========================, COMPONENT DID MOUNT ON PLAPP.JS');
         Stripe.init({
             publishableKey: stripeAPIKey
@@ -47,19 +57,29 @@ var PLApp = React.createClass({
 
 
         AppState.addEventListener('change', this.handleAppStateChange);
-    },
+    }
 
-    componentWillUnmount: function () {
+    componentWillUnmount () {
         AppState.removeEventListener('change', this.handleAppStateChange);
-    },
+    }
 
-    handleAppStateChange: function (appState) {
+    handleAppStateChange (appState) {
         if (appState === 'active') {
         }
-    },
+    }
 
-    render: function () {
+    render () {
         console.log('===>>><<<===', this.props);
+        if (this.props.token && this.state.splash){ // if user is logged in, show fake splashscreen - also verify in his profile is has an agency
+            return <View style={{flex: 1, backgroundColor: '#f0f'}}>
+                <Text>This is my fake SplashScreen</Text>
+                {
+                    /*
+                    here will enter an centered image, that we will need to cache when user logs in
+                    */
+                }
+            </View>;
+        }
         return <Root>
             {
                 this.props.isLoggedIn
@@ -67,9 +87,9 @@ var PLApp = React.createClass({
                 : <LoginStack />
             }
         </Root>;
-    },
+    }
 
-});
+};
 
 var styles = StyleSheet.create({
     container: {
