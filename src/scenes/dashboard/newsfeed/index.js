@@ -71,7 +71,7 @@ class Newsfeed extends Component {
         if (this.props.payload !== nextProps.payload){
             return true;
         }
-        console.log('????????????????????????')
+        // console.log('????????????????????????')
         return false;
         // if (this.props.lastOffset !== nextProps.lastOffset){
         //     return false;
@@ -79,15 +79,17 @@ class Newsfeed extends Component {
     }
 
     componentWillMount(){
-        if (!!this.props.selectedGroup){
+        if (!this.props.selectedGroup){
             let data = {id: 'all', group: 'all', header: 'all'};
             this.props.setGroup(data, this.props.token, 'all');
-
             // this.props.dispatch({ type: 'RESET_ACTIVITIES' });
             // this.props.dispatch({type: 'SET_GROUP', data: {id: 'all', group: 'all', header: 'all'}})
             // this.props.dispatch(loadActivities(this.props.token, 0, 20, 'all'));
             // this.props.dispatch({type: 'SAVE_OFFSET', payload: 0})
         }
+        setTimeout(() => {
+            this.props.dispatch({type: 'SET_LOADING', payload: false})
+        }, 15000)
     }
     
     componentDidMount() {
