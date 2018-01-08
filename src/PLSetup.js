@@ -10,7 +10,6 @@ var React = require('React');
 var { Provider } = require('react-redux');
 var configureStore = require('./store/configureStore');
 
-function setup(): ReactClass<{}> {
   console.disableYellowBox = true;
 
   class Root extends React.Component {
@@ -38,8 +37,6 @@ function setup(): ReactClass<{}> {
     }
   }
 
-  return Root;
-}
 
 global.LOG = (...args) => {
   console.log('/------------------------------\\');
@@ -61,4 +58,4 @@ global.ALERT = arg => {
   } catch(e) {}
 };
 
-module.exports = setup;
+module.exports = Root;

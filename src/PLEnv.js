@@ -2,11 +2,14 @@
  * @providesModule PLEnv
  * @flow
  */
-import Mixpanel from 'react-native-mixpanel';
-
-let MixpanelToken = '41d5e20219405736fed2c133437f2953';
-
-Mixpanel.sharedInstanceWithToken(MixpanelToken);
+let Mixpanel = {};
+try {
+    Mixpanel =  require('react-native-mixpanel');
+    let MixpanelToken = '41d5e20219405736fed2c133437f2953';
+    Mixpanel.sharedInstanceWithToken(MixpanelToken);
+} catch (error) {
+    console.warn('Somehow mixpanel import failed in PLEnv.js .');
+}
 
 
 'use strict';
