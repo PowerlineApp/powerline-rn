@@ -161,11 +161,11 @@ class FeedHeader extends Component {
         }
         
         if (!isUpvoted) {
-            alert('User can share only a post he has upvoted.');
+            alert(item.type === 'post' ? 'User can share only a post he has upvoted.' : 'User can share only a petition he has signed.');
             return;
         }
 
-        sharePost(this.props.token, item.entity.id, cb);
+        sharePost(this.props.token, item.type === 'post', item.entity.id, cb);
 
         this.menu && this.menu.close();
     }
