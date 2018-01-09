@@ -86,17 +86,22 @@ class Share extends Component {
     } 
     componentDidMount (){
         const myGroup = 'group.ne.powerline.share';
-        this.setState({content: 'getting data'});
+        // this.setState({content: 'getting data'});
         
         ShareExtension.data().then(({type, value}) => {
-            fs.readFile(value, "base64").then(r => {
-                this.setState({image: r, content: ''});
-            }).catch(e => {
-                this.showToast('Error ocurred reading file.');
-            });
+            // this.setState({content: JSON.stringify({type, value})});
+            if (type === 'jpg' || type === 'jpeg' || type === 'png'){
+                fs.readFile(value, "base64").then(r => {
+                    this.setState({image: r, content: ''});
+                }).catch(e => {
+                    this.showToast('Error ocurred reading file.');
+                });
+            } else {
+                this.setState({content: value});
+            }
         });
         RNSKBucket.get('token', myGroup).then(value => {
-            this.setState({token: value, content: value});
+            this.setState({token: value});
             this.loadGroups(value);
         });
     }
@@ -112,7 +117,7 @@ class Share extends Component {
                 selectedGroupIndex
             });
         }).catch(err => {
-            this.showToast('Error when loading groups Trying again in 15 seconds.');
+            this.showToast('Error when loading groups. Try again later.');
             setTimeout(() => {
                 this.loadGroups(token);
             }, 15000);
@@ -189,14 +194,9 @@ class Share extends Component {
         createPostToGroup(token, groupId, this.state.content, this.state.image)
             .then(data => {
                 this.showToast('Post Successful!');
-                // this.refs.animatedView.fadeInDownBig(1000);
                 setTimeout(() => {
                     ShareExtension.close();
                 }, 2500);
-                // setTimeout(() => {
-                //     if (this.state.sharing) this.props.onPost();
-                //     else Actions.itemDetail({ type:'replace' , entityId: data.id, entityType: 'post', backTo: 'home', share: this.state.share });
-                // }, 200);
             })
             .catch(err => {
                 this.setState({sending: false});
@@ -226,7 +226,7 @@ class Share extends Component {
                             <Image source={{ uri: `data:image/png;base64,${this.state.image}` }} resizeMode='cover' style={{ width: width, height: height }} />
                         </View>
                     : <View style={{ height: height, width: width }} >
-                        <Image source={require("img/upload_image.png")} resizeMode='cover' style={{ width: width, height: height, tintColor: 'gray' }} />
+                        {/* <Image source={require("img/upload_image.png")} resizeMode='cover' style={{ width: width, height: height, tintColor: 'gray' }} /> */}
                     </View>
                 }
                     </Button>
@@ -244,24 +244,12 @@ class Share extends Component {
     }
     
     render() {
-        // console.log(this.state.displaySuggestionBox, this.state.suggestionList);
         let groupTitle = this.state.selectedGroupIndex == -1 
-                            ? 'Select a community' 
-                            : (this.state.grouplist[this.state.selectedGroupIndex] || {official_name: ''}).official_name;
+            ? 'Select a community' 
+            : (this.state.grouplist[this.state.selectedGroupIndex] || {official_name: ''}).official_name;
         return (
             <Root>
                 <View style={{flexDirection: 'row', width: '100%', height: '100%'}}>
-                    {/* <Toast 
-                    position={50}
-                    visible
-                    shadow
-                    animation
-                    hideOnPress
-                    delay={0}
-                >
-                    {this.state.toastMessage}
-                hello
-                </Toast> */}
                     <Container style={styles.container}>
                         <Header style={styles.header}>
                             <Left>
@@ -359,11 +347,6 @@ class Share extends Component {
             
         );
     }
-    // render () {
-    //     return (
-    //         <View style={{width: '100%', height: '100%', flex: 1, backgroundColor: 'rgba(120, 120, 120, 0.5)'}} />
-    //     );
-    // }
 }
 
 module.exports = Share;

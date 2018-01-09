@@ -79,7 +79,7 @@ class Newsfeed extends Component {
     }
 
     componentWillMount(){
-        if (!this.props.selectedGroup){
+        if (!this.props.selectedGroup || !this.props.selectedGroup.id){
             let data = {id: 'all', group: 'all', header: 'all'};
             this.props.setGroup(data, this.props.token, 'all');
             // this.props.dispatch({ type: 'RESET_ACTIVITIES' });

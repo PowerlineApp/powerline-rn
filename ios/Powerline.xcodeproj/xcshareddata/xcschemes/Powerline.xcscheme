@@ -31,7 +31,7 @@
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
                BuildableName = "Powerline.app"
                BlueprintName = "Powerline"
-               ReferencedContainer = "container:Powerline.xcodeproj">
+               ReferencedContainer = "container:powerline.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -45,7 +45,7 @@
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
                BuildableName = "PowerlineTests.xctest"
                BlueprintName = "PowerlineTests"
-               ReferencedContainer = "container:Powerline.xcodeproj">
+               ReferencedContainer = "container:powerline.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -64,7 +64,7 @@
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
                BuildableName = "PowerlineTests.xctest"
                BlueprintName = "PowerlineTests"
-               ReferencedContainer = "container:Powerline.xcodeproj">
+               ReferencedContainer = "container:powerline.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -74,7 +74,7 @@
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
             BuildableName = "Powerline.app"
             BlueprintName = "Powerline"
-            ReferencedContainer = "container:Powerline.xcodeproj">
+            ReferencedContainer = "container:powerline.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -98,7 +98,7 @@
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
             BuildableName = "Powerline.app"
             BlueprintName = "Powerline"
-            ReferencedContainer = "container:Powerline.xcodeproj">
+            ReferencedContainer = "container:powerline.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <EnvironmentVariables>
@@ -124,7 +124,7 @@
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
             BuildableName = "Powerline.app"
             BlueprintName = "Powerline"
-            ReferencedContainer = "container:Powerline.xcodeproj">
+            ReferencedContainer = "container:powerline.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
