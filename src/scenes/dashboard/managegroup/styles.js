@@ -135,7 +135,7 @@ export default {
         fontSize: 14
     },
     referral: {
-        backgroundColor: 'ddd',
+        // backgroundColor: '#ddd',
         borderColor: 'silver',
         borderWidth: 1,
         height: 40,

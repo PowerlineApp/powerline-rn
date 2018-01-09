@@ -55,8 +55,8 @@ class SubscriptionLevel extends Component {
         showToast('Subscription updated');
         this.setState({loading: false});
     }
-    onFail(){
-        alert("Something went wrong while updating your subscription. Try again later.");
+    onFail(r){
+        alert("Something went wrong while updating your subscription. Try again later." + r.message);
         this.setState({loading: false});
     }
 
@@ -85,7 +85,7 @@ class SubscriptionLevel extends Component {
         console.log('subscription level props', this.props);
         let hasCard = this.props.cards && this.props.cards.length > 0;
 
-        // console.log('~>', this.props.subscription.package_type);
+        console.log('~>', this.props);
         return (
             <View>
                 {

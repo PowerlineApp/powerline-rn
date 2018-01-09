@@ -123,6 +123,8 @@ class GroupInvite extends Component {
                                 light
                                 grouplist={grouplist}
                                 onPress={this.selectGroupList.bind(this)}
+                                onCancel={() => this.selectGroupList(this.state.selectedGroupIndex)}
+
                             />
                         </View>
                     </View>

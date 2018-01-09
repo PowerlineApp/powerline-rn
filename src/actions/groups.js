@@ -906,7 +906,14 @@ const groupGetSubscriptions = (groupId) => (dispatch, getState) => {
 
 const groupUpdateSubscriptions = (groupId, package_type, referral, cb) => (dispatch, getState) => {
     const token = getState().user.token
-    console.log('cb', cb)
+    console.log('cb', groupId, package_type, referral, cb, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': token
+        },
+        body: JSON.stringify({package_type, coupon: referral})
+    })
     dispatch({type: ActionTypes.GROUP_UPDATE_SUBSCRIPTIONS_LOADING, payload: true})
     fetch(API_URL + '/v2/groups/' + groupId + '/subscription', {
         method: 'PUT',
@@ -916,7 +923,12 @@ const groupUpdateSubscriptions = (groupId, package_type, referral, cb) => (dispa
         },
         body: JSON.stringify({package_type, coupon: referral})
     })
-    .then(response => response.json())
+    .then(r => {
+        if (!r.ok) {
+            throw Error(r.statusText)
+        } 
+        else return r
+    }).then(response => response.json())
     .then(res => {
         console.log(res);
         if (cb) cb.onSuccess();

@@ -79,6 +79,7 @@ class Newsfeed extends Component {
     }
 
     componentWillMount(){
+        console.log(this.props)
         if (!this.props.selectedGroup || !this.props.selectedGroup.id){
             let data = {id: 'all', group: 'all', header: 'all'};
             this.props.setGroup(data, this.props.token, 'all');

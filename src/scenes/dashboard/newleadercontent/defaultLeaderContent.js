@@ -758,6 +758,8 @@ class NewLeaderContent extends Component {
                             <CommunityView
                                 grouplist={this.state.grouplist}
                                 onPress={(i) => this.selectGroupList(i)}
+                                onCancel={() => this.selectGroupList(this.state.selectedGroupIndex)}
+
                             />
                         }
                 </ScrollView>

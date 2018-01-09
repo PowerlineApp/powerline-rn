@@ -299,7 +299,7 @@ const mapStateToProps = state => ({
     state: state.groups.state,
     country: state.groups.country,
     groupList: state.groups.payload,
-    selectedGroupId: state.activities.group.group
+    selectedGroupId: state.activities.selectedGroup.group
 });
 
 
