@@ -201,8 +201,7 @@ class NewPost extends Component {
                 showToast('Post Successful!');
                 this.refs.animatedView.fadeInDownBig(1000);
                 setTimeout(() => {
-                    if (this.state.sharing) this.props.onPost();
-                    else Actions.itemDetail({ type:'replace' , entityId: data.id, entityType: 'post', backTo: 'home', share: this.state.share });
+                    Actions.itemDetail({ entityId: data.id, entityType: 'post', backTo: 'home', share: this.state.share });
                 }, 200);
             })
             .catch(err => {
@@ -412,7 +411,7 @@ class NewPost extends Component {
                     </List>
                     <ScrollView onLayout={(e) => this.setState({contentHeight: e.nativeEvent.layout.height})} scrollEnabled={false} keyboardShouldPersistTaps={'handled'} style={styles.main_content} >
                         {/* <S style={styles.main_content}> */}
-                        <View style={{flex: 1, height: '100%', backgroundColor: '006'}}  >
+                        <View style={{flex: 1, height: '100%', backgroundColor: '#fff'}}  >
                             <ScrollView style={{flex: 1, height: '100%'}}>
                                 <TextInput
                                     maxLength={POST_MAX_LENGTH}

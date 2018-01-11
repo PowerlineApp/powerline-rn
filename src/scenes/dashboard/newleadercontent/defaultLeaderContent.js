@@ -456,22 +456,25 @@ class NewLeaderContent extends Component {
 
             req.then(resp => {
                 resp.json().then(r => {
-                    console.warn(r);
+                    // console.warn(r);
+                    this.setState({sending: false});
+
                     this.sendAttachmentsAndPublish(r, attachments).then((r) => {
                         console.log('published: ', r);
-                        Actions.itemDetail({type: 'replace', entityType: 'poll', entityId: r.id});
+                        Actions.itemDetail({entityType: 'poll', entityId: r.id, backTo: 'home'});
                     }).catch(e => {
                         console.log('failure', e);
                     });
                 });
             }).catch(e => {
                 // alert(e);
+                this.setState({sending: false});
                 console.warn(JSON.parse(e));
             });
 
         } else {
+            this.setState({sending: false});
         }
-        this.setState({sending: false});
     }
 
     changeTitle(text) {

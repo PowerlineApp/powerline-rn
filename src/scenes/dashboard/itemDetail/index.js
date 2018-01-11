@@ -78,7 +78,8 @@ class ItemDetail extends Component {
             dataSource: ds,
             inputDescription: '',
             placeholderTitle: '',
-            sharing: false
+            sharing: false,
+            addingComment: false
         };
         this.commentToReply = null;
         this.isLoadedAll = false;

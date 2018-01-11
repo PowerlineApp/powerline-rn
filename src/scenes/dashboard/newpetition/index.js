@@ -158,7 +158,7 @@ class NewPetition extends Component {
         createPetition(token, this.state.grouplist[this.state.selectedGroupIndex].id, this.state.title, this.state.content, this.state.image)
         .then(data => {
             showToast('Petition Successful!');
-            Actions.itemDetail({ type:'replace', entityId: data.id, entityType: 'user-petition', backTo: 'home', share: this.state.share });
+            Actions.itemDetail({ entityId: data.id, entityType: 'user-petition', backTo: 'home', share: this.state.share });
         })
         .catch(err => {
             this.setState({sending: false});
