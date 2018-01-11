@@ -79,14 +79,11 @@ class Newsfeed extends Component {
     }
 
     componentWillMount(){
-        console.log(this.props)
+        // console.log(this.props)
+        // alert(JSON.stringify(this.props.selectedGroup))
         if (!this.props.selectedGroup || !this.props.selectedGroup.id){
             let data = {id: 'all', group: 'all', header: 'all'};
-            this.props.setGroup(data, this.props.token, 'all');
-            // this.props.dispatch({ type: 'RESET_ACTIVITIES' });
-            // this.props.dispatch({type: 'SET_GROUP', data: {id: 'all', group: 'all', header: 'all'}})
-            // this.props.dispatch(loadActivities(this.props.token, 0, 20, 'all'));
-            // this.props.dispatch({type: 'SAVE_OFFSET', payload: 0})
+            this.props.dispatch(setGroup(data, this.props.token, 'all'));
         }
         setTimeout(() => {
             this.props.dispatch({type: 'SET_LOADING', payload: false})
@@ -416,7 +413,7 @@ async function timeout(ms: number): Promise {
 const mapStateToProps = state => 
 
 {
-    console.log('activities state', state.activities)
+    // console.log('activities state', state.activities)
     return ({
     token: state.user.token,
     page: state.activities.page,

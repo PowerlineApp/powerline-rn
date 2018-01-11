@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -53,6 +52,8 @@
 		6F338CE51FACB6A700010FBC /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6F338CE31FACB6A700010FBC /* MainInterface.storyboard */; };
 		6F338D131FACB70300010FBC /* PowerlineShare.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F338D121FACB70300010FBC /* PowerlineShare.m */; };
 		6F7682EE200213F9003C40D6 /* libRNSKBucket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F7682ED200210FA003C40D6 /* libRNSKBucket.a */; };
+		6F87DA642007426200A3B788 /* libRNFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F87DA612007424600A3B788 /* libRNFS.a */; };
+		6F87DA65200746B500A3B788 /* libRNFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F87DA612007424600A3B788 /* libRNFS.a */; };
 		6FA439BD1FACC275003D94E9 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		6FA439BF1FACC29C003D94E9 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		6FA439C01FACC29F003D94E9 /* libRCTImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302C01ABCB91800DB3ED1 /* libRCTImage.a */; };
@@ -106,7 +107,6 @@
 		7E6021F6142146348AD5CB66 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2B0A98CC688448BC9795AE2C /* Foundation.ttf */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		834508072A9F440AB0037229 /* libRNDeviceInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D0EDD794C4584D59A6D2796F /* libRNDeviceInfo.a */; };
-		89E18930C09E0DC0B5269AA6 /* libPods-Powerline.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FC82D122001601E004A03DD /* libPods-Powerline.a */; };
 		94714AA809F14E9A8D788CDF /* libTPSStripe.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D8A3F2920A9749B3B242EBBB /* libTPSStripe.a */; };
 		9AD373A74D5249D4A6BE0E54 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8C71FEAB024A420EABD9183B /* Zocial.ttf */; };
 		9F15D24EE347462CBA13C51A /* libSplashScreen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 71629848DDD64885A3F61DB8 /* libSplashScreen.a */; };
@@ -155,11 +155,11 @@
 		CC43B73FB5684CBDAD74E797 /* libRNAddCalendarEvent.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AF3E0991AD3A44A8B5B271B1 /* libRNAddCalendarEvent.a */; };
 		D18DDB46738B456DB393DD89 /* libRCTOneSignal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1EDD888396B44AE18E0253ED /* libRCTOneSignal.a */; };
 		D40462269E0D484A85173A33 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F36F175618204355B9F05ADF /* MaterialIcons.ttf */; };
-		D6E73ED0B7EDD56D68CEC9FD /* libPods-Powerline.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7E0E6B14F21F2105A0B4F78 /* libPods-Powerline.a */; };
 		D84A59A845634D7C9A6B17BE /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 51371419671C4EE79B85642E /* Feather.ttf */; };
 		DAF38F5147C14EB6B0689DC7 /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = A09F58E80ACB44848AD073DD /* OFL.txt */; };
 		EA7244BC19E241E5A25F6BCF /* libimageCropPicker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F151C77C0E5F4BB3A5F11E4C /* libimageCropPicker.a */; };
 		EB519C281EC94E57001C8D63 /* libBVLinearGradient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EB519C0E1EC94E3E001C8D63 /* libBVLinearGradient.a */; };
+		F5DA2EB9C0EE600D144F6B8D /* libPods-Powerline.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B88C19BC0DD3D445C111C06D /* libPods-Powerline.a */; };
 		F5EC7EDE52334D738A548402 /* libRNFetchBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E0A7B71CE864263971B3BD0 /* libRNFetchBlob.a */; };
 /* End PBXBuildFile section */
 
@@ -395,6 +395,20 @@
 			remoteGlobalIDString = 413522C81D18398B007ACD21;
 			remoteInfo = RNSKBucket;
 		};
+		6F87DA602007424600A3B788 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6F87DA5B2007424500A3B788 /* RNFS.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F12AFB9B1ADAF8F800E0535D;
+			remoteInfo = RNFS;
+		};
+		6F87DA622007424600A3B788 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6F87DA5B2007424500A3B788 /* RNFS.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6456441F1EB8DA9100672408;
+			remoteInfo = "RNFS-tvOS";
+		};
 		6F9E050B1FB6494A008A5BC8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 9F4683281FA8AE5300E4F9E9 /* imageCropPicker.xcodeproj */;
@@ -594,10 +608,12 @@
 		00E356EE1AD99517003FC87E /* PowerlineTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PowerlineTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* PowerlineTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PowerlineTests.m; sourceTree = "<group>"; };
+		014161475832E340F4C93599 /* Pods-Powerline.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Powerline.release.xcconfig"; path = "Pods/Target Support Files/Pods-Powerline/Pods-Powerline.release.xcconfig"; sourceTree = "<group>"; };
 		063CA9EA6A614BDF88FE5481 /* libRNMixpanel.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNMixpanel.a; sourceTree = "<group>"; };
 		080DF54BF6044349805964C6 /* libRNVectorIcons.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNVectorIcons.a; sourceTree = "<group>"; };
 		0825B1F861DD47648F482F0A /* RNAddCalendarEvent.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNAddCalendarEvent.xcodeproj; path = "../node_modules/react-native-add-calendar-event/ios/RNAddCalendarEvent.xcodeproj"; sourceTree = "<group>"; };
 		08E0DB79BCB847F4ABF2335C /* Rubik-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-Regular.ttf"; path = "../node_modules/native-base/Fonts/Rubik-Regular.ttf"; sourceTree = "<group>"; };
+		0AEF2B4D51EFCCA4F6966568 /* Pods-Powerline.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Powerline.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Powerline/Pods-Powerline.debug.xcconfig"; sourceTree = "<group>"; };
 		0DA853DE55474CE59D13A18C /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/native-base/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSettings.xcodeproj; path = "../node_modules/react-native/Libraries/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; };
 		139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebSocket.xcodeproj; path = "../node_modules/react-native/Libraries/WebSocket/RCTWebSocket.xcodeproj"; sourceTree = "<group>"; };
@@ -645,6 +661,7 @@
 		6F338D121FACB70300010FBC /* PowerlineShare.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PowerlineShare.m; sourceTree = "<group>"; };
 		6F481B9C1FAE6811002A8F06 /* ios_development (8).cer */ = {isa = PBXFileReference; lastKnownFileType = file; name = "ios_development (8).cer"; path = "../../../../Downloads/ios_development (8).cer"; sourceTree = "<group>"; };
 		6F76829720020FC6003C40D6 /* PowerlineShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PowerlineShare.entitlements; sourceTree = "<group>"; };
+		6F87DA5B2007424500A3B788 /* RNFS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNFS.xcodeproj; path = "../../node_modules/react-native-fs/RNFS.xcodeproj"; sourceTree = "<group>"; };
 		6F9E04A81FB64780008A5BC8 /* RSKImageCropper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSKImageCropper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6F9E04AA1FB647A4008A5BC8 /* QBImagePicker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = QBImagePicker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6FA439CA1FACC418003D94E9 /* ReactNativeShareExtension.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReactNativeShareExtension.xcodeproj; path = "../node_modules/react-native-share-extension/ios/ReactNativeShareExtension.xcodeproj"; sourceTree = "<group>"; };
@@ -652,7 +669,6 @@
 		6FB759682001CBE7003E8C51 /* RSKImageCropper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSKImageCropper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6FB759A52001DA30003E8C51 /* libStripe.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libStripe.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		6FBE2A0A1FD8AF2F008F6F44 /* TPSStripe */ = {isa = PBXFileReference; lastKnownFileType = folder; name = TPSStripe; path = "../node_modules/tipsi-stripe/ios/TPSStripe"; sourceTree = "<group>"; };
-		6FC82D122001601E004A03DD /* libPods-Powerline.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libPods-Powerline.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6FD027D72001C91600DB6BC1 /* libMixpanel.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libMixpanel.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		6FD2AF5047AB400095DD9B56 /* RNMixpanel.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNMixpanel.xcodeproj; path = "../node_modules/react-native-mixpanel/RNMixpanel.xcodeproj"; sourceTree = "<group>"; };
 		6FDD06082004A2C600E1E6F2 /* Octicons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Octicons.ttf; sourceTree = "<group>"; };
@@ -679,7 +695,6 @@
 		892D530E368A466C9882701C /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/native-base/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		8C71FEAB024A420EABD9183B /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		9034D88597074DD2886A6B5D /* SanFranciscoThin.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SanFranciscoThin.ttf; path = "../node_modules/native-base/Fonts/SanFranciscoThin.ttf"; sourceTree = "<group>"; };
-		90E94B1548D252EB09E8DBC3 /* Pods-Powerline.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Powerline.release.xcconfig"; path = "Pods/Target Support Files/Pods-Powerline/Pods-Powerline.release.xcconfig"; sourceTree = "<group>"; };
 		9A639B96EEFD4AF0910D61F2 /* imageCropPicker.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = imageCropPicker.xcodeproj; path = "../node_modules/react-native-image-crop-picker/ios/imageCropPicker.xcodeproj"; sourceTree = "<group>"; };
 		9B5B785F46BF4E7EB8236087 /* Rubik-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-Light.ttf"; path = "../node_modules/native-base/Fonts/Rubik-Light.ttf"; sourceTree = "<group>"; };
 		9F4682CE1FA8589D00E4F9E9 /* QBImagePicker.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = QBImagePicker.framework; sourceTree = "<group>"; };
@@ -692,9 +707,8 @@
 		AD6BB6EE9431427690F9EF82 /* TPSStripe.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = TPSStripe.xcodeproj; path = "../node_modules/tipsi-stripe/ios/TPSStripe.xcodeproj"; sourceTree = "<group>"; };
 		AF3E0991AD3A44A8B5B271B1 /* libRNAddCalendarEvent.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNAddCalendarEvent.a; sourceTree = "<group>"; };
 		B2D6989DE69545FCB021A589 /* Rubik-MediumItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-MediumItalic.ttf"; path = "../node_modules/native-base/Fonts/Rubik-MediumItalic.ttf"; sourceTree = "<group>"; };
-		B7E0E6B14F21F2105A0B4F78 /* libPods-Powerline.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Powerline.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B88C19BC0DD3D445C111C06D /* libPods-Powerline.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Powerline.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C1F67FFB656C4CF19321D995 /* Skia.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Skia.ttf; path = "../node_modules/native-base/Fonts/Skia.ttf"; sourceTree = "<group>"; };
-		C35278079264B585096B3AA5 /* Pods-Powerline.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Powerline.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Powerline/Pods-Powerline.debug.xcconfig"; sourceTree = "<group>"; };
 		C3B806F37C084F19829E724B /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
 		C820D65E1F86408600F68FFA /* Andale Mono.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Andale Mono.ttf"; sourceTree = "<group>"; };
 		C820D65F1F86408600F68FFA /* Arial Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Arial Black.ttf"; sourceTree = "<group>"; };
@@ -773,6 +787,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6F87DA65200746B500A3B788 /* libRNFS.a in Frameworks */,
 				94714AA809F14E9A8D788CDF /* libTPSStripe.a in Frameworks */,
 				6FC76C451FE3E83A00AEA858 /* RSKImageCropper.framework in Frameworks */,
 				2F4EE3991FADCFC200C15D72 /* libART.a in Frameworks */,
@@ -802,9 +817,8 @@
 				666BB909D45048F680D43150 /* libRNVectorIcons.a in Frameworks */,
 				CC43B73FB5684CBDAD74E797 /* libRNAddCalendarEvent.a in Frameworks */,
 				D18DDB46738B456DB393DD89 /* libRCTOneSignal.a in Frameworks */,
-				D6E73ED0B7EDD56D68CEC9FD /* libPods-Powerline.a in Frameworks */,
-				89E18930C09E0DC0B5269AA6 /* libPods-Powerline.a in Frameworks */,
 				B0D74C3461744C5CB5BB10A5 /* libRNSKBucket.a in Frameworks */,
+				F5DA2EB9C0EE600D144F6B8D /* libPods-Powerline.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -834,6 +848,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6F87DA642007426200A3B788 /* libRNFS.a in Frameworks */,
 				6F7682EE200213F9003C40D6 /* libRNSKBucket.a in Frameworks */,
 				6FB759672001CBE7003E8C51 /* RSKImageCropper.framework in Frameworks */,
 				6FB759652001CBDB003E8C51 /* QBImagePicker.framework in Frameworks */,
@@ -1055,15 +1070,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		640C0F7F5F254C9D5A604C1D /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				C35278079264B585096B3AA5 /* Pods-Powerline.debug.xcconfig */,
-				90E94B1548D252EB09E8DBC3 /* Pods-Powerline.release.xcconfig */,
-			);
-			name = Pods;
-			sourceTree = "<group>";
-		};
 		67BC7E46E199A3175E28B8B6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -1071,7 +1077,6 @@
 				6FB759682001CBE7003E8C51 /* RSKImageCropper.framework */,
 				6FB759662001CBDB003E8C51 /* QBImagePicker.framework */,
 				6FD027D72001C91600DB6BC1 /* libMixpanel.a */,
-				6FC82D122001601E004A03DD /* libPods-Powerline.a */,
 				6F1F2E4E1FD899D000664DE6 /* Bolts.framework */,
 				6F1F2E4B1FD899C700664DE6 /* FBSDKCoreKit.framework */,
 				6F1F2E4A1FD899C700664DE6 /* FBSDKLoginKit.framework */,
@@ -1079,7 +1084,7 @@
 				6F9E04AA1FB647A4008A5BC8 /* QBImagePicker.framework */,
 				6F9E04A81FB64780008A5BC8 /* RSKImageCropper.framework */,
 				6F481B9C1FAE6811002A8F06 /* ios_development (8).cer */,
-				B7E0E6B14F21F2105A0B4F78 /* libPods-Powerline.a */,
+				B88C19BC0DD3D445C111C06D /* libPods-Powerline.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1095,6 +1100,7 @@
 		6F338CDF1FACB6A700010FBC /* PowerlineShare */ = {
 			isa = PBXGroup;
 			children = (
+				6F87DA5B2007424500A3B788 /* RNFS.xcodeproj */,
 				6F76829720020FC6003C40D6 /* PowerlineShare.entitlements */,
 				6F338CE31FACB6A700010FBC /* MainInterface.storyboard */,
 				6F338CE61FACB6A700010FBC /* Info.plist */,
@@ -1124,6 +1130,15 @@
 			isa = PBXGroup;
 			children = (
 				6F7682ED200210FA003C40D6 /* libRNSKBucket.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6F87DA5C2007424500A3B788 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6F87DA612007424600A3B788 /* libRNFS.a */,
+				6F87DA632007424600A3B788 /* libRNFS.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1225,6 +1240,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		81AFC9C8BFF4FA1F0B6A8DA6 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				0AEF2B4D51EFCCA4F6966568 /* Pods-Powerline.debug.xcconfig */,
+				014161475832E340F4C93599 /* Pods-Powerline.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
@@ -1281,7 +1305,7 @@
 				67BC7E46E199A3175E28B8B6 /* Frameworks */,
 				5DFBB4D655204255A07169DD /* Resources */,
 				6FBEFC0E1F96C48C005E5B8A /* Recovered References */,
-				640C0F7F5F254C9D5A604C1D /* Pods */,
+				81AFC9C8BFF4FA1F0B6A8DA6 /* Pods */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -1425,7 +1449,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Powerline" */;
 			buildPhases = (
-				148A94323D2689967EDCDFE4 /* [CP] Check Pods Manifest.lock */,
+				7BA887DD89189E64BE8C6EC7 /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
@@ -1434,8 +1458,8 @@
 				6F338D111FACB6A700010FBC /* Embed App Extensions */,
 				6FC666111FAD000000F9CD94 /* ShellScript */,
 				6F9E05351FB64B6C008A5BC8 /* Embed Frameworks */,
-				71B1697FB5F99EC78E62F24D /* [CP] Embed Pods Frameworks */,
-				8D77B38D3D55BA53CD12ADF9 /* [CP] Copy Pods Resources */,
+				F13FDD28EB42DC36C8C23418 /* [CP] Embed Pods Frameworks */,
+				1537C16B5AC3F87885B2FB70 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1556,7 +1580,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "powerline" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Powerline" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -1655,6 +1679,10 @@
 				{
 					ProductGroup = 6FCF024F1FA54D1300184F4D /* Products */;
 					ProjectRef = A1A53D4629C3483EAAD3542B /* RNFetchBlob.xcodeproj */;
+				},
+				{
+					ProductGroup = 6F87DA5C2007424500A3B788 /* Products */;
+					ProjectRef = 6F87DA5B2007424500A3B788 /* RNFS.xcodeproj */;
 				},
 				{
 					ProductGroup = 6F5004031FB9389700CE7B1F /* Products */;
@@ -1901,6 +1929,20 @@
 			fileType = archive.ar;
 			path = libRNSKBucket.a;
 			remoteRef = 6F7682EC200210FA003C40D6 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6F87DA612007424600A3B788 /* libRNFS.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNFS.a;
+			remoteRef = 6F87DA602007424600A3B788 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6F87DA632007424600A3B788 /* libRNFS.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNFS.a;
+			remoteRef = 6F87DA622007424600A3B788 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		6F9E050C1FB6494A008A5BC8 /* libimageCropPicker.a */ = {
@@ -2194,22 +2236,42 @@
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
 		};
-		148A94323D2689967EDCDFE4 /* [CP] Check Pods Manifest.lock */ = {
+		1537C16B5AC3F87885B2FB70 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
+				"${SRCROOT}/Pods/Target Support Files/Pods-Powerline/Pods-Powerline-resources.sh",
+				"${PODS_ROOT}/FBSDKCoreKit/FacebookSDKStrings.bundle",
+				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPArrowLeft.png",
+				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPArrowLeft@2x.png",
+				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPArrowRight.png",
+				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPArrowRight@2x.png",
+				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPCheckmark.png",
+				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPCheckmark@2x.png",
+				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPCloseButton.png",
+				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPCloseButton@2x.png",
+				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPCloseButton@3x.png",
+				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPDismissKeyboard.png",
+				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPDismissKeyboard@2x.png",
+				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPLogo.png",
+				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPLogo@2x.png",
+				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/placeholder-image.png",
+				"${PODS_ROOT}/Mixpanel/Mixpanel/MPTakeoverNotificationViewController~ipad.xib",
+				"${PODS_ROOT}/Mixpanel/Mixpanel/MPTakeoverNotificationViewController~iphonelandscape.xib",
+				"${PODS_ROOT}/Mixpanel/Mixpanel/MPTakeoverNotificationViewController~iphoneportrait.xib",
+				$PODS_CONFIGURATION_BUILD_DIR/QBImagePickerController/QBImagePicker.bundle,
+				"${PODS_ROOT}/RSKImageCropper/RSKImageCropper/RSKImageCropperStrings.bundle",
+				$PODS_CONFIGURATION_BUILD_DIR/Stripe/Stripe.bundle,
 			);
-			name = "[CP] Check Pods Manifest.lock";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Powerline-checkManifestLockResult.txt",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Powerline/Pods-Powerline-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		2D02E4CB1E0B4B27006451C7 /* Bundle React Native Code And Images */ = {
@@ -2252,57 +2314,22 @@
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
 		};
-		71B1697FB5F99EC78E62F24D /* [CP] Embed Pods Frameworks */ = {
+		7BA887DD89189E64BE8C6EC7 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
-			name = "[CP] Embed Pods Frameworks";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Powerline-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Powerline/Pods-Powerline-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		8D77B38D3D55BA53CD12ADF9 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-Powerline/Pods-Powerline-resources.sh",
-				"${PODS_ROOT}/FBSDKCoreKit/FacebookSDKStrings.bundle",
-				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPArrowLeft.png",
-				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPArrowLeft@2x.png",
-				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPArrowRight.png",
-				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPArrowRight@2x.png",
-				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPCheckmark.png",
-				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPCheckmark@2x.png",
-				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPCloseButton.png",
-				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPCloseButton@2x.png",
-				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPCloseButton@3x.png",
-				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPDismissKeyboard.png",
-				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPDismissKeyboard@2x.png",
-				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPLogo.png",
-				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPLogo@2x.png",
-				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/placeholder-image.png",
-				"${PODS_ROOT}/Mixpanel/Mixpanel/MPTakeoverNotificationViewController~ipad.xib",
-				"${PODS_ROOT}/Mixpanel/Mixpanel/MPTakeoverNotificationViewController~iphonelandscape.xib",
-				"${PODS_ROOT}/Mixpanel/Mixpanel/MPTakeoverNotificationViewController~iphoneportrait.xib",
-				$PODS_CONFIGURATION_BUILD_DIR/QBImagePickerController/QBImagePicker.bundle,
-				"${PODS_ROOT}/RSKImageCropper/RSKImageCropper/RSKImageCropperStrings.bundle",
-				$PODS_CONFIGURATION_BUILD_DIR/Stripe/Stripe.bundle,
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Powerline/Pods-Powerline-resources.sh\"\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		EB519AF11EC62479001C8D63 /* Run Script */ = {
@@ -2318,6 +2345,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Fabric/run\" ce0340efb3aa30e519403d7c29e9c50cd087684d de5e25019984dd37066ca5ce2ee220f82d69a972ea1a53aa7600a8f2edeb71ff";
+		};
+		F13FDD28EB42DC36C8C23418 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Powerline/Pods-Powerline-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -2489,7 +2531,7 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C35278079264B585096B3AA5 /* Pods-Powerline.debug.xcconfig */;
+			baseConfigurationReference = 0AEF2B4D51EFCCA4F6966568 /* Pods-Powerline.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -2547,7 +2589,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 90E94B1548D252EB09E8DBC3 /* Pods-Powerline.release.xcconfig */;
+			baseConfigurationReference = 014161475832E340F4C93599 /* Pods-Powerline.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -3007,7 +3049,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "powerline" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Powerline" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,

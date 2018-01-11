@@ -154,8 +154,11 @@ class FriendActivity extends Component {
                         this._onRefresh();
                     }
                 }}>
-                <ListView dataSource={this.state.dataSource} renderRow={item => {
-                    return <FeedActivity item={item} token={this.props.token} profile={this.props.profile}/>
+                <ListView 
+                    dataSource={this.state.dataSource}
+                    style={{marginBottom: 48}}
+                    renderRow={item => {
+                        return <FeedActivity item={item} token={this.props.token} profile={this.props.profile}/>
                 }}
                 />
                 <PLOverlayLoader

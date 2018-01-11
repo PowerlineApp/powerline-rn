@@ -88,7 +88,7 @@ class Login extends React.Component {
         }
       })
       .catch((err) => {
-        console.log(err);
+        console.log('facebook error', err);
         this.setState({ isLoading: false });
         alert("Facebook Login Error");
       });

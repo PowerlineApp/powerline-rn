@@ -186,7 +186,7 @@ class Home extends Component {
             ShareExtension.data().then((data) => {
                 // console.log('SHARE EXTENSION DATA: ', data);
                 if (data.type != "" && data.value != "") {
-                        Actions.newpost({ data: data, sharing: true, onPost: () => ShareExtension.close()});
+                        Actions.share({ token: this.props.token});
                 }
             });
     }
@@ -812,12 +812,11 @@ class Home extends Component {
                             </Button>
                         </Left>
                         {this.state.tab2 != true && this.state.tab4 != true ?
-                            //We need to make this placeholder text a little brighter/whiter
                             <Item style={styles.searchBar}>
-                                <Input style={styles.searchInput} placeholder="Search groups, people, topics" autoCorrect={false} spellCheck={false} /*onEndEditing={() => this.onSearch()}*/ onChangeText={(text) => this.onChangeText(text)} />
-                                <Icon active name="search" onPress={() => this.onSearch(this.state.search)} />
+                                <Input style={styles.searchInput} placeholderTextColor="#ccc" placeholder="Search groups, people, topics" autoCorrect={false} spellCheck={false} /*onEndEditing={() => this.onSearch()}*/ onChangeText={(text) => this.onChangeText(text)} />
+                                <Icon active name="search" style={{color: '#ccc'}} onPress={() => this.onSearch(this.state.search)} />
                             </Item> :
-                            null}
+                            <Item style={styles.header} />}
                     </Header>
                     {this.state.tab2 != true && this.state.tab4 != true ?
                         //This is the Group Selector and provides All, Town, State, Country, and More options. Each button loads appropriate selected feed into Newsfeed tab.
@@ -924,7 +923,7 @@ const optionsStyles = {
 
 const menuContextStyles = {
     menuContextWrapper: styles.container,
-    backdrop: styles.backdrop
+    backdrop: styles.backdrop,
 };
 
 function bindAction(dispatch) {

@@ -6,6 +6,7 @@ import com.facebook.react.ReactInstanceManager;
 
 import com.crashlytics.android.Crashlytics;
 import com.facebook.react.ReactApplication;
+import com.rnfs.RNFSPackage;
 import com.github.alinz.rnsk.RNSKPackage;
 import com.centaurwarchief.smslistener.SmsListenerPackage;
 import com.kevinejohn.RNMixpanel.RNMixpanel;
@@ -53,6 +54,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
         new MainReactPackage(),
+            new RNFSPackage(),
             new RNSKPackage(),
             new SmsListenerPackage(),
         new RNMixpanel(),

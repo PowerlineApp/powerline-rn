@@ -12,4 +12,6 @@ project './powerline.xcodeproj'
   pod 'RSKImageCropper'
   pod 'QBImagePickerController'
   pod 'Stripe', '~> 11.2.0'
+  pod 'RNFS', :path => '../node_modules/react-native-fs'
+
 end

@@ -7,6 +7,7 @@ import { showToast } from 'PLToast';
 //Newsfeed activities can be loaded by All, by Group (town/state/country/group), by Friends, by Specific user, or by Favorites
 async function loadActivities(token: string, page: ?number = 0, perPage: ?number = PER_PAGE, group: ?string = 'all', user: ?string = 'all', followed = 'all'): Promise<Action> {
     console.log(`${API_URL}/v2/activities?_format=json&user=${user}&group=${group}&page=${page + 1}&per_page=${perPage}&followed=${followed}`);
+    // alert('ola')
     // '/api/v2/activities?user=all&group=all&page=1&per_page=20&followed=true'
     // '/api/v2/activities?user=all&group=all&followed=true&page=0&per_page=20'
     // console.log('loadActivities API -> ', token, page, perPage, group, user, followed)
@@ -220,7 +221,8 @@ const saveOffSet = (pos) => (dispatch) => {
 }
 
 const setGroup = (data, token, id) => (dispatch) => {
-    console.log('setgroup', data, token, id)
+    // console.log('setgroup', data, token, id)
+    // alert('ola')
     dispatch({ type: 'RESET_ACTIVITIES' });
     dispatch({type: 'SET_LOADING', payload: true})
     dispatch({type: 'SET_GROUP', data});

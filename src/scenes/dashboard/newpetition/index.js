@@ -369,11 +369,11 @@ class NewPetition extends Component {
                 </List>
                 <ScrollView onLayout={(e) => this.setState({contentHeight: e.nativeEvent.layout.height})} scrollEnabled={false} keyboardShouldPersistTaps={'handled'} style={styles.main_content} >
                     {
-                    this.state.displaySuggestionBox && this.state.suggestionList.length > 0
-                    ? <ScrollView style={{position: 'absolute', top: 20, zIndex: 3}} keyboardShouldPersistTaps='always'  >
-                        <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
-                    </ScrollView>
-                    : <ScrollView />
+                    // this.state.displaySuggestionBox && this.state.suggestionList.length > 0
+                    // ? <ScrollView style={{position: 'absolute', top: 20, zIndex: 3}} keyboardShouldPersistTaps='always'  >
+                    //     <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
+                    // </ScrollView>
+                    // : <ScrollView />
                 }
                     <View style={{flex: 1, height: '100%'}}  >
                         <ScrollView style={{flex: 1, height: '100%'}}>
@@ -408,22 +408,35 @@ class NewPetition extends Component {
                         />
                     }
                 </ScrollView>
-                <KeyboardAvoidingView behavior={Platform.select({android:'height', ios: 'padding'})}>
+                <KeyboardAvoidingView
+                    keyboardVerticalOffset={Platform.select({android: 20, ios: 0})}
+                    behavior={Platform.select({android:'padding', ios: 'padding'})}>
                     {
-                        this.renderAttachments()
-                    }
-                    <Footer style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: PLColors.main, paddingLeft: 10, paddingRight: 10 }}>
+                            this.renderAttachments()
+                        }
+                    <Footer style={{ maxHeight: 64, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: PLColors.main, paddingLeft: 10, paddingRight: 10 }}>
                         {
-                        this.state.petition_remaining
-                        ? <Label style={{ color: 'white', fontSize: 10 }}>
-                            You have <Label style={{ fontWeight: 'bold' }}>{this.state.petition_remaining}</Label> petitions left in this group
-                        </Label>
-                        :<Label />
-                    }
+                                this.state.posts_remaining
+                            ? <Label style={{ color: 'white', fontSize: 10 }}>
+                                You have <Label style={{ fontWeight: 'bold' }}>{this.state.petition_remaining}</Label> petitions left in this group
+                            </Label>
+                            :<Label />
+                        }
                         {/* Related: GH 151 */}
                         <Label style={{ color: 'white' }}>
                             {(PETITION_MAX_LENGTH - this.state.content.length)}
                         </Label>
+                        {
+                                this.state.displaySuggestionBox && this.state.suggestionList.length > 0
+                                ? <ScrollView style={{ height: 40, bottom: 0, backgroundColor: '#fff', position: 'absolute', zIndex: 3}} keyboardShouldPersistTaps='always'>
+                                    {/* <KeyboardAvoidingView behavior='padding' style={{flex: 1}}> */}
+                                    {/* <Animated.View style={{marginBottom: 0}}> */}
+                                    <SuggestionBox horizontal substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
+                                    {/* </Animated.View> */}
+                                    {/* </KeyboardAvoidingView> */}
+                                </ScrollView>
+                                : <ScrollView style={{ position: 'absolute', zIndex: 3}} />
+                            }
                     </Footer>
                 </KeyboardAvoidingView>
             </Container>

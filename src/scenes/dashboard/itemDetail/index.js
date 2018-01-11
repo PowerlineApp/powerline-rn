@@ -12,9 +12,9 @@ import Share from 'react-native-share';
 import RNFetchBlob from 'react-native-fetch-blob'
 const fs = RNFetchBlob.fs
 
-import {ScrollView} from 'react-native';
+// import {ScrollView, Modal, TouchableOpacity} from 'react-native';
 import { Spinner, Container, Header, Title, Textarea, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, List, ListItem, Item, Input, Card } from 'native-base';
-import { Image, View, StyleSheet, TouchableOpacity, Platform, KeyboardAvoidingView, Keyboard, TextInput, ListView } from 'react-native';
+import { Image, View, StyleSheet, Modal, ScrollView, TouchableOpacity, TouchableHighlight, Platform, KeyboardAvoidingView, Keyboard, TextInput, ListView } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
 import * as Animatable from 'react-native-animatable';
@@ -112,7 +112,7 @@ class ItemDetail extends Component {
     }
 
     markAsRead(item){
-        console.log(item.zone, item.entity.type)
+        // console.log(item.zone, item.entity.type)
         if (item.read) return;
         // petition or discussion or boosted post/petition is OPENED
         if (item.zone === 'prioritized'){
@@ -156,7 +156,8 @@ class ItemDetail extends Component {
     _onAddComment(comment) {
         this.setState({ placeholderTitle: randomPlaceholder('comment') });
         this.commentToReply = comment ? comment : null;
-        this.addCommentView.open();
+        this.setState({addingComment: true});
+        // this.addCommentView.open();
     }
 
     _onSendComment() {
@@ -248,9 +249,9 @@ class ItemDetail extends Component {
             // remove the file from storage
             return fs.unlink(imagePath)
         }).catch(e => {
-            console.log(e, entity, imgURL)
+            // console.log(e, entity, imgURL)
             if (!imgURL) {
-                alert('Something went wrong loading poster')
+                alert('Poster not available')
             } else {
                 alert('Failed to load poster');
                 // allow user to hit share again
@@ -519,12 +520,7 @@ class ItemDetail extends Component {
     }
 
     substitute(mention) {
-        // console.log('----------------------------------------------------------------------------')
-        // console.log('----------------------------------------------------------------------------')
-        // console.log('----------------------------------------------------------------------------')
-        // console.log('----------------------------------------------------------------------------')
-        // console.log('----------------------------------------------------------------------------')
-        // console.log('----------------------------------------------------------------------------')
+        console.log('SUBSTITUTING...')
         let { init, end } = this.state;
         let newContent = this.state.commentText;
         let initialLength = newContent.length;
@@ -533,13 +529,15 @@ class ItemDetail extends Component {
         let finalPart = newContent.substr(end, initialLength);
         
         let finalString = firstPart + mention + finalPart;
-        console.log(finalString)
-        
-        this.setState({ commentText: finalString, displaySuggestionBox: false, lockSuggestionPosition: end });
-        this.addCommentInput.setNativeProps({text: finalString});// = finalString;
-        console.log(this.addCommentInput)
-        // console.log('----------------------------------------------------------------------------')
-        // console.log(this.addCommentInput.value)
+        try {
+            console.log('finalString', finalString)
+            
+            this.setState({ commentText: finalString, displaySuggestionBox: false, lockSuggestionPosition: end });
+            // console.log('this.addCommentInput', this.addCommentInput)
+            // this.addCommentInput.setNativeProps({text: finalString});// = finalString;
+        } catch (error) {
+            console.log(error)            
+        }
     }
 
     onSelectionChange(event) {
@@ -612,10 +610,83 @@ class ItemDetail extends Component {
     }
 
     onChangeComment(text){
-        console.log('setting state => ', text)
+        // console.log('setting state => ', text)
         this.setState({commentText: text}, () => console.log(this.state.commentText))
     }
 
+    onCloseComment(){
+        console.log('---------- onclose comment')
+        this.setState({addingComment: false, displaySuggestionBox: false, suggestionList: []})
+    }
+
+
+    renderAddCommentView(){
+        const { props: { profile } } = this;
+        let thumbnail = profile.avatar_file_name ? profile.avatar_file_name : '';
+        let {value} = this.state;
+        if (!this.state.addingComment){
+            return null;
+        }
+        /* <Menu
+            renderer={SlideInMenu}
+            ref={this.onRef}
+            onBackdropPress={this.resetEditComment}
+        >  <MenuTrigger />
+            <MenuOptions optionsContainerStyle={{
+                backgroundColor: 'white',
+                width: WINDOW_WIDTH,
+                minHeight: Platform.OS === 'android' ? 50 : ((WINDOW_HEIGHT / 2) + (this.props.displaySuggestionBox ? 40 : 0))
+            }}> */
+        return (
+            <Modal transparent onRequestClose={() => this.onCloseComment()} visible={this.state.addingComment} animationType="slide">
+                <TouchableOpacity transparent onPress={() => this.onCloseComment()} style={{flex: 1, height: '100%', justifyContent: 'flex-end'}}>
+                    {
+                        (this.state.displaySuggestionBox && this.state.suggestionList.length > 0) 
+                        && <ScrollView style={{maxHeight: 40, backgroundColor: '#fff', marginBottom: 0, zIndex: 3}} keyboardShouldPersistTaps='handled'>
+                            <SuggestionBox horizontal substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox && this.state.suggestionList.length > 0} userList={this.state.suggestionList} />
+                        </ScrollView>
+                    }
+                    <View style={{
+                        marginBottom: 0,
+                        height: (Platform.OS === 'android' 
+                        ? 60 + (this.props.displaySuggestionBox ? 40 : 0)
+                        : ((WINDOW_HEIGHT / 2) + (this.props.displaySuggestionBox ? 40 : 0))) }}>
+                        <CardItem>
+                            <Left>
+                                <Thumbnail small source={thumbnail ? { uri: thumbnail + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                                <Body>
+                                    <Input
+                                        autoFocus
+                                        placeholder={this.state.placeholderTitle}
+                                        style={styles.commentInput}
+                                        ref={this.onCommentInputRef}
+                                        value={this.state.commentText}
+                                        defaultValue={this.state.defaultInputValue}
+                                        onChangeText={this.onChangeComment}
+                                        onSelectionChange={(e) => this.onSelectionChange(e)}
+                                        multiline
+                                        maxHeight={60}
+                                        />
+                                </Body>
+                                <Right style={{ flex: 0.3 }}>
+                                    <TouchableHighlight style={{ flexDirection: 'row' }} onPress={() => this._onSendComment()}>
+                                        <View>
+                                            <Text style={styles.commentSendText}>SEND</Text>
+                                            <Icon name="md-send" style={styles.commentSendIcon} />
+                                        </View>
+                                    </TouchableHighlight>
+                                </Right>
+                            </Left>
+                        </CardItem>
+                    </View>
+                </TouchableOpacity>
+                
+            </Modal>
+        )
+                    /* </MenuOptions>
+                    </Menu> */
+    }
+                
     //Adding a comment to an item
     _renderAddComment() {
         const { props: { profile } } = this;
@@ -628,48 +699,7 @@ class ItemDetail extends Component {
                         <Thumbnail small source={thumbnail ? { uri: thumbnail + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                         <Body>
                             <Text style={styles.addCommentTitle}>Add your thoughts...</Text>
-                            <Menu
-                                renderer={SlideInMenu}
-                                ref={this.onRef}
-                                onBackdropPress={this.resetEditComment}
-                            >
-                                <MenuTrigger />
-                                <MenuOptions optionsContainerStyle={{
-                                    backgroundColor: 'white',
-                                    width: WINDOW_WIDTH,
-                                    minHeight: Platform.OS === 'android' ? 50 : ((WINDOW_HEIGHT / 2) + (this.props.displaySuggestionBox ? 40 : 0))
-                                }}>
-                                    <ScrollView keyboardShouldPersistTaps='always'>
-                                        <SuggestionBox horizontal substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox && this.state.suggestionList.length > 0} userList={this.state.suggestionList} />
-                                    </ScrollView>
-                                    <CardItem>
-                                        <Left>
-                                            <Thumbnail small source={thumbnail ? { uri: thumbnail + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
-                                            <Body>
-                                                <TextInput
-                                                    autoFocus
-                                                    keyboardShoulPersisTaps
-                                                    placeholder={this.state.placeholderTitle}
-                                                    style={styles.commentInput}
-                                                    ref={this.onCommentInputRef}
-                                                    defaultValue={this.state.defaultInputValue}
-                                                    onChangeText={this.onChangeComment}
-                                                    onSelectionChange={(e) => this.onSelectionChange(e)}
-                                                    multiline
-                                                    onBlur={() => this.setState({displaySuggestionBox: false})}
-                                                    maxHeight={60}
-                                                />
-                                            </Body>
-                                            <Right style={{ flex: 0.3 }}>
-                                                <TouchableOpacity style={{ flexDirection: 'row' }} onPress={() => this._onSendComment()}>
-                                                    <Text style={styles.commentSendText}>SEND</Text>
-                                                    <Icon name="md-send" style={styles.commentSendIcon} />
-                                                </TouchableOpacity>
-                                            </Right>
-                                        </Left>
-                                    </CardItem>
-                                </MenuOptions>
-                            </Menu>
+                            {this.renderAddCommentView()}
                         </Body>
                         <Right />
                     </Left>
@@ -717,7 +747,7 @@ class ItemDetail extends Component {
     }
 
     _renderRootComment = (comment, isChild = false) => {
-        console.log('render comment', comment);
+        // console.log('render comment', comment);
         let thumbnail = comment.author_picture ? comment.author_picture : '';
         let title = (comment.user ? comment.user.first_name : '' || '') + ' ' + (comment.user ? comment.user.last_name : '' || '');
         let rateUp = (comment.rate_count || 0) / 2 + comment.rate_sum / 2;
@@ -730,7 +760,7 @@ class ItemDetail extends Component {
             style.marginTop = 5;
         }
 
-        console.log(thumbnail, title, rateUp, rateDown)
+        // console.log(thumbnail, title, rateUp, rateDown)
 
         return (
             <CardItem style={style}>
@@ -936,7 +966,7 @@ class ItemDetail extends Component {
     }
 
     _renderActivity(item, state) {
-        console.log('type', item.entity.type)
+        // console.log('type', item.entity.type)
         switch (item.entity.type) {
             case 'post':
             case 'user-petition':
@@ -959,7 +989,7 @@ class ItemDetail extends Component {
     }
 
     renderFloatingActionButton(item){
-        console.log(item)
+        // console.log(item)
         //Felipe - Need to add: OR if the user is author of this item
         //User can share anyone's post from a public (local/state/country) group, but can only share his own items from private groups
         if (item.group.group_type_label !== "local"
@@ -1002,8 +1032,8 @@ class ItemDetail extends Component {
             return null;
         }
         let item = this.item;
-        console.log('ITEMDETAIL', this.state)
-        console.log('ITEMDETAIL', this.props)
+        // console.log('ITEMDETAIL', this.state)
+        // console.log('ITEMDETAIL', this.props)
         return (
             <MenuContext customStyles={menuContextStyles}>
                 <Container style={{ flex: 1 }}>

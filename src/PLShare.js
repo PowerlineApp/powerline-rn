@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import { TextInput, Keyboard, Platform, KeyboardAvoidingView, ActivityIndicator, TouchableHighlight} from 'react-native';
-// import { Actions } from 'react-native-router-flux';
+import { Actions } from 'react-native-router-flux';
 // import * as Animatable from 'react-native-animatable';
 import ShareExtension from 'react-native-share-extension';
 import { RNSKBucket } from 'react-native-swiss-knife';
 
 
-import RNFetchBlob from 'react-native-fetch-blob';
-const fs = RNFetchBlob.fs;
+// import RNFetchBlob from 'react-native-fetch-blob';
+// const fs = RNFetchBlob.fs;
+// import react-native-fs from 'react-native-fs';
+const fs = require('react-native-fs');
 
 import {
     Root,
@@ -89,24 +91,27 @@ class Share extends Component {
         // this.setState({content: 'getting data'});
         
         ShareExtension.data().then(({type, value}) => {
-            // this.setState({content: JSON.stringify({type, value})});
-            if (type === 'jpg' || type === 'jpeg' || type === 'png'){
+            this.setState({content: JSON.stringify({type, value})});
+            if (type === 'jpg' || type === 'jpeg' || type === 'png' || type.split('/')[0] === 'image'){
                 fs.readFile(value, "base64").then(r => {
                     this.setState({image: r, content: ''});
                 }).catch(e => {
-                    this.showToast('Error ocurred reading file.');
+                    this.showToast('Error ocurred reading file.' + JSON.stringify(e));
+                    // this.setState({content: JSON.stringify(e)});
                 });
             } else {
-                this.setState({content: value});
+                // this.setState({content: value});
             }
         });
         RNSKBucket.get('token', myGroup).then(value => {
+            value = this.props.token || value;
             this.setState({token: value});
             this.loadGroups(value);
         });
     }
 
     loadGroups (token) {
+        // this.setState({content: 'loading groups with token: ' + token});
         getGroups(token).then(ret => {
             let showCommunity = true;
             let selectedGroupIndex = -1;
@@ -195,7 +200,9 @@ class Share extends Component {
             .then(data => {
                 this.showToast('Post Successful!');
                 setTimeout(() => {
-                    ShareExtension.close();
+                    Platform.OS === 'ios'
+                    ? ShareExtension.close()
+                    : Actions.pop();
                 }, 2500);
             })
             .catch(err => {
@@ -254,7 +261,8 @@ class Share extends Component {
                         <Header style={styles.header}>
                             <Left>
                                 <Button transparent onPress={() => {Keyboard.dismiss(); ShareExtension.close(); }} style={{ width: 50, height: 50 }}>
-                                    <Icon active name='arrow-back' style={{ color: 'white' }} />
+                                    {/* <Icon active name='arrow-back' style={{ color: 'white' }} /> */}
+                                    <Text style={{color: '#fff'}}>{'X'}</Text>
                                 </Button>
                             </Left> 
                             <Body>
@@ -274,7 +282,7 @@ class Share extends Component {
                             <ListItem style={styles.community_container} onPress={() => this.toggleCommunity()}>
                                 <View style={styles.avatar_container}>
                                     <View style={styles.avatar_wrapper}>
-                                        <Thumbnail square style={styles.avatar_img} source={{ uri: this.state.profile.avatar_file_name + '&w=150&h=150&auto=compress,format,q=95' }} />
+                                        {/* <Thumbnail square style={styles.avatar_img} source={{ uri: this.state.profile.avatar_file_name + '&w=150&h=150&auto=compress,format,q=95' }} /> */}
                                     </View>
                                     <View style={styles.avatar_subfix} />
                                 </View>
@@ -284,7 +292,8 @@ class Share extends Component {
                                     </Text>
                                 </Body>
                                 <Right style={styles.communicty_icon_container}>
-                                    <Icon name='md-create' style={{ color: 'white' }} />
+                                    <Text style={{color: '#fff'}}>{'[+]'}</Text>
+                                    {/* <Icon name='md-create' style={{ color: 'white' }} /> */}
                                 </Right>
                             </ListItem>
                         </List>

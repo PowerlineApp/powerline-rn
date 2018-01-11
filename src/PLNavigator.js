@@ -151,9 +151,16 @@ class MyRouter extends Component {
     // so we keep our state when opening the drawer!!!
     return false;
   }
+  onBackPress() {
+    if (Actions.state.index === 0) {
+      return false
+    }
+    Actions.pop()
+    return true
+  }
   render (){
     return (
-          <RouterWithRedux key="router">
+          <RouterWithRedux onBackPress={this.onBackPress}  key="router">
             <Scene key="root" hideNavBar>
               <Scene key="analyticsView" component={AnalyticsView} hideNavBar/>
               <Scene key="home" component={Home} initial hideNavBar />
