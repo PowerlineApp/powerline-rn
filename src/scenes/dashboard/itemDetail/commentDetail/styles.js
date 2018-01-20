@@ -178,6 +178,9 @@ export default {
     commentInput: {
         fontSize: 12,
         fontWeight: '100',
+        backgroundColor: '#f0f',
+        margin: 0,
+        padding: 0,
         flex: 1,
     },
     commentSendText: {

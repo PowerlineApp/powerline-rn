@@ -4,13 +4,46 @@ var { API_URL, PER_PAGE } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
 import { showToast } from 'PLToast';
 
+
+async function getActivities2(token, groupId, user, followed, cursor, type, id) {
+    let params = `?&user=${user || ''}&group=${groupId || ''}&followed=${followed || ''}`
+    let url = cursor || `${API_URL}/v2.2/feed` + params;
+    console.log(url, token)
+    let res = await fetch(url, {
+        method: 'GET',
+        headers: {
+            'token': token,
+            'Content-Type': 'application/json',
+        }
+    });
+    let headers = res.headers;
+    if (!res.ok){
+        return Promise.reject('Invalid response');
+    }
+    let nextCursor = headers.get('X-Cursor-Next');
+    let json = await res.json();
+    // console.log('json respnse', json)
+    let action = {
+        type: 'LOADED_ACTIVITIES',
+        data: {
+            totalItems: json.length,
+            cursor: nextCursor !== cursor && nextCursor,
+            items: json,
+            payload: json
+        }
+
+    }
+    // console.log('actionxx', action.data.items[0].group)
+    return Promise.resolve(action)
+}
+
+
 //Newsfeed activities can be loaded by All, by Group (town/state/country/group), by Friends, by Specific user, or by Favorites
 async function loadActivities(token: string, page: ?number = 0, perPage: ?number = PER_PAGE, group: ?string = 'all', user: ?string = 'all', followed = 'all'): Promise<Action> {
+    return getActivities2(token, group, user, followed, null);
+
+    
     console.log(`${API_URL}/v2/activities?_format=json&user=${user}&group=${group}&page=${page + 1}&per_page=${perPage}&followed=${followed}`);
-    // alert('ola')
-    // '/api/v2/activities?user=all&group=all&page=1&per_page=20&followed=true'
-    // '/api/v2/activities?user=all&group=all&followed=true&page=0&per_page=20'
-    // console.log('loadActivities API -> ', token, page, perPage, group, user, followed)
     try {
         var response = await fetch(`${API_URL}/v2/activities?_format=json&user=${user}&group=${group}&followed=${followed}&page=${page + 1}&per_page=${perPage}`, {
             method: 'GET',
@@ -75,7 +108,7 @@ async function loadFriendsActivities(token: string, page: ?number = 0, perPage: 
         });
         var json = await response.json();
         if (json.totalItems) {
-            // console.log('${API_URL}/v2/activities?_format=json&followed=true&page=${page + 1}&per_page=${perPage} --- load friends activities return: ', json.payload.map(item => item.title + item.description))
+            // console.log('${API_URL}/v2/activities?_format=json&followed=true&page=${page + 1}&per_page=${perPage} --- load friends activities return: ', json.payload.map(item => item.title + item.body))
             const action = {
                 type: 'LOADED_ACTIVITIES',
                 data: {
@@ -132,10 +165,10 @@ function loadActivitiesByUserId(token, page = 0, per_page = 20, group = 'all', u
 
 //Should be for loading public groups (Town/state/country) or by public groups (e.g. Save the Whales)
 function loadActivityByEntityId(token, entityType, entityId) {
-    // console.log('about to fetch => ' + '/v2/activities?_format=json&' + entityType + '_id=' + entityId + '&page=1&per_page=20');
+    console.log('about to fetch => ' + `/v2.2/${entityType + 's'}/${entityId}?_format=json&&page=1&per_page=1`);
     // /api/v2/activities?petition_id=349&page=1&per_page=20
     return new Promise((resolve, reject) => {
-        fetch(API_URL + '/v2/activities?_format=json&' + entityType + '_id=' + entityId + '&page=1&per_page=20', {
+        fetch(API_URL + `/v2.2/${entityType + 's'}/${entityId}?_format=json&&page=1&per_page=1`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -144,7 +177,7 @@ function loadActivityByEntityId(token, entityType, entityId) {
         })
             .then((res) => {console.log('res', res); return res.json()})
             .then(data => {
-                // console.log("Load Activity by Entity Id API success", data);
+                console.log("Load Activity by Entity Id API success", data);
                 resolve(data);
             })
             .catch(err => {
@@ -234,6 +267,7 @@ const setGroup = (data, token, id) => (dispatch) => {
 }
 
 module.exports = {
+    getActivities2,
     loadActivities,
     resetActivities,
     loadActivitiesByUserId,

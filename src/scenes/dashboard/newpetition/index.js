@@ -116,6 +116,7 @@ class NewPetition extends Component {
             selectedGroupIndex: index,
             showCommunity: false
         });
+        if (index === -1) return;
 
         var { token } = this.props;
 
@@ -158,7 +159,7 @@ class NewPetition extends Component {
         createPetition(token, this.state.grouplist[this.state.selectedGroupIndex].id, this.state.title, this.state.content, this.state.image)
         .then(data => {
             showToast('Petition Successful!');
-            Actions.itemDetail({ entityId: data.id, entityType: 'user-petition', backTo: 'home', share: this.state.share });
+            Actions.itemDetail({ item: data, entityId: data.id, entityType: 'user-petition', backTo: 'home', share: this.state.share });
         })
         .catch(err => {
             this.setState({sending: false});
@@ -390,7 +391,7 @@ class NewPetition extends Component {
                                 maxLength={PETITION_MAX_LENGTH}
                                 onSelectionChange={this.onSelectionChange}
                                 placeholderTextColor='rgba(0,0,0,0.1)'
-                                style={styles.textarea(this.state.contentHeight - 40)}
+                                style={styles.textarea((this.state.contentHeight - 40) || 200)}
                                 multiline
                                 placeholder={this.placeholderTitle}
                                 value={this.state.content}
@@ -410,7 +411,7 @@ class NewPetition extends Component {
                 </ScrollView>
                 <KeyboardAvoidingView
                     keyboardVerticalOffset={Platform.select({android: 20, ios: 0})}
-                    behavior={Platform.select({android:'padding', ios: 'padding'})}>
+                    behavior={Platform.select({android:'height', ios: 'padding'})}>
                     {
                             this.renderAttachments()
                         }
@@ -422,7 +423,6 @@ class NewPetition extends Component {
                             </Label>
                             :<Label />
                         }
-                        {/* Related: GH 151 */}
                         <Label style={{ color: 'white' }}>
                             {(PETITION_MAX_LENGTH - this.state.content.length)}
                         </Label>

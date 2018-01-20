@@ -37,6 +37,7 @@ class RegisterScene extends Component{
             <View style={styles.container}>
                 <Register 
                     back={() => dispatch(NavigationActions.back())} 
+                    onLoggedIn={() => dispatch(NavigationActions.reset())}
                     isFb={params.isFb} 
                     fbData={params.fbData} 
                     tour={(callback) =>  navigate('Tour', {callback: callback})}

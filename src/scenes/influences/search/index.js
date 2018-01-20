@@ -114,7 +114,7 @@ class SearchFollowing extends Component {
                 <Content>
                     <List>
                         {
-                            users.map((user, index) => {
+                            (users.length > 0 ? users : []).map((user, index) => {
                                 return (
                                     <ListItem avatar onPress={() => this.goToProfile(user.id)} key={index}>
                                         <Left>

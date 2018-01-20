@@ -16,7 +16,7 @@ class ConversationActivity extends Component {
         } else if (item.user_petition) {
             type = 'user-petition';
         }
-        Actions[scene]({ entityType: type, entityId: item.entity.id, ...options });
+        Actions[scene]({ entityType: item.type, entityId: item.id, ...options });
     }
 
 
@@ -30,7 +30,7 @@ class ConversationActivity extends Component {
                 </Left>
                 <Body style={{borderBottomWidth: 0}}>
                     <Text style={styles.title}>{item.user.full_name}</Text>
-                    <Text note style={styles.mainDescription}>{item.description}</Text>
+                    <Text note style={styles.mainDescription}>{item.body}</Text>
                 </Body>
                 <Right style={{borderBottomWidth: 0}}>
                     <Text style={styles.itemTime}><TimeAgo time={item.sent_at}/></Text>

@@ -26,6 +26,16 @@ async function loadPost(token: string, entityId: number): Promise<Action> {
 }
 
 async function votePost(token: string, postId: string, option: string) {
+    console.log(`${API_URL}/v2/posts/${postId}/vote`, {
+        method: 'POST',
+        headers: {
+            'token': token,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            option: option,
+        })
+    });
     return fetch(`${API_URL}/v2/posts/${postId}/vote`, {
             method: 'POST',
             headers: {
@@ -148,7 +158,7 @@ function createPostToGroup(token, groupId, content, base64image) {
         if (base64image) {
             body.image = base64image;
         }
-        fetch(API_URL + '/v2/groups/' + groupId + '/posts', {
+        fetch(API_URL + '/v2.2/groups/' + groupId + '/posts', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

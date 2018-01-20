@@ -16,12 +16,12 @@ class FeedDescription extends Component {
       } else if (item.user_petition) {
           type = 'user-petition';
       }
-      Actions[scene]({ entityType: type, entityId: item.entity.id, ...options });
+      Actions[scene]({ entityType: item.type, entityId: item.id, ...options });
   }
 
   _renderTitle (item) {
-    if (item.title) {
-        return (<Text style={styles.descriptionTitle}>{item.title}</Text>);
+    if (item.title || item.petition_title) {
+        return (<Text style={styles.descriptionTitle}>{item.title || item.petition_title}</Text>);
     } else {
         return null;
     }
@@ -38,13 +38,12 @@ class FeedDescription extends Component {
   _renderAttachedImage(item){
     if (this.props.isInDetail) return null;
     // console.log(item);
-    let imgURL;
+    let imgURL = item.image;
     let blur;
-    if (item.post){
-        imgURL = item.post.image;
-    } else if (item.user_petition) {
-        imgURL = item.user_petition.image;
-    }
+    // if (item.post){
+    //     imgURL = item.post.image;
+    // } else if (item.user_petition) {
+    // }
     if (!imgURL) return null;
 
     if (item.user.follow_status === 'active'){
@@ -108,10 +107,10 @@ class FeedDescription extends Component {
                     { pattern: /#(\w+)/, style: styles.hashtag, onPress: this.handleHashtagPress },
                   ]
                 }
-                numberOfLines={this.props.isInDetail ? null : item.entity.type === 'post' ? 5 : 4}
+                numberOfLines={this.props.isInDetail ? null : item.type === 'post' ? 5 : 4}
                 childrenProps={{ allowFontScaling: false }}
               >
-                {item.description}
+                {item.body || item.subject}
               </ParsedText>
             </TouchableOpacity>
           </Body>

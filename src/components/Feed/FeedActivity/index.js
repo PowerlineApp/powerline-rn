@@ -16,11 +16,11 @@ import styles from '../styles';
 
 class FeedActivity extends Component {
     onSwipeRight(item, gestureState) {
-        if (item.entity.type === 'post' && item.zone !== 'expired') {
+        if (item.type === 'post' && item.zone !== 'expired') {
             this.footer.vote(item, 'upvote');
         }
 
-        if (item.entity.type === 'user-petition') {
+        if (item.type === 'user-petition') {
             let isSigned = false;
             if (
                 item && item.user_petition &&
@@ -79,7 +79,7 @@ class FeedActivity extends Component {
     render() {
         let { item, displayCommentPreview } = this.props;
 
-        switch (item.entity.type) {
+        switch (item.type) {
         case 'post':
         case 'user-petition':
             return this._renderPostOrPetition(item, displayCommentPreview);

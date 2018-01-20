@@ -167,6 +167,9 @@ class NewLeaderContent extends Component {
         } else if (this.descriptionRef && this.state.content === '') {
             this.descriptionRef.focus();
         }
+
+        if (index === -1) return;
+
         
         let { token, type } = this.props;
         this.updateBankInfo(token, this.state.grouplist[index].id, type);
@@ -238,7 +241,7 @@ class NewLeaderContent extends Component {
         let subject = state.content;
 
         if (type && petition_title && petition_body && subject)
-            return {type, petition_title, petition_body, subject};
+            return {type, petition_title, petition_body, subject, options : [{value: 'Sign'}, {value: 'Unsign'}]};
 
         if (!petition_title){
             alert("Please create a title for your petition");
@@ -461,7 +464,7 @@ class NewLeaderContent extends Component {
 
                     this.sendAttachmentsAndPublish(r, attachments).then((r) => {
                         console.log('published: ', r);
-                        Actions.itemDetail({entityType: 'poll', entityId: r.id, backTo: 'home'});
+                        Actions.itemDetail({item: r, entityType: 'poll', entityId: r.id, backTo: 'home'});
                     }).catch(e => {
                         console.log('failure', e);
                     });

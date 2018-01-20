@@ -33,7 +33,7 @@ class FeedHeader extends Component {
     redirect(item, options, scene = 'itemDetail') {
         let type;
         if (item.poll) {
-            type = item.entity.type;
+            type = item.type;
         } else if (item.post) {
             type = 'post';
         } else if (item.user_petition) {
@@ -42,17 +42,17 @@ class FeedHeader extends Component {
         // if (scene === 'itemDetail'){
         //     Actions
         // }
-        Actions[scene]({ entityType: type, entityId: item.entity.id, ...options });
+        Actions[scene]({ entityType: item.type, entityId: item.id, ...options });
     }
 
     subscribe(item) {
-        console.log(item.entity.type);
-        this.props.dispatch(subscribeNotification(this.props.token, item.entity.id, item.id, item.entity.type));
+        console.log(item.type);
+        this.props.dispatch(subscribeNotification(this.props.token, item.id, item.id, item.type));
         this.menu && this.menu.close();
     }
 
     unsubscribe(item) {
-        this.props.dispatch(unsubscribeNotification(this.props.token, item.entity.id, item.id, item.entity.type));
+        this.props.dispatch(unsubscribeNotification(this.props.token, item.id, item.id, item.type));
         this.menu && this.menu.close();        
     }
 
@@ -62,7 +62,7 @@ class FeedHeader extends Component {
     }
 
     boost(item) {
-        this.props.dispatch(boostPost(item.entity.type, item.entity.id, item.group.id, item.id));
+        this.props.dispatch(boostPost(item.type, item.id, item.group && item.group.id, item.id));
         this.menu && this.menu.close();
     }
 
@@ -108,11 +108,11 @@ class FeedHeader extends Component {
     }
 
     delete(item) {
-        if (item.entity.type === 'post') {
-            this.props.dispatch(deletePost(item.entity.id, item.id));
+        if (item.type === 'post') {
+            this.props.dispatch(deletePost(item.id, item.id));
         }
-        if (item.entity.type === 'user-petition') {
-            this.props.dispatch(deletePetition(item.entity.id, item.id));
+        if (item.type === 'user-petition') {
+            this.props.dispatch(deletePetition(item.id, item.id));
         }
 
         this.menu && this.menu.close();
@@ -133,7 +133,7 @@ class FeedHeader extends Component {
         let isUpvoted = false;
         console.log('notify => ', item);
         if (item.upvotes_count > 0 || item.responses_count > 0) {
-            let type = item.entity.type;
+            let type = item.type;
             if (type === 'user-petition') {
                 type = 'user_petition';
             }
@@ -165,7 +165,7 @@ class FeedHeader extends Component {
             return;
         }
 
-        sharePost(this.props.token, item.type === 'post', item.entity.id, cb);
+        sharePost(this.props.token, item.type === 'post', item.id, cb);
 
         this.menu && this.menu.close();
     }
@@ -181,7 +181,7 @@ class FeedHeader extends Component {
 
     spam(item) {
         showAlertOkCancel('Are you sure you want to report this item? Group leaders can only remove items that have been reported by multiple users.', () => {
-            this.props.dispatch(markAsSpam(this.props.token, item.entity.id, item.entity.type));
+            this.props.dispatch(markAsSpam(this.props.token, item.id, item.type));
         });
         this.menu && this.menu.close();        
     }
@@ -198,15 +198,15 @@ class FeedHeader extends Component {
 
     onPressGroup(item) {
         console.log('just pressed group', item);
-        Actions.groupprofile({ id: item.group.id });
+        Actions.groupprofile({ id: item.group && item.group.id });
     }
 
     isGroupOwnerOrManager(item) {
-        return item.group.user_role === 'manager' || item.group.user_role === 'owner';
+        return (item.group && item.group.user_role === 'manager') || (item.group && item.group.user_role === 'owner');
     }
 
     isSubscribed(item) {
-        let type = item.entity.type;
+        let type = item.type;
         if (type === 'user-petition') {
             type = 'user_petition';
         }
@@ -230,17 +230,17 @@ class FeedHeader extends Component {
 
         // console.log(this.props, isAuthor, item.user.id, this.props.userId, item.user.id === this.props.userId);
 
-        switch (item.entity.type) {
+        switch (item.type) {
         case 'post':
         case 'user-petition':
-            thumbnail = item.owner.avatar_file_path ? item.owner.avatar_file_path : '';
-            title = item.user.full_name;//item.owner ? item.owner.first_name : '' + ' ' + item.owner ? item.owner.last_name : '';
+            thumbnail = (item.owner || item.user).avatar || '';
+            title = item.user.first_name + item.user.last_name;//item.owner ? item.owner.first_name : '' + ' ' + item.owner ? item.owner.last_name : '';
             canInviteUpvoters = isBoosted;
             canSpam = true;
             break;
         default:
-            thumbnail = item.group.avatar_file_path ? item.group.avatar_file_path : '';
-            title = item.user.full_name;
+            thumbnail = item.group && item.group.avatar_file_path ? item.group && item.group.avatar_file_path : '';
+            title = item.user.first_name + item.user.last_name;//item.owner ? item.owner.first_name : '' + ' ' + item.owner ? item.owner.last_name : '';
             break;
         }
 //Header
@@ -257,7 +257,7 @@ class FeedHeader extends Component {
                     </TouchableHighlight>
                     <Body>
                         <Text style={styles.title} onPress={() => this.onPressAuthor(item)}>{title}</Text>
-                        <Text note style={styles.subtitle} onPress={() => this.onPressGroup(item)}>{item.group.official_name} • <TimeAgo time={item.sent_at} hideAgo /></Text>
+                        <Text note style={styles.subtitle} onPress={() => this.onPressGroup(item)}>{item.group && item.group.official_name} • <TimeAgo time={item.created_at} hideAgo /></Text>
                     </Body>
                     <Right style={{ flex: 0.08 }}>
                         <Menu style={{ width: '100%'}} ref={(ref) => { this.menu = ref; }}>

@@ -30,7 +30,7 @@ import Menu, {
     MenuOption,
     renderers
 } from 'react-native-popup-menu';
-import { getComments, votePost, getUsersByGroup, addComment, editComment, deleteComment, rateComment, loadActivityByEntityId, deletePost, deletePetition, changePost, changePetition, loadPollByEntityId, markAsRead } from 'PLActions';
+import { getComments, votePost, getActivities2, getUsersByGroup, addComment, editComment, deleteComment, rateComment, loadActivityByEntityId, deletePost, deletePetition, changePost, changePetition, loadPollByEntityId, markAsRead } from 'PLActions';
 import PLOverlayLoader from 'PLOverlayLoader';
 import randomPlaceholder from '../../../utils/placeholder';
 import { FloatingAction } from 'react-native-floating-action';
@@ -100,7 +100,7 @@ class ItemDetail extends Component {
     componentDidMount() {
         // this.addCommentInput.focus(); 
         // console.log('=xx=x=x=x=x=x=x=x=x==x')
-        // console.log('propss', this.props.entityType, this.props.entityId);
+        // console.log('propss', this.props.this.item.type, this.props.entityId);
         if (this.props.commenting) {
             setTimeout(
                 () => this._onAddComment()
@@ -113,18 +113,18 @@ class ItemDetail extends Component {
     }
 
     markAsRead(item){
-        // console.log(item.zone, item.entity.type)
+        // console.log(item.zone, item.type)
         if (item.read) return;
         // petition or discussion or boosted post/petition is OPENED
         if (item.zone === 'prioritized'){
             // boosted post/petition
-            if (item.entity.type === 'post' || item.entity.type === 'user-petition'){
+            if (item.type === 'post' || item.type === 'user-petition'){
                 this.props.markAsRead(this.props.token, item.id);
             }
         }
 
         // discussion
-        if (item.entity.type === 'leader-news'){
+        if (item.type === 'leader-news'){
             this.props.markAsRead(this.props.token, item.id);
         }
     }
@@ -191,7 +191,7 @@ class ItemDetail extends Component {
 
     _onCommentBody(comment) {
         const { props: { entityType, entityId } } = this;
-        Actions.commentDetail({ comment: comment, entityType: entityType, entityId: entityId });
+        Actions.commentDetail({ comment: comment, entityType: this.item.type, entityId: entityId });
     }
 
     async onShare(share, entity){
@@ -270,14 +270,14 @@ class ItemDetail extends Component {
         // console.log(entityId, entityType)
         this.setState({ isLoading: true });
 
-        let type = 'poll';
-        if (entityType === 'user-petition') type = 'petition';
-        if (entityType === 'post') type = 'post'
+        let type = entityType;
+        // if (entityType === 'user-petition') type = 'petition';
+        // if (entityType === 'post') type = 'post'
 
         let data = null;
         // try {
             await this.loadItem(token, type, entityId, entityType);
-            this.setState({ isLoading: false, inputDescription: this.item.description });
+            this.setState({ isLoading: false, inputDescription: this.item.body });
             this.loadComments();
             this.onShare(this.props.share, this.item);
             this.markAsRead(this.item);
@@ -288,8 +288,9 @@ class ItemDetail extends Component {
     }
 
     async loadItem(token, type, entityId, entityType){
-            data = await loadActivityByEntityId(token, type, entityId);
-            this.item = data.payload[0];
+            console.log('type => ', type, this.props)
+            this.item = this.props.item || await loadActivityByEntityId(token, type === 'post' ? 'post' : type === 'user-petition' ? 'user-petition' : 'poll' , entityId);
+            // this.item = action.data.payload[0];
             // if (type !== 'petition' && type !== 'post'){
             //     data = await loadPollByEntityId(token, entityId)
             //     this.item = {...this.item, options: data.options };
@@ -305,10 +306,11 @@ class ItemDetail extends Component {
         
         const { props: { token, entityId, entityType, dispatch } } = this;
         this.setState({ isCommentsLoading: true });
-        WARN(entityType)
+        // WARN('=> ' + this.item)
+        console.log(this.item)
         try {
             let response = await Promise.race([
-                getComments(token, entityType, entityId),
+                getComments(token, !!this.item.options ? 'poll' : this.item.type, entityId),
                 timeout(15000),
             ]);
             // LOG('rsp3ioj2fo2jf', response);
@@ -346,7 +348,7 @@ class ItemDetail extends Component {
             this.setState({ isCommentsLoading: true });
             try {
                 let response = await Promise.race([
-                    getComments(token, entityType, entityId, this.nextCursor),
+                    getComments(token, !!this.item.options ? 'poll' : this.item.type, entityId, this.nextCursor),
                     timeout(15000),
                 ]);
 
@@ -383,23 +385,24 @@ class ItemDetail extends Component {
     //GH17
     //Users should be able to create comments and reply to a comment
     async doComment(commentText) {
-        const { props: { entityId, entityType, token, dispatch } } = this;
-        this.setState({ isLoading: true });
-        let response = await addComment(token, entityType, entityId, commentText, (this.commentToReply != null) ? this.commentToReply.id : '0');;
-        this.addCommentView.close();
+        const { props: { entityId, token, dispatch } } = this;
+        this.setState({ isLoading: true, addingComment: false });
+        let response = await addComment(token, !!this.item.options ? 'poll' : this.item.type, entityId, commentText, (this.commentToReply != null) ? this.commentToReply.id : '0');;
+        // this.addCommentView.close();
         this.setState({
             isLoading: false,
         });
+        console.log(response)
         if (response && response.comment_body) {
-            this.setState({ dataArray: [] });
-            loadActivityByEntityId(token, entityType, entityId).then(data => {
-                if (data.payload && data.payload[0]) {
-                    this.item = data.payload[0];
-                    this.loadComments();
-                }
-            }).catch(err => {
+            // this.setState({ dataArray: [] });
+            // loadActivityByEntityId(token, this.item.type, entityId).then(data => {
+            //     if (data.payload && data.payload[0]) {
+            //         this.item = data.payload[0];
+                    // this.loadComments();
+                // }
+            // }).catch(err => {
                 this.loadComments();
-            });
+            // });
         }
         else {
             alert('Something went wrong');
@@ -418,7 +421,7 @@ class ItemDetail extends Component {
 
     async doEditComment(commentText) {
         this.setState({ isLoading: true });
-        let response = await editComment(this.item.entity.type, this.props.token, this.state.editedCommentId, commentText);
+        let response = await editComment(this.item.type, this.props.token, this.state.editedCommentId, commentText);
 
         this.addCommentView.close();
         this.setState({
@@ -437,7 +440,7 @@ class ItemDetail extends Component {
     }
 
     async deleteComment(comment) {
-        let response = await deleteComment(this.item.entity.type, this.props.token, comment.id);
+        let response = await deleteComment(this.item.type, this.props.token, comment.id);
         if (response.status === 204 && response.ok) {
             this.loadComments();
         } else {
@@ -458,7 +461,7 @@ class ItemDetail extends Component {
         this.setState({ isRating: true });
 
         const { props: { entityType, token } } = this;
-        let response = await rateComment(token, entityType, comment.id, option);
+        let response = await rateComment(token, this.item.type, comment.id, option);
 
         this.setState({ isRating: false });
         if (response && response.comment_body) {
@@ -473,13 +476,13 @@ class ItemDetail extends Component {
         const { inputDescription } = this.state;
 
         if (inputDescription !== '') {
-            if (this.item.entity.type === 'post') {
-                this.props.dispatch(changePost(this.item.entity.id, this.item.id, inputDescription));
+            if (this.item.type === 'post') {
+                this.props.dispatch(changePost(this.item.id, this.item.id, inputDescription));
             }
-            if (this.item.entity.type === 'user-petition') {
-                this.props.dispatch(changePetition(this.item.entity.id, this.item.id, inputDescription));
+            if (this.item.type === 'user-petition') {
+                this.props.dispatch(changePetition(this.item.id, this.item.id, inputDescription));
             }
-            this.item.description = inputDescription;
+            this.item.body = inputDescription;
             this.setState({ isEditMode: false });
         } else {
             alert('Description is empty.')
@@ -488,7 +491,7 @@ class ItemDetail extends Component {
 
     dismiss = () => {
         this.setState({
-            inputDescription: this.item.description,
+            inputDescription: this.item.body,
             isEditMode: false,
         });
     }
@@ -499,11 +502,11 @@ class ItemDetail extends Component {
     }
 
     delete(item) {
-        if (item.entity.type === 'post') {
-            this.props.dispatch(deletePost(item.entity.id, item.id));
+        if (item.type === 'post') {
+            this.props.dispatch(deletePost(item.id, item.id));
         }
-        if (item.entity.type === 'user-petition') {
-            this.props.dispatch(deletePetition(item.entity.id, item.id));
+        if (item.type === 'user-petition') {
+            this.props.dispatch(deletePetition(item.id, item.id));
         }
 
         this.onBackPress();
@@ -639,53 +642,55 @@ class ItemDetail extends Component {
                 minHeight: Platform.OS === 'android' ? 50 : ((WINDOW_HEIGHT / 2) + (this.props.displaySuggestionBox ? 40 : 0))
             }}> */
         return (
-            <Modal transparent onRequestClose={() => this.onCloseComment()} visible={this.state.addingComment} animationType="slide">
-                <TouchableOpacity transparent onPress={() => this.onCloseComment()} style={{flex: 1, height: '100%', justifyContent: 'flex-end'}}>
+                <Modal style={{justifyContent: 'flex-end'}} transparent onRequestClose={() => this.onCloseComment()} visible={this.state.addingComment} animationType="slide">
+                    <TouchableOpacity transparent onPress={() => this.onCloseComment()} style={{flex: 1, height: '100%', justifyContent: 'flex-end'}}>
                     {
                         (this.state.displaySuggestionBox && this.state.suggestionList.length > 0) 
-                        && <ScrollView style={{maxHeight: 40, backgroundColor: '#fff', marginBottom: 0, zIndex: 3}} keyboardShouldPersistTaps='handled'>
+                        && <ScrollView style={{maxHeight: 40, backgroundColor: '#fff', marginBottom: 0, zIndex: 3}} keyboardShouldPersistTaps='always'>
                             <SuggestionBox horizontal substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox && this.state.suggestionList.length > 0} userList={this.state.suggestionList} />
                         </ScrollView>
                     }
-                    <View style={{
-                        marginBottom: 0,
-                        height: (Platform.OS === 'android' 
-                        ? 60 + (this.props.displaySuggestionBox ? 40 : 0)
-                        : ((WINDOW_HEIGHT / 2) + (this.props.displaySuggestionBox ? 40 : 0))) }}>
-                        <CardItem>
-                            <Left>
-                                <Thumbnail small source={thumbnail ? { uri: thumbnail + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
-                                <Body>
-                                    <Input
-                                        autoFocus
-                                        placeholder={this.state.placeholderTitle}
-                                        style={styles.commentInput}
-                                        ref={this.onCommentInputRef}
-                                        value={this.state.commentText}
-                                        defaultValue={this.state.defaultInputValue}
-                                        onChangeText={this.onChangeComment}
-                                        onSelectionChange={(e) => this.onSelectionChange(e)}
-                                        multiline
-                                        maxHeight={60}
-                                        />
-                                </Body>
-                                <Right style={{ flex: 0.3 }}>
-                                    <TouchableHighlight style={{ flexDirection: 'row' }} onPress={() => this._onSendComment()}>
-                                        <View>
-                                            <Text style={styles.commentSendText}>SEND</Text>
-                                            <Icon name="md-send" style={styles.commentSendIcon} />
-                                        </View>
-                                    </TouchableHighlight>
-                                </Right>
-                            </Left>
-                        </CardItem>
-                    </View>
-                </TouchableOpacity>
-                
-            </Modal>
+                        <View 
+                            keyboardShouldPersistTaps="always"
+                            style={{
+                                marginBottom: 0,
+                                height: (Platform.OS === 'android' 
+                                ? 60 + (this.props.displaySuggestionBox ? 40 : 0)
+                                : ((WINDOW_HEIGHT / 2) + (this.props.displaySuggestionBox ? 40 : 0))) }}>
+                            <CardItem keyboardShouldPersistTaps="always">
+                                <Left keyboardShouldPersistTaps="always">
+                                    <Thumbnail small source={thumbnail ? { uri: thumbnail + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                                    <Body keyboardShouldPersistTaps="always">
+                                        <Input
+                                            autoFocus
+                                            placeholder={this.state.placeholderTitle}
+                                            onContentSizeChange={() => {}}
+
+                                            style={styles.commentInput}
+                                            ref={this.onCommentInputRef}
+                                            value={this.state.commentText}
+                                            defaultValue={this.state.defaultInputValue}
+                                            onChangeText={this.onChangeComment}
+                                            onSelectionChange={(e) => this.onSelectionChange(e)}
+                                            multiline
+                                            numberOfLines={2}
+                                            />
+                                    </Body>
+                                    <Right style={{ flex: 0.2 }}>
+                                        <TouchableHighlight style={{ flexDirection: 'row' }} onPress={() => this._onSendComment()}>
+                                            <View style={{ flexDirection: 'row' }}>
+                                                <Text style={styles.commentSendText}>SEND</Text>
+                                                <Icon name="md-send" style={styles.commentSendIcon} />
+                                            </View>
+                                        </TouchableHighlight>
+                                    </Right>
+                                </Left>
+                            </CardItem>
+                        </View>
+                    </TouchableOpacity>
+                </Modal>
+            
         )
-                    /* </MenuOptions>
-                    </Menu> */
     }
                 
     //Adding a comment to an item
@@ -695,10 +700,10 @@ class ItemDetail extends Component {
         let {value} = this.state;
         return (
             <TouchableOpacity onPress={() => this._onAddComment()}>
-                <CardItem style={styles.commentAddField}>
-                    <Left>
+                <CardItem keyboardShouldPersistTaps="always" style={styles.commentAddField}>
+                    <Left keyboardShouldPersistTaps="always">
                         <Thumbnail small source={thumbnail ? { uri: thumbnail + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
-                        <Body>
+                        <Body keyboardShouldPersistTaps="always">
                             <Text style={styles.addCommentTitle}>Add your thoughts...</Text>
                             {this.renderAddCommentView()}
                         </Body>
@@ -897,7 +902,7 @@ class ItemDetail extends Component {
                         <View>
                             {this._renderTitle(item)}
                             {this._renderTextarea(item, state)}
-                            <Text style={styles.description} numberOfLines={5}>{item.description}</Text>
+                            <Text style={styles.description} numberOfLines={5}>{item.body}</Text>
                         </View>
                     </Body>
                 </Left>
@@ -906,12 +911,11 @@ class ItemDetail extends Component {
     }
 
     renderAttachedImage(item){
-        let imgURL;
-        if (item.post){
-            imgURL = item.post.image;
-        } else {
-            imgURL = item.user_petition.image;
-        }
+        let imgURL = item.image;
+        // if (item.post){
+        //     imgURL = item.image;
+        // } else {
+        // }
         if (!imgURL) return;
         console.warn(imgURL)
         return (
@@ -967,8 +971,8 @@ class ItemDetail extends Component {
     }
 
     _renderActivity(item, state) {
-        // console.log('type', item.entity.type)
-        switch (item.entity.type) {
+        // console.log('type', item.type)
+        switch (item.type) {
             case 'post':
             case 'user-petition':
                 return this._renderPostOrUserPetitionCard(item, state);
@@ -990,10 +994,8 @@ class ItemDetail extends Component {
     }
 
     renderFloatingActionButton(item){
-        // console.log(item)
-        //Felipe - Need to add: OR if the user is author of this item
-        //User can share anyone's post from a public (local/state/country) group, but can only share his own items from private groups
-        if (item.group.group_type_label !== "local"
+        let group = item.group;
+        if (group && group.group_type_label !== "local"
             && item.group.group_type_label !== "state"
             && item.group.group_type_label !== "country"
             && item.user.id !== this.props.profile.id)
@@ -1033,12 +1035,11 @@ class ItemDetail extends Component {
             return null;
         }
         let item = this.item;
-        // console.log('ITEMDETAIL', this.state)
-        // console.log('ITEMDETAIL', this.props)
         return (
-            <MenuContext customStyles={menuContextStyles}>
-                <Container style={{ flex: 1 }}>
+            <MenuContext customStyles={menuContextStyles} keyboardShouldPersistTaps="always">
+                <Container style={{ flex: 1 }} keyboardShouldPersistTaps="always">
                     <HeaderImageScrollView
+                    keyboardShouldPersistTaps="always"
                         maxHeight={MAX_HEIGHT}
                         minHeight={MIN_HEIGHT}
                         fadeOutForeground

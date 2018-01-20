@@ -251,6 +251,17 @@ class GroupProfile extends Component{
         Actions.managegroup({ group: this.state.data });
     }
 
+
+    onBackPress = () => {
+        const { backTo } = this.props;
+
+        if (backTo) {
+            Actions.popTo(backTo);
+        } else {
+            Actions.pop();
+        }
+    }
+
     render(){
         console.log('GROUP PROFILE', this.state)
         console.log('GROUP PROFILE', this.props)
@@ -258,7 +269,7 @@ class GroupProfile extends Component{
             <Container style={styles.container}>
                 <Header style={styles.header}>
                     <Left>
-                        <Button transparent onPress={() => Actions.pop()} style={{width: 50, height: 50 }}  >
+                        <Button transparent onPress={this.onBackPress} style={{width: 50, height: 50 }}  >
                             <Icon active name="arrow-back" style={{color: 'white'}}/>
                         </Button>
                     </Left>

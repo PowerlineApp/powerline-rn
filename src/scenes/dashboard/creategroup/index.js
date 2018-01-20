@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
+import {ActivityIndicator} from 'react-native';
 import {
     Container,
     Header,
@@ -128,7 +129,7 @@ class CreateGroup extends Component{
                         {
                             text: 'OK',
                             onPress: () => {
-                                Actions.groupprofile(data);
+                                Actions.groupprofile({backTo:'home', ...data});
                             }
                         }
                     ],
@@ -161,7 +162,11 @@ class CreateGroup extends Component{
                         </Body>
                         <Right>
                             <Button transparent onPress={() => this.onSend()}>
-                                <Label style={{color: 'white'}}>Send</Label>
+                            {
+                                this.state.loading 
+                                ? <ActivityIndicator color={'#fff'} animating={this.state.sending} />
+                                : <Label style={{color: 'white'}}>{'Send'}</Label>
+                            }
                             </Button>
                         </Right>
                     </Header>

@@ -49,7 +49,7 @@ class SearchUsers extends Component{
             <Content>
                 <List>
                     {
-                        this.props.users.map((user, index) => {
+                        (this.props.users || []).map((user, index) => {
                             return (
                                 <ListItem avatar key={index} onPress={() => this.goToProfile(user.id)}>
                                     <Left>

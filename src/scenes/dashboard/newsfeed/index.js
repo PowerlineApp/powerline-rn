@@ -13,7 +13,7 @@ import { Actions } from 'react-native-router-flux';
 import { ActionSheet, Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, ListItem, Thumbnail, List, Card, CardItem, Label, Footer } from 'native-base';
 import { ScrollView, FlatList, View, RefreshControl, TouchableOpacity, Image, WebView, Platform, Share } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
-import { setGroup, loadActivities, resetActivities, votePost, editFollowers, loadActivityByEntityId, createPostToGroup, deletePost, deletePetition, getGroups, saveOffSet } from 'PLActions';
+import { setGroup, loadActivities, getActivities2, resetActivities, votePost, editFollowers, loadActivityByEntityId, createPostToGroup, deletePost, deletePetition, getGroups, saveOffSet } from 'PLActions';
 import styles, { sliderWidth, itemWidth } from './styles';
 import TimeAgo from 'react-native-timeago';
 import ImageLoad from 'react-native-image-placeholder';
@@ -57,7 +57,7 @@ class Newsfeed extends Component {
     }
 
     shouldComponentUpdate(nextProps, nextState){
-        console.warn('should component update', nextProps)
+        // console.warn('should component update', nextProps)
         if (this.state !== nextState){
             return true;
         }
@@ -119,9 +119,12 @@ class Newsfeed extends Component {
         const { props: { token, dispatch, page } } = this;
         const group = nextProps ? nextProps.selectedGroup.group : this.props.selectedGroup.group;
         try {
-            let activities = await loadActivities(token, 0, 20, group);
+            // let activities = await loadActivities(token, 0, 20, group);
+            let activities = await getActivities2(token, group, 0, 0, this.props.cursor);
+            console.log('got activities', activities.type);
             dispatch(activities);
         } catch (e) {
+            console.log('e', e)
             this.setState({ isRefreshing: false });
             
             const message = e.message || e;
@@ -139,10 +142,16 @@ class Newsfeed extends Component {
         const { props: { token, page, dispatch } } = this;
         const {group} = this.props.selectedGroup;
         try {
-            await Promise.race([
-                dispatch(loadActivities(token, page, 20, group)),
-                timeout(15000),
-            ]);
+            let activities = await getActivities2(token, group, 0, 0, this.props.cursor);
+            console.log('got activities', activities.type);
+
+            dispatch(activities);
+
+            // await Promise.race([
+            //     // dispatch(loadActivities(token, page, 20, group)),
+            //     dispatch(getActivities2(token, group, 0, 0, this.props.cursor)),
+            //     timeout(15000),
+            // ]);
         } catch (e) {
             this.setState({ isLoadingTail: false });
             
@@ -286,45 +295,9 @@ class Newsfeed extends Component {
         </TouchableOpacity>)
     }
 
-    getHeight(item){
-        // basico
-        // considerando height 50 para descricao
-        let height = 200;
-        // comentario
-        // se tiver comentario, somar 62
-        let hasComment = false;
-        let previewData = {comments: []};
-        if (item.poll) {
-            previewData = item.poll;
-        } else if (item.post) {
-            previewData = item.post;
-        } else if (item.user_petition) {
-            previewData = item.user_petition;
-        }
-        // console.log(previewData, item)
-        hasComment = !!previewData.comments[0];
-        
-        if (hasComment) height += 62;
-
-
-        if (item.metadata && item.metadata.image) {
-            height += 180;
-        }
-
-        if (item.poll && item.poll.educational_context.length > 0){
-            height += 180;
-        }
-        // foto (e nao eh post nem peticao)
-        // 180
-        // console.log(item)
-        return height;
-    }
-
     renderActivity = (item) => (
          <FeedActivity key={item.id} item={item.item} token={this.props.token} profile={this.props.profile} />
     )
-
-
 
     render() {
         const { isRefreshing, isLoading, isLoadingTail } = this.state;
@@ -338,6 +311,7 @@ class Newsfeed extends Component {
 
 
         let dataArray = this.props.payload;
+        // dataArray = [];
         // console.log(dataArray);
 
         this.conversationView = false;
@@ -346,7 +320,7 @@ class Newsfeed extends Component {
             this.conversationView = false;
         }
 
-        console.log('newsfeed render', this.props.loadingActions)
+        // console.log('newsfeed render', this.props.cursor)
 
         return (
             <Container style={{flex: 1}}>
@@ -354,15 +328,10 @@ class Newsfeed extends Component {
                         this.renderHeader(this.props.selectedGroup)
                     }
                     <ContentPlaceholder
-                        empty={!this.state.isRefreshing && !this.state.isLoading && this.state.dataArray.length === 0}
+                        refreshControl={<RefreshControl onRefresh={() => this._onRefresh()} refreshing={false} />}
+                        empty={!this.state.isRefreshing && !this.state.isLoading && dataArray.length === 0}
                         title="The world belongs to those who speak up! Be the first to create a post!" />
-
-                    {/**
-                     * using FlatList here to test performance -- can easily be changed to ListView again, but I think we might gain
-                     * some performance using FlatList (as recommended on the docs)
-                     */}
                     <FlatList 
-                        // bounces
                         data={dataArray}
                         scrollEventThrottle={100}
                         refreshing={false}
@@ -375,14 +344,8 @@ class Newsfeed extends Component {
                         onEndReached={() => this._onEndReached()}
                         renderItem={(item) => <FeedActivity key={item.id} item={item.item} token={this.props.token} profile={this.props.profile} />}
                     /> 
-                    <PLOverlayLoader visible={this.props.loadingActions  || isLoading || isLoadingTail || isRefreshing} logo />
+                    <PLOverlayLoader visible={this.props.loadingActions || isLoading || isLoadingTail || isRefreshing} logo />
                     {
-                        /**
-                         * if we are in conversation view, we have a textinput on the bottom, that creates posts
-                         * right now works good on android, but on iOS the keyboard goes over the input 
-                         * the <KeyboardAvoidingView> above should make it work, but for some reason it doesnt --to be fixed
-                         * // Felipe
-                         */
                         this.conversationView
                         ?
                         <KeyboardAvoidingView behavior={Platform.select({android:'height', ios: 'padding'})}>
@@ -418,6 +381,7 @@ const mapStateToProps = state =>
     token: state.user.token,
     page: state.activities.page,
     totalItems: state.activities.totalItems,
+    cursor: state.activities.cursor,
     // totalItems: 5,
     payload: state.activities.payload,
     loadingActions: state.activities.loading,

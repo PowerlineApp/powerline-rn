@@ -459,7 +459,8 @@ class Register extends React.Component{
             country,
             phone: countryCode + phone,
             zip,
-            code
+            code,
+            agency: 'r5oq01l2'
         }
         return register2(data).then(r => {
             console.log('register success', r);

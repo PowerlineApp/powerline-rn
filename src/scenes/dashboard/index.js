@@ -755,7 +755,7 @@ class Home extends Component {
                 </Button>
             </MenuOption>
         ]
-        if (group && (group.group === 'all' || group.user_role === 'owner' || group.user_role === 'manager'))
+        if (group && (group.user_role === 'owner' || group.user_role === 'manager'))
         options.unshift(
             // <MenuOption value={'group_announcement'}>
             //     <Button iconLeft transparent dark onPress={() => {this.selectNewItem('group_announcement'); Mixpanel.track("Opened New Announcement Form");}}>

@@ -244,6 +244,10 @@ export default {
     commentInput: {
         fontSize: 12,
         fontWeight: '100',
+        // backgroundColor: '#f0f',
+        height: 60,
+        padding: 0,
+        margin: 0,
         flex: 1
     },
     commentSendText: {

@@ -156,7 +156,9 @@ class NewPost extends Component {
             selectedGroupIndex: index,
             showCommunity: false
         });
+
         this.postInputRef.focus();
+        if (index === -1) return;
 
         var { token } = this.props;
 
@@ -201,7 +203,7 @@ class NewPost extends Component {
                 showToast('Post Successful!');
                 this.refs.animatedView.fadeInDownBig(1000);
                 setTimeout(() => {
-                    Actions.itemDetail({ entityId: data.id, entityType: 'post', backTo: 'home', share: this.state.share });
+                    Actions.itemDetail({ item: data, entityId: data.id, entityType: 'post', backTo: 'home', share: this.state.share });
                 }, 200);
             })
             .catch(err => {

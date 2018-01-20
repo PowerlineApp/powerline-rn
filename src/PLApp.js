@@ -29,13 +29,22 @@ import { RNSKBucket } from 'react-native-swiss-knife';
 
 
 // import OneSignal from 'react-native-onesignal';
-console.log = () => {};
-console.warn = () => {};
+// console.log = (a1, a2, a3) => {
+//     let str = a1 ? typeof a1 === 'object' ? JSON.stringify(a1, null, '    ') : a1 || '' : ``;
+//     let str2 = a2 ? typeof a2 === 'object' ? JSON.stringify(a2, null, '    ') : a2 || '' : ``;
+//     let str3 = a3 ? typeof a3 === 'object' ? JSON.stringify(a3, null, '    ') : a3 || '' : ``;
+//     str.split('\n').map(s => console.warn('powerline', s));
+//     str2.split('\n').map(s => console.warn('powerline', s));
+//     str3.split('\n').map(s => console.warn('powerline', s));
+// };
+    // console.warn('powerline-log', a1 ? typeof a1 === 'object' ? JSON.stringify(a1, null, '\t') : a1 || '' : ``, a2 ? typeof a2 === 'object' ? JSON.stringify(a2, null, '\t') : a2 || '' : ``, a3 ? typeof a3 === 'object' ? JSON.stringify(a3, null, '\t') : a3 || '' : ``, a4 ? typeof a4 === 'object' ? JSON.stringify(a4, null, '\t') : a4 || '' : ``, a5 ? typeof a5 === 'object' ? JSON.stringify(a5, null, '\t') : a5 || '' : ``, a6 ? typeof a6 === 'object' ? JSON.stringify(a6, null, '\t') : a6 || '' : ``, a7 ? typeof a7 === 'object' ? JSON.stringify(a7, null, '\t') : a7 || '' : ``, a8 ? typeof a8 === 'object' ? JSON.stringify(a8, null, '\t') : a8 || '' : ``, a9 ? typeof a9 === 'object' ? JSON.stringify(a9, null, '\t') : a9 || '' : ``);};
+// console.warn = (a1, a2, a3, a4, a5, a6, a7, a8, a9) => {console.warn('powerline-log', a1, a2, a3, a4, a5, a6, a7, a8, a9);};
+// console.warn = () => {};
 
 var PLApp = React.createClass({
     displayName: 'PLApp',
     componentDidMount: function () { 
-        console.log('===========================, COMPONENT DID MOUNT ON PLAPP.JS');
+        // console.log('===========================, COMPONENT DID MOUNT ON PLAPP.JS');
         Stripe.init({
             publishableKey: stripeAPIKey
         });

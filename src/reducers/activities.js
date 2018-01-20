@@ -5,6 +5,7 @@ import type { Action } from '../actions/types';
 export type State = {
     page: number;
     payload: Array<Object>;
+    cursor: String;
     items: number;
     totalItems: number;
     loading: boolean;
@@ -20,6 +21,7 @@ export type State = {
 const initialState = {
     page: 0,
     payload: [],
+    cursor: '',
     items: 0,
     totalItems: 0,
     group: null,
@@ -38,7 +40,7 @@ const initialState = {
 const payloadStack: Array<Object> = [];
 
 function activities(state: State = initialState, action: Action): State {
-    console.warn('action(activities):', action.type);
+    // console.warn('action(activities):', action.type);
     switch (action.type) {
 
     case 'SAVE_OFFSET': {
@@ -46,16 +48,17 @@ function activities(state: State = initialState, action: Action): State {
     }
 
     case 'SET_LOADING': {
-        console.log('=z==zz=z=z=>', action, {...state, loading: action.payload})
+        // console.log('=z==zz=z=z=>', action, {...state, loading: action.payload})
         return {...state, loading: action.payload}
     }
     
     case 'LOADED_ACTIVITIES': {
-        console.log('=z==zz=z=z=>', action.type)
+        console.log('=z==zz=z=z=>', action.data)
         payloadStack = payloadStack.concat(action.data.payload);
         return {
             ...state,
-            page: action.data.page,
+            // page: action.data.page,
+            cursor: action.data.cursor,
             loading: false,
             items: action.data.items,
             totalItems: action.data.totalItems,

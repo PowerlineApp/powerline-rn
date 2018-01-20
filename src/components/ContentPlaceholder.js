@@ -15,13 +15,13 @@ const styles = {
     }
 };
 
-const ContentPlaceholder = ({ empty, title, children, ...otherProps }) => {
+const ContentPlaceholder = ({ empty, title, children, refreshControl, ...otherProps }) => {
     if (empty) {
         otherProps.contentContainerStyle = StyleSheet.flatten(styles.container);
     }
 
     return (
-        <Content {...otherProps}>
+        <Content {...otherProps} refreshControl={refreshControl}>
             {
         empty ?
             <View style={styles.container}>

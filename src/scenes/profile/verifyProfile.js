@@ -75,7 +75,7 @@ class VerifyProfile extends Component {
     }
 
     onAutoComplete = (data, details) => {
-        console.log('!!!!!!!!!!!!!!!')
+        // console.log('!!!!!!!!!!!!!!!')
         this.setState({
             address1: "",
             state: "",
@@ -216,11 +216,10 @@ class VerifyProfile extends Component {
                         </Button>
                     </View>
                     <View style={{flex: 10}}>
-                        <Thumbnail source={{uri: this.state.user.avatar_file_name}} style={{marginTop: 8, borderRadius: 25}}>
-                            <View style={{position: 'absolute', alignSelf:'center', borderRadius: 25, flex: 1, zIndex: 3, marginTop: 16}}>
-                                <ImageSelector onConfirm={(i) => this.updateUserAvatar(i)} iconSize={20} iconColor='#000' onError={err => console.log(err)}/>
-                            </View> 
-                        </Thumbnail>
+                        <Thumbnail source={{uri: this.state.user.avatar_file_name}} style={{marginTop: 8, borderRadius: 25}} />
+                        <View style={{position: 'absolute', alignSelf:'center', borderRadius: 25, flex: 1, zIndex: 3, marginTop: 16}}>
+                            <ImageSelector onConfirm={(i) => this.updateUserAvatar(i)} iconSize={20} iconColor='#000' onError={err => console.log(err)}/>
+                        </View> 
                     </View>
                 </View>
                 <Card>

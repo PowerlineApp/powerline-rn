@@ -65,7 +65,7 @@ class FriendActivity extends Component {
 
     subscribe(item) {
         Share.share({
-            message: item.description,
+            message: item.body,
             title: ""
         });
     }

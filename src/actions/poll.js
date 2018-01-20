@@ -82,7 +82,7 @@ async function loadPollByEntityId(token, entityId) {
 // trying new req pattern
 function createPoll(token, groupId, body){
     console.log('creating poll - ', `${API_URL}/v2/groups/${groupId}/polls`, token, groupId, body)
-    return fetch(`${API_URL}/v2/groups/${groupId}/polls`, {
+    return fetch(`${API_URL}/v2.2/groups/${groupId}/polls`, {
         method: 'POST',
         headers: {
             'token': token,
