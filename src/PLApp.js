@@ -26,8 +26,10 @@ import RegisterScene  from './scenes/auth/RegisterScene';
 import TourScene from './scenes/auth/TourScene';
 import {Root} from 'native-base';
 import { RNSKBucket } from 'react-native-swiss-knife';
+import {CachedImage} from "react-native-img-cache";
 
-
+console.log = () => {};
+console.warn = () => {};
 // import OneSignal from 'react-native-onesignal';
 // console.log = (a1, a2, a3) => {
 //     let str = a1 ? typeof a1 === 'object' ? JSON.stringify(a1, null, '    ') : a1 || '' : ``;
@@ -58,6 +60,8 @@ class PLApp extends Component {
             } else {
                 this.setState({splash: false});
             }
+        } else {
+            this.setState({splash: false});
         }
         Stripe.init({
             publishableKey: stripeAPIKey
@@ -82,11 +86,15 @@ class PLApp extends Component {
     }
 
     render () {
+        console.log(this.state.splash);
         if (this.state.splash === null) return null;
         if (this.state.splash){
+            console.log('splash ===>', this.state.splash);
             return <View style={{flex: 1, backgroundColor: '#fff'}}>
                 {/* <Text>This is my fake SplashScreen</Text> */}
-                <Image source={{uri: this.state.splash}} onError={() => this.setState({splash: false})} />
+                <CachedImage style={{flex: 1}} source={{ uri: this.state.splash }} />
+
+                {/* <Image source={{uri: this.state.splash}} onError={() => this.setState({splash: false})} /> */}
             </View>;
         }
         return <Root>
