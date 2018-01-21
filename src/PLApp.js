@@ -28,8 +28,9 @@ import {Root} from 'native-base';
 import { RNSKBucket } from 'react-native-swiss-knife';
 import {CachedImage} from "react-native-img-cache";
 
-console.log = () => {};
-console.warn = () => {};
+// console.log = () => {};
+// console.warn = () => {};
+
 // import OneSignal from 'react-native-onesignal';
 // console.log = (a1, a2, a3) => {
 //     let str = a1 ? typeof a1 === 'object' ? JSON.stringify(a1, null, '    ') : a1 || '' : ``;

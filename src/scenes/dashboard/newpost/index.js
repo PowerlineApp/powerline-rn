@@ -56,6 +56,7 @@ import CommunityView from '../../../components/CommunityView';
 // import { setTimeout } from 'timers';
 const POST_MAX_LENGTH = 5000;
 import {Mixpanel} from 'PLEnv';
+// import { isNumber } from 'util';
 
 class NewPost extends Component {
     constructor(props) {
@@ -67,7 +68,7 @@ class NewPost extends Component {
             grouplist: [],
             selectedGroupIndex: -1,
             content: '',
-            posts_remaining: null,
+            posts_remaining: 0,
             displaySuggestionBox: false,
             suggestionSearch: '',
             groupUsers: [],
@@ -108,6 +109,24 @@ class NewPost extends Component {
                 grouplist: ret.payload,
                 showCommunity, selectedGroupIndex
             });
+            if (selectedGroupIndex !== -1){
+
+                getPetitionConfig(token, this.state.grouplist[selectedGroupIndex].id)
+                .then(data => {
+                    console.log('===========================');
+                    console.log('=>>>>>>>>>>>>', data);
+                    console.log('===========================');
+                    this.setState({
+                        posts_remaining: data.posts_remaining
+                    });
+                })
+                .catch(err => {
+                    console.log('===========================');
+                    console.log('=>>>>>>>>>>>>', err);
+                    console.log('===========================');
+                });
+            }
+            
 
         }).catch(err => {
             
@@ -164,6 +183,9 @@ class NewPost extends Component {
 
         getPetitionConfig(token, this.state.grouplist[index].id)
             .then(data => {
+                console.log('===========================');
+                console.log('=>>>>>>>>>>>>', data);
+                console.log('===========================');
                 this.setState({
                     posts_remaining: data.posts_remaining
                 });
@@ -176,10 +198,10 @@ class NewPost extends Component {
     createPost() {
         var { token } = this.props;
         var groupId = null;
-        // if (this.state.posts_remaining <= 0){
-        //     alert('You do not have any posts left in this group');
-        //     return;
-        // }
+        if (this.state.posts_remaining <= 0){
+            alert('You do not have any posts left in this group');
+            return;
+        }
         if (this.state.sending) return;
         this.setState({sending: true});
         
@@ -448,7 +470,7 @@ class NewPost extends Component {
                         }
                         <Footer style={{ maxHeight: 64, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: PLColors.main, paddingLeft: 10, paddingRight: 10 }}>
                             {
-                                this.state.posts_remaining
+                                (this.state.posts_remaining || this.state.posts_remaining === 0)
                             ? <Label style={{ color: 'white', fontSize: 10 }}>
                                 You have <Label style={{ fontWeight: 'bold' }}>{this.state.posts_remaining}</Label> posts left in this group
                             </Label>

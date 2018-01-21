@@ -215,7 +215,7 @@ class ItemDetail extends Component {
         //     type = 'user_petition'
         // }
 
-        let imgURL = entity.share_picture //entity[type].facebook_thumbnail;
+        let imgURL = entity.facebook_thumbnail //entity[type].facebook_thumbnail;
 
         // console.log(imgURL);
 

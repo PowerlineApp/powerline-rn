@@ -60,7 +60,7 @@ class NewPetition extends Component {
             selectedGroupIndex: -1,
             title: "",
             content: "",
-            petition_remaining: null,
+            petition_remaining: 0,
             mentionEntry: null,
             suggestionSearch: '',
             groupUsers: [],
@@ -93,6 +93,18 @@ class NewPetition extends Component {
             this.setState({
                 grouplist: ret.payload,
                 showCommunity, selectedGroupIndex
+            });
+            getPetitionConfig(token, this.state.grouplist[index].id)
+            .then(data => {
+                console.log('===========================');
+                console.log('=>>>>>>>>>>>>', data);
+                console.log('===========================');
+                this.setState({
+                    petition_remaining: data.petition_remaining
+                });
+            })
+            .catch(err => {
+
             });
     
         }).catch(err => {
@@ -416,8 +428,8 @@ class NewPetition extends Component {
                             this.renderAttachments()
                         }
                     <Footer style={{ maxHeight: 64, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: PLColors.main, paddingLeft: 10, paddingRight: 10 }}>
-                        {
-                                this.state.posts_remaining
+                    {
+                                (this.state.petition_remaining || this.state.petition_remaining === 0)
                             ? <Label style={{ color: 'white', fontSize: 10 }}>
                                 You have <Label style={{ fontWeight: 'bold' }}>{this.state.petition_remaining}</Label> petitions left in this group
                             </Label>

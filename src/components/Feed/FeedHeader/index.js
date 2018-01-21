@@ -229,7 +229,9 @@ class FeedHeader extends Component {
         let canSpam = false;
 
         // console.log(this.props, isAuthor, item.user.id, this.props.userId, item.user.id === this.props.userId);
-
+        console.log('=============================');
+        console.log('item.user', item.owner, item.id);
+        console.log('=============================');
         switch (item.type) {
         case 'post':
         case 'user-petition':
