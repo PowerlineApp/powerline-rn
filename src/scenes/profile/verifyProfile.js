@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { View, TextInput, TouchableOpacity, Alert, ScrollView, BackHandler, ActivityIndicator } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import { connect } from 'react-redux';
 import {
@@ -41,6 +41,8 @@ class VerifyProfile extends Component {
             country: props.profile.country,
             user: {}
         };
+
+        this.backHandler = BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
     }
 
     componentDidMount(){
@@ -55,15 +57,30 @@ class VerifyProfile extends Component {
         });
     }
 
+    handleBackPress = () => {
+        if (this.state.showPhoneScreen){
+            this.setState({showPhoneScreen: false});
+            return true;
+        } else {
+            Actions.pop()
+            return true;
+        }
+        return false;
+    }
+
     updateUser() {
-        let {zip, address1, address2, city, state, email, country, phone} = this.state
+        let {zip, address1, address2, city, state, email, country, phone} = this.state;
+        this.setState({loading: true})
         updateUserProfile(this.props.token, {zip, address1, address2, city, state, email, country, phone})
-            .then(response => {
-                console.log(response)
-                Actions.pop();
-                Actions.profile();
-            })
-            .catch(err => console.log(err));
+        .then(response => {
+            this.setState({loading: false})
+            console.log(response)
+            Actions.pop();
+            Actions.profile();
+        })
+        .catch(err => {
+            this.setState({loading: false})
+            console.log(err)});
     }
 
     updateUserAvatar(image) {
@@ -217,18 +234,20 @@ class VerifyProfile extends Component {
                     </View>
                     <View style={{flex: 10}}>
                         <Thumbnail source={{uri: this.state.user.avatar_file_name}} style={{marginTop: 8, borderRadius: 25}} />
-                        <View style={{position: 'absolute', alignSelf:'center', borderRadius: 25, flex: 1, zIndex: 3, marginTop: 16}}>
+                        {/* <View style={{position: 'absolute', alignSelf:'center', borderRadius: 25, flex: 1, zIndex: 3, marginTop: 16}}>
                             <ImageSelector onConfirm={(i) => this.updateUserAvatar(i)} iconSize={20} iconColor='#000' onError={err => console.log(err)}/>
-                        </View> 
+                        </View>  */}
                     </View>
                 </View>
-                <Card>
-                    <List style={{alignItems: 'center', justifyContent: 'center'}}>
+                <Card style={{alignItems: 'center'}}>
+                    {/* <List style={{alignItems: 'center', justifyContent: 'center'}}> */}
+                    <ScrollView contentContainerStyle={{alignItems: 'center', paddingBottom: 20}}>
+
                         <View style={{padding: 20}}>
                             <Label>Verify or Complete your data</Label>
                         </View>
 
-                        <GooglePlacesAutocomplete
+                        {/* <GooglePlacesAutocomplete
                             placeholder='Street Address'
                             minLength={2}
                             autoFocus={false}
@@ -257,8 +276,8 @@ class VerifyProfile extends Component {
                             nearbyPlacesAPI='GoogleReverseGeocoding'
                             filterReverseGeocodingByTypes={['street_number', 'route','neighborhood', 'locality','administrative_area_level_1','country','postal_code']}
                             debounce={200}
-                    />
-                        <View style={styles.fieldContainer}>
+                    /> */}
+                        {/* <View style={styles.fieldContainer}> */}
                             <TextInput
                                 placeholder='Zipcode'
                                 style={styles.textInput}
@@ -266,9 +285,8 @@ class VerifyProfile extends Component {
                                 value={zip}
                                 onChangeText={(v) => this.onChange(v, 'zip')}
                                 underlineColorAndroid={'transparent'}
-                        />
-                        </View>
-                        <View style={styles.fieldContainer}>
+                                />
+                        {/* </View> */}
                             <TextInput
                                 placeholder='City'
                                 style={styles.textInput}
@@ -277,8 +295,6 @@ class VerifyProfile extends Component {
                                 onChangeText={(v) => this.onChange(v, 'city')}
                                 underlineColorAndroid={'transparent'}
                         />
-                        </View>
-                        <View style={styles.fieldContainer}>
                             <TextInput
                                 placeholder='State'
                                 style={styles.textInput}
@@ -287,8 +303,6 @@ class VerifyProfile extends Component {
                                 onChangeText={(v) => this.onChange(v, 'state')}
                                 underlineColorAndroid={'transparent'}
                         />
-                        </View>
-                        <View style={styles.fieldContainer}>
                             <TextInput
                                 placeholder='Country'
                                 style={styles.textInput}
@@ -297,8 +311,6 @@ class VerifyProfile extends Component {
                                 onChangeText={(v) => this.onChange(v, 'country')}
                                 underlineColorAndroid={'transparent'}
                         />
-                        </View>
-                        <View style={styles.fieldContainer}>
                             <TextInput
                                 placeholder='Email'
                                 style={styles.textInput}
@@ -307,23 +319,30 @@ class VerifyProfile extends Component {
                                 onChangeText={(v) => this.onChange(v, 'email')}
                                 underlineColorAndroid={'transparent'}
                             />
-                        </View>
+
                         <View style={styles.fieldContainer}>
                             <View style={{flex: 1, justifyContent: 'center'}}>
                             <TouchableOpacity onPress={() => this.validatePhone()}>
                                 <Text style={styles.autoTextInput} >{phone || 'Enter phone'}</Text>
                             </TouchableOpacity>
                             </View>
-                        </View>
+                        </View> 
                         <View style={{padding: 20}}>
                             <Text style={{fontSize: 10, color: 'grey'}}>We may occasionally contact you via e-mail, but we will never sell your information.</Text>
                         </View>
-                    </List>
-                </Card>
+                    {/* </List> */}
+                    {
+                        this.state.loading
+                        ? <ActivityIndicator color={'#fff'} animating={this.state.sending} />
+                        : 
                         <PLButton
-                            caption={'Update profile'}
-                            onPress={() => this.updateUser()}
+                        caption={'Update profile'}
+                        onPress={() => this.updateUser()}
                         />
+                    }
+                    </ScrollView>
+                    
+                </Card>
             </Content>
         );
     }
@@ -360,12 +379,21 @@ const styles = {
         color: '#ff0000'
     },
     textInput: {
+        marginTop: 5,
+        borderRadius: 5,
+        borderWidth: 0.5,
+        width: '80%',
+        minWidth: 300,
+        borderColor: PLColors.textInputBorder,
+        paddingHorizontal: 10,
+        backgroundColor: PLColors.textInputBackground,
+
         height: 44,
         fontSize: 14,
         color: PLColors.lightText,
-        flex: 1,
-        margin: 0,
-        backgroundColor: 'transparent'
+        // flex: 1,
+        // margin: 0,
+        // backgroundColor: 'transparent'
     },
     fieldContainer: {
         marginTop: 5,
@@ -373,6 +401,7 @@ const styles = {
         borderRadius: 5,
         borderWidth: 0.5,
         width: '80%',
+        minWidth: 300,
         borderColor: PLColors.textInputBorder,
         justifyContent: "center",
         paddingHorizontal: 10,

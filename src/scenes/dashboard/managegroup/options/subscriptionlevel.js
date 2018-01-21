@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Label as NSLabel, Button, Spinner } from 'native-base';
-import { View, Text, Alert, TextInput } from 'react-native';
+import { View, Text, Alert, TextInput, ActivityIndicator } from 'react-native';
 import { exportReports } from 'PLActions';
 import { Actions } from 'react-native-router-flux';
 import { Label, Level, Input, PopupLabel } from '../components';
@@ -42,7 +42,8 @@ class SubscriptionLevel extends Component {
         super();
         this.state={
             nextLevel: null,
-            referral: ''
+            referral: '',
+            loading: false
         };
     }
     componentDidMount() {
@@ -51,6 +52,8 @@ class SubscriptionLevel extends Component {
         this.props.getCards(group.id);
     }
 
+
+    
     onSuccess(){
         showToast('Subscription updated');
         this.setState({loading: false});
@@ -75,7 +78,7 @@ class SubscriptionLevel extends Component {
 
     selectSubscription (level, hasCard) {
         if (!hasCard){
-            alert('Please add a payment method before selecting a subscription');
+            Actions.groupBankAccountScene({group: this.props.group});
             return;
         }
         this.setState({nextLevel: level});

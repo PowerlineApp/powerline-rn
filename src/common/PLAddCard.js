@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet,  } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { connect } from 'react-redux';
 import Stripe, {PaymentCardTextField} from 'tipsi-stripe';
 import {
@@ -187,6 +187,8 @@ class PLAddCard extends Component {
                             <Input placeholderTextColor={'#ccc'} placeholder='90210' value={this.state.addressZip} onChangeText={text => this.inputChanged('addressZip', text)} />
                         </Item>
                     </View>
+                    <Agreement />
+
                     <Text style={styles.errorMessage}>{this.state.error}</Text>
                     <Button disabled={this.state.loading} block style={styles.submitButtonContainer} onPress={() => this.save(this.state)}>
                         <Label style={{color: 'white'}}>{this.state.loading ? 'Loading' : 'Save'}</Label>
@@ -214,6 +216,36 @@ const styles = {
         color: '#D00'
     }
 };
+
+const Agreement = () => (
+    <View>
+        <View style={{padding: 3, paddingBottom: 10}}>
+            <Text
+                style={{fontSize: 12, color: 'grey'}}
+            >
+                By setting up your payment information, you agree to our
+                <Text
+                    style={{fontSize: 12, color: 'blue'}}
+                    onPress={() => Linking.openURL('https://www.powerli.ne/terms')}
+                >
+                    {''} Terms of Service {''} 
+                </Text>
+                and the
+                <Text
+                    style={{fontSize: 12, color: 'blue'}}
+                    onPress={() => Linking.openURL('https://stripe.com/us/connect-account/legal')}
+                >
+                    {''} Stripe Connected Account Agreement
+                </Text>
+                .
+            </Text>
+        </View>
+        <TouchableOpacity style={{flexDirection: 'row'}} onPress={() => Linking.openURL('https://stripe.com/us/connect-account/legal')}>
+            <Image source={require('../assets/powered_by_stripe.png')} style={{height: 50, flex: 1, borderRadius: 25}} />
+            <Image source={require('../assets/comodo_logo.jpg')} style={{height: 50, flex: 1,  borderRadius: 25}} />
+        </TouchableOpacity>
+    </View>
+);
 
 const mapStateToProps = (state) => ({
     user: state.user.profile

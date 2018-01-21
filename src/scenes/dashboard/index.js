@@ -19,6 +19,7 @@ import { openDrawer } from '../../actions/drawer';
 import styles from './styles';
 
 import {
+    getAgency,
     loadUserProfile,
     loadActivities,
     setGroup,
@@ -53,6 +54,7 @@ import ShareExtension from 'react-native-share-extension';
 import OneSignal from 'react-native-onesignal';
 var DeviceInfo = require('react-native-device-info');
 import {Mixpanel} from '../../PLEnv';
+// import { get } from 'http';
 
 
 const isIOS = Platform.OS === 'ios';
@@ -150,6 +152,7 @@ class Home extends Component {
 
     componentWillMount() {
         const { props: { profile, token, dispatch } } = this;
+        this.preCacheAgencyImages();
         
         OneSignal.configure();
         
@@ -189,6 +192,19 @@ class Home extends Component {
                         Actions.share({ token: this.props.token});
                 }
             });
+    }
+
+    preCacheAgencyImages(){
+        getAgency(this.props.token)
+        .then(r => {
+            console.log('=> agency', r)
+            if (r.splash_screen){
+                AsyncStorage.setItem('splashScreen', r.splash_screen);
+            }
+        })
+        .catch(e => {
+            console.log(e)
+        })
     }
 
     onReceived(data) {

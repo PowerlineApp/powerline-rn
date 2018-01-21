@@ -30,7 +30,7 @@ import {
     Input,
     View
 } from 'native-base';
-import { RefreshControl, TouchableOpacity, Image, WebView, Platform } from 'react-native';
+import { RefreshControl, TouchableOpacity, Image, WebView, Platform, FlatList } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 import styles , { sliderWidth, itemWidth } from './styles';
 const PLColors = require('PLColors');
@@ -90,9 +90,9 @@ class Profile extends Component{
         });
 
         loadActivitiesByUserId(token, 1, 20, null, id || loggedUserId).then(data => {
-            // console.log('res ---', data);
+            console.log('res ---', data);
             this.setState({
-                activities: data.payload
+                activities: data.data.items
             });
         })
         .catch(err => {
@@ -213,10 +213,17 @@ class Profile extends Component{
         const { selected } = this.state;
         if(selected === 'My Posts') {
             return (
-                <List dataArray={this.state.activities} renderRow={item => {
-                    return <FeedActivity item={item} token={this.props.token} profile={this.props.profile} />
-                }}
-                />
+                <FlatList 
+                        data={this.state.activities}
+                        refreshing={false}
+                        initialNumToRender={3}
+                        style={{ marginBottom: 48 }}
+                        renderItem={(item) => <FeedActivity key={item.id} item={item.item} token={this.props.token} profile={this.props.profile} />}
+                    /> 
+                // <List dataArray={this.state.activities} renderRow={item => {
+                //     return <FeedActivity item={item} token={this.props.token} profile={this.props.profile} />
+                // }}
+                // />
             )
         }
         if(selected === 'My Info') {
@@ -235,35 +242,35 @@ class Profile extends Component{
     }
     // It would appear that the below is the User Profile Screen GH44
     render(){
-        // console.log('USER', this.state.user)
+        console.log('USER', this.state)
         let isOwnUser = !this.props.id;
-        // console.log(isOwnUser);
+        console.log('isOwnUser', isOwnUser, this.state.activities);
         return (
             <MenuContext customStyles={menuContextStyles}>
                 <Container style={styles.container}> 
                     {this.state.user?      
                     <View style={{backgroundColor: PLColors.main}}>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingTop: 20 }}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingTop: 12 }}>
                             <View>                            
                                 <Button transparent onPress={() => Actions.pop()}>
                                     <Icon active name="arrow-back" style={{color: 'white'}}/>
                                 </Button>                           
                             </View>
                                 <View style={{flexDirection: 'row', width: 100}}>
-                                {this.state.following_status === 'active' &&
+                                {!isOwnUser && this.state.following_status === 'active' &&
                                     <Button transparent onPress={() => this.mute()}>
                                         <Icon active name="md-volume-off" style={{ color: 'white' }} />
                                     </Button>}
                                     <Button transparent onPress={() => this.follow()}>                              
                                         <View  style={{flexDirection: 'row', backgroundColor: 'white', padding: 1, width: 28, height: 28, borderRadius: 24, borderWidth: 1, borderColor: '#11c1f3'}}>
-                                            {this.state.following_status == 'pending'?
+                                            {!isOwnUser && this.state.following_status == 'pending'?
                                             <Icon name="ios-person" style={{marginLeft: 5, fontSize: 20, color: PLColors.lightText}}/> 
                                             :
                                             <Icon name="ios-person" style={{marginLeft: 5,fontSize: 20, color: '#11c1f3'}}/>   
                                             } 
-                                            {this.state.following_status == 'active'?                                            
+                                            {!isOwnUser && this.state.following_status == 'active'?                                            
                                             <Icon name="remove-circle" style={{marginLeft: -3,fontSize: 8, color: PLColors.lightText, marginTop: 13}}/>:
-                                            this.state.following_status == 'pending'?
+                                            !isOwnUser && this.state.following_status == 'pending'?
                                             <Icon name="ios-clock-outline" style={{marginLeft: -3,fontSize: 8, color: '#11c1f3', marginTop: 13}}/>:
                                             <Icon name="add-circle" style={{marginLeft: -3,fontSize: 8, color: PLColors.lightText, marginTop: 13}}/>
                                             }
@@ -272,15 +279,16 @@ class Profile extends Component{
                                 </View>
                         </View> 
                         <View style={{justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}>
+
+                            <Thumbnail source={{uri: this.state.user.avatar_file_name}} style={{marginBottom: 8, borderRadius: 25}}>
+                                
+                            </Thumbnail>       
                             { this.state.selected === "My Info"
-                                ? <View style={{position: 'absolute', borderRadius: 25, flex: 1, zIndex: 3,  }}>
+                                ? <View style={{position: 'absolute', borderRadius: 25, flex: 1, zIndex: 3000, backgroundColor: '#f0f', height: 20, width: 20  }}>
                                     <ImageSelector onConfirm={this.updateUserAvatar} iconSize={27} iconColor='#fff' onError={err => console.log(err)}/>
                                 </View> 
                                 : null
                             }
-                            <Thumbnail source={{uri: this.state.user.avatar_file_name}} style={{marginBottom: 8, borderRadius: 25}}>
-                                
-                            </Thumbnail>       
                         </View>
                         <View style={{justifyContent: 'center', alignItems: 'center'}}>
                             <Text style={{color: 'white', fontSize: 16, fontWeight: 'bold'}}>{this.state.user.first_name} {this.state.user.last_name}</Text>

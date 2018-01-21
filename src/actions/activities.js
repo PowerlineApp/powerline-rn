@@ -22,7 +22,7 @@ async function getActivities2(token, groupId, user, followed, cursor, type, id) 
     }
     let nextCursor = headers.get('X-Cursor-Next');
     let json = await res.json();
-    // console.log('json respnse', json)
+    console.log('\nresponse => ', res, '\njson => ', json,'\nheaders => ', headers)
     let action = {
         type: 'LOADED_ACTIVITIES',
         data: {
@@ -142,6 +142,7 @@ function resetActivities(): ThunkAction {
 }
 
 function loadActivitiesByUserId(token, page = 0, per_page = 20, group = 'all', user) {
+    return getActivities2(token, null, user, null)
     // console.log(token, page, per_page, group, user)
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2/activities?_format=json&user=' + user + '&group=' + group + '&page=' + page + '&per_page=' + per_page, {

@@ -207,15 +207,15 @@ class ItemDetail extends Component {
         this.setState({sharing: true});
         showToast('Generating poster now...');
 
-        let type = 'poll';
-        if (entity.post) {
-            type = 'post';
-        }
-        if (entity.user_petition){
-            type = 'user_petition'
-        }
+        // let type = 'poll';
+        // if (entity.post) {
+        //     type = 'post';
+        // }
+        // if (entity.user_petition){
+        //     type = 'user_petition'
+        // }
 
-        let imgURL = entity[type].facebook_thumbnail;
+        let imgURL = entity.share_picture //entity[type].facebook_thumbnail;
 
         // console.log(imgURL);
 
@@ -289,7 +289,13 @@ class ItemDetail extends Component {
 
     async loadItem(token, type, entityId, entityType){
             console.log('type => ', type, this.props)
-            this.item = this.props.item || await loadActivityByEntityId(token, type === 'post' ? 'post' : type === 'user-petition' ? 'user-petition' : 'poll' , entityId);
+            if (this.props.item){
+                this.item = this.props.item
+            } else {
+
+                this.item = await loadActivityByEntityId(token, type === 'post' ? 'post' : type === 'user-petition' ? 'user-petition' : 'poll' , entityId);
+            }
+            
             // this.item = action.data.payload[0];
             // if (type !== 'petition' && type !== 'post'){
             //     data = await loadPollByEntityId(token, entityId)
@@ -960,13 +966,13 @@ class ItemDetail extends Component {
     
     _renderGroupCard(item) {
         return (
-                <Card>
+                <View style={{backgroundColor: '#fff', padding: 0}}>
                     <FeedDescription item={item} profile={this.props.profile} isInDetail />
                     <FeedCarousel item={item} />
                     <Options onVote={() => this.loadEntity()} item={item} profile={this.props.profile} token={this.props.token} />
                     <View style={styles.borderContainer} />
                     <FeedFooter isInDetail item={item} profile={this.props.profile} token={this.props.token} showAnalytics />
-                </Card>
+                </View>
         );
     }
 
@@ -995,13 +1001,13 @@ class ItemDetail extends Component {
 
     renderFloatingActionButton(item){
         let group = item.group;
-        if (group && group.group_type_label !== "local"
-            && item.group.group_type_label !== "state"
-            && item.group.group_type_label !== "country"
-            && item.user.id !== this.props.profile.id)
-            {
-                return null;
-            }
+        // if (group.group_type !== "local"
+        //     && item.group.group_type !== "state"
+        //     && item.group.group_type !== "country"
+        //     && item.owner.id !== this.props.profile.id)
+        //     {
+        //         return null;
+        //     }
 
         return (
             <FloatingAction
@@ -1075,7 +1081,7 @@ class ItemDetail extends Component {
                                 </Button>
                                 <Body style={{ marginTop: -12 }}>
                                     <TouchableOpacity onPress={() => Actions.groupprofile({id: item.group.id})} style={{alignContent: 'center', alignItems: 'center'}} >
-                                        <Thumbnail size={50} source={item.group.avatar_file_path ? { uri: item.group.avatar_file_path + '&w=200&h=200&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                                        <Thumbnail size={50} source={item.group.avatar ? { uri: item.group.avatar + '&w=200&h=200&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                                         <Text style={styles.imageTitle} >{item.group.official_name}</Text>
                                     </TouchableOpacity>
                                 </Body>

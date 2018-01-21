@@ -56,6 +56,7 @@ class Register extends React.Component{
             zip: isFb? fbData.zip: "",
             country: isFb? fbData.country : '',
             email: isFb? fbData.email: "",
+            agency: '',
             countryCode: '+1',
             is_over_13: false,
             position: 0,
@@ -139,6 +140,9 @@ class Register extends React.Component{
 
     onChangeEmail = email => {
         this.setState({ email: email });
+    }
+    onChangeAgency = agency => {
+        this.setState({ agency: agency });
     }
 
     onChangeSwitch = is_over_13 => {
@@ -297,7 +301,7 @@ class Register extends React.Component{
     }
 
     renderBasic = () => {
-        var { first_name, last_name, username, email, position } = this.state;
+        var { first_name, last_name, username, email, position, agency } = this.state;
         var { isFb } = this.props;
         return (
             <ScrollView style={styles.container}>
@@ -348,6 +352,7 @@ class Register extends React.Component{
                             placeholder="Email"
                             style={styles.textInput}
                             autoCorrect={false}
+                            autoCapitalize={false}
                             value={email}
                             onChangeText={this.onChangeEmail}
                             onEndEditing={this.onConfirmEmail}
@@ -357,6 +362,17 @@ class Register extends React.Component{
                             <Image source={require('img/envelope.png')} style={styles.icon}/>
                         </View>
                     </View>
+                    <View style={styles.fieldContainer}>
+                        <TextInput
+                            placeholder="Agency Code"
+                            style={styles.textInput}
+                            autoCorrect={false}
+                            autoCapitalize={false}
+                            value={agency}
+                            onChangeText={this.onChangeAgency}
+                            underlineColorAndroid={'transparent'}
+                        />
+                    </View> 
                     <View style={styles.markContainer}>
                         <View style={styles.markWrapper}>
                             <View style={[styles.markItem, styles.markActiveItem]}></View>
@@ -449,7 +465,7 @@ class Register extends React.Component{
     async onRegister(){
         this.setState({loading: true})
         if (this.state.registered) return;
-        let { first_name, last_name, code, email, username, zip, country, phone, countryCode} = this.state;
+        let { first_name, last_name, code, email, username, zip, country, phone, countryCode, agency} = this.state;
         let { onLoggedIn, isFb, fbData, tour } = this.props;
         let data = {
             username,
@@ -460,7 +476,7 @@ class Register extends React.Component{
             phone: countryCode + phone,
             zip,
             code,
-            agency: 'r5oq01l2'
+            agency
         }
         return register2(data).then(r => {
             console.log('register success', r);

@@ -233,13 +233,13 @@ class FeedHeader extends Component {
         switch (item.type) {
         case 'post':
         case 'user-petition':
-            thumbnail = (item.owner || item.user).avatar || '';
+            thumbnail = item.user.avatar || '';
             title = item.user.first_name + item.user.last_name;//item.owner ? item.owner.first_name : '' + ' ' + item.owner ? item.owner.last_name : '';
             canInviteUpvoters = isBoosted;
             canSpam = true;
             break;
         default:
-            thumbnail = item.group && item.group.avatar_file_path ? item.group && item.group.avatar_file_path : '';
+            thumbnail = item.group && item.group.avatar ? item.group.avatar : '';
             title = item.user.first_name + item.user.last_name;//item.owner ? item.owner.first_name : '' + ' ' + item.owner ? item.owner.last_name : '';
             break;
         }

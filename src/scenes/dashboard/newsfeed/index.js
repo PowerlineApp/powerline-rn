@@ -95,7 +95,7 @@ class Newsfeed extends Component {
         // console.warn('componentDidMount', this.props.payload.length)
         console.warn('last offset: ====>', this.props.lastOffset, this.props.payload.length)
         setTimeout(() => {
-            this.flatListRef.scrollToOffset({offset: this.props.lastOffset, animated: true})
+            this.flatListRef && this.flatListRef.scrollToOffset({offset: this.props.lastOffset, animated: true})
         }, 1000)       
 
     }
@@ -142,7 +142,7 @@ class Newsfeed extends Component {
         const { props: { token, page, dispatch } } = this;
         const {group} = this.props.selectedGroup;
         try {
-            let activities = await getActivities2(token, group, 0, 0, this.props.cursor);
+            let activities = this.props.cursor ? await getActivities2(token, group, 0, 0, this.props.cursor) : {type: ''}
             console.log('got activities', activities.type);
 
             dispatch(activities);
@@ -157,7 +157,7 @@ class Newsfeed extends Component {
             
             const message = e.message || e;
             if (typeof message === 'string') {
-                alert('Timed out. Please check internet connection');
+                alert('Timed out. Please check internet connection' + message);
             }
         } finally {
             this.setState({ isLoadingTail: false });

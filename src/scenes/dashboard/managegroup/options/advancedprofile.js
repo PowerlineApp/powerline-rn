@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 
-import { Text, View } from 'react-native';
+import { Text, View, ActivityIndicator } from 'react-native';
 import {
   Button,
   Label as NSLabel
@@ -9,10 +9,14 @@ import { updateProfileSetup, getGroupAdvancedAttributes, groupAdvancedAttribsInp
 
 import { Label, Input, PopupLabel } from '../components';
 import styles from '../styles';
+import { showToast } from '../../../../utils/toast';
 
 class AdvancedProfile extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+          loading: false
+        }
         this.inputChange = this.inputChange.bind(this)
     }
   componentWillMount() {
@@ -20,10 +24,22 @@ class AdvancedProfile extends Component {
     dispatch(getGroupAdvancedAttributes(id))
   }
 
-  saveProfile = () => {
-    const { data, group: { id }, dispatch } = this.props;
+  onSuccess = () => {
+      this.setState({loading: false});
+      showToast('Update success!')
 
-    dispatch(updateGroupAdvancedAttributes(id, data));
+    } 
+  onFail = () => {
+      this.setState({loading: false});
+      showToast('Update failed')
+  } 
+
+  saveProfile = () => {
+    const { data, group: { id }, dispatch, loading } = this.props;
+    let cb = {onSucces: this.onSuccess, onFail: this.onFail}
+    this.setState({loading: true})
+
+    dispatch(updateGroupAdvancedAttributes(id, data, cb));
   }
 
   inputChange(key, prop) {
@@ -46,10 +62,13 @@ class AdvancedProfile extends Component {
             value={this.props.data ? this.props.data.welcome_video : ''}
           onChangeText={text => this.inputChange('welcome_video', text)}
         />
-
-        <Button block style={styles.submitButtonContainer} onPress={this.saveProfile}>
-          <NSLabel style={styles.submitButtonText}>Save</NSLabel>
-        </Button>
+        {
+          this.state.loading
+          ? <ActivityIndicator style={{marginTop: 20, marginBottom: 12}} color={'#020860'} animating={this.state.loading} /> 
+          : <Button block style={styles.submitButtonContainer} onPress={this.saveProfile}>
+                <NSLabel style={styles.submitButtonText}>Save</NSLabel>
+            </Button>
+        }
       </View>
     );
   }

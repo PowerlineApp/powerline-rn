@@ -15,11 +15,12 @@ import {
   Icon,
   Label as NSLabel
 } from 'native-base';
-import { View, Text } from 'react-native';
+import { View, Text, ActivityIndicator } from 'react-native';
 import { getUserContentSettings, updateUserContentSettings } from 'PLActions';
 
 import { Label, Input, PopupLabel } from '../components';
 import styles from '../styles';
+import { showToast } from '../../../../utils/toast';
 
 class UserContentSettings extends Component {
   static propTypes = {
@@ -30,6 +31,7 @@ class UserContentSettings extends Component {
     petition_per_month: "30",
     petition_percent: "10",
     petition_duration: "7",
+    loading: false
   };
 
   componentDidMount = async () => {
@@ -44,8 +46,20 @@ class UserContentSettings extends Component {
     })
   }
 
+  onSuccess = () => {
+    this.setState({loading: false});
+    showToast('Update success!')
+
+  } 
+onFail = () => {
+    this.setState({loading: false});
+    showToast('Update failed')
+} 
+
+
   saveSettings = () => {
     const { token, dispatch, groupId } = this.props;
+    let cb = {onSucces: this.onSuccess, onFail: this.onFail}
 
     if (
       !this.state.petition_per_month &&
@@ -56,7 +70,7 @@ class UserContentSettings extends Component {
       return;
     };
 
-    dispatch(updateUserContentSettings(token, groupId, this.state));
+    dispatch(updateUserContentSettings(token, groupId, this.state, cb));
   }
 
   render() {
@@ -68,7 +82,7 @@ class UserContentSettings extends Component {
 
     return (
       <View>
-        <Label small>Number of posts or petitions per user per month{'\n'}(choose value between 1 and 1000)</Label>
+        <Label small>Number of posts or petitions per user per month{'\n'}(choose value between 30 and 1000)</Label>
         <Input
           maxLength={3}
           keyboardType="numeric"
@@ -76,7 +90,7 @@ class UserContentSettings extends Component {
           onChangeText={petition_per_month => this.setState({ petition_per_month })}
         />
 
-        <Label small>Auto-boosting percentage{'\n'}(choose value between 1 and 50)</Label>
+        <Label small>Auto-boosting percentage{'\n'}(choose value between 30 and 50)</Label>
         <Input
           maxLength={2}
           keyboardType="numeric"
@@ -84,17 +98,20 @@ class UserContentSettings extends Component {
           onChangeText={petition_percent => this.setState({ petition_percent })}
         />
 
-        <Label small>Post expiration in days{'\n'}(choose value between 1 and 30)</Label>
+        <Label small>Post expiration in days{'\n'}(choose value between 10 and 30)</Label>
         <Input
           maxLength={2}
           keyboardType="numeric"
           value={petition_duration}
           onChangeText={petition_duration => this.setState({ petition_duration })}
         />
-
-        <Button block style={styles.submitButtonContainer} onPress={this.saveSettings}>
-          <NSLabel style={styles.submitButtonText}>Save</NSLabel>
-        </Button>
+        {
+          this.state.loading
+          ? <ActivityIndicator style={{marginTop: 20, marginBottom: 12}} color={'#020860'} animating={this.state.loading} /> 
+          : <Button block style={styles.submitButtonContainer} onPress={this.saveSettings}>
+              <NSLabel style={styles.submitButtonText}>Save</NSLabel>
+            </Button>
+        }
       </View>
     );
   }

@@ -3,6 +3,20 @@ var { Action, ThunkAction } = require('./types');
 var FacebookSDK = require('FacebookSDK');
 import api from '../utils/api';
 
+async function getAgency(token) {
+    try {
+        let res = await fetch(`${API_URL}/v2.2/user/agency`, {
+            method: 'GET',
+            headers: {
+                'token': token,
+                'Content-Type': 'application/json',
+            }
+        })
+        return res.json();
+    } catch (error) {
+        console.warn(error);   
+    }
+}
 async function loadUserCards(token) {
     try {
         let res = await fetch(`${API_URL}/v2/cards`, {
@@ -224,6 +238,7 @@ function updateUserProfile(token, data) {
 }
 
 module.exports = {
+    getAgency,
     loadUserProfile,
     loadUserCards,
     userAddCard,

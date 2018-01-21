@@ -5,25 +5,25 @@
 
 'use strict';
 
-var React = require('React');
+import React, {Component} from 'React';
+import {View, Text, Image, AsyncStorage} from 'react-native';
 import Stripe from 'tipsi-stripe';
-var AppState = require('AppState');
-var Platform = require('Platform');
-var LoginScene = require('./scenes/auth/LoginScene');
-var TermsPolicyScene = require('./scenes/auth/TermsPolicyScene');
-var ForgotPasswordScene = require('./scenes/auth/ForgotPasswordScene');
-var StyleSheet = require('StyleSheet');
-var PLNavigator = require('PLNavigator');
-var View = require('View');
-var StatusBar = require('StatusBar');
-// var SplashScreen = require('react-native-splash-screen');
+import AppState from 'AppState';
+import Platform from 'Platform';
+import LoginScene from './scenes/auth/LoginScene';
+import TermsPolicyScene from './scenes/auth/TermsPolicyScene';
+import ForgotPasswordScene from './scenes/auth/ForgotPasswordScene';
+import StyleSheet from 'StyleSheet';
+import PLNavigator from 'PLNavigator';
+import StatusBar from 'StatusBar';
+// import SplashScreen from 'react-native-splash-screen';
 import SplashScreen from 'react-native-splash-screen';
 
-var { connect } = require('react-redux');
-var { version, stripeAPIKey } = require('./PLEnv.js');
-var { StackNavigator } = require('react-navigation');
-var RegisterScene  = require('./scenes/auth/RegisterScene');
-var TourScene = require('./scenes/auth/TourScene');
+import { connect } from 'react-redux';
+import { version, stripeAPIKey } from './PLEnv.js';
+import { StackNavigator } from 'react-navigation';
+import RegisterScene  from './scenes/auth/RegisterScene';
+import TourScene from './scenes/auth/TourScene';
 import {Root} from 'native-base';
 import { RNSKBucket } from 'react-native-swiss-knife';
 
@@ -41,14 +41,28 @@ import { RNSKBucket } from 'react-native-swiss-knife';
 // console.warn = (a1, a2, a3, a4, a5, a6, a7, a8, a9) => {console.warn('powerline-log', a1, a2, a3, a4, a5, a6, a7, a8, a9);};
 // console.warn = () => {};
 
-var PLApp = React.createClass({
-    displayName: 'PLApp',
-    componentDidMount: function () { 
-        // console.log('===========================, COMPONENT DID MOUNT ON PLAPP.JS');
+class PLApp extends Component {
+    constructor(){
+        super();
+        this.state = {
+            splash: null
+        };
+    }
+    // displayName: 'PLApp',
+    async componentDidMount () {
+        if (this.props.token){
+            let splash = await AsyncStorage.getItem('splashScreen');
+            console.log('aaaaaaaaaaaaaaaaaa\n', splash);
+            if (splash){
+                this.setState({splash}, () => setTimeout(() => this.setState({splash: false}), 1000) );
+            } else {
+                this.setState({splash: false});
+            }
+        }
         Stripe.init({
             publishableKey: stripeAPIKey
         });
-        console.log('=>', SplashScreen);
+        // console.log('=>', SplashScreen);
         SplashScreen.hide();
 
         const myGroup = 'group.ne.powerline.share';
@@ -56,19 +70,25 @@ var PLApp = React.createClass({
 
 
         AppState.addEventListener('change', this.handleAppStateChange);
-    },
+    }
 
-    componentWillUnmount: function () {
+    componentWillUnmount () {
         AppState.removeEventListener('change', this.handleAppStateChange);
-    },
+    }
 
-    handleAppStateChange: function (appState) {
+    handleAppStateChange (appState) {
         if (appState === 'active') {
         }
-    },
+    }
 
-    render: function () {
-        console.log('===>>><<<===', this.props);
+    render () {
+        if (this.state.splash === null) return null;
+        if (this.state.splash){
+            return <View style={{flex: 1, backgroundColor: '#fff'}}>
+                {/* <Text>This is my fake SplashScreen</Text> */}
+                <Image source={{uri: this.state.splash}} onError={() => this.setState({splash: false})} />
+            </View>;
+        }
         return <Root>
             {
                 this.props.isLoggedIn
@@ -76,9 +96,9 @@ var PLApp = React.createClass({
                 : <LoginStack />
             }
         </Root>;
-    },
+    }
 
-});
+};
 
 var styles = StyleSheet.create({
     container: {

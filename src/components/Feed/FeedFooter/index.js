@@ -56,7 +56,7 @@ class FeedFooter extends Component {
         console.log('\n before --- \n votes: ',newItem.votes && newItem.vote, '\n upvotes: ', newItem.upvotes_count, '\n downvotes: ' , newItem.downvotes_count, '----------');
         
         // user shouldn't vote his own post
-        if (profile.id === item.user.id) {
+        if (profile.id === item.owner.id) {
             alert("You're not supposed to vote on your own Post.");
             return;
         }
@@ -177,13 +177,13 @@ class FeedFooter extends Component {
         }
         let entity;
         if (item.type === 'user-petition'){
-            if (signed) item.user_petition.signatures = [{option_id : 2}];  
-            else item.user_petition.signatures = [{option_id : 1}];
+            if (signed) item.signature.id = null;  
+            else item.signature ={id: 1};
             this.setState({item: item});
             entity = 'petition';
         } else {
-            if (signed) item.answers = [{option_id : 2}];
-            else item.answers = [{option_id : 1}];
+            if (signed) item.answer.option_id = 2;
+            else item.answers.option_id = 1;
             this.setState({item: item});
             entity = 'poll';
 
@@ -311,12 +311,12 @@ class FeedFooter extends Component {
         // console.log(item.type, item.body)
         let isSigned = false;     // (item.user_petition.signatures[0] ? item.user_petition.signatures[0].option_id : 2) === 1;
         if (
-            item && item.user_petition &&
-            item.user_petition.signatures && item.user_petition.signatures[0]
+            item &&
+            item.signature
         ) {
-            let vote = item.user_petition.signatures[0];
+            let vote = item.signature;
             // console.log('vote', vote);
-            if (vote.option_id === 1) {
+            if (vote.id) {
                 isSigned = true;
             }
         }
@@ -367,7 +367,7 @@ class FeedFooter extends Component {
         let unsignOptionIndex = signOptionIndex === 0 ? 1 : 0;
         console.log(signOptionIndex, item.answer, item.options)
 
-        if (item.answer && item.options[signOptionIndex].id == item.answer.option){
+        if (item.answer && (item.options[signOptionIndex].id || {}) == item.answer.option){
             isSigned = true;
         }
         console.log('signed', isSigned, (item.options[signOptionIndex] || {}).id, (item.answer || {}).option)
@@ -395,13 +395,13 @@ class FeedFooter extends Component {
         // console.log(item.type ? item.type : '==================');
 
         return (
-            <CardItem footer style={{ height: 35 }}>
+            !this.props.isInDetail && <CardItem footer style={{ height: 35 }}>
                 <Left style={{ justifyContent: 'space-between' }}>
                     <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item)} >
                         <Icon name='md-arrow-dropdown' style={styles.footerIcon} />
                         <Label style={styles.footerText}>Answer</Label>
                     </Button>
-                    {!this.props.isInDetail && this.ReplyButton({item})}
+                    {this.ReplyButton({item})}
                     {/* <Button iconLeft transparent style={styles.footerButton} onPress={() => this.redirect(item, {commenting: true})} >
                         <Icon active name='ios-undo' style={styles.footerIcon} />
                         <Label style={styles.footerText} >
@@ -530,7 +530,7 @@ class FeedFooter extends Component {
         case 'petition':
             footer =  this._renderLeaderPetitionFooter(item, false);
             break;
-        case 'question':
+        case 'poll':
             footer =  this._renderQuestionFooter(item, false);
             break;
         case 'crowdfunding-payment-request':

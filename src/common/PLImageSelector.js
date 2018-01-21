@@ -43,7 +43,7 @@ class PLImageSelector extends Component {
     render() {
         console.log('=>', this.props);
         return (
-            <TouchableOpacity transparent onPress={this.selectImage}>
+            <TouchableOpacity transparent style={{minHeight: 60, minWidth: 60}} onPress={this.selectImage}>
                 {/* <Icon name='camera'  /> */}
                 <View style={styles.imageContainer}>
                     <Thumbnail source={{uri: this.props.image}} square />
@@ -94,6 +94,8 @@ const styles = {
     },
     imageContainer: {
         height: '100%',
+        minHeight: 60,
+        minWidth: 60,
         width: '100%'
     },
     iconContainer: {
@@ -120,7 +122,7 @@ const styles = {
         flexDirection: 'row',
         height: 30,
         alignSelf: 'center',
-        alignItems: 'space-around',
+        alignItems: 'center',
         marginTop: 10
     }
 };

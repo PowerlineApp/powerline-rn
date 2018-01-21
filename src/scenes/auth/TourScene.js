@@ -117,13 +117,16 @@ class TourScene extends Component{
     }
 
     onSkip = () =>{
+        console.log(this.props);
+        // this.props.dispatch(NavigationActions.reset())
+        this.props.navigation.state.params.onBackPress();
         // var { navigation } = this.props;        
         // if(navigation){
         //     var { state, dispatch } = navigation;
         //     var { params } = state;
         //     params.callback();
         // }else{
-           Actions.home();
+        //    Actions.home();
         // }      
     }
 

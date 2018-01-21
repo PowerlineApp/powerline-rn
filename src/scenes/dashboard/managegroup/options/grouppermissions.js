@@ -16,12 +16,13 @@ import {
   Label as NSLabel,
   CheckBox
 } from 'native-base';
-import { View, Text } from 'react-native';
+import { View, Text, ActivityIndicator } from 'react-native';
 import { loadGroupPermissions, updateGroupPermissions } from 'PLActions';
 import { showToast } from '../../../../utils/toast';
 
 import { Label, Input, PopupLabel, CheckBoxItem } from '../components';
 import styles from '../styles';
+
 
 const permissionsLabels = {
   "permissions_name": "Name",
@@ -46,7 +47,8 @@ class GroupPermissions extends Component {
   };
 
   state = {
-    permissions: {}
+    permissions: {},
+    loading: false
   };
 
   async componentDidMount() {
@@ -55,6 +57,18 @@ class GroupPermissions extends Component {
 
     this.setState({ permissions });
   }
+
+  onSuccess = () => {
+    this.setState({loading: false});
+    showToast('Update success!')
+
+  } 
+onFail = () => {
+    this.setState({loading: false});
+    showToast('Update failed')
+} 
+
+
 
   setPermission = pId => {
     this.setState({
@@ -76,12 +90,15 @@ class GroupPermissions extends Component {
       return result;
     }, []);
     
+    this.setState({loading: true})
     updateGroupPermissions(token, groupId, permissionsArray).then(r => {
     console.log(r)
     showToast('Updated with success');
-    }).catch(e => {
-      console.log(e);
-      showToast('Update failed')
+    this.setState({loading: false})
+  }).catch(e => {
+    console.log(e);
+    showToast('Update failed')
+    this.setState({loading: false})
     })
   }
 
@@ -99,10 +116,16 @@ class GroupPermissions extends Component {
           ))
         }
         {
-          this.props.isOwnerManager &&
-          <Button block style={styles.submitButtonContainer} onPress={this.savePermissions}>
-            <NSLabel style={styles.submitButtonText}>Save</NSLabel>
-          </Button>
+          this.state.loading
+          ? <ActivityIndicator style={{marginTop: 20, marginBottom: 12}} color={'#020860'} animating={this.state.loading} /> 
+          : <Button block style={styles.submitButtonContainer} onPress={this.savePermissions}>
+                <NSLabel style={styles.submitButtonText}>Save</NSLabel>
+            </Button>
+        }
+        {
+          // <Button block style={styles.submitButtonContainer} onPress={this.savePermissions}>
+          //   <NSLabel style={styles.submitButtonText}>Save</NSLabel>
+          // </Button>
         }
       </View>
     );

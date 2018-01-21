@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 
-import { Text, View } from 'react-native';
+import { Text, View, ActivityIndicator } from 'react-native';
 import {
   Button,
   Label as NSLabel
@@ -32,20 +32,37 @@ class ProfileSetup extends Component {
     official_city: this.props.group.official_city,
     official_state: this.props.group.official_state,
     official_type: this.props.group.official_type,
-    acronym: this.props.group.acronym
+    acronym: this.props.group.acronym,
+    loading: false
   };
 
   saveProfile = () => {
     const { token, dispatch, group: { id } } = this.props;
+    this.setState({loading: true})
 
     updateProfileSetup(token, id, this.state).then(r => {
+      this.onSuccess();
       console.log(r)
       showToast('Updated with success');
+      this.setState({loading: false})
     }).catch(e => {
+      this.onFail()
       console.log(e);
       showToast('Something went wrong');
+      this.setState({loading: false})
     })
   }
+
+  onSuccess = () => {
+    this.setState({loading: false});
+    showToast('Update success!')
+
+  } 
+onFail = () => {
+    this.setState({loading: false});
+    showToast('Update failed')
+} 
+
 
   render() {
     const {
@@ -110,10 +127,13 @@ class ProfileSetup extends Component {
           placeholder="State (optional)"
           onChangeText={official_state => this.setState({ official_state })}
         />
-
-        <Button block style={styles.submitButtonContainer} onPress={this.saveProfile}>
-          <NSLabel style={styles.submitButtonText}>Save</NSLabel>
-        </Button>
+        {
+          this.state.loading
+          ? <ActivityIndicator style={{marginTop: 20, marginBottom: 12}} color={'#020860'} animating={this.state.loading} /> 
+          : <Button block style={styles.submitButtonContainer} onPress={this.saveProfile}>
+              <NSLabel style={styles.submitButtonText}>Save</NSLabel>
+            </Button>
+        }
       </View>
     );
   }

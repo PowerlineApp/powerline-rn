@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 
-import { Text, View } from 'react-native';
+import { Text, View, ActivityIndicator } from 'react-native';
 import {
   Button,
   Icon,
@@ -37,6 +37,7 @@ class MembershipControl extends Component {
     passcode: '',
     fields: [],
     newField: '',
+    loading: false
   };
 
   componentDidMount() {
@@ -72,6 +73,8 @@ class MembershipControl extends Component {
       alert('Input passcode first and try again');
       return;
     }
+    this.setState({loading: true})
+
   
     updateMembershipControl(token, id, control, passcode).then(r => {
       console.log('r => ', r)
@@ -110,15 +113,28 @@ class MembershipControl extends Component {
     }
   }
 
+  onSuccess = () => {
+    this.setState({loading: false});
+    showToast('Update success!')
+
+  } 
+  onFail = () => {
+      this.setState({loading: false});
+      showToast('Update failed')
+  } 
+
+
   addField = async () => {
     const { token, group: { id } } = this.props;
     const { newField } = this.state;
+    let cb = {onSucces: this.onSuccess, onFail: this.onFail}
+
     if (newField === '') {
       alert('Input text before add and try again');
       return;
     }
 
-    const response = await addMembershipField(token, id, newField);
+    const response = await addMembershipField(token, id, newField, cb);
     if (response.id) {
       this.setState({ fields: this.state.fields.concat(response), newField: '' });
     } else {
@@ -184,20 +200,25 @@ class MembershipControl extends Component {
             </View>
           ))
         }
-        <View style={styles.memebershipAddContainer}>
-          <Input
-            style={styles.membershipInput}
-            value={newField}
-            placeholder="Add Required Field for Entry"
-            onChangeText={newField => this.setState({ newField })}
-          />
-          <Button transparent onPress={() => this.addField()}>
-            <Icon
-              name="md-add-circle"
-              style={styles.membershipAddIcon}
-            />
-          </Button>
-        </View>
+        {
+          this.state.loading
+          ? <ActivityIndicator style={{marginTop: 20, marginBottom: 12}} color={'#020860'} animating={this.state.loading} /> 
+          : <View style={styles.memebershipAddContainer}>
+              <Input
+                style={styles.membershipInput}
+                value={newField}
+                placeholder="Add Required Field for Entry"
+                onChangeText={newField => this.setState({ newField })}
+              />
+              <Button transparent onPress={() => this.addField()}>
+                <Icon
+                  name="md-add-circle"
+                  style={styles.membershipAddIcon}
+                />
+              </Button>
+            </View>
+        }
+        
       </View>
     );
   }

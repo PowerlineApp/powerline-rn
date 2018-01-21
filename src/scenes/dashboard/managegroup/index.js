@@ -53,7 +53,7 @@ class ManageGroup extends Component {
   }
 
   render() {
-    const { group, dispatch, token } = this.props;
+    const { group, dispatch, token, loading } = this.props;
 
     return (
       <MenuContext customStyles={styles.menuContextStyles}>
@@ -103,22 +103,23 @@ class ManageGroup extends Component {
             </List>
             <List style={{ ...styles.list, ...styles.borderList }}>
               <AccordionItem title="Profile Setup">
-                <Options.ProfileSetup dispatch={dispatch} token={token} group={group} />
+                <Options.ProfileSetup loading={loading} dispatch={dispatch} token={token} group={group} />
               </AccordionItem>
               <AccordionItem title="Advanced Profile">
-                <Options.AdvancedProfile dispatch={dispatch} data={this.props.advanced} token={token} group={group} />
+                <Options.AdvancedProfile loading={loading} dispatch={dispatch} data={this.props.advanced} token={token} group={group} />
               </AccordionItem>
               <AccordionItem title="Group Tags">
-                <Options.Tags dispatch={dispatch} data={this.props.groupTags} groupOwnTags={this.props.groupOwnTags} token={token} group={group} />
+                <Options.Tags loading={loading} dispatch={dispatch} data={this.props.groupTags} groupOwnTags={this.props.groupOwnTags} token={token} group={group} />
               </AccordionItem>
               <AccordionItem title="Subscription Level">
-                <Options.SubscriptionLevel group={group} token={token}/>
+                <Options.SubscriptionLevel loading={loading} group={group} token={token}/>
               </AccordionItem>
               <AccordionItem title="Fundraiser Setup">
-                <Options.FundRaiser group={group}/>
+                <Options.FundRaiser loading={loading} group={group}/>
               </AccordionItem>
               <AccordionItem title="Membership Control">
                 <Options.MembershipControl
+                  loading={loading}
                   dispatch={dispatch}
                   token={token}
                   group={group}
@@ -128,6 +129,7 @@ class ManageGroup extends Component {
               </AccordionItem>
               <AccordionItem title="Group Permissions">
                 <Options.GroupPermissions
+                  loading={loading}
                   dispatch={dispatch}
                   token={token}
                   groupId={group.id}
@@ -135,19 +137,19 @@ class ManageGroup extends Component {
                 />
               </AccordionItem>
               <AccordionItem title="Manage Group Members">
-                <Options.GroupMembers group={this.props.group}/>
+                <Options.GroupMembers loading={loading} group={this.props.group}/>
               </AccordionItem>
               <AccordionItem title="Group Sections/Sub-Groups">
                 <Text>In Progress</Text>
               </AccordionItem>
               <AccordionItem title="User Content Settings">
-                <Options.UserContentSettings dispatch={dispatch} token={token} groupId={group.id} />
+                <Options.UserContentSettings loading={loading} dispatch={dispatch} token={token} groupId={group.id} />
               </AccordionItem>
               <AccordionItem title="Invites">
-                <Options.Invites dispatch={dispatch} token={token} groupId={group.id} />
+                <Options.Invites loading={loading} dispatch={dispatch} token={token} groupId={group.id} />
               </AccordionItem>
               <AccordionItem title="Reports">
-                <Options.Reports dispatch={dispatch} token={token} groupId={group.id} />
+                <Options.Reports loading={loading} dispatch={dispatch} token={token} groupId={group.id} />
               </AccordionItem>
             </List>
           </Content>
@@ -159,6 +161,7 @@ class ManageGroup extends Component {
 
 export default connect(state => ({
   token: state.user.token,
+  loading: state.groupManagement.loading,
   advanced: state.groupManagement.advancedAttribs,
   groupTags: state.groupManagement.groupTags,
   groupOwnTags: state.groupManagement.groupOwnTags

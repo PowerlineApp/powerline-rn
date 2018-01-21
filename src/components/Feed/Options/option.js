@@ -77,11 +77,11 @@ class Option extends Component{
 
     render() {
         let {opt, type} = this.props;
-        // console.log('SS', this.state.value);
+        console.log('SS', opt, type);
         switch(type){
         case 'leader-event': 
             return this.renderEventOption(opt);
-        case 'question':
+        case 'poll':
             return this.renderPollOption(opt);
         case 'crowdfunding-payment-request':
         case 'payment-request':
