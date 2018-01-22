@@ -364,7 +364,7 @@ class Register extends React.Component{
                     </View>
                     <View style={styles.fieldContainer}>
                         <TextInput
-                            placeholder="Agency Code"
+                            placeholder="Custom Code"
                             style={styles.textInput}
                             autoCorrect={false}
                             autoCapitalize={false}
