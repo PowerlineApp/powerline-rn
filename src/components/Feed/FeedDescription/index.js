@@ -37,7 +37,7 @@ class FeedDescription extends Component {
 
   _renderAttachedImage(item){
     if (this.props.isInDetail) return null;
-    // console.log(item);
+    // console.log(item, item.user.id, item.owner.id, this.props.profile.id);
     let imgURL = item.image;
     let blur;
     // if (item.post){
@@ -48,7 +48,7 @@ class FeedDescription extends Component {
 
     if (item.user.follow_status === 'active'){
       blur = '0';
-    } else if (item.user.id !== this.props.profile.id){
+    } else if (Number(item.user.id) !== Number(this.props.profile.id)){
       blur = '1000';
     }
     return (
@@ -89,14 +89,11 @@ class FeedDescription extends Component {
     // console.log(item)
 //Priority Zone, Comment, Counter, and Main Text Body
     return (
-      <CardItem style={{ paddingLeft: 5, paddingRight: 15 }}>
-        <Left>
-          {/* <View style={styles.descLeftContainer}>
-            {this._renderZoneIcon(item)}
-            <Label style={styles.commentCount}>{item.responses_count}</Label>
-          </View> */}
+      <View style={{ marginTop: 8, paddingLeft: 5, paddingRight: 15, flex: 1, alignItems: 'flex-start' }}>
+        <Left style={{backgroundColor: '#fff', width: '100%'}} >
           <Body style={styles.descBodyContainer}>
-            <TouchableOpacity onPress={() => this.redirect(item)}>
+            <View style={{minWidth: '80%'}}>
+            <TouchableOpacity style={{alignItems: 'flex-start', justifyContent: 'flex-start'}} onPress={() => this.redirect(item)}>
               {this._renderTitle(item)}
               <ParsedText
                 style={styles.description}
@@ -109,14 +106,17 @@ class FeedDescription extends Component {
                 }
                 numberOfLines={this.props.isInDetail ? null : item.type === 'post' ? 5 : 4}
                 childrenProps={{ allowFontScaling: false }}
-              >
+                >
                 {item.body || item.subject}
               </ParsedText>
             </TouchableOpacity>
-          </Body>
+                </View>
+                <View>
             {this._renderAttachedImage(item)}
+                </View>
+          </Body>
         </Left>
-      </CardItem>
+      </View>
     );
   }
 }

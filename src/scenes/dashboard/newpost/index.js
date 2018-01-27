@@ -50,7 +50,7 @@ const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
 
 
 const { width, height } = Dimensions.get('window');
-import { loadUserData, getGroups, getUsersByGroup, createPostToGroup, getPetitionConfig } from 'PLActions';
+import { loadUserData, getGroups, getUsersByGroup, createPostToGroup, getPetitionConfig, updateFeedFirstItem } from 'PLActions';
 import randomPlaceholder from '../../../utils/placeholder';
 import CommunityView from '../../../components/CommunityView';
 // import { setTimeout } from 'timers';
@@ -226,6 +226,7 @@ class NewPost extends Component {
                 this.refs.animatedView.fadeInDownBig(1000);
                 setTimeout(() => {
                     Actions.itemDetail({ item: data, entityId: data.id, entityType: 'post', backTo: 'home', share: this.state.share });
+                    this.props.updateFeedFirstItem(data);
                 }, 200);
             })
             .catch(err => {
@@ -503,4 +504,4 @@ const mapStateToProps = state => ({
     token: state.user.token
 });
 
-export default connect(mapStateToProps)(NewPost);
+export default connect(mapStateToProps, {updateFeedFirstItem})(NewPost);

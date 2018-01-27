@@ -344,7 +344,7 @@ class Newsfeed extends Component {
                         onEndReached={() => this._onEndReached()}
                         renderItem={(item) => <FeedActivity key={item.id} item={item.item} token={this.props.token} profile={this.props.profile} />}
                     /> 
-                    <PLOverlayLoader visible={this.props.loadingActions || isLoading || isLoadingTail || isRefreshing} logo />
+                    <PLOverlayLoader visible={ this.props.loadingActions || isLoading || isLoadingTail || isRefreshing} logo />
                     {
                         this.conversationView
                         ?

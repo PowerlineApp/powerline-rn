@@ -48,9 +48,9 @@ export default {
     },
 
     list: {
-        marginLeft: 17,
+        // marginLeft: 17,
         marginTop: 17,
-        marginRight: 17,
+        // marginRight: 17,
         marginBottom: 17,
     },
 

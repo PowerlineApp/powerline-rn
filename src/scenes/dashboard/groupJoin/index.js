@@ -132,7 +132,7 @@ class GroupJoin extends Component {
                             fields.map((field, index) => {
                                 return (
                                     <View style={{flex: 1, minWidth: '100%'}}>
-                                        <Text style={{alignSelf: 'flex-start', color: PLColors.inactiveText, fontSize: 13}}>{field.field_name}</Text>
+                                        <Text style={{alignSelf: 'flex-start', color: PLColors.darkText, fontSize: 13}}>{field.field_name}</Text>
                                         <TextInput
                                             autoCapitalize='none'
                                             key={index}

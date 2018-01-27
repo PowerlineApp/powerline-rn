@@ -98,7 +98,7 @@ async function updateGroupPermissions(token: string, id: number, permissions: st
 }
 
 // GROUP INVITES
-async function sendGroupInvites(token: string, id: number, emails: string): Promise<Action> {
+async function sendGroupInvites(token: string, id: number, emails: string, cb): Promise<Action> {
   LOG('Send Group Invites API', id, emails);
   if (emails == null || emails.length == 0) {
     return;
@@ -109,6 +109,9 @@ async function sendGroupInvites(token: string, id: number, emails: string): Prom
   LOG(response, emailsAsArray);
   if (response.status === 204 && response.ok) {
     showToast(`Invitations send successfully to ${emailsAsArray.length} user(s).`)
+    if (cb) cb.onSuccess();
+  } else {
+    if (cb) cb.onFail();
   }
   return response;
 }

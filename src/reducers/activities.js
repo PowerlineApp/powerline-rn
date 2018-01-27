@@ -51,6 +51,17 @@ function activities(state: State = initialState, action: Action): State {
         // console.log('=z==zz=z=z=>', action, {...state, loading: action.payload})
         return {...state, loading: action.payload}
     }
+
+    case 'UPDATE_FEED': {
+        return {
+            ...state,
+            payload: [action.payload, ...state.payload],
+            items: [action.payload, ...state.payload],
+            count: state.count + 1,
+            count: state.count + 1,
+
+        }
+    }
     
     case 'LOADED_ACTIVITIES': {
         console.log('=z==zz=z=z=>', action.data)

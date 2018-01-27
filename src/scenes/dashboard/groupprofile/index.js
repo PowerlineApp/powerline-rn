@@ -292,7 +292,7 @@ class GroupProfile extends Component{
                         }
                     >
                     {this.state.data?
-                    <List style={{marginLeft: 17, marginTop: 17}}>
+                    <List style={{ marginTop: 17}}>
                         <ListItem style={{backgroundColor: 'white', marginLeft: 0, paddingLeft: 17}}>
                             {this.state.data.avatar_file_path?
                             <Thumbnail style={styles.avatar} square source={{uri: this.state.data.avatar_file_path+'&w=150&h=150&auto=compress,format,q=95'}}/>:

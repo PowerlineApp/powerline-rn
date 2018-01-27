@@ -15,7 +15,8 @@ export default {
     },
 
     header: {
-        backgroundColor: PLColors.main
+        backgroundColor: PLColors.main,
+        justifyContent: 'space-between'
     },
 
     itemHeaderStyle: {

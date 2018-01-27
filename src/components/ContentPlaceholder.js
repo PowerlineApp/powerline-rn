@@ -5,13 +5,17 @@ import PropTypes from 'prop-types';
 
 const styles = {
     container: { 
-        flex: 1, 
+        flex: 1,
+        width: '100%',
+        paddingHorizontal: '5%',
         justifyContent: 'center',
         alignItems: 'center'
     },
     title: {
         fontSize: 15,
-        fontWeight: '500'
+        fontWeight: '500',
+        textAlign: 'center',
+        textAlignVertical: 'center'
     }
 };
 

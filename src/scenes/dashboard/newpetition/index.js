@@ -42,7 +42,7 @@ import {
     Image,
 } from 'react-native';
 const { width, height } = Dimensions.get('window');
-import { loadUserData, getGroups, getUsersByGroup, createPetition, getPetitionConfig } from 'PLActions';
+import { loadUserData, getGroups, getUsersByGroup, createPetition, getPetitionConfig, updateFeedFirstItem } from 'PLActions';
 import { showToast } from 'PLToast';
 
 const PETITION_MAX_LENGTH = 7000;
@@ -172,6 +172,7 @@ class NewPetition extends Component {
         .then(data => {
             showToast('Petition Successful!');
             Actions.itemDetail({ item: data, entityId: data.id, entityType: 'user-petition', backTo: 'home', share: this.state.share });
+            this.props.updateFeedFirstItem(data);
         })
         .catch(err => {
             this.setState({sending: false});
@@ -460,4 +461,4 @@ const mapStateToProps = state => ({
     token: state.user.token
 });
 
-export default connect(mapStateToProps)(NewPetition);
+export default connect(mapStateToProps, {updateFeedFirstItem})(NewPetition);

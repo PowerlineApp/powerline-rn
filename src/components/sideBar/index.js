@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Container, Content, Text, ListItem, List, Left, Icon, Right } from 'native-base';
+import { Container, Content, Text, ListItem, List, Left, Icon, Right, Button } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
 import { closeDrawer } from '../../actions/drawer';
@@ -9,7 +9,7 @@ import { logOut, logOutWithPrompt } from 'PLActions';
 
 import styles from './style';
 import OneSignal from 'react-native-onesignal';
-import { AsyncStorage, Keyboard } from 'react-native';
+import { AsyncStorage, Keyboard, Modal, TextInput, View } from 'react-native';
 import {Mixpanel} from 'PLEnv';
 
 
@@ -45,6 +45,12 @@ const datas = [
     icon: 'git-network',
     bg: '#1EBC7C',
   },
+  // {
+  //   name: 'Custom Code',
+  //   route: 'enter-custom-code',
+  //   icon: 'more',
+  //   bg: '#1EBC7C',
+  // },
   {
     name: 'Representatives',
     route: 'representatives',
@@ -108,7 +114,12 @@ const datas = [
 ];
 
 class SideBar extends Component {
-
+  constructor(){
+    super();
+    this.state = {
+      enterCustomCode: false
+    }
+  }
   static propTypes = {
     logOut: React.PropTypes.func,
     closeDrawer: React.PropTypes.func,
@@ -119,13 +130,18 @@ class SideBar extends Component {
     this.props.navigateTo(route, 'home');
   }
 
+  enterCustomCode(){
+    this.setState({enterCustomCode: true});
+  }
+
   onSelectItem(route: string, option) {
     console.log('onSelectItem', route)
     if (route == 'logout') {
-      var { token } = this.props;
+      let { token } = this.props;
       this.props.logOut(token);
-      Mixpanel.track("Logout via Menu");
-             
+      Mixpanel.track("Logout via Menu");       
+    } else if (route === 'enter-custom-code'){
+      this.enterCustomCode();
     } else if(typeof route === 'string') {
       Actions[route](option)
     } else{
@@ -135,11 +151,50 @@ class SideBar extends Component {
     this.props.closeDrawer();
   }
 
+  enterCustomCode(){
+    let code = this.state.customCode;
+    if (this.state.sending) return;
+    this.setState({sending: true});
+    // send
+
+    // show toast on success/error
+
+
+    this.setState({sending: false, enterCustomCode: false})
+  }
+
+  customCodeModal(){
+    return <Modal visible={this.state.enterCustomCode} transparent style={styles.container} onRequestClose={() => {}} >
+    <View style={styles.background} >
+        <View style={styles.prompt}>
+            <Text style={styles.promptTitle}>Enter a custom code to attach it to your profile!</Text>
+            <Text style={styles.promptContent}>Custom codes can link you to specific agency groups and much more!</Text>
+
+            <View style={styles.textInput}>
+                <TextInput
+                    keyboardType={'default'}
+                    onChangeText={(value) => this.setState({customCode: value})}
+                    placeholder={'Custom code'}
+                    value={this.state.customCode} />
+            </View>
+            <View style={styles.buttonsRow}>
+                <Button style={styles.button} onPress={() => this.setState({enterCustomCode: false})}>
+                  <Text style={{fontWeight: '700'}}>Cancel</Text>
+                </Button>
+                <Button style={styles.button} onPress={() => this.enterCustomCode()}>
+                  <Text style={{fontWeight: '700'}}>Send</Text>
+                </Button>
+            </View>
+        </View>
+    </View>
+</Modal>
+  }
+
   render() {
     console.log('drawer rendering')
     return (
       <Container style={styles.sidebar}>
-        {/* <Content> */}
+          {this.customCodeModal()}
           <List
             dataArray={datas} renderRow={data =>
               <ListItem button noBorder onPress={() => this.onSelectItem(data.route, data.option)} >
@@ -158,11 +213,11 @@ class SideBar extends Component {
                 }
               </ListItem>}
           />
-        {/* </Content> */}
       </Container>
     );
   }
 }
+
 
 function bindAction(dispatch) {
   return {
@@ -176,5 +231,7 @@ const mapStateToProps = state => ({
   is_verified: state.user.profile && state.user.profile.is_verified,
   pushId: state.user.pushId
 });
+
+
 
 export default connect(mapStateToProps, bindAction)(SideBar);

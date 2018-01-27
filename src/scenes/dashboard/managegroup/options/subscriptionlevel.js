@@ -78,7 +78,7 @@ class SubscriptionLevel extends Component {
 
     selectSubscription (level, hasCard) {
         if (!hasCard){
-            Actions.groupBankAccountScene({group: this.props.group});
+            Actions.groupAddCardScene({group: this.props.group});
             return;
         }
         this.setState({nextLevel: level});

@@ -75,10 +75,11 @@ class FriendActivity extends Component {
         const { props: { token, dispatch } } = this;
         try {
             await Promise.race([
-                dispatch(loadFriendsActivities(token, 0, 20)),
+                dispatch(loadFriendsActivities(token)),
                 timeout(15000),
             ]);
         } catch (e) {
+            console.log('error=>', e)
             this.setState({ isRefreshing: false });
             
             const message = e.message || e;
@@ -92,10 +93,10 @@ class FriendActivity extends Component {
 
     async loadNextActivities() {
         this.setState({ isLoadingTail: true });
-        const { props: { token, page, dispatch } } = this;
+        const { props: { token, page, dispatch, cursor } } = this;
         try {
             await Promise.race([
-                dispatch(loadFriendsActivities(token, page, 20)),
+                dispatch(loadFriendsActivities(token, cursor)),
                 timeout(15000),
             ]);
         } catch (e) {
@@ -103,7 +104,7 @@ class FriendActivity extends Component {
             
             const message = e.message || e;
             if (typeof message === 'string') {
-                alert('Timed out. Please check internet connection');
+                alert('e.message');
             }
         } finally {
             this.setState({ isLoadingTail: false });
@@ -186,6 +187,7 @@ async function timeout(ms: number): Promise {
 
 const mapStateToProps = state => ({
     token: state.user.token,
+    cursor: state.activities.cursor,
     page: state.activities.page,
     totalItems: state.activities.totalItems,
     payload: state.activities.payload,

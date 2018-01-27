@@ -199,9 +199,9 @@ class Home extends Component {
     preCacheAgencyImages(){
         getAgency(this.props.token)
         .then(r => {
-            console.log('=> agency', r)
-            if (r.splash_screen){
-                let uri = r.splash_screen; //"https://static-cdn.jtvnw.net/jtv_user_pictures/panel-62449166-image-47d2742a-e94a-4b31-b987-1de9fffea6b5";
+            console.log('hehe => agency', r)
+            if (r.splash_screen){ // r.splash_screen; //
+                let uri = "https://static-cdn.jtvnw.net/jtv_user_pictures/panel-62449166-image-47d2742a-e94a-4b31-b987-1de9fffea6b5";
                 ImageCache.get().on({
                     uri
                 }, (path) => {

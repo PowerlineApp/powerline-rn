@@ -252,8 +252,8 @@ class GroupSelector extends Component {
                         <Left>
                             <Text style={styles.titleText}>Choose Group</Text>
                         </Left>
-                        <Right>
-                            <Button onPress={() => Actions.createGroup()} small iconLeft transparent style={{ alignSelf: 'flex-end', width: 100 }}>
+                        <Right>        
+                            <Button onPress={() => Actions.groupsearch()} small iconLeft transparent style={{ alignSelf: 'flex-end', width: 100 }}>
                                 <Icon name="ios-add-circle" style={styles.buttonIcon} />
                                 <Text style={styles.buttonText}>ADD GROUP</Text>
                             </Button>

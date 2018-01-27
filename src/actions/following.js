@@ -1,5 +1,6 @@
 var { API_URL } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
+import { showToast } from 'PLToast';
 
 
 //Shows who the user is following (User A is following User B... User B returned)
@@ -121,6 +122,7 @@ function putFollowings(token, id, activityId: number){
         })      
         .then(() => {
             console.log("Following a user,  API call Success:");
+            showToast('Follow request sent!')
             resolve({
                 type: 'CHANGE_FOLLOW_STATUS',
                 data: { id: activityId, follow_status: 'pending' },
@@ -144,6 +146,7 @@ function unFollowings(token, id, activityId: number){
             }
         })        
         .then(() => {
+            showToast('User unfollowed')
             console.log("UnFollowing API call Success:");
             resolve({
                 type: 'CHANGE_FOLLOW_STATUS',

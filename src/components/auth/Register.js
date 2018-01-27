@@ -73,6 +73,10 @@ class Register extends React.Component{
         // })
         this.requestLocation()
 
+        // this.props.tour(() => {
+        //     this.props.onLoggedIn({token: '1234'});
+        // });
+
 
     }
 
@@ -364,7 +368,7 @@ class Register extends React.Component{
                     </View>
                     <View style={styles.fieldContainer}>
                         <TextInput
-                            placeholder="Custom Code"
+                            placeholder="Custom Code (optional)"
                             style={styles.textInput}
                             autoCorrect={false}
                             autoCapitalize={false}

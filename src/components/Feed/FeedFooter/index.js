@@ -60,12 +60,6 @@ class FeedFooter extends Component {
             alert("You're not supposed to vote on your own Post.");
             return;
         }
-        // console.log(item, option);
-        // if (this.state.postingVote) {
-        //     console.log('posting already!');
-        //     return;
-        // }
-        // uses this state to avoid double clicking, the user is allowed to vote again only when the last request is done
         this.setState({postingVote: true});
         let undo = false;
         console.log(newItem, option);
@@ -125,7 +119,7 @@ class FeedFooter extends Component {
             }
         }
 
-        console.log('\n after --- \n votes: ',newItem.vote, '\n upvotes: ', newItem.upvotes_count, '\n downvotes: ' , newItem.downvotes_count, '----------');
+        // console.log('\n after --- \n votes: ',newItem.vote, '\n upvotes: ', newItem.upvotes_count, '\n downvotes: ' , newItem.downvotes_count, '----------');
         this.setState({
             item: {...newItem,
                 downvotes_count: newItem.downvotes_count < 0 ? 0 : newItem.downvotes_count,
@@ -148,6 +142,11 @@ class FeedFooter extends Component {
                     if (option === 'downvote') {
                         showToast('Downvoted');
                     }
+                } else {
+                    let error = await response.json();
+                    console.log(error)
+                    showToast(error.errors.errors[0])
+                    this.setState({item: originalItem});
                 }
             }
         } catch (error) {
@@ -547,7 +546,7 @@ class FeedFooter extends Component {
             footer =  null;
         }
         return (
-            <View style={{backgroundColor: '#ff0'}} >
+            <View style={{bottom: 0, width: '100%', position: 'absolute'}}>
                 {this.renderFirstRow(item)}
                 <View style={styles.borderContainer} />
                 {footer}

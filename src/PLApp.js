@@ -93,7 +93,7 @@ class PLApp extends Component {
             console.log('splash ===>', this.state.splash);
             return <View style={{flex: 1, backgroundColor: '#fff'}}>
                 {/* <Text>This is my fake SplashScreen</Text> */}
-                <CachedImage style={{flex: 1}} source={{ uri: this.state.splash }} />
+                {/* <CachedImage style={{flex: 1}} source={{ uri: this.state.splash }} /> */}
 
                 {/* <Image source={{uri: this.state.splash}} onError={() => this.setState({splash: false})} /> */}
             </View>;

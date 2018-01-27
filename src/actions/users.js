@@ -236,6 +236,66 @@ function updateUserProfile(token, data) {
             })
     });
 }
+function blockUser(token, id) {
+    return new Promise((resolve, reject) => {
+        fetch(API_URL + `/v2.2/user/blocked-users/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'token': token
+            }
+        })
+            .then((res) => res.json())
+            .then(data => {
+                console.log("Block user success", data);
+                resolve(data);
+            })
+            .catch(err => {
+                console.log("Block user Error", err);
+                reject(err);
+            })
+    });
+}
+function unblockUser(token, id) {
+    return new Promise((resolve, reject) => {
+        fetch(API_URL + `/v2.2/user/blocked-users/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'token': token
+            }
+        })
+            .then((res) => res.json())
+            .then(data => {
+                console.log("Unblock user success", data);
+                resolve(data);
+            })
+            .catch(err => {
+                console.log("Unblock user Error", err);
+                reject(err);
+            })
+    });
+}
+function getBlockedUsers(token) {
+    return new Promise((resolve, reject) => {
+        fetch(API_URL + `/v2.2/user/blocked-users/`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'token': token
+            }
+        })
+            .then((res) => res.json())
+            .then(data => {
+                console.log("Get blocked users success", data);
+                resolve(data);
+            })
+            .catch(err => {
+                console.log("get blocked users Error", err);
+                reject(err);
+            })
+    });
+}
 
 module.exports = {
     getAgency,
@@ -249,5 +309,8 @@ module.exports = {
     search,
     getFriendsSuggestions,
     getUserDiscountCode,
-    updateUserProfile
+    updateUserProfile,
+    blockUser,
+    unblockUser,
+    getBlockedUsers
 }

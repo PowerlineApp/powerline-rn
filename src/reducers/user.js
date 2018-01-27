@@ -23,7 +23,8 @@ var initialState = {
   id: null,
   username: null,
   token: null,
-  profile: null
+  profile: null,
+  blockedList: []
 };
 
 function user(state: State = initialState, action: Action): State {
@@ -48,6 +49,9 @@ function user(state: State = initialState, action: Action): State {
   }
   if (action.type === 'LOGGED_OUT') {
     return initialState;
+  }
+  if (action.type === 'BLOCKED_LIST') {
+    return {...state, blockedList: action.payload}
   }
   return state;
 }

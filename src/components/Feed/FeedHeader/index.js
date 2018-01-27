@@ -11,6 +11,7 @@ import Menu, {
     MenuOption
 } from 'react-native-popup-menu';
 import { showAlertOkCancel, showAlertYesNo } from 'PLAlert';
+import { showToast } from 'PLToast';
 
 import { WINDOW_WIDTH } from 'PLConstants';
 import {
@@ -25,6 +26,9 @@ import {
     subscribeNotification,
     unsubscribeNotification,
     markAsSpam,
+    blockUser,
+    unblockUser,
+    getBlockedUsers
 } from 'PLActions';
 
 import styles from '../styles';
@@ -47,12 +51,12 @@ class FeedHeader extends Component {
 
     subscribe(item) {
         console.log(item.type);
-        this.props.dispatch(subscribeNotification(this.props.token, item.id, item.id, item.type));
+        this.props.dispatch(subscribeNotification(this.props.token, item.id, item.id, item.type === 'post' ? 'post' : item.type === 'user-petition' ? 'user-petition' : 'poll'));
         this.menu && this.menu.close();
     }
 
     unsubscribe(item) {
-        this.props.dispatch(unsubscribeNotification(this.props.token, item.id, item.id, item.type));
+        this.props.dispatch(unsubscribeNotification(this.props.token, item.id, item.id, item.type === 'post' ? 'post' : item.type === 'user-petition' ? 'user-petition' : 'poll'));
         this.menu && this.menu.close();        
     }
 
@@ -83,7 +87,7 @@ class FeedHeader extends Component {
         ActionSheet.show(
             {
                 options: ['1 hour', '8 hours', '24 hours'],
-                title: 'MUTE NOTIFICATIONS FOR THIS USER'
+                title: "Mute user's notifications"
             },
 
             buttonIndex => {
@@ -217,6 +221,17 @@ class FeedHeader extends Component {
         return false;
     }
 
+    block(item){
+        let {token} = this.props;
+        blockUser(token, item.owner.id).then(r => {
+            console.log('user blocked', r);
+            showToast('User blocked');
+        }).catch(e => {
+            console.log('blocking user failed.', e);
+            showToast('Blocking user failed.');
+        });
+    }
+
     render() {
         const { item } = this.props;
         let thumbnail = '';
@@ -228,27 +243,29 @@ class FeedHeader extends Component {
         let canInviteUpvoters = false;
         let canSpam = false;
 
+        let canBlock = item.user.id !== this.props.userId;
+
         // console.log(this.props, isAuthor, item.user.id, this.props.userId, item.user.id === this.props.userId);
         console.log('=============================');
-        console.log('item.user', item.owner, item.id);
+        console.log('item.user', item);//, item.owner, item.id);
         console.log('=============================');
         switch (item.type) {
         case 'post':
         case 'user-petition':
             thumbnail = item.user.avatar || '';
-            title = item.user.first_name + item.user.last_name;//item.owner ? item.owner.first_name : '' + ' ' + item.owner ? item.owner.last_name : '';
+            title = item.user.first_name + ' ' +  item.user.last_name;//item.owner ? item.owner.first_name : '' + ' ' + item.owner ? item.owner.last_name : '';
             canInviteUpvoters = isBoosted;
             canSpam = true;
             break;
         default:
             thumbnail = item.group && item.group.avatar ? item.group.avatar : '';
-            title = item.user.first_name + item.user.last_name;//item.owner ? item.owner.first_name : '' + ' ' + item.owner ? item.owner.last_name : '';
+            title = item.user.first_name +' ' +item.user.last_name;//item.owner ? item.owner.first_name : '' + ' ' + item.owner ? item.owner.last_name : '';
             break;
         }
 //Header
         return (
-            <CardItem style={{ paddingBottom: 0, paddingLeft:5}}>
-                <Left>
+            <View style={{flexDirection: 'row', paddingBottom: 0, paddingLeft:5, flex: 1}}>
+                <Left style={{flexDirection: 'row'}}>
                     <TouchableHighlight onPress={() => this.onPressThumbnail(item)} underlayColor={'#fff'}>
                         <View>
                             <Thumbnail small
@@ -257,7 +274,7 @@ class FeedHeader extends Component {
                             />
                         </View>
                     </TouchableHighlight>
-                    <Body>
+                    <Body style={{alignItems: 'flex-start', marginLeft: 16}}>
                         <Text style={styles.title} onPress={() => this.onPressAuthor(item)}>{title}</Text>
                         <Text note style={styles.subtitle} onPress={() => this.onPressGroup(item)}>{item.group && item.group.official_name} • <TimeAgo time={item.created_at} hideAgo /></Text>
                     </Body>
@@ -368,11 +385,20 @@ class FeedHeader extends Component {
                                         </Button>
                                     </MenuOption>
                                 }
+                                {
+                                    !canBlock && <MenuOption onSelect={() => this.block(item)}>
+                                        <Button iconLeft transparent dark onPress={() => this.block(item)}>
+                                            <Icon name='ios-close-circle-outline' style={styles.menuIcon} />
+                                            {/* <Image source={require("img/spam.png")} style={styles.upvotersIcon} /> */}
+                                            <Text style={styles.menuText}>Block User</Text>
+                                        </Button>
+                                    </MenuOption>
+                                }
                             </MenuOptions>
                         </Menu>
                     </Right>
                 </Left>
-            </CardItem>
+            </View>
         );
     }
 }
@@ -385,6 +411,8 @@ const optionsStyles = {
     }
 };
 
-const mapStateToProps = () => ({});
+const mapStateToProps = (state) => ({
+    blokedUsers: state.user.blockedList
+});
 
 export default connect(mapStateToProps)(FeedHeader);

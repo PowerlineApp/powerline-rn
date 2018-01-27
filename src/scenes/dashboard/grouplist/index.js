@@ -38,6 +38,7 @@ const PLColors = require('PLColors');
 import styles from './styles';
 import { openDrawer } from '../../../actions/drawer';
 import { getGroups } from 'PLActions';
+import ContentPlaceholder from '../../../components/ContentPlaceholder';
 
 class GroupList extends Component{
     constructor(props){
@@ -59,7 +60,7 @@ class GroupList extends Component{
         this.state.groupList = [];
         var { token }  = this.props;
         getGroups(token).then(data => {
-            var groups = data.payload;
+            let groups = data.payload;
             groups.map((item, index) => {
                 if(item.official_name && item.joined && item.group_type_label == 'common'){
                     var letter = item.official_name.toUpperCase()[0];
@@ -87,8 +88,10 @@ class GroupList extends Component{
                         groupList: this.state.groupList,
                         refreshing: false
                     });
-                }  
+                }
             });
+            this.setState({refreshing: false});
+
         })
         .catch(err => {
             console.log(err);
@@ -127,15 +130,15 @@ class GroupList extends Component{
             <MenuContext customStyles={menuContextStyles}>
                 <Container>
                     <Header style={styles.header}>
-                        <Left>
+                        <Left style={{flex: 1}}>
                             <Button transparent onPress={this.props.openDrawer}>
                                 <Icon active name='menu' style={{color: 'white'}} />
                             </Button>
                         </Left>
-                        <Body>
+                        <Body style={{flex: 1, alignItems: 'center'}}>
                             <Title style={{color: '#fff'}}>My Groups</Title>
                         </Body>
-                        <Right>
+                        <Right style={{flex: 1}}>
                             {/*We need to make it easier for user to tap this button. Larger tappable area needed*/}
                             <Button transparent onPress={() => this.goToSearch()}>
                                 <Icon active name='add-circle' style={{color: 'white'}} />
@@ -155,7 +158,11 @@ class GroupList extends Component{
                             }
                         }}
                         >
-                        <List style={{backgroundColor: 'white', marginLeft: 17, marginTop: 17}}>
+                        <ContentPlaceholder
+                            refreshControl={<RefreshControl onRefresh={() => this._onRefresh()} refreshing={false} />}
+                            empty={!this.state.isRefreshing && !this.state.isLoading && this.state.groupList.length === 0}
+                            title="It seems like you don't belong to any group yet" />
+                        <List style={{backgroundColor: 'white', marginTop: 17}}>
                             {
                                 this.state.groupList.map((itemGroups, index1) => {
                                     return (
@@ -177,6 +184,7 @@ class GroupList extends Component{
                                                         </ListItem>
                                                     );                                                    
                                                 })
+                                                
                                             }
                                         </View>
                                     );

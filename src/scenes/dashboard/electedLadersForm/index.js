@@ -112,11 +112,10 @@ class ElectedLeadersForm extends Component {
                 <Content padder>
                     <Card>
                         <ListItem style={styles.listItem}>
-                            <Thumbnail style={styles.avatar} square source={this.state.avatar ? {uri: this.state.avatar.path} : require('../../../assets/blank_person.png')}>
-                                <View style={styles.selectorContainer}>
-                                    <PLImageSelector onConfirm={this.updateGroupAvatar} iconSize={20} iconColor='#000' onError={err => console.log(err)} />
-                                </View>
-                            </Thumbnail>
+                            <Thumbnail style={styles.avatar} square source={this.state.avatar ? {uri: this.state.avatar.path} : require('../../../assets/blank_person.png')} />
+                            <View style={styles.selectorContainer}>
+                                <PLImageSelector onConfirm={this.updateGroupAvatar} iconSize={20} iconColor='#000' onError={err => console.log(err)} />
+                            </View>
                             <Body>
                                 <Text style={{color: PLColors.main}}>Avatar</Text>
                             </Body>

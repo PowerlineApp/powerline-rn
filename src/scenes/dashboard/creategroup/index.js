@@ -117,8 +117,18 @@ class CreateGroup extends Component{
         
         showToast('Creating group...')
 
-        var { token } = this.props;
-        createGroup(token, this.state)
+        let { token } = this.props;
+        let data = {
+            manager_first_name: this.state.manager_first_name,
+            manager_last_name: this.state.manager_last_name,
+            manager_email: this.state.manager_email,
+            manager_phone: this.state.manager_phone,
+            official_name: this.state.official_name,
+            official_type: this.state.official_type,
+            official_description: this.state.official_description,
+            acronym: this.state.acronym
+        }
+        createGroup(token, data)
         .then(data => {
             this.setState({loading: false})
             if(!data.message){

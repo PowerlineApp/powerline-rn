@@ -31,15 +31,16 @@ export default class Pulse extends React.Component {
                 marginTop: -pulseMaxSize/2,
             }]}>
                 <Animated.View
-                    style={[styles.circle, {
+                    style={[{
                         borderColor,
                         backgroundColor,
+                        // borderWidth: 2,
                         width: size,
                         height: size,
+                        borderRadius: size/2,
                         transform: [
                           {scale: this.anim.interpolate({inputRange: [0,1], outputRange: [1, maxTransform]})}
                         ],
-                        borderRadius: pulseMaxSize/2,
                         opacity: this.anim.interpolate({
                             inputRange: [0, 1],
                             outputRange: [1, 0]

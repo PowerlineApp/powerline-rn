@@ -127,17 +127,18 @@ class MembershipControl extends Component {
   addField = async () => {
     const { token, group: { id } } = this.props;
     const { newField } = this.state;
-    let cb = {onSucces: this.onSuccess, onFail: this.onFail}
+    let cb = {onSuccess: this.onSuccess, onFail: this.onFail}
 
     if (newField === '') {
       alert('Input text before add and try again');
       return;
     }
-
+    this.setState({loading: true})
     const response = await addMembershipField(token, id, newField, cb);
     if (response.id) {
-      this.setState({ fields: this.state.fields.concat(response), newField: '' });
+      this.setState({ fields: this.state.fields.concat(response), newField: '', loading: false });
     } else {
+      this.setState({loading: false})
       alert('Something wrong. Try again');
     }
   }

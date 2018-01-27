@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import {TouchableOpacity} from 'react-native';
+import {TouchableOpacity, Image} from 'react-native';
 import {Left, Text, Body, CardItem, View} from 'native-base';
-import ImageLoad from 'react-native-image-placeholder';
+// import ImageLoad from 'react-native-image-placeholder';
 import styles from '../styles';
 
 class FeedMetaData extends Component {
@@ -20,9 +20,9 @@ class FeedMetaData extends Component {
                                 style={styles.metaContainer}
                                 onPress={() => { }}>
                                 <View style={styles.imageContainer}>
-                                    <ImageLoad
+                                    <Image
                                         placeholderSource={require('img/empty_image.png')}
-                                        source={{ uri: item.metadata.image + '&w=400&h=400&auto=compress,format,q=95' }}
+                                        source={{ uri: item.metadata.image }}
                                         style={styles.image}
                                     />
                                 </View>

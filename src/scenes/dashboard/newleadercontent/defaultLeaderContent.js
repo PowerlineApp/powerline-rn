@@ -53,7 +53,7 @@ const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
 
 
 const { width, height } = Dimensions.get('window');
-import { loadUserData, getGroups, getUsersByGroup, createPostToGroup, getPetitionConfig, createPoll, createAnnouncement, sendAttachment, groupBankAccounts, publishPoll, publishAnnouncement } from 'PLActions';
+import { loadUserData, getGroups, getUsersByGroup, updateFeedFirstItem, createPostToGroup, getPetitionConfig, createPoll, createAnnouncement, sendAttachment, groupBankAccounts, publishPoll, publishAnnouncement } from 'PLActions';
 import randomPlaceholder from '../../../utils/placeholder';
 import CommunityView from '../../../components/CommunityView';
 
@@ -465,6 +465,7 @@ class NewLeaderContent extends Component {
                     this.sendAttachmentsAndPublish(r, attachments).then((r) => {
                         console.log('published: ', r);
                         Actions.itemDetail({item: r, entityType: 'poll', entityId: r.id, backTo: 'home'});
+                        this.props.updateFeedFirstItem(r);
                     }).catch(e => {
                         console.log('failure', e);
                     });
@@ -783,4 +784,4 @@ const mapStateToProps = state => ({
     token: state.user.token
 });
 
-export default connect(mapStateToProps)(NewLeaderContent);
+export default connect(mapStateToProps, {updateFeedFirstItem})(NewLeaderContent);

@@ -334,17 +334,19 @@ function boostPost(type: string, postId: number, groupId: number, activityId: nu
             const token = getState().user.token;
             const members = await api.get(token, `/v2/groups/${groupId}`);
             const { total_members } = await members.json();
-
+            
             if (typeof total_members !== 'number') {
                 return;
             }
-
+            
             showAlertYesNo(`All ${total_members} group members will get a notification about this item immediately. Are you sure? Use sparingly!`, async () => {
                 const boost = await api.patch(token, `/v2/${type}s/${postId}`);
                 if (boost.ok && boost.status === 200) {
+                    // showToast('Boosted.');
                     console.log("boost Post/Petition API Success");
                     dispatch({ type: 'BOOST_ACTIVITY', id: activityId });
                 } else {
+                    // showToast('Boosting item failed.');
                     handleError(response);
                 }
             });

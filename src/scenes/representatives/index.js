@@ -19,7 +19,7 @@ import {
     Content,
     Thumbnail,
     Right
-} from 'native-base'
+} from 'native-base';
 
 import {
     MenuContext,
@@ -50,7 +50,7 @@ class Representatives extends Component {
             groups: [],
             totalItems: 10,
             refreshing: false
-        }
+        };
     }
 
     componentWillMount() {
@@ -97,7 +97,7 @@ class Representatives extends Component {
                     <Header style={styles.header}>
                         <Left>
                             <Button transparent onPress={this.props.openDrawer}>
-                                <Icon active name="menu" style={{ color: 'white' }} />
+                                <Icon active name='menu' style={{ color: 'white' }} />
                             </Button>
                         </Left>
                         <Body>
@@ -136,23 +136,26 @@ class Representatives extends Component {
                                                                 <Text note style={styles.text1}>{user.official_title}</Text>
                                                             </Body>
                                                             <Right>
-                                                                <Icon name="ios-arrow-forward" />
+                                                                <Icon name='ios-arrow-forward' />
                                                             </Right>
                                                         </ListItem>
                                                     );
                                                 })
                                             }
                                         </View>
-                                    )
+                                    );
                                 })
                             }
                         </List>
                         {
                             // The is_registration_complete is the wrong reference. Button should show to all users if verified.
                             this.props.is_registration_complete
-                            ?   <View style={{padding: 20}}>
-                                    <Button style={{width: '100%', justifyContent: 'center'}} onPress={Actions.electedLeadersForm} iconRight><Text>Create Representative</Text><Icon name='circle-plus'></Icon></Button>
-                                </View>
+                            ? <View style={{padding: 20}}>
+                                <Button style={{width: '100%', justifyContent: 'center'}} onPress={Actions.electedLeadersForm} iconRight>
+                                    <Text>Create Representative</Text>
+                                    <Icon name='circle-plus' />
+                                </Button>
+                            </View>
                             :   null
                         }
                         

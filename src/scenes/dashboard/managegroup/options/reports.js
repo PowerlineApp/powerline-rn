@@ -26,13 +26,16 @@ onFail = () => {
 } 
 
 
-  export = () => {
+  export = async () => {
     const { token, dispatch, groupId } = this.props;
     let cb = {onSucces: this.onSuccess, onFail: this.onFail}
     this.setState({loading: true})
 
-    dispatch(exportReports(token, groupId, cb));
+    let reports = await exportReports(token, groupId, cb);
+
+    this.setState({loading: false})
   }
+
 
   render() {
     return (

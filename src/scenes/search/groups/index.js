@@ -83,7 +83,7 @@ class SearchGroups extends Component{
         return (
             <Container style={styles.container}>
                 <Content>
-                    <List style={{backgroundColor: 'white', marginLeft: 17,marginRight: 17}}>
+                    <List style={{backgroundColor: 'white',marginRight: 17}}>
                         {
                             this.props.groups.map((group, index) => {
                                 return (

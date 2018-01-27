@@ -41,7 +41,7 @@ onFail = () => {
 
   sendInvites = () => {
     const { token, dispatch, groupId } = this.props;
-    let cb = {onSucces: this.onSuccess, onFail: this.onFail}
+    let cb = {onSuccess: this.onSuccess, onFail: this.onFail}
     
     this.setState({loading: true})
     
@@ -63,7 +63,7 @@ onFail = () => {
         {
           this.state.loading
           ? <ActivityIndicator style={{marginTop: 20, marginBottom: 12}} color={'#020860'} animating={this.state.loading} /> 
-          : <Button block style={styles.submitButtonContainer} onPress={this.saveProfile}>
+          : <Button block style={styles.submitButtonContainer} onPress={this.sendInvites}>
                 <NSLabel style={styles.submitButtonText}>Save</NSLabel>
             </Button>
         }

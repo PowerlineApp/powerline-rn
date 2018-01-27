@@ -97,8 +97,9 @@ const markAsRead = (token, id) => (dispatch, state) => {
 }
 
 
-async function loadFriendsActivities(token: string, page: ?number = 0, perPage: ?number = PER_PAGE): Promise<Action> {
-    try {
+async function loadFriendsActivities(token, cursor): Promise<Action> {
+    return getActivities2(token, null, null, true, cursor, null, null);
+        try {
         var response = await fetch(`${API_URL}/v2/activities?_format=json&followed=1&page=${page + 1}&per_page=${perPage}`, {
             method: 'GET',
             headers: {
@@ -139,6 +140,14 @@ function resetActivities(): ThunkAction {
             type: 'RESET_ACTIVITIES',
         });
     };
+}
+
+const updateFeedFirstItem = (item) => (dispatch, getState) => {
+    if (!item.id) return;
+    console.log(item.group, getState().activities.selectedGroup)
+    if (item.group.id !== getState().activities.selectedGroup.id && getState().activities.selectedGroup.id !== 'all') return;
+    // console.log('===>', pos)
+    dispatch({type: 'UPDATE_FEED', payload: item})
 }
 
 function loadActivitiesByUserId(token, page = 0, per_page = 20, group = 'all', user) {
@@ -218,12 +227,13 @@ async function subscribeNotification(token: string, id: number, activityId: numb
     const response = await api.put(token, `/v2/user/${type}s/${id}`);
     LOG(response)
     if (response.status === 204) {
-        showToast('Subscribed to post');
+        showToast('Notifications on');
         return {
             type: 'ACTIVITY_NOTIFICATION_SUBSCRIBE',
             data: { id: activityId, type }
         }
     } else {
+        showToast('Subscribe to post failed');
         console.warn('FAILED TO UNSUBSCRIBE, DISPATCHING EMPTY ACTION')
         return {type: ''}
     }
@@ -233,7 +243,7 @@ async function unsubscribeNotification(token: string, id: number, activityId: nu
     LOG('Unsubscribe to notification API', id, type);
     const response = await api.delete(token, `/v2/user/${type}s/${id}`);
     if (response.status === 204) {
-        showToast('Unsubscribed');
+        showToast('Notifications Muted');
         return {
             type: 'ACTIVITY_NOTIFICATION_UNSUBSCRIBE',
             data: { id: activityId, type }
@@ -280,5 +290,6 @@ module.exports = {
     markAsSpam,
     saveOffSet,
     setGroup,
-    markAsRead
+    markAsRead,
+    updateFeedFirstItem
 }

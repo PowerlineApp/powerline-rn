@@ -243,7 +243,7 @@ class Profile extends Component{
     // It would appear that the below is the User Profile Screen GH44
     render(){
         console.log('USER', this.state)
-        let isOwnUser = !this.props.id;
+        let isOwnUser = !this.props.id || Number(this.props.id) === Number(this.props.profile.id);
         console.log('isOwnUser', isOwnUser, this.state.activities);
         return (
             <MenuContext customStyles={menuContextStyles}>

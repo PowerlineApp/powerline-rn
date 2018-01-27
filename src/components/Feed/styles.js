@@ -37,6 +37,10 @@ export default {
     // this contains the whole thing
     container: {
         backgroundColor: '#fff',
+        flexDirection: 'column',
+        padding: 8,
+        paddingBottom: 90,
+        // marginBottom: 40
     },
     // this is the author name
     title: {
@@ -141,7 +145,10 @@ export default {
     },
     descBodyContainer: {
         alignSelf: 'flex-start',
-        minHeight: 50
+        minHeight: 50,
+        alignItems: 'center',
+        // justifyContent: 'flex-end',
+        flexDirection: 'row'
     },
     metaContainer: {
         height: metaHeight,
@@ -213,6 +220,6 @@ export default {
         marginRight: 0,
         justifyContent: 'flex-end',
         alignItems: 'center',
-        alignSelf: 'flex-start'
+        alignSelf: 'flex-end'
     }
 };

@@ -397,6 +397,7 @@ class ItemDetail extends Component {
         // this.addCommentView.close();
         this.setState({
             isLoading: false,
+            commentText: ''
         });
         console.log(response)
         if (response && response.comment_body) {
@@ -656,13 +657,7 @@ class ItemDetail extends Component {
                             <SuggestionBox horizontal substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox && this.state.suggestionList.length > 0} userList={this.state.suggestionList} />
                         </ScrollView>
                     }
-                        <View 
-                            keyboardShouldPersistTaps="always"
-                            style={{
-                                marginBottom: 0,
-                                height: (Platform.OS === 'android' 
-                                ? 60 + (this.props.displaySuggestionBox ? 40 : 0)
-                                : ((WINDOW_HEIGHT / 2) + (this.props.displaySuggestionBox ? 40 : 0))) }}>
+                        <KeyboardAvoidingView behavior={Platform.select({android:'height', ios: 'padding'})}>
                             <CardItem keyboardShouldPersistTaps="always">
                                 <Left keyboardShouldPersistTaps="always">
                                     <Thumbnail small source={thumbnail ? { uri: thumbnail + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
@@ -692,7 +687,7 @@ class ItemDetail extends Component {
                                     </Right>
                                 </Left>
                             </CardItem>
-                        </View>
+                        </KeyboardAvoidingView>
                     </TouchableOpacity>
                 </Modal>
             
@@ -950,7 +945,8 @@ class ItemDetail extends Component {
     _renderPostOrUserPetitionCard(item, state) {
         // console.log('got here')
         return (
-            <View>
+            <View style={{padding: 8, paddingBottom: 70}}>
+                <FeedHeader userId={this.props.userId} item={item} />
                 {
                     state.isEditMode
                     ? this.renderEditableDescription(item, state)
@@ -966,7 +962,8 @@ class ItemDetail extends Component {
     
     _renderGroupCard(item) {
         return (
-                <View style={{backgroundColor: '#fff', padding: 0}}>
+                <View style={{backgroundColor: '#fff', padding: 8, paddingBottom: 70}}>
+                    <FeedHeader userId={this.props.userId} item={item} />
                     <FeedDescription item={item} profile={this.props.profile} isInDetail />
                     <FeedCarousel item={item} />
                     <Options onVote={() => this.loadEntity()} item={item} profile={this.props.profile} token={this.props.token} />
@@ -1087,11 +1084,11 @@ class ItemDetail extends Component {
                                 </Body>
                             </Left>
                         )}>
-                                    <Content>
+                <Content bounces={false}>
                         <TriggeringView
                             onHide={() => this.navTitleView.fadeInUp(200)}
                             onDisplay={() => this.navTitleView.fadeOut(100)}>
-                            {this._renderHeader(item)}
+                            {/* {this._renderHeader(item)} */}
                         </TriggeringView>
                             {this._renderActivity(item, this.state)}
                         <View style={styles.borderContainer} />
