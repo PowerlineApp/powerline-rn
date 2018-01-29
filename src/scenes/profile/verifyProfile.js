@@ -26,6 +26,7 @@ import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete'
 import ImageSelector from '../../common/PLImageSelector'
 import PLButton from 'PLButton';
 import PhoneVerification from '../../components/auth/PhoneVerification';
+const googlePlacesKey = 'AIzaSyBQOJDsIGt-XxuSNI7Joe1KRpAOJwDAEQE';
 
 
 class VerifyProfile extends Component {
@@ -215,6 +216,10 @@ class VerifyProfile extends Component {
       />
     }
 
+    onChangeZip = zip => {
+        this.setState({ zip: zip });
+    }
+
 
     render() {
         console.log('this.state', this.state);
@@ -246,6 +251,41 @@ class VerifyProfile extends Component {
                         <View style={{padding: 20}}>
                             <Label>Verify or Complete your data</Label>
                         </View>
+
+                        <GooglePlacesAutocomplete
+                        placeholder='Zipcode'
+                        minLength={2}
+                        autoFocus={false}
+                        getDefaultValue={() => this.state.zip}
+                        textInputProps={{
+                            onChangeText: (text) => {this.onChangeZip(text); this.setState({listViewDisplayed: true})},
+                            onBlur: () => {this.setState({listViewDisplayed: false})}
+                        }}
+                        returnKeyType={'Done'}
+                        listViewDisplayed={this.state.listViewDisplayed}
+                        fetchDetails={true}
+                        renderDescription={(row) => row.description}  
+                        onPress={this.onAutoComplete}                      
+                        query={{
+                            key: googlePlacesKey,
+                            language: 'en',
+                            components: this.state.country ? `country:${this.state.country}` : ''
+                        }}
+                        ref={(zipobj) => {
+                            this.state.autoZip = zipobj;
+                        }}
+                        styles={{
+                            container: styles.autoContainer,
+                            textInputContainer: styles.autoTextInputContainer,
+                            textInput: styles.autoTextInput,
+                            description: styles.autoDescription,
+                            predefinedPlacesDescription: styles.autoPredefinedPlacesDescription
+                        }}
+                        currentLocation={false}                        
+                        nearbyPlacesAPI='GoogleReverseGeocoding'
+                        filterReverseGeocodingByTypes={['country']}
+                        debounce={200}
+                    />
 
                         {/* <GooglePlacesAutocomplete
                             placeholder='Street Address'

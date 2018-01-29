@@ -201,7 +201,7 @@ class Home extends Component {
         .then(r => {
             console.log('hehe => agency', r)
             if (r.splash_screen){ // r.splash_screen; //
-                let uri = "https://static-cdn.jtvnw.net/jtv_user_pictures/panel-62449166-image-47d2742a-e94a-4b31-b987-1de9fffea6b5";
+                let uri = r.splash_screen; //"https://static-cdn.jtvnw.net/jtv_user_pictures/panel-62449166-image-47d2742a-e94a-4b31-b987-1de9fffea6b5";
                 ImageCache.get().on({
                     uri
                 }, (path) => {
@@ -768,7 +768,7 @@ class Home extends Component {
         Actions.search({ search });
     }
 
-    renderMenuOptions(group){
+    renderMenuOptions(isLeader){
         // console.log('SELECTED GROUP', group);
         let options = [
             <MenuOption key="petition" value={'petition'}>
@@ -784,7 +784,7 @@ class Home extends Component {
                 </Button>
             </MenuOption>
         ]
-        if (group && (group.user_role === 'owner' || group.user_role === 'manager'))
+        if (isLeader)
         options.unshift(
             // <MenuOption value={'group_announcement'}>
             //     <Button iconLeft transparent dark onPress={() => {this.selectNewItem('group_announcement'); Mixpanel.track("Opened New Announcement Form");}}>
@@ -829,14 +829,23 @@ class Home extends Component {
 
     render() {
         console.warn('render at dashboard')
+        let isLeader = false; 
+        for (let group of this.props.groupList) {
+            if(group.user_role === 'owner' || group.user_role === 'manager') {
+                isLeader = true;
+                break;
+            }
+
+        }
         let {selectedGroup} = this.props;
+
         
         return (
             <MenuContext customStyles={menuContextStyles}>
                 {/* <Container> */}
                     <Header searchBar rounded style={styles.header}>
                         <Left style={{ flex: 0.1 }}>
-                            <Button transparent onPress={this.props.openDrawer}>
+                            <Button style={{width: '100%'}}  transparent onPress={this.props.openDrawer}>
                                 <Icon active name="menu" style={{ color: 'white' }} />
                             </Button>
                         </Left>
@@ -916,7 +925,7 @@ class Home extends Component {
                                         </MenuTrigger>
                                         <MenuOptions ref={r => this.menuOptions = r} customStyles={optionsStyles} renderOptionsContainer={optionsRenderer}>
                                             {
-                                                this.renderMenuOptions(selectedGroup)
+                                                this.renderMenuOptions(isLeader)
                                             } 
                                         </MenuOptions>
                                     </Menu>

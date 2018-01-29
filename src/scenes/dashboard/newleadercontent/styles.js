@@ -39,6 +39,10 @@ export default {
         justifyContent: 'center'
     },
     input_text: {
+        textAlignVertical: 'center',
+        alignContent: 'center',
+        alignItems: 'center',
+        // textAlign: 'center',
         height: 44,
         margin: 16,
         flex: 1,
@@ -126,10 +130,10 @@ export default {
 
     textarea: {
         paddingTop: 0,
-        marginTop: 8,
+        marginTop: 16,
         textAlignVertical: 'top',
-        width: width, 
-        height: height - 185,
+        width: width,
+        height: height / 2 - 185,
         fontSize: 18, 
         color: 'rgba(0,0,0,0.6)',
         zIndex: 5,
@@ -208,6 +212,7 @@ export default {
     },
     numericInput: {
         width: 70,
+        height: '100%',
         overflow: 'visible',
         backgroundColor: '#fff',
     },

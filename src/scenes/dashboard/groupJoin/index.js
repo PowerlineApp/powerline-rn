@@ -268,11 +268,11 @@ class GroupJoin extends Component {
             <Container style={styles.container}>
                 <Header style={styles.header}>
                     <Left>
-                        <Button transparent onPress={() => Actions.pop()} style={{width: 50, height: 50 }}  >
+                        <Button style={{width: '100%'}} transparent onPress={() => Actions.pop()} style={{width: 50, height: 50 }}  >
                             <Icon active name='arrow-back' style={{color: 'white'}} />
                         </Button>
                     </Left>
-                    <Body>
+                    <Body style={{flex: 3}}>
                         <Title style={{color: 'white'}}>Group Join</Title>
                     </Body>
                     <Right>

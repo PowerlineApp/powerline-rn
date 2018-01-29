@@ -93,10 +93,10 @@ class SearchGroups extends Component{
                                                 <Thumbnail square source={{uri: group.avatar_file_path+'&w=150&h=150&auto=compress,format,q=95'}} />:
                                             <View style={{width: 56, height: 56}} />
                                         }
-                                        <Body>
+                                        <Body style={{flex: 3}}>
                                             <Text style={styles.text1}>{group.official_name}</Text>
                                         </Body>
-                                        <Right>
+                                        <Right style={{flex: 1}}>
                                             <Button transparent>
                                                 {   group.joined 
                                                     ? <Icon active name='add-circle' style={{color: '#802000'}} onPress={() => this.unjoin(group)} />

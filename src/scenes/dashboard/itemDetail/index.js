@@ -114,7 +114,7 @@ class ItemDetail extends Component {
 
     markAsRead(item){
         // console.log(item.zone, item.type)
-        if (item.read) return;
+        if (item.is_read) return;
         // petition or discussion or boosted post/petition is OPENED
         if (item.zone === 'prioritized'){
             // boosted post/petition
@@ -128,7 +128,6 @@ class ItemDetail extends Component {
             this.props.markAsRead(this.props.token, item.id);
         }
     }
-
 
     onCommentInputRef = r => {
         this.addCommentInput = r;
@@ -658,8 +657,8 @@ class ItemDetail extends Component {
                         </ScrollView>
                     }
                         <KeyboardAvoidingView behavior={Platform.select({android:'height', ios: 'padding'})}>
-                            <CardItem keyboardShouldPersistTaps="always">
-                                <Left keyboardShouldPersistTaps="always">
+                            <CardItem style={{padding: 0, backgroundColor: '#fff'}} keyboardShouldPersistTaps="always">
+                                <Left style={{height: 40, margin: 0, backgroundColor: '#fff'}} keyboardShouldPersistTaps="always">
                                     <Thumbnail small source={thumbnail ? { uri: thumbnail + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                                     <Body keyboardShouldPersistTaps="always">
                                         <Input
@@ -674,11 +673,11 @@ class ItemDetail extends Component {
                                             onChangeText={this.onChangeComment}
                                             onSelectionChange={(e) => this.onSelectionChange(e)}
                                             multiline
-                                            numberOfLines={2}
+                                            numberOfLines={4}
                                             />
                                     </Body>
                                     <Right style={{ flex: 0.2 }}>
-                                        <TouchableHighlight style={{ flexDirection: 'row' }} onPress={() => this._onSendComment()}>
+                                        <TouchableHighlight style={{ flexDirection: 'row', alignItems: 'center', height: '100%' }} onPress={() => this._onSendComment()}>
                                             <View style={{ flexDirection: 'row' }}>
                                                 <Text style={styles.commentSendText}>SEND</Text>
                                                 <Icon name="md-send" style={styles.commentSendIcon} />
@@ -697,6 +696,7 @@ class ItemDetail extends Component {
     //Adding a comment to an item
     _renderAddComment() {
         const { props: { profile } } = this;
+        console.log(profile)
         let thumbnail = profile.avatar_file_name ? profile.avatar_file_name : '';
         let {value} = this.state;
         return (
@@ -705,7 +705,7 @@ class ItemDetail extends Component {
                     <Left keyboardShouldPersistTaps="always">
                         <Thumbnail small source={thumbnail ? { uri: thumbnail + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                         <Body keyboardShouldPersistTaps="always">
-                            <Text style={styles.addCommentTitle}>Add your thoughts...</Text>
+                            <Text numberOfLines={1} style={styles.addCommentTitle}>Add your thoughts...</Text>
                             {this.renderAddCommentView()}
                         </Body>
                         <Right />
@@ -796,9 +796,9 @@ class ItemDetail extends Component {
                     </Body>
                     {
                         comment.is_owner && comment.user.id === this.props.userId &&
-                        <Right style={{ flex: 0.1, alignSelf: 'flex-start' }}>
-                            <Menu ref={ref => { this.menuComment = ref; }}>
-                                <MenuTrigger>
+                        <Right style={{ flex: 0.1, alignSelf: 'flex-start', alignContent: 'center', alignItems: 'center', paddingVertical: 4, backgroundColor: '#fff' }}>
+                            <Menu style={{ width: '100%'}} ref={ref => { this.menuComment = ref; }}>
+                                <MenuTrigger style={{alignItems: 'center', width: '100%', justifyContent: 'center', backgroundColor: '#fff'}}>
                                     <Icon name="md-more" style={styles.commentMoreIcon} />
                                 </MenuTrigger>
                                 <MenuOptions customStyles={optionsStyles}>
@@ -962,11 +962,12 @@ class ItemDetail extends Component {
     
     _renderGroupCard(item) {
         return (
-                <View style={{backgroundColor: '#fff', padding: 8, paddingBottom: 70}}>
+            <View style={{backgroundColor: '#fff', padding: 8, paddingBottom: 70}}>
                     <FeedHeader userId={this.props.userId} item={item} />
                     <FeedDescription item={item} profile={this.props.profile} isInDetail />
                     <FeedCarousel item={item} />
                     <Options onVote={() => this.loadEntity()} item={item} profile={this.props.profile} token={this.props.token} />
+                    <FeedMetaData item={item} />
                     <View style={styles.borderContainer} />
                     <FeedFooter isInDetail item={item} profile={this.props.profile} token={this.props.token} showAnalytics />
                 </View>
@@ -1060,7 +1061,7 @@ class ItemDetail extends Component {
                             ref={(navTitleView) => { this.navTitleView = navTitleView; }}>
                                 <Header style={{ backgroundColor: 'transparent' }}>
                                     <Left>
-                                        <Button transparent onPress={this.onBackPress} style={{ width: 50, height: 50 }}  >
+                                        <Button style={{width: '100%'}}  transparent onPress={this.onBackPress} style={{ width: 50, height: 50 }}  >
                                             <Icon active name="arrow-back" style={{ color: 'white' }} />
                                         </Button>
                                     </Left>
@@ -1084,24 +1085,24 @@ class ItemDetail extends Component {
                                 </Body>
                             </Left>
                         )}>
-                <Content bounces={false}>
+                <ScrollView keyboardShouldPersistTaps="always" bounces={false}>
                         <TriggeringView
                             onHide={() => this.navTitleView.fadeInUp(200)}
                             onDisplay={() => this.navTitleView.fadeOut(100)}>
-                            {/* {this._renderHeader(item)} */}
                         </TriggeringView>
                             {this._renderActivity(item, this.state)}
                         <View style={styles.borderContainer} />
                         {this._renderAddComment()}
                         <View style={styles.borderContainer} />
                         <ListView
+                            scrollEnabled={false}
                             dataSource={this.state.dataSource} renderRow={(comment) =>
                                 this._renderComment(comment)
                             } />
                         {this._renderLoadMore()}
                         {this._renderCommentsLoading()}
-                        <View style={{ height: 50 }} />
-                </Content>
+                        {/* <View style={{ height: 50 }} /> */}
+                </ScrollView>
                             </HeaderImageScrollView>
                 </Container>
                 {

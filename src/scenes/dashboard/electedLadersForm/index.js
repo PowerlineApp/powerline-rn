@@ -101,13 +101,14 @@ class ElectedLeadersForm extends Component {
             <Container style={styles.container}>
                 <Header style={styles.header}>
                     <Left>
-                        <Button transparent onPress={() => Actions.pop()}>
+                        <Button transparent style={{width: '100%'}} onPress={() => Actions.pop()}>
                             <Icon active name='arrow-back' style={{ color: 'white' }} />
                         </Button>
                     </Left>
-                    <Body>
+                    <Body style={{flex: 5}}>
                         <Title style={{ color: 'white' }}>Registration Form</Title>
                     </Body>
+                    <Right />
                 </Header>
                 <Content padder>
                     <Card>

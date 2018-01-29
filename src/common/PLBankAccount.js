@@ -27,6 +27,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import PLColors from 'PLColors';
 import DatePicker from 'react-native-datepicker';
+
 import { Actions } from 'react-native-router-flux';
 import Stripe from 'tipsi-stripe';
 
@@ -195,6 +196,8 @@ class PLBankAccount extends Component {
     }
 
     generateToken({accountNumber, accountHolderName, currency, routingNumber, countryCode, accountHolderType, accountNickname}) {
+        // this.setState({token: `token.tokenId`, bankSaved: true, tokenLoading: false});
+        // return;
         this.setState({tokenLoading: true});
         const params = {accountNumber, accountHolderName, currency, routingNumber, countryCode, accountHolderType, metadata: {Label: accountNickname}};
         if(this.validateFields()) {
@@ -308,6 +311,8 @@ class PLBankAccount extends Component {
                             customStyles={{dateInput: {borderWidth: 0, marginLeft: -50}, placeholderText: {color: 'grey', fontSize: 17, marginLeft: 20}, dateText: {fontSize: 17, marginLeft: 20}}}
                             onDateChange={date => this.inputChanged('dob', date)}
                             date={this.state.dob}
+                            confirmBtnText='Confirm'
+                            cancelBtnText='Cancel'
                         />
                     </View>
                     <View style={{marginVertical: 5}}>
@@ -372,9 +377,13 @@ class PLBankAccount extends Component {
         console.log(this.props.user);
         console.log(this.state.bankSaved);
         if(this.state.bankSaved) {
-            return this._renderAditionalForm();
+            return <Content key={1} padder>
+                {this._renderAditionalForm()}
+            </Content>;
         } else {
-            return this._renderBankForm();
+            return <Content key={2} padder>
+                {this._renderBankForm()}
+            </Content>;
         }
     }
 
@@ -548,8 +557,8 @@ const Agreement = () => (
             </Text>
         </View>
         <TouchableOpacity style={{flexDirection: 'row'}} onPress={() => Linking.openURL('https://stripe.com/us/connect-account/legal')}>
-            <Image source={require('../assets/powered_by_stripe.png')} style={{height: 50, flex: 1, borderRadius: 25}} />
-            <Image source={require('../assets/comodo_logo.jpg')} style={{height: 50, flex: 1,  borderRadius: 25}} />
+            <Image source={require('../assets/powered_by_stripe.png')} resizeMode='contain' style={{height: 50, flex: 1, borderRadius: 25}} />
+            <Image source={require('../assets/comodo_logo.jpg')} resizeMode='contain' style={{height: 50, flex: 1,  borderRadius: 25}} />
         </TouchableOpacity>
     </View>
 );

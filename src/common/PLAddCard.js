@@ -241,8 +241,8 @@ const Agreement = () => (
             </Text>
         </View>
         <TouchableOpacity style={{flexDirection: 'row'}} onPress={() => Linking.openURL('https://stripe.com/us/connect-account/legal')}>
-            <Image source={require('../assets/powered_by_stripe.png')} style={{height: 50, flex: 1, borderRadius: 25}} />
-            <Image source={require('../assets/comodo_logo.jpg')} style={{height: 50, flex: 1,  borderRadius: 25}} />
+            <Image source={require('../assets/powered_by_stripe.png')} resizeMode='contain' style={{height: 50, flex: 1, borderRadius: 25}} />
+            <Image source={require('../assets/comodo_logo.jpg')} resizeMode='contain' style={{height: 50, flex: 1,  borderRadius: 25}} />
         </TouchableOpacity>
     </View>
 );

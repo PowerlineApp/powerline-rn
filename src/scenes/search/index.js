@@ -119,7 +119,7 @@ class Search extends Component {
                 <Container style={styles.container}>
                     <Header searchBar rounded style={styles.header}>
                         <Left style={{flex: 0.1}}>
-                            <Button  transparent onPress={this.props.openDrawer}>
+                            <Button style={{width: '100%'}}  transparent onPress={this.props.openDrawer}>
                                 <Icon active name="menu" style={{color: 'white'}}/>
                             </Button>
                         </Left>

@@ -130,13 +130,14 @@ class GroupMembersManagingScene extends Component {
             <Container style={styles.container}>
                 <Header style={styles.header}>
                     <Left>
-                        <Button transparent onPress={() => Actions.pop()}>
+                        <Button style={{width: '100%'}}  transparent onPress={() => Actions.pop()}>
                             <Icon active name='arrow-back' style={{ color: 'white' }} />
                         </Button>
                     </Left>
                     <Body>
                         <Title style={{ color: 'white' }}>Manage Group</Title>
                     </Body>
+                    <Right />
                 </Header>
                 <Content padder >
                     <Filter options={OPTIONS} selected={this.state.selected} onSelection={item => this.setState({selected: item})} />

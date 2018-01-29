@@ -111,13 +111,14 @@ class RepresentatyProfile extends Component{
             <Container style={styles.container}>
                 <Header style={styles.header}>
                     <Left>
-                        <Button transparent onPress={() => Actions.pop()} style={{width: 50, height: 50 }} >
+                        <Button style={{width: '100%'}} transparent onPress={() => Actions.pop()} style={{width: 50, height: 50 }} >
                             <Icon active name="arrow-back" style={{color: 'white'}}/>
                         </Button>
                     </Left>
                     <Body>
                         <Title style={{color: '#fff'}}>Rep Profile</Title>
                     </Body>
+                    <Right />
                 </Header>
                 <Content
                     refreshControl={Platform.OS === 'android' &&

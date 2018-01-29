@@ -11,7 +11,9 @@ import {
     Switch,
     Alert,
     AsyncStorage,
-    PermissionsAndroid
+    PermissionsAndroid,
+    KeyboardAvoidingView,
+    Keyboard
 }  from 'react-native';
 
 import PLColors from 'PLColors';
@@ -21,7 +23,7 @@ import { connect } from 'react-redux';
 import PLOverlayLoader from 'PLOverlayLoader';
 import DeviceInfo from 'react-native-device-info';
 
-import {Button, Icon} from 'native-base';
+import {Button, Icon, Content, Container } from 'native-base';
 
 const {width} = Dimensions.get('window');
 import {
@@ -302,13 +304,16 @@ class Register extends React.Component{
             }
         }
         this.state.autoZip.setAddressText(this.state.zip);
+        this.setState({listViewDisplayed: false})
+        Keyboard.dismiss();
     }
 
     renderBasic = () => {
         var { first_name, last_name, username, email, position, agency } = this.state;
         var { isFb } = this.props;
         return (
-            <ScrollView style={styles.container}>
+            <Container>
+            <Content style={styles.container}>
                 <Text style={styles.titleText}>Let's set up your account</Text>
                 <Text style={styles.descriptionText}>This only requires 2 steps to get started!</Text>
                 <View style={styles.formContainer}>
@@ -338,61 +343,67 @@ class Register extends React.Component{
                             underlineColorAndroid={'transparent'}
                         />
                     </View>
-                    <View style={styles.fieldContainer}>
-                        <TextInput
-                            placeholder="Username"
-                            style={styles.textInput}
-                            autoCorrect={false}
-                            value={username}
-                            onChangeText={this.onChangeUserName}
-                            underlineColorAndroid={'transparent'}
-                        />
-                        <View style={styles.iconContainer}>
-                            <Image source={require('img/user.png')} style={styles.icon}/>
+                        <View style={styles.fieldContainer}>
+                            <TextInput
+                                placeholder="Username"
+                                style={styles.textInput}
+                                autoCorrect={false}
+                                value={username}
+                                onChangeText={this.onChangeUserName}
+                                underlineColorAndroid={'transparent'}
+                            />
+                            <View style={styles.iconContainer}>
+                                <Image source={require('img/user.png')} style={styles.icon}/>
+                            </View>
                         </View>
-                    </View>
-                    <View style={styles.fieldContainer}>
-                        <TextInput
-                            placeholder="Email"
-                            style={styles.textInput}
-                            autoCorrect={false}
-                            autoCapitalize={false}
-                            value={email}
-                            onChangeText={this.onChangeEmail}
-                            onEndEditing={this.onConfirmEmail}
-                            underlineColorAndroid={'transparent'}
-                        />
-                        <View style={styles.iconContainer}>
-                            <Image source={require('img/envelope.png')} style={styles.icon}/>
+                        <View style={styles.fieldContainer}>
+                            <TextInput
+                                placeholder="Email"
+                                style={styles.textInput}
+                                autoCorrect={false}
+                                autoCapitalize={false}
+                                value={email}
+                                onChangeText={this.onChangeEmail}
+                                onEndEditing={this.onConfirmEmail}
+                                underlineColorAndroid={'transparent'}
+                            />
+                            <View style={styles.iconContainer}>
+                                <Image source={require('img/envelope.png')} style={styles.icon}/>
+                            </View>
                         </View>
-                    </View>
-                    <View style={styles.fieldContainer}>
-                        <TextInput
-                            placeholder="Custom Code (optional)"
-                            style={styles.textInput}
-                            autoCorrect={false}
-                            autoCapitalize={false}
-                            value={agency}
-                            onChangeText={this.onChangeAgency}
-                            underlineColorAndroid={'transparent'}
-                        />
-                    </View> 
-                    <View style={styles.markContainer}>
-                        <View style={styles.markWrapper}>
-                            <View style={[styles.markItem, styles.markActiveItem]}></View>
-                            <View style={styles.markItem}></View>
-                            <View style={styles.markItem}></View>
-                        </View>
-                    </View>             
+                        <View style={styles.fieldContainer}>
+                            <TextInput
+                                placeholder="Custom Code (optional)"
+                                style={styles.textInput}
+                                autoCorrect={false}
+                                autoCapitalize={false}
+                                value={agency}
+                                onChangeText={this.onChangeAgency}
+                                underlineColorAndroid={'transparent'}
+                            />
+                        </View> 
+                        <View style={styles.markContainer}>
+                            <View style={styles.markWrapper}>
+                                <View style={[styles.markItem, styles.markActiveItem]}></View>
+                                <View style={styles.markItem}></View>
+                                <View style={styles.markItem}></View>
+                            </View>
+                        </View>             
                 </View>
-            </ScrollView>
+                
+            </Content>
+            </Container>
+            
         )
     }
 
     renderContact(){
         var { city, state, country, zip, email, position, is_over_13 } = this.state;
         return (
-            <ScrollView style={styles.container}>
+            <Content>
+                <Container style={styles.container}>
+                <ScrollView>
+
                 <Text style={styles.titleText}>Enter your contact details.</Text>
                 <Text style={styles.descriptionText}>You're almost done!</Text>
                 <View style={styles.formContainer}>
@@ -462,7 +473,10 @@ class Register extends React.Component{
                         </View>
                     </View>
                 </View>
-            </ScrollView>
+                </ScrollView>
+                
+                </Container>
+            </Content>
         );
     }
 

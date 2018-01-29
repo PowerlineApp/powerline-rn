@@ -394,7 +394,7 @@ class NewPost extends Component {
                             {
                             this.state.sharing
                             ? null
-                            : <Button transparent onPress={() => {Keyboard.dismiss(); Actions.pop();}} style={{ width: 50, height: 50 }}  >
+                            : <Button  style={{width: '100%'}} transparent onPress={() => {Keyboard.dismiss(); Actions.pop();}} style={{ width: 50, height: 50 }}  >
                                 <Icon active name='arrow-back' style={{ color: 'white' }} />
                             </Button>
                         }

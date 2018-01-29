@@ -115,7 +115,7 @@ class GroupAddCard extends Component {
             <Container style={styles.container}>
                 <Header style={styles.header}>
                     <Left>
-                        <Button transparent onPress={() => Actions.pop()}>
+                        <Button style={{width: '100%'}}  transparent onPress={() => Actions.pop()}>
                             <Icon active name='arrow-back' style={{ color: 'white' }} />
                         </Button>
                     </Left>
@@ -128,7 +128,7 @@ class GroupAddCard extends Component {
                                 <Icon name='plus' size={30} color='#ffffff' />
                             </TouchableOpacity>
                         </Right>
-                        : null
+                        : <Right />
                     }
                 </Header>
                 <Content style={{padding: 5}}>

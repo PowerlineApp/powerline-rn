@@ -224,7 +224,7 @@ class GroupSelector extends Component {
             <Container style={styles.container}>
                 <Header searchBar rounded style={styles.header}>
                     <Left style={{ flex: 0.1 }}>
-                        <Button transparent onPress={() => Actions.pop()} style={{width: 50, height: 50 }}  >
+                        <Button transparent style={{width: '100%'}}  onPress={() => Actions.pop()} style={{width: 50, height: 50 }}  >
                             <Icon active name="arrow-back" style={{ color: 'white' }} />
                         </Button>
                     </Left>

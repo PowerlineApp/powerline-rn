@@ -99,13 +99,14 @@ class SearchFollowing extends Component {
             <Container style={styles.container}>
                 <Header style={styles.header}>
                     <Left>
-                        <Button transparent onPress={() => Actions.pop()} style={{ width: 50, height: 50 }}  >
+                        <Button style={{width: '100%'}}  transparent onPress={() => Actions.pop()} style={{ width: 50, height: 50 }}  >
                             <Icon active name="arrow-back" style={{ color: 'white' }} />
                         </Button>
                     </Left>
                     <Body>
                         <Title style={{ color: 'white' }}>My Influences</Title>
                     </Body>
+                    <Right />
                 </Header>
                 <Item style={styles.searchBar}>
                     <Input style={styles.searchInput} placeholder="Search for influences" value={this.state.queryText} onChangeText={(text) => this.onChangeText(text)} />

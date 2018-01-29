@@ -40,7 +40,7 @@ class Influences extends Component {
                 <Container>
                     <Header hasTabs style={styles.header}>
                         <Left>
-                            <Button transparent onPress={this.props.openDrawer}>
+                            <Button style={{width: '100%'}}  transparent onPress={this.props.openDrawer}>
                                 <Icon active name="menu" style={{ color: 'white' }} />
                             </Button>
                         </Left>

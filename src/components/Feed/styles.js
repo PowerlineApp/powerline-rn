@@ -151,6 +151,9 @@ export default {
         flexDirection: 'row'
     },
     metaContainer: {
+        // backgroundColor: '#f0f',
+        // padding: 20,
+        width: '100%',
         height: metaHeight,
         borderWidth: 1,
         borderColor: PLColors.cellBorder

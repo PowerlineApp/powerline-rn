@@ -28,6 +28,8 @@ const PLColors = require('PLColors');
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
 var { getActivities, unFollowers, acceptFollowers, putSocialActivity, getInvites, joinGroup,getGroupDetails } = require('PLActions');
 
+import HTMLView from 'react-native-htmlview';
+
 import ContentPlaceholder from '../../../components/ContentPlaceholder';
 import styles from './styles';
 
@@ -71,27 +73,37 @@ class Notifications extends Component{
     }
 
     showText(text){
-        if(text){
-            var misPText = text.substring(3, text.length - 4);
-            var index1 = misPText.indexOf("<strong>");
-            var preText = misPText.substring(0, index1);
-            var index2 = misPText.indexOf("</strong>");
-            var strongText = misPText.substring(index1 + 8 , index2);
-            var subText = misPText.substring(index2 + 9, misPText.length);
-            return (
-                <Text style={styles.text1}>
-                    {preText}
-                    <Text style={styles.text3}>
-                        {strongText}
-                    </Text>
-                    {subText}
-                </Text>
-            );
-        }else{
-            return (
-                <Text style={styles.text1} />
-            );
-        }
+        if (!text) return null;
+        return <HTMLView
+            value={text}					
+            stylesheet={{
+                strong:{
+                    fontWeight:'bold',
+                }
+            }}	
+    //  onLinkPress={(url) => console.log('clicked link: ', url)}
+/>;
+        // if(text){
+        //     var misPText = text.substring(3, text.length - 4);
+        //     var index1 = misPText.indexOf("<strong>");
+        //     var preText = misPText.substring(0, index1);
+        //     var index2 = misPText.indexOf("</strong>");
+        //     var strongText = misPText.substring(index1 + 8 , index2);
+        //     var subText = misPText.substring(index2 + 9, misPText.length);
+        //     return (
+        //         <Text style={styles.text1}>
+        //             {preText}
+        //             <Text style={styles.text3}>
+        //                 {strongText}
+        //             </Text>
+        //             {subText}
+        //         </Text>
+        //     );
+        // }else{
+        //     return (
+        //         <Text style={styles.text1} />
+        //     );
+        // }
     }
 //When a user gets a follow request from another user
     acceptFollower(target, index, notifiId){
@@ -193,27 +205,31 @@ class Notifications extends Component{
 
     itemDetail(notification) {
         // return;
-        console.log(notification);
+        // console.log(notification);
         let item = notification.target;
+        if (!item || !item.type || !item.id) return;
 
         Actions.itemDetail({ entityType: item.type, entityId: item.id });
     }
 
     navigate(notification){
-        console.log(notification);
+        // console.log(notification);
 
         switch(notification.type){
         case 'join-to-group-approved':
             Actions.groupprofile({id: notification.group.id});
             break;
+        case 'follow-request':
+            Actions.myInfluences();
         case 'comment-mentioned':
         case 'post-mentioned':
         case 'own-post-commented':
         case 'own-user-petition-signed':
             this.itemDetail(notification);
             break;
-        case 'follow-request':
-            Actions.myInfluences();
+        default:
+            this.itemDetail(notification);
+            break;
         }        
     }
 
@@ -245,7 +261,7 @@ class Notifications extends Component{
  
    // There are three general types of activities that show up in the Notifications Feed. A social activity update (e.g someone mentioned you in a comment), a Social Follow Request (User A wants to follow you), and a Group Join invite (You were invited to Save the Whales)
     render() {
-        console.log(this.props.notifications);
+        // console.log(this.props.notifications);
         return (
             <ContentPlaceholder
                 empty={
@@ -272,7 +288,7 @@ class Notifications extends Component{
                 <List style={{backgroundColor: 'white'}}>
                     {
                         this.state.invites.map((value, index) => {
-                            console.log(invites);
+                            console.log('invites', value);
                             return (
                                 <ListItem avatar key={index} style={styles.listItem}>
                                     <Left>
@@ -301,13 +317,8 @@ class Notifications extends Component{
                     }
                     {
                         this.props.notifications.map((value, index)=> {
-                            // console.log(value);
-                            if (
-                                value.type == 'comment-mentioned' 
-                                || value.type == 'post-mentioned' 
-                                || value.type == 'own-post-commented' 
-                                || value.type == 'follow-request' 
-                                || value.type == 'own-user-petition-signed') {
+                            console.log('notifications', value);
+                            if (true) {
                                 return (
                                     <ListItem avatar key={index} style={styles.listItem} onPress={() => this.navigate(value)} >
                                         {value.target.image?

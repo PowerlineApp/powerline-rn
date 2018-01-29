@@ -16,7 +16,8 @@ class FilterAnalytics extends Component {
             <View>
                 <SegmentedControls
                     options={this.props.options}
-                    containerStyle={{borderColor: PLColors.main, borderRadius: 0}}
+                    containerStyle={{borderColor: '#eee', padding: 0, backgroundColor: '#fff', borderRadius: 0}}
+                    backTint={'#eee'}
                     tint={PLColors.main}
                     onSelection={item => this.onSelection(item)}
                     selectedOption={this.props.selected}

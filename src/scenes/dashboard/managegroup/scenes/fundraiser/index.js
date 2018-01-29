@@ -124,6 +124,8 @@ class GroupBankAccount extends Component {
                 </Right>
             );
         } 
+
+        return <Right />
     }
     
     render() {
@@ -131,18 +133,16 @@ class GroupBankAccount extends Component {
             <Container style={styles.container}>
                 <Header style={styles.header}>
                     <Left>
-                        <Button transparent onPress={() => Actions.pop({type: 'reset'})}>
+                        <Button style={{width: '100%'}}  transparent onPress={() => Actions.pop({type: 'reset'})}>
                             <Icon active name='arrow-back' style={{ color: 'white' }} />
                         </Button>
                     </Left>
-                    <Body>
+                    <Body style={{flex: 2}}>
                         <Title style={{ color: 'white' }}>Bank Account</Title>
                     </Body>
                     {this.renderPlusSign()}
                 </Header>
-                <Content padder >
                     {this.renderAccountsOrForm()}
-                </Content>
             </Container>
         );
     }

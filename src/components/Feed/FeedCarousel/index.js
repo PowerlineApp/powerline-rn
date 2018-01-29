@@ -27,9 +27,9 @@ class FeedCarousel extends Component {
 
     render () {
         // If an item has multiple attachments (leader content) it could be multiple videos or pictures, displayed as carousel, three items max
-
+        
         let {item} = this.props;
-
+        console.log(item);
         if (item.poll) {
             // const slides = item.poll.educational_context.map((entry, index) => {
             //     return (
@@ -45,7 +45,7 @@ class FeedCarousel extends Component {
             //         </TouchableOpacity>
             //     );
             // });
-            if (item.poll.educational_context.length < 1){ return null;}
+            if (item < 1){ return null;}
             // return null;
             // console.log('=>', slides);
             return (

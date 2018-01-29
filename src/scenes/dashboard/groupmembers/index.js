@@ -21,7 +21,8 @@ import {
     List,
     ListItem,
     Label,
-    Toast
+    Toast,
+    Right
 } from 'native-base';
 import {
     View,
@@ -132,13 +133,14 @@ class GroupMembers extends Component{
             <Container style={styles.container}>
                 <Header style={styles.header}>
                     <Left>
-                        <Button transparent onPress={() => Actions.pop()} style={{width: 50, height: 50 }}  >
+                        <Button transparent style={{width: '100%'}}  onPress={() => Actions.pop()} style={{width: 50, height: 50 }}  >
                             <Icon active name='arrow-back' style={{color: 'white'}} />
                         </Button>
                     </Left>
-                    <Body>
+                    <Body style={{flex: 5}}>
                         <Title style={{color: '#fff'}}>Group Members</Title>
                     </Body>
+                    <Right />
                 </Header>
                 <Content padder>
                     <List style={{marginTop: 17}}>

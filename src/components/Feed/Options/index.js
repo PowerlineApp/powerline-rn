@@ -151,12 +151,12 @@ class Options extends Component {
     }
 
     alreadyDonatedText(item){
-        if (item.type === 'crowdfunding-payment-request' && this.props.item.answers[0]) {
+        if (item.type === 'crowdfunding-payment-request' && this.props.item.answer) {
             return (
                 <Text style={styles.alreadyDonatedText}>{`You've already donated to this crowdfunding. \nYou can change your donation option before the deadline.`}</Text>
             );
         }
-        if (item.type === 'payment-request' && this.props.item.answers[0]) {
+        if (item.type === 'payment-request' && this.props.item.answer) {
             return (
                 <Text style={styles.alreadyDonatedText}>{`You've already donated to this fundraiser. \nFeel free to donate again`}</Text>
             );

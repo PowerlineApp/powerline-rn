@@ -68,25 +68,25 @@ class FeedFooter extends Component {
             // didnt have any option checked
                 console.log(2);
                 newItem.vote = {option :'upvote'};
-                newItem.upvotes_count += 1;
+                newItem.upvotes_count = Number(newItem.upvotes_count) + 1;
             } else {
                 // user is unsetting his vote
                 if (newItem.vote.option === "upvote") {
                     console.log(3);
                     newItem.vote.option = "" ; //[0].option = null;
-                    newItem.upvotes_count -= 1;
+                    newItem.upvotes_count = Number(newItem.upvotes_count) - 1;
                     undo = true;
                 } else {
                     // user is setting his vote to up, had the down up checked
                     if (newItem.vote.option === "downvote") {
                         console.log(4);
                         newItem.vote = {option: 'upvote'};
-                        newItem.upvotes_count += 1;
-                        newItem.downvotes_count -= 1;
+                        newItem.upvotes_count = Number(newItem.upvotes_count) + 1;
+                        newItem.downvotes_count = Number(newItem.downvotes_count) - 1;
                     } else {
                         console.log('LIMBOO')
                         newItem.vote = {option: 'upvote'};
-                        newItem.upvotes_count += 1;
+                        newItem.upvotes_count = Number(newItem.upvotes_count) + 1;
                     }
                 }
             }
@@ -95,25 +95,25 @@ class FeedFooter extends Component {
                 console.log(5);
                 // didnt have any option checked
                 newItem.vote = {option : "downvote"};
-                newItem.downvotes_count += 1;
+                newItem.downvotes_count = Number(newItem.downvotes_count) + 1;
             } else {
                 // user is unsetting his vote
                 if (newItem.vote.option === "downvote") {
                     console.log(6);
                     newItem.vote.option = ""; // [0].option = null;
-                    newItem.downvotes_count -= 1;
+                    newItem.downvotes_count = Number(newItem.downvotes_count) - 1;
                     undo = true;
                 } else {
                     // user is setting his vote to down, had the option up checked
                     if (newItem.vote.option === "upvote") {
                         console.log(7);
                         newItem.vote = {option: "downvote"};
-                        newItem.upvotes_count -= 1;
-                        newItem.downvotes_count += 1;
+                        newItem.upvotes_count = Number(newItem.upvotes_count) - 1;
+                        newItem.downvotes_count = Number(newItem.downvotes_count) + 1;
                     } else {
                         console.log('limbo!!!!')
                         newItem.vote = {option: "downvote"};
-                        newItem.downvotes_count += 1;
+                        newItem.downvotes_count = Number(newItem.downvotes_count) + 1;
                     }
                 }
             }

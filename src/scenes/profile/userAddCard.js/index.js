@@ -37,13 +37,14 @@ class UserAddCards extends Component {
             <Container style={styles.container}>
                 <Header style={styles.header}>
                     <Left>
-                        <Button transparent onPress={() => Actions.pop()}>
+                        <Button style={{width: '100%'}}  transparent onPress={() => Actions.pop()}>
                             <Icon active name='arrow-back' style={{ color: 'white' }} />
                         </Button>
                     </Left>
                     <Body>
                         <Title style={{ color: 'white' }}>Add Card</Title>
                     </Body>
+                    <Right />
                 </Header>
                 <Content style={{padding: 5}}>
                     <PLAddCard onSave={(token) => this.onSave(token)} />

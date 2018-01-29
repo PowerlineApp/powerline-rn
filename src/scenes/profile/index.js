@@ -145,9 +145,10 @@ class Profile extends Component{
                 var newDate = new Date((new Date()).getTime() + 1000 * 60 * 60 * hours);
                 editFollowers(token, id, false, newDate)
                     .then(data => {
-
+                        showToast('User muted');
                     })
                     .catch(err => {
+                        showToast('Muting user failed');
 
                     });
             }
@@ -242,7 +243,7 @@ class Profile extends Component{
     }
     // It would appear that the below is the User Profile Screen GH44
     render(){
-        console.log('USER', this.state)
+        console.log('USER', this.state, this.props.profile)
         let isOwnUser = !this.props.id || Number(this.props.id) === Number(this.props.profile.id);
         console.log('isOwnUser', isOwnUser, this.state.activities);
         return (
@@ -284,7 +285,7 @@ class Profile extends Component{
                                 
                             </Thumbnail>       
                             { this.state.selected === "My Info"
-                                ? <View style={{position: 'absolute', borderRadius: 25, flex: 1, zIndex: 3000, backgroundColor: '#f0f', height: 20, width: 20  }}>
+                                ? <View style={{position: 'absolute', alignContent: 'center', alignItems: 'center', borderRadius: 15, width: 30, height: 30, backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
                                     <ImageSelector onConfirm={this.updateUserAvatar} iconSize={27} iconColor='#fff' onError={err => console.log(err)}/>
                                 </View> 
                                 : null

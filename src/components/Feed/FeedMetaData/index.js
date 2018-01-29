@@ -13,7 +13,7 @@ class FeedMetaData extends Component {
             return (
                 <CardItem>
                     <Left>
-                        <View style={styles.descLeftContainer} />
+                        {/* <View style={styles.descLeftContainer} /> */}
                         <Body>
                             <TouchableOpacity
                                 activeOpacity={0.7}

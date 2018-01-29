@@ -41,9 +41,9 @@ class PLImageSelector extends Component {
     }
 
     render() {
-        console.log('=>', this.props);
+        console.log('=>', this.state);
         return (
-            <TouchableOpacity transparent style={{minHeight: 60, minWidth: 60}} onPress={this.selectImage}>
+            <TouchableOpacity transparent onPress={this.selectImage}>
                 {/* <Icon name='camera'  /> */}
                 <View style={styles.imageContainer}>
                     <Thumbnail source={{uri: this.props.image}} square />
@@ -58,7 +58,7 @@ class PLImageSelector extends Component {
                 <Modal visible={this.state.showConfirmationModal} presentationStyle='pageSheet' transparent>
                     <View style={styles.confirmationContainer}>
                         <View style={styles.confirmationContent}>
-                            <Image source={{uri: (this.state.image ? this.state.image.path : null)}} style={styles.confirmationImage} />
+                            <Image source={{uri: (this.state.image ? `data:${this.state.image.mime};base64,${this.state.image.data}` : null )}} style={styles.confirmationImage} />
                             <View style={styles.buttonsWrapper}>
                                 <TouchableOpacity style={styles.button} onPress={this.onModalConfirm}>
                                     <Text style={styles.buttonText}>Confirm</Text>
@@ -81,6 +81,10 @@ const styles = {
     confirmationContainer: {
         height: '85%', width: '95%', alignSelf: 'center', marginTop: 5
     },
+    confirmationImage: {
+        flex: 1,
+        margin: 16
+    },
     confirmationContainer: {
         flex: 1,
         backgroundColor: rgb(0,0,0,0.7),
@@ -90,11 +94,11 @@ const styles = {
     confirmationContent: {
         height: '60%',
         width: '90%', 
-        backgroundColor: 'white'
+        backgroundColor: '#fff'
     },
     imageContainer: {
         height: '100%',
-        minHeight: 60,
+        // minHeight: 60,
         minWidth: 60,
         width: '100%'
     },

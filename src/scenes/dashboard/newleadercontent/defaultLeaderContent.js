@@ -108,14 +108,19 @@ class NewLeaderContent extends Component {
         getGroups(token).then(ret => {
             console.log('ret => ', ret);
             let showCommunity = true, selectedGroupIndex = -1;
+            let grouplist = ret.payload.filter(group => group.user_role === 'owner' || group.user_role === 'manager');
+            console.log('grouplist', grouplist);
             if (group && group !== 'all'){
                 showCommunity = false;
-                selectedGroupIndex = ret.payload.map(grouObj => grouObj.id).indexOf(group);
-                this.updateBankInfo(token, ret.payload[selectedGroupIndex].id, type);
+                selectedGroupIndex = grouplist.map(grouObj => grouObj.id).indexOf(group);
+                if (selectedGroupIndex >= 0){
+                    this.updateBankInfo(token, ret.payload[selectedGroupIndex].id, type);
+                }
             }
             this.setState({
-                grouplist: ret.payload.filter(group => group.user_role === 'owner' || group.user_role === 'manager'),
-                showCommunity, selectedGroupIndex
+                grouplist,
+                showCommunity,
+                selectedGroupIndex
             });
         }).catch(err => {
             
@@ -427,24 +432,30 @@ class NewLeaderContent extends Component {
         let groupId = this.state.grouplist[this.state.selectedGroupIndex].id;
         let {attachments} = this.state;
         let body;
+        let groupActivityType = 'poll';
         switch(type){
         case 'group_discussion':
             body = this.prepareGroupDiscussionToServer(); // title, content
+            groupActivityType = 'leader-news';
             break;
         case 'group_announcement':
             body = this.prepareGroupAnnouncementToServer();// content
             break;
         case 'group_petition':
             body = this.prepareGroupPetitionToServer(); // title, content
+            groupActivityType = 'petition';
             break;
         case 'group_poll':
             body = this.prepareGroupPollToServer(); // title (question subject), options
+            groupActivityType = 'poll';
             break;
         case 'group_event':
             body = this.prepareGroupEventToServer(); // title, content, date, options
+            groupActivityType = 'leader-event';
             break;
         case 'group_fundraiser':
             body = this.prepareGroupFundraiserToServer(); // not treted yet
+            groupActivityType = 'crowdfnding-payment-request';
             break;
         }
         console.log(body);
@@ -461,10 +472,17 @@ class NewLeaderContent extends Component {
                 resp.json().then(r => {
                     // console.warn(r);
                     this.setState({sending: false});
+                    // 'petition';
+                    // 'poll';
+                    // 'crowdfunding-payment-request';
+                    // 'payment-request';
+                    // 'leader-event';
+                    // 'leader-news';
+                    // item: {...r, user: this.props.profile, group: this.state.grouplist[this.state.selectedGroupIndex], type}
 
                     this.sendAttachmentsAndPublish(r, attachments).then((r) => {
                         console.log('published: ', r);
-                        Actions.itemDetail({item: r, entityType: 'poll', entityId: r.id, backTo: 'home'});
+                        Actions.itemDetail({entityType: 'poll', entityId: r.id, backTo: 'home'});
                         this.props.updateFeedFirstItem(r);
                     }).catch(e => {
                         console.log('failure', e);
@@ -647,7 +665,6 @@ class NewLeaderContent extends Component {
         return (
             <Container style={styles.container}>
                 <Modal visible={this.state.videoModal} transparent>
-
                     <View style={{flexDirection: 'column', alignSelf: 'center', width: '100%' ,borderRadius: 8, margin: 16, marginTop: 250, backgroundColor: '#ccc', padding: 16, paddingRight: 8, paddingLeft: 8}}>
                         <View style={{flexDirection: 'row'}}>
                             <TextInput
@@ -666,12 +683,12 @@ class NewLeaderContent extends Component {
                     </View>
                 </Modal>
                 {
-                    /* this.state.blockFundraiser && !this.state.showCommunity &&
-                    // <FundraiserBlocker group={this.state.grouplist[this.state.selectedGroupIndex]} visible={this.state.blockFundraiser && !this.state.showCommunity} /> */
+                    this.state.blockFundraiser && !this.state.showCommunity &&
+                    <FundraiserBlocker group={this.state.grouplist[this.state.selectedGroupIndex]} visible={this.state.blockFundraiser && !this.state.showCommunity} />
                 }
                 <Header style={styles.header}>
                     <View style={{alignSelf: 'flex-start'}}>
-                        <Button transparent onPress={() => Actions.pop()} style={{ width: 50, height: 50, paddingLeft: 0 }}  >
+                        <Button style={{width: '100%'}}  transparent onPress={() => Actions.pop()} style={{ width: 50, height: 50, paddingLeft: 0 }}  >
                             <Icon active name='arrow-back' style={{ color: 'white' }} />
                         </Button>
                     </View>
@@ -698,7 +715,12 @@ class NewLeaderContent extends Component {
                         </View>
                         <Body style={styles.community_text_container}>
                             <Text style={{color: 'white'}}>
-                                {this.state.selectedGroupIndex == -1 ? 'Select a community' : this.state.grouplist[this.state.selectedGroupIndex].official_name}
+                                {
+                                    // console.log('heh', this.state) &&
+                                    this.state.selectedGroupIndex < 0 
+                                    ? 'Select a community' 
+                                    : (this.state.grouplist[this.state.selectedGroupIndex]).official_name
+                                }
                             </Text>
                         </Body>
                         <Right style={styles.communicty_icon_container}>
@@ -710,8 +732,8 @@ class NewLeaderContent extends Component {
                         </Right>
                     </ListItem>
                 </List>
-                <ScrollView keyboardShouldPersistTaps={'handled'} style={styles.main_content} >
-                    <ScrollView style={{margin: 16}}  >
+                <ScrollView keyboardShouldPersistTaps={'handled'} scrollEnabled={false} enableAutoAutomaticScroll={false} style={styles.main_content} >
+                    <ScrollView style={{margin: 16}} scrollEnabled={false} enableAutoAutomaticScroll={false}  >
                         <Content>
                             {
                             hasTitle &&
@@ -721,24 +743,28 @@ class NewLeaderContent extends Component {
                                 underlineColorAndroid='rgba(0,0,0,0)'
                                 style={styles.input_text}
                                 autoCorrect={false}
+                                multiline
+                                numberOfLines={2}
                                 value={this.state.title}
                                 onChangeText={(text) => this.changeTitle(text)}
                                 // underlineColorAndroid={'transparent'}
-                            />
-                        }
+                                />
+                            }
                             {
-                            hasDescription &&
-                            <TextInput
-                                maxLength={10000}
-                                underlineColorAndroid='rgba(0,0,0,0)'
-                                ref={(r) => this.descriptionRef = r}
-                                onSelectionChange={this.onSelectionChange}
-                                placeholderTextColor='rgba(0,0,0,0.1)'
-                                style={wrapDescription ? styles.wrappedTextarea : styles.textarea}
-                                multiline
-                                placeholder={descriptionPlaceHolder}
-                                value={this.state.content}
-                                onChangeText={(text) => this.changeContent(text)}
+                                hasDescription &&
+                                    <TextInput
+                                        maxLength={10000}
+                                        enableAutoAutomaticScroll={false}
+                                        underlineColorAndroid='rgba(0,0,0,0)'
+                                        ref={(r) => this.descriptionRef = r}
+                                        onSelectionChange={this.onSelectionChange}
+                                        placeholderTextColor='rgba(0,0,0,0.2)'
+                                        style={wrapDescription ? styles.wrappedTextarea : styles.textarea}
+                                        multiline   
+                                        numberOfLines={10}
+                                        placeholder={descriptionPlaceHolder}
+                                        value={this.state.content}
+                                        onChangeText={(text) => this.changeContent(text)}
                             />
                         }
                             {
@@ -781,7 +807,8 @@ class NewLeaderContent extends Component {
 }
 
 const mapStateToProps = state => ({
-    token: state.user.token
+    token: state.user.token,
+    profile: state.user.profile
 });
 
 export default connect(mapStateToProps, {updateFeedFirstItem})(NewLeaderContent);
