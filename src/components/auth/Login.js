@@ -8,8 +8,8 @@ import LinearGradient from "react-native-linear-gradient";
 import PLButton from 'PLButton';
 import PLColors from 'PLColors';
 import PLConstants, { WINDOW_WIDTH } from 'PLConstants';
-import { logInManually, logInWithFacebook, verifyCode, sendCode, sendRecoveryEmail, finishRecovery }  from 'PLActions';
-
+import { logInManually, logInWithFacebook, verifyCode, sendCode, sendRecoveryEmail, finishRecovery, login2 }  from 'PLActions';
+import PLOverlayLoader from 'PLOverlayLoader';
 import PhoneVerification from './PhoneVerification';
 
 class Login extends React.Component {
@@ -142,20 +142,20 @@ class Login extends React.Component {
   };
 
   sendCode(){
-    let {phone, countryCode} = this.state;
+    let {phone, countryCode, username, password} = this.state;
     countryCode = countryCode || '+1';
     
-    this.setState({loading: true});
-    sendCode(countryCode + phone).then(r => {
+    this.setState({isLoading: true});
+    sendCode(countryCode + phone, "", username, password).then(r => {
         console.log(r);
-        this.setState({loading: false, enterCode: true})
+        this.setState({isLoading: false, enterCode: true})
     }).catch(e => {
         console.log(e);
         Alert.alert('Invalid data',
         'Validation failed.',
         [
             {text: 'Ok', onPress: () => {
-                this.setState({loading: false})
+                this.setState({isLoading: false})
             }}
         ],
         {cancelable: false}
@@ -165,13 +165,13 @@ class Login extends React.Component {
   verifyCode(){
     let { dispatch } = this.props;
     
-    this.setState({loading: true});
-    let {phone, code, countryCode} = this.state;
+    this.setState({isLoading: true});
+    let {phone, code, countryCode, username, password} = this.state;
     countryCode = countryCode || '+1';    
     this.setState({code: ''})
-    verifyCode(countryCode + phone, code).then(r => r.json()).then(r => {
+    verifyCode({code, username}).then(r => r.json()).then(r => {
         console.log('verify code res', r);
-        this.setState({loading: false}, () => {
+        this.setState({isLoading: false}, () => {
           if (r.token){
             dispatch({ type: 'LOGGED_IN', data: r });
           }
@@ -182,7 +182,7 @@ class Login extends React.Component {
         'Validation failed.',
         [
             {text: 'Ok', onPress: () => {
-                this.setState({loading: false})
+                this.setState({isLoading: false})
             }}
         ],
         {cancelable: false}
@@ -198,14 +198,14 @@ class Login extends React.Component {
 
   finishRecovery(){
     let {dispatch} = this.props;
-    this.setState({loading: true})
+    this.setState({isLoading: true})
     let {username, token} = this.state.newDevice;
     finishRecovery({username, token}).then(r => r.json()).then(r =>{
       console.log(r);
       if (r.token){
         dispatch({ type: 'LOGGED_IN', data: r });
       }
-      this.setState({loading: false})
+      this.setState({isLoading: false})
     }).catch(e => {
       console.warn(e);
       Alert.alert('Invalid data',
@@ -247,6 +247,24 @@ class Login extends React.Component {
       ],
       {cancelable: false}
       )
+    })
+  }
+
+  userNameAuth(){
+    this.setState({isLoading: true});
+    let {username, password} = this.state;
+    login2(username, password).then(r => {
+        this.setState({displayPhoneVerification: true, isLoading: false})
+    }).catch(e => {
+        Alert.alert('Invalid data',
+        'Validation failed.',
+        [
+            {text: 'Ok', onPress: () => {
+                this.setState({isLoading: false})
+            }}
+        ],
+        {cancelable: false}
+        )
     })
   }
 
@@ -310,18 +328,60 @@ class Login extends React.Component {
     </ScrollView>
   }
 
-  render() {
+  renderUserEntry(){
+    return (
+      <View style={{flex: 1}}>
+
+        <Button transparent onPress={() => this.setState({displayManualLogin: false})} style={{ width: 200, height: 50 }}  >
+            <Icon active name='arrow-back' style={{ color: '#6A6AD5' }} />
+        </Button>
+    <View style={{flex: 1, paddingHorizontal: 20, marginTop: 60}}>
+        <View style={styles.fieldContainer}>
+          <TextInput
+              placeholder="Username"
+              style={styles.textInput}
+              autoCorrect={false}
+              value={this.state.username}
+              onChangeText={(v) => this.setState({username: v})}
+              underlineColorAndroid={'transparent'}
+              />
+        </View>
+        <View style={styles.fieldContainer}>
+          <TextInput
+              placeholder="Password"
+              style={styles.textInput}
+              autoCorrect={false}
+              value={this.state.password}
+              secureTextEntry
+              onChangeText={(v) => this.setState({password: v})}
+              underlineColorAndroid={'transparent'}
+              />
+        </View>
+        <View style={styles.login}>
+          <PLButton
+            caption={'Login'}
+            onPress={() => this.userNameAuth()}
+            />
+        </View>
+    </View>
+    </View>
+    
+        )    
+  }
+
+  renderLoginContent(){
     if (this.state.displayManualLogin){
       if (this.state.displayManualLogin && this.state.showNewDevice){
         return (this.renderNewDevice())
-      }
-      else {
+      } else if (this.state.displayPhoneVerification) {
         return(
+          <LinearGradient colors={['#afcbe6', '#fff', '#afcbe6']} style={styles.container}>
+
           <View style={{flexDirection: 'column'}}>
           <View style={{flex: 1, minHeight: 400}}>
             <PhoneVerification
               onRegister={() => this.register()}
-              onBack={() => this.setState({displayManualLogin: false})}
+              onBack={() => this.setState({displayManualLogin: false, displayPhoneVerification: false})}
               type='login'
               onSendCode={() => this.sendCode()}   
               onVerifycode={() => this.verifyCode()}
@@ -330,7 +390,7 @@ class Login extends React.Component {
               phone={this.state.phone}
               onChangePhone={(value) => this.setState({phone: value})}
               loading={this.state.loading}
-              enterCode={this.state.enterCode}
+              enterCode
               setCountryCode={(code) => this.setState({countryCode: '+' + code})}
               resetForm={() => this.setState({code: '', phone: '', countryCode: '', enterCode: false})}
               />
@@ -342,9 +402,14 @@ class Login extends React.Component {
                   onPress={() => this.setState({showNewDevice: true})}
                   />
               </View>
-            
           </View>
+          </LinearGradient>
         )
+      } else {
+        return <LinearGradient colors={['#afcbe6', '#fff', '#afcbe6']} style={styles.container}>
+          {this.renderUserEntry()}
+          <View style={{ flex: 1 }} />
+        </LinearGradient>
       }
     }
     return (
@@ -357,6 +422,16 @@ class Login extends React.Component {
       </LinearGradient>
     );
   }
+
+  render() {
+    return (
+      <View style={{flex: 1}}>
+
+      <PLOverlayLoader visible={ this.state.isLoading} logo />
+      {this.renderLoginContent()}
+      </View>
+    )
+}
 }
 
 async function timeout(ms: number): Promise {

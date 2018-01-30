@@ -18,10 +18,11 @@ export default {
         paddingLeft: 17
     },
     selectorContainer: {
+        position: 'absolute',
         justifyContent: 'center',
         alignItems: 'center',
-        height: '100%',
-        width: '100%'
+        height: 80,
+        width: 88
     },
 
     avatar: {

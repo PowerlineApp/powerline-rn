@@ -318,7 +318,7 @@ class ItemDetail extends Component {
                 getComments(token, !!this.item.options ? 'poll' : this.item.type, entityId),
                 timeout(15000),
             ]);
-            // LOG('rsp3ioj2fo2jf', response);
+            console.log('load comments response', response);
             if (response.nextCursor) {
                 this.nextCursor = response.nextCursor;
                 this.isLoadedAll = false;
@@ -398,7 +398,7 @@ class ItemDetail extends Component {
             isLoading: false,
             commentText: ''
         });
-        console.log(response)
+        console.log('response', response)
         if (response && response.comment_body) {
             // this.setState({ dataArray: [] });
             // loadActivityByEntityId(token, this.item.type, entityId).then(data => {

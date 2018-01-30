@@ -75,13 +75,13 @@ class VerifyProfile extends Component {
         updateUserProfile(this.props.token, {zip, address1, address2, city, state, email, country, phone})
         .then(response => {
             this.setState({loading: false})
-            console.log(response)
+            console.log('response', response)
             Actions.pop();
             Actions.profile();
         })
         .catch(err => {
             this.setState({loading: false})
-            console.log(err)});
+            console.log('err', err)});
     }
 
     updateUserAvatar(image) {
@@ -93,7 +93,7 @@ class VerifyProfile extends Component {
     }
 
     onAutoComplete = (data, details) => {
-        // console.log('!!!!!!!!!!!!!!!')
+        console.log('!!!!!!!!!!!!!!!', data, details)
         this.setState({
             address1: "",
             state: "",
@@ -147,7 +147,7 @@ class VerifyProfile extends Component {
         let {phone, code, countryCode} = this.state;
         countryCode = countryCode || '+1';    
         this.setState({code: ''})
-        verifyCode(countryCode + phone, code).then(r => {
+        verifyCode({phone: countryCode + phone, code}).then(r => {
             // user successfully validated his phone, so its a real deal.
             this.setState({showPhoneScreen: false, loading: false, phone: countryCode + phone})
         }).catch(error => {
@@ -252,7 +252,7 @@ class VerifyProfile extends Component {
                             <Label>Verify or Complete your data</Label>
                         </View>
 
-                        <GooglePlacesAutocomplete
+                        {/* <GooglePlacesAutocomplete
                         placeholder='Zipcode'
                         minLength={2}
                         autoFocus={false}
@@ -283,20 +283,22 @@ class VerifyProfile extends Component {
                         }}
                         currentLocation={false}                        
                         nearbyPlacesAPI='GoogleReverseGeocoding'
-                        filterReverseGeocodingByTypes={['country']}
-                        debounce={200}
-                    />
+                        filterReverseGeocodingByTypes={['street_number', 'route','neighborhood', 'locality','administrative_area_level_1','country']}
 
-                        {/* <GooglePlacesAutocomplete
-                            placeholder='Street Address'
+                        debounce={200}
+                    /> */}
+
+                        <GooglePlacesAutocomplete
+                            placeholder='Zip Code'
                             minLength={2}
                             autoFocus={false}
                             returnKeyType={'Done'}
                             listViewDisplayed='auto'
                             fetchDetails
-                            renderDescription={(row) => row.description}  
+                            getDefaultValue={() => this.state.zip}
+
+                            renderDescription={(row) => {console.log(row); return row.description}}  
                             onPress={this.onAutoComplete}    
-                            getDefaultValue={() => address1}
                             query={{
                                 key: 'AIzaSyBQOJDsIGt-XxuSNI7Joe1KRpAOJwDAEQE',
                                 language: 'en',
@@ -314,18 +316,26 @@ class VerifyProfile extends Component {
                             }}
                             currentLocation={false}                        
                             nearbyPlacesAPI='GoogleReverseGeocoding'
-                            filterReverseGeocodingByTypes={['street_number', 'route','neighborhood', 'locality','administrative_area_level_1','country','postal_code']}
+                            filterReverseGeocodingByTypes={['postal_code']}
                             debounce={200}
-                    /> */}
+                    />
                         {/* <View style={styles.fieldContainer}> */}
                             <TextInput
-                                placeholder='Zipcode'
+                                placeholder='Address 1'
+                                autoCorrect={false}
+                                style={styles.textInput}
+                                value={address1}
+                                onChangeText={(v) => this.onChange(v, 'address1')}
+                                underlineColorAndroid={'transparent'}
+                            />
+                            <TextInput
+                                placeholder='Address 2'
                                 style={styles.textInput}
                                 autoCorrect={false}
-                                value={zip}
-                                onChangeText={(v) => this.onChange(v, 'zip')}
+                                value={address2}
+                                onChangeText={(v) => this.onChange(v, 'address2')}
                                 underlineColorAndroid={'transparent'}
-                                />
+                            />
                         {/* </View> */}
                             <TextInput
                                 placeholder='City'
@@ -514,7 +524,7 @@ const styles = {
         borderWidth: 0.5,
         borderColor: PLColors.textInputBorder,
         backgroundColor: PLColors.textInputBackground,
-        width: '80%'
+        width: '95%'
     },
     autoTextInput: {
         backgroundColor: 'transparent',

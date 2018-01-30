@@ -48,26 +48,26 @@ class FeedCarousel extends Component {
             if (item < 1){ return null;}
             // return null;
             // console.log('=>', slides);
-            return (
-                <CardItem cardBody>
-                    <Carousel
-                        sliderWidth={sliderWidth}
-                        itemWidth={itemWidth}
-                        inactiveSlideScale={1}
-                        inactiveSlideOpacity={1}
-                        enableMomentum
-                        autoplay={false}
-                        autoplayDelay={500}
-                        autoplayInterval={2500}
-                        containerCustomStyle={styles.slider}
-                        contentContainerCustomStyle={styles.sliderContainer}
-                        showsHorizontalScrollIndicator={false}
-                        snapOnAndroid
-                        removeClippedSubviews={false}
-                        data={item.poll.educational_context}
-                        renderItem={this._renderItem}
-                    />
-                </CardItem>
+            return ( null
+                // <CardItem cardBody>
+                //     <Carousel
+                //         sliderWidth={sliderWidth}
+                //         itemWidth={itemWidth}
+                //         inactiveSlideScale={1}
+                //         inactiveSlideOpacity={1}
+                //         enableMomentum
+                //         autoplay={false}
+                //         autoplayDelay={500}
+                //         autoplayInterval={2500}
+                //         containerCustomStyle={styles.slider}
+                //         contentContainerCustomStyle={styles.sliderContainer}
+                //         showsHorizontalScrollIndicator={false}
+                //         snapOnAndroid
+                //         removeClippedSubviews={false}
+                //         data={item.poll.educational_context}
+                //         renderItem={this._renderItem}
+                //     />
+                // </CardItem>
             );
         } else {
             return null;

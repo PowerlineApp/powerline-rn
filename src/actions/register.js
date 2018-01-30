@@ -143,12 +143,19 @@ function registerFromFB(data){
         });
     });
 }
-function verifyCode (phone, code) {
-    console.log('~>' + API_URL + `/v2/security/login`, phone, code);
+function verifyCode ({phone, code, username, password}) {
+    console.log('~>' + API_URL + `/v2/security/login`, API_URL + '/v2/security/login', {
+        method: 'POST',
+        body: JSON.stringify({phone, code, username, password}),
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+    });
     return new Promise((fullfill, reject) => {
         fetch(API_URL + '/v2/security/login', {
             method: 'POST',
-            body: JSON.stringify({phone, code}),
+            body: JSON.stringify({phone, code, username, password}),
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
@@ -156,10 +163,34 @@ function verifyCode (phone, code) {
         }).then(res => {
             console.log(res);
             if (res.status === 200){
-                // res.json().then(r => fullfill(r));
                 fullfill(res);
             } else {
-                // res.json().then(r => reject(r));
+                reject(res);
+            }
+        }).catch(e => {reject(e);});
+    });
+}
+function login2 (username, password) {
+    console.log(API_URL + '/v2/security/login', {
+        method: 'POST',
+        body: JSON.stringify({username, password}),
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        }});
+    return new Promise((fullfill, reject) => {
+        fetch(API_URL + '/v2/security/login', {
+            method: 'POST',
+            body: JSON.stringify({username, password}),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+        }).then(res => {
+            console.log('res', res.ok);
+            if (res.ok){
+                fullfill(res);
+            } else {
                 reject(res);
             }
         }).catch(e => {reject(e);});
@@ -199,5 +230,6 @@ module.exports = {
     registerFromFB,
     verifyCode,
     sendCode: verifyCode,
+    login2,
     getZipCode
 };

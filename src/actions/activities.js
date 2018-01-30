@@ -87,12 +87,12 @@ const markAsRead = (token, id) => (dispatch, state) => {
               'token': token,
               'Content-Type': 'application/json',
           },
-          body: JSON.stringify({activities: [{id: id, read: true}]})
+          body: JSON.stringify({activities: [{id: id, read: "true"}]})
         }).then(r => {
-            // console.log('response', r)
+            console.log('marking as read response', r)
             dispatch({type: 'DECREASE_NEWSFEED_COUNT'})
         }).catch(e => {
-            console.log('error', e)
+            console.log('marking as read error', e)
         })
 }
 
@@ -242,6 +242,7 @@ async function subscribeNotification(token: string, id: number, activityId: numb
 async function unsubscribeNotification(token: string, id: number, activityId: number, type: string): Promise<Action> {
     LOG('Unsubscribe to notification API', id, type);
     const response = await api.delete(token, `/v2/user/${type}s/${id}`);
+    console.log('response', response)
     if (response.status === 204) {
         showToast('Notifications Muted');
         return {

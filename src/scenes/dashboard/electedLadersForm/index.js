@@ -110,7 +110,7 @@ class ElectedLeadersForm extends Component {
                     </Body>
                     <Right />
                 </Header>
-                <Content padder>
+                <View style={{flex: 1}} padder>
                     <Card>
                         <ListItem style={styles.listItem}>
                             <Thumbnail style={styles.avatar} square source={this.state.avatar ? {uri: this.state.avatar.path} : require('../../../assets/blank_person.png')} />
@@ -271,7 +271,7 @@ class ElectedLeadersForm extends Component {
                         />
                         </GiftedForm>
                     </Card>
-                </Content>
+                </View>
             </Container>
         );
     }

@@ -58,7 +58,7 @@ function activities(state: State = initialState, action: Action): State {
             payload: [action.payload, ...state.payload],
             items: [action.payload, ...state.payload],
             count: state.count + 1,
-            count: state.count + 1,
+            // count: state.count + 1,
 
         }
     }

@@ -125,7 +125,7 @@ class GroupBankAccount extends Component {
             );
         } 
 
-        return <Right />
+        return <Right />;
     }
     
     render() {
@@ -142,7 +142,7 @@ class GroupBankAccount extends Component {
                     </Body>
                     {this.renderPlusSign()}
                 </Header>
-                    {this.renderAccountsOrForm()}
+                {this.renderAccountsOrForm()}
             </Container>
         );
     }

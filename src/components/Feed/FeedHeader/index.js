@@ -86,7 +86,7 @@ class FeedHeader extends Component {
         var { token, dispatch } = this.props;
         ActionSheet.show(
             {
-                options: ['1 hour', '8 hours', '24 hours'],
+                options: ['1 hour', '8 hours', '24 hours', 'Cancel'],
                 title: "Mute user's notifications"
             },
 
@@ -97,8 +97,9 @@ class FeedHeader extends Component {
                 } else if (buttonIndex == 2) {
                     hours = 24;
                 }
+                if (buttonIndex === 3) return;
 
-                var newDate = new Date((new Date()).getTime() + 1000 * 60 * 60 * hours);
+                var newDate = new Date((new Date()).getTime() + 1000 * 60 * 60 * hours).toISOString();
                 editFollowers(token, item.owner.id, false, newDate)
                     .then(data => {
                         console.warn(JSON);
@@ -210,15 +211,7 @@ class FeedHeader extends Component {
     }
 
     isSubscribed(item) {
-        let type = item.type;
-        if (type === 'user-petition') {
-            type = 'user_petition';
-        }
-        if (item[type] !== undefined) {
-            return item[type].is_subscribed;
-        }
-
-        return false;
+        return item.is_subscribed;
     }
 
     block(item){
@@ -237,17 +230,16 @@ class FeedHeader extends Component {
         let thumbnail = '';
         let title = '';
         const isBoosted = item.zone === 'prioritized';
-        const isAuthor = item.user.id === this.props.userId;
+        const isAuthor = Number(item.user.id) === Number(this.props.userId);
         const canUnfollow = item.user.follow_status === 'active';
         const canFollow = item.user.follow_status === null;
         let canInviteUpvoters = false;
         let canSpam = false;
-
-        let canBlock = item.user.id !== this.props.userId;
-
+        let canBlock = Number(item.owner.id) !== Number(this.props.userId);
+        let canSubscribe = item.type === 'user-petition' || item.type === 'post';
         // console.log(this.props, isAuthor, item.user.id, this.props.userId, item.user.id === this.props.userId);
         console.log('=============================');
-        console.log('item.user', item);//, item.owner, item.id);
+        console.log('item.user', item, item.user.id, this.props.userId);//, item.owner, item.id);
         console.log('=============================');
         switch (item.type) {
         case 'post':
@@ -285,6 +277,8 @@ class FeedHeader extends Component {
                             </MenuTrigger>
                             <MenuOptions customStyles={optionsStyles}>
                                 {
+                                    canSubscribe && (
+
                                     !this.isSubscribed(item)
                                     ?
                                         <MenuOption onSelect={() => this.subscribe(item)}>
@@ -300,6 +294,8 @@ class FeedHeader extends Component {
                                                 <Text style={styles.menuText}>Unsubscribe to Notifications</Text>
                                             </Button>
                                         </MenuOption>
+                                    )
+                                        
                                 }
                                 {
                                     !isAuthor && canUnfollow &&
@@ -386,7 +382,7 @@ class FeedHeader extends Component {
                                     </MenuOption>
                                 }
                                 {
-                                    !canBlock && <MenuOption onSelect={() => this.block(item)}>
+                                    !isAuthor && <MenuOption onSelect={() => this.block(item)}>
                                         <Button iconLeft transparent dark onPress={() => this.block(item)}>
                                             <Icon name='ios-close-circle-outline' style={styles.menuIcon} />
                                             {/* <Image source={require("img/spam.png")} style={styles.upvotersIcon} /> */}
@@ -412,7 +408,8 @@ const optionsStyles = {
 };
 
 const mapStateToProps = (state) => ({
-    blokedUsers: state.user.blockedList
+    blokedUsers: state.user.blockedList,
+    userId: state.user.profile.id,
 });
 
 export default connect(mapStateToProps)(FeedHeader);

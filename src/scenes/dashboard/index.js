@@ -529,6 +529,7 @@ class Home extends Component {
             case 'open-group-button':
             case 'respond-button':
             case 'view-poll-button':
+            case 'rsvp-button':
                 this.redirect(type, data.notification.payload);
                 break;
             case 'reply-comment-button':
@@ -537,7 +538,6 @@ class Home extends Component {
             case 'open-comment-button':
                 this._openComment(token, data);
                 break;
-
             case 'sign-petition-button':
                 this._signPetition(token, data);
                 break;
@@ -574,10 +574,7 @@ class Home extends Component {
             case 'share-announcement-button':
                 this._shareAnnouncement(token, data);
                 break;
-            case 'rsvp-button':
-                this.rspv(data);
-                break;
-            default:
+                default:
                 this.redirect(data);
         }
     }

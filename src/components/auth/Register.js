@@ -150,6 +150,12 @@ class Register extends React.Component{
     onChangeAgency = agency => {
         this.setState({ agency: agency });
     }
+    onChangePassword = password => {
+        this.setState({ password });
+    }
+    onChangeConfirm = confirm => {
+        this.setState({ confirm });
+    }
 
     onChangeSwitch = is_over_13 => {
         this.setState({ is_over_13: is_over_13 });
@@ -181,7 +187,7 @@ class Register extends React.Component{
     }
 
     async onNext() {
-        let { email, position, first_name, last_name, username, zip, country, is_over_13, phone} = this.state;
+        let { email, position, first_name, last_name, username, zip, country, is_over_13, phone, password, confirm} = this.state;
         let { onLoggedIn, isFb, fbData, tour } = this.props;
         if(position === 0){
             
@@ -247,7 +253,7 @@ class Register extends React.Component{
             if(country == "" || country.trim() == ""){
                 alert("Country is empty.");
                 return;
-            }            
+            }  
 
             if(isFb){
                 let data = fbData;
@@ -277,6 +283,10 @@ class Register extends React.Component{
                     return;
                 });
             } else {
+                if (password == "" || password.trim() === ""){
+                    alert("Password is empty");
+                    return;
+                }
                 this.setState({position: position + 1})
             }
         }
@@ -398,7 +408,7 @@ class Register extends React.Component{
     }
 
     renderContact(){
-        var { city, state, country, zip, email, position, is_over_13 } = this.state;
+        var { city, state, country, zip, email, position, is_over_13, password, confirm } = this.state;
         return (
             <Content>
                 <Container style={styles.container}>
@@ -411,17 +421,6 @@ class Register extends React.Component{
                         <Text style={styles.starText}>*</Text>
                         Powerline requires this information to link you to your communities and, if available, your specific elected leaders. This helps prove you are real and not a robot. We  may also aggregate this information for anonymous reporting purposes.
                     </Text>
-                    <View style={styles.fieldContainer}>
-                        <TextInput
-                            placeholder="Country"
-                            maxLength={2}
-                            style={styles.textInput}
-                            autoCorrect={false}
-                            value={country}
-                            onChangeText={this.onChangeCountry}
-                            underlineColorAndroid={'transparent'}
-                        />
-                    </View>
                     <GooglePlacesAutocomplete
                         placeholder='Zipcode'
                         minLength={2}
@@ -456,6 +455,32 @@ class Register extends React.Component{
                         filterReverseGeocodingByTypes={['country']}
                         debounce={200}
                     />
+                    <View style={styles.fieldContainer}>
+                        <TextInput
+                            placeholder="Country"
+                            maxLength={2}
+                            style={styles.textInput}
+                            autoCorrect={false}
+                            value={country}
+                            onChangeText={this.onChangeCountry}
+                            underlineColorAndroid={'transparent'}
+                        />
+                    </View>
+                    {
+                        !this.props.isFb &&
+                    <View style={styles.fieldContainer}>
+                        <TextInput
+                            placeholder="Password"
+                            style={styles.textInput}
+                            autoCorrect={false}
+                            value={password}
+                            secureTextEntry
+                            onChangeText={this.onChangePassword}
+                            underlineColorAndroid={'transparent'}
+                            />
+                    </View>
+                    
+                        }
 
 
                     <View style={styles.switchContainer}>
@@ -483,7 +508,7 @@ class Register extends React.Component{
     async onRegister(){
         this.setState({loading: true})
         if (this.state.registered) return;
-        let { first_name, last_name, code, email, username, zip, country, phone, countryCode, agency} = this.state;
+        let { first_name, last_name, code, email, username, zip, country, phone, countryCode, agency, password, confirm} = this.state;
         let { onLoggedIn, isFb, fbData, tour } = this.props;
         let data = {
             username,
@@ -494,7 +519,9 @@ class Register extends React.Component{
             phone: countryCode + phone,
             zip,
             code,
-            agency
+            agency,
+            password,
+            // confirm
         }
         return register2(data).then(r => {
             console.log('register success', r);
@@ -683,8 +710,7 @@ var styles = StyleSheet.create({
     },
     formContainer: {
         marginTop: 20,
-        paddingLeft: 50,
-        paddingRight: 50
+        paddingHorizontal: 20
     },
     requireText: {
         fontSize: 14,
