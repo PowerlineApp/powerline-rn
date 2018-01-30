@@ -31,15 +31,16 @@ class FeedCommentPreview extends Component {
         let previewData = {};
         // console.log(item);
 
-        if (item.poll) {
-            previewData = item.poll;
-        } else if (item.post) {
-            previewData = item.post;
-        } else if (item.user_petition) {
-            previewData = item.user_petition;
-        }
-        let comment = (previewData.comments || [])[0];
-        if (!comment) { return  null; }
+        // if (item.poll) {
+        //     previewData = item.poll;
+        // } else if (item.post) {
+        //     previewData = item.post;
+        // } else if (item.user_petition) {
+        //     previewData = item.user_petition;
+        // }
+        let comment = item.first_comment;
+        if (!comment) { return  <View style={{marginBottom: 8}} />; }
+        console.log (comment);
         // console.log('comment preview:', comment.user.full_name,' - ', comment.comment_body,' - ', item.title, item.body)
         return (
             <TouchableOpacity onPress={() => this.redirect(item)} >
@@ -52,7 +53,7 @@ class FeedCommentPreview extends Component {
                             />
                         </View>
                         <Body>
-                            <Text style={styles.commentTitle} >{comment.user.full_name}</Text>
+                            <Text style={styles.commentTitle} >{(comment.user || {full_name: 'Johnny Doe'}).full_name}</Text>
                             <Text style={styles.commentPreviewText} >{this.limitString(comment.comment_body)}</Text>
                         </Body>
                     </Left>

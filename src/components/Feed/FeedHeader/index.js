@@ -230,16 +230,16 @@ class FeedHeader extends Component {
         let thumbnail = '';
         let title = '';
         const isBoosted = item.zone === 'prioritized';
-        const isAuthor = Number(item.user.id) === Number(this.props.userId);
+        const isAuthor = Number(item.user && item.user.id) === Number(this.props.userId);
         const canUnfollow = item.user.follow_status === 'active';
         const canFollow = item.user.follow_status === null;
         let canInviteUpvoters = false;
         let canSpam = false;
-        let canBlock = Number(item.owner.id) !== Number(this.props.userId);
+        let canBlock = !isAuthor;
         let canSubscribe = item.type === 'user-petition' || item.type === 'post';
         // console.log(this.props, isAuthor, item.user.id, this.props.userId, item.user.id === this.props.userId);
         console.log('=============================');
-        console.log('item.user', item, item.user.id, this.props.userId);//, item.owner, item.id);
+        console.log('item.user', item, item.user && item.user.id, this.props.userId);//, item.owner, item.id);
         console.log('=============================');
         switch (item.type) {
         case 'post':

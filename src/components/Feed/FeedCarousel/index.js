@@ -11,6 +11,7 @@ class FeedCarousel extends Component {
         return <FeedContext entry={entry} />;
     }
     _renderItem ({item, index}) {
+        console.log('item, index', item, index);
         return (
             <TouchableOpacity
                 key={`entry-${index}`}
@@ -30,7 +31,6 @@ class FeedCarousel extends Component {
         
         let {item} = this.props;
         console.log(item);
-        if (item.poll) {
             // const slides = item.poll.educational_context.map((entry, index) => {
             //     return (
             //         <TouchableOpacity
@@ -45,33 +45,30 @@ class FeedCarousel extends Component {
             //         </TouchableOpacity>
             //     );
             // });
-            if (item < 1){ return null;}
+        if (item < 1){ return null;}
             // return null;
             // console.log('=>', slides);
-            return ( null
-                // <CardItem cardBody>
-                //     <Carousel
-                //         sliderWidth={sliderWidth}
-                //         itemWidth={itemWidth}
-                //         inactiveSlideScale={1}
-                //         inactiveSlideOpacity={1}
-                //         enableMomentum
-                //         autoplay={false}
-                //         autoplayDelay={500}
-                //         autoplayInterval={2500}
-                //         containerCustomStyle={styles.slider}
-                //         contentContainerCustomStyle={styles.sliderContainer}
-                //         showsHorizontalScrollIndicator={false}
-                //         snapOnAndroid
-                //         removeClippedSubviews={false}
-                //         data={item.poll.educational_context}
-                //         renderItem={this._renderItem}
-                //     />
-                // </CardItem>
+        return (
+                <CardItem cardBody>
+                    <Carousel
+                        sliderWidth={sliderWidth}
+                        itemWidth={itemWidth}
+                        inactiveSlideScale={1}
+                        inactiveSlideOpacity={1}
+                        enableMomentum
+                        autoplay={false}
+                        autoplayDelay={500}
+                        autoplayInterval={2500}
+                        containerCustomStyle={styles.slider}
+                        contentContainerCustomStyle={styles.sliderContainer}
+                        showsHorizontalScrollIndicator={false}
+                        snapOnAndroid
+                        removeClippedSubviews={false}
+                        data={item.educational_contexts}
+                        renderItem={this._renderItem}
+                    />
+                </CardItem>
             );
-        } else {
-            return null;
-        }
     }
 }
 export default FeedCarousel;

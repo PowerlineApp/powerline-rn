@@ -225,8 +225,7 @@ class NewPost extends Component {
                 showToast('Post Successful!');
                 this.refs.animatedView.fadeInDownBig(1000);
                 setTimeout(() => {
-                    Actions.itemDetail({ item: data, entityId: data.id, entityType: 'post', backTo: 'home', share: this.state.share });
-                    this.props.updateFeedFirstItem(data);
+                    Actions.itemDetail({ item: data, entityId: data.id, entityType: 'post', backTo: 'home', share: this.state.share, updateFeed: true });
                 }, 200);
             })
             .catch(err => {

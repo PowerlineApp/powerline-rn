@@ -27,7 +27,7 @@ class FeedContext extends Component {
             return (
                 <Image
                     placeholderSource={require('img/empty_image.png')}
-                    source={{ uri: entry.imageSrc + '&w=300&h=300&auto=compress,format,q=95' }}
+                    source={{ uri: entry.image + '&w=300&h=300&auto=compress,format,q=95' }}
                     style={styles.image}
                     />
             );

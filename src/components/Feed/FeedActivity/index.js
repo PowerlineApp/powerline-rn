@@ -73,17 +73,18 @@ class FeedActivity extends Component {
 
     _renderGroupCard(item) {
         return (
-            <Card style={styles.container}>
-                <FeedHeader item={item} token={this.props.token} />
-                <FeedDescription item={item} profile={this.props.profile} />
-                <FeedCarousel item={item} />
-                <View style={styles.borderContainer} />
-                {/* <View style={{flex: 1}}> */}
-                {/* <CardItem style={{marginTop: 1, paddingTop: 1, height: 1}} /> */}
-                <FeedFooter item={item} profile={this.props.profile} token={this.props.token} showAnalytics={this.props.showAnalytics} />
-                {/* </View> */}
-                <FeedCommentPreview item={item} />
-            </Card>
+            
+        [<Card style={styles.container}>
+            <FeedHeader item={item} token={this.props.token} />
+            <FeedDescription item={item} profile={this.props.profile} />
+            <FeedCarousel item={item} />
+            <View style={styles.borderContainer} />
+            {/* <View style={{flex: 1}}> */}
+            {/* <CardItem style={{marginTop: 1, paddingTop: 1, height: 1}} /> */}
+            <FeedFooter item={item} profile={this.props.profile} token={this.props.token} showAnalytics={this.props.showAnalytics} />
+            {/* </View> */}
+        </Card>,
+            <FeedCommentPreview item={item} />]
         );
     }
 

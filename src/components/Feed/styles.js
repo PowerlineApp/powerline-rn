@@ -40,6 +40,11 @@ export default {
         flexDirection: 'column',
         padding: 8,
         paddingBottom: 90,
+        marginBottom: 0,
+        elevation: 2
+        // sha
+        // width: '100%',
+        // marginHorizontal: 80,
         // marginBottom: 40
     },
     // this is the author name
@@ -200,7 +205,11 @@ export default {
     commentPreviewContainer: {
         backgroundColor: '#F8F8F8',
         minHeight: 45,
-        paddingLeft: 5
+        paddingLeft: 5,
+        padding: 0,
+        marginHorizontal: 2,
+        elevation: 3,
+        marginBottom: 8
     },
     buttonContainer: {
         flexDirection: 'row'

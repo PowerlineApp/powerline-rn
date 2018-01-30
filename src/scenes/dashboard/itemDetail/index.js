@@ -14,7 +14,7 @@ const fs = RNFetchBlob.fs
 
 // import {ScrollView, Modal, TouchableOpacity} from 'react-native';
 import { Spinner, Container, Header, Title, Textarea, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, List, ListItem, Item, Input, Card } from 'native-base';
-import { Image, View, StyleSheet, Modal, ScrollView, TouchableOpacity, TouchableHighlight, Platform, KeyboardAvoidingView, Keyboard, TextInput, ListView } from 'react-native';
+import { Image, View, StyleSheet, Modal, ScrollView, TouchableOpacity, TouchableHighlight, Platform, KeyboardAvoidingView, Keyboard, TextInput, ListView, BackHandler } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
 import * as Animatable from 'react-native-animatable';
@@ -30,7 +30,7 @@ import Menu, {
     MenuOption,
     renderers
 } from 'react-native-popup-menu';
-import { getComments, votePost, getActivities2, getUsersByGroup, addComment, editComment, deleteComment, rateComment, loadActivityByEntityId, deletePost, deletePetition, changePost, changePetition, loadPollByEntityId, markAsRead } from 'PLActions';
+import { getComments, votePost,updateFeedFirstItem, getActivities2, getUsersByGroup, addComment, editComment, deleteComment, rateComment, loadActivityByEntityId, deletePost, deletePetition, changePost, changePetition, loadPollByEntityId, markAsRead } from 'PLActions';
 import PLOverlayLoader from 'PLOverlayLoader';
 import randomPlaceholder from '../../../utils/placeholder';
 import { FloatingAction } from 'react-native-floating-action';
@@ -89,6 +89,7 @@ class ItemDetail extends Component {
 
         this.onChangeComment = this.onChangeComment.bind(this);
         this.onSelectionChange = this.onSelectionChange.bind(this);
+        this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => this.onBackPress());
     }
 
     componentWillMount() {
@@ -291,8 +292,11 @@ class ItemDetail extends Component {
             if (this.props.item){
                 this.item = this.props.item
             } else {
-
                 this.item = await loadActivityByEntityId(token, type === 'post' ? 'post' : type === 'user-petition' ? 'user-petition' : 'poll' , entityId);
+            }
+
+            if (this.props.updateFeed) {
+                this.props.updateFeedFirstItem(this.item);
             }
             
             // this.item = action.data.payload[0];
@@ -1130,4 +1134,4 @@ const mapStateToProps = state => ({
     userId: state.user.id,
 });
 
-export default connect(mapStateToProps, {markAsRead})(ItemDetail);
+export default connect(mapStateToProps, {markAsRead, updateFeedFirstItem})(ItemDetail);

@@ -133,7 +133,7 @@ class NewLeaderContent extends Component {
         groupBankAccounts(token, groupId).then(r => {
             r.json().then(r => {
                 console.log('BANK ACCOUNTS:', r);
-                if (!r || r.length === 0){
+                if (!r || !r.length){
                     this.setState({blockFundraiser: true});
                     Alert.alert('This group does not have an Bank Account setup yet',
                         "It seems that your group doesn't have any bank account registered. Please add a bank account to your group or ask the group owner to do so.",
@@ -482,8 +482,7 @@ class NewLeaderContent extends Component {
 
                     this.sendAttachmentsAndPublish(r, attachments).then((r) => {
                         console.log('published: ', r);
-                        Actions.itemDetail({entityType: 'poll', entityId: r.id, backTo: 'home'});
-                        this.props.updateFeedFirstItem(r);
+                        Actions.itemDetail({entityType: 'poll', entityId: r.id, backTo: 'home', updateFeed: true});
                     }).catch(e => {
                         console.log('failure', e);
                     });
@@ -732,8 +731,8 @@ class NewLeaderContent extends Component {
                         </Right>
                     </ListItem>
                 </List>
-                <ScrollView keyboardShouldPersistTaps={'handled'} scrollEnabled={false} enableAutoAutomaticScroll={false} style={styles.main_content} >
-                    <ScrollView style={{margin: 16}} scrollEnabled={false} enableAutoAutomaticScroll={false}  >
+                <ScrollView keyboardShouldPersistTaps={'handled'} scrollEnabled enableAutoAutomaticScroll={false} style={styles.main_content} >
+                    <ScrollView style={{margin: 16}} scrollEnabled enableAutoAutomaticScroll={false}  >
                         <Content>
                             {
                             hasTitle &&
