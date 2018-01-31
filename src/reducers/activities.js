@@ -221,10 +221,7 @@ function activities(state: State = initialState, action: Action): State {
             if (activity.id === id) {
                 return {
                     ...activity,
-                    [type]: {
-                        ...activity[type],
-                        is_subscribed: false,
-                    }
+                    is_subscribed: false,
                 };
             } else {
                 return activity;

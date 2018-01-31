@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View } from 'react-native';
+import { View, Clipboard } from 'react-native';
 import { connect } from 'react-redux';
 import {
     Container,
@@ -22,6 +22,7 @@ import {
 import Fields from './fields';
 import PLColors from 'PLColors';
 import { updateUserProfile } from 'PLActions';
+import {showToast} from 'PLToast';
 class MyInfo extends Component {
     constructor(props) {
         super(props);
@@ -89,7 +90,7 @@ class MyInfo extends Component {
                             </View>
                             <Text>{this.props.profile.username}</Text>
                         </ListItem>
-                        <ListItem>
+                        <ListItem onPress={() => {Clipboard.setString(this.props.referal_code); showToast('Referral code copied to Clipboard.');}}>
                             <View style={{paddingHorizontal: 10, flexDirection: 'row'}}>
                                 <Icon name='contact' color={PLColors.main} style={{marginRight: 10}} />
                                 <Text style={{color: 'grey'}}>My Referral Code:</Text>

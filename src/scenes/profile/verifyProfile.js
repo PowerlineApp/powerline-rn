@@ -25,6 +25,8 @@ import { findByUsernameEmailOrPhone, updateUserProfile, loadUserProfileById, ver
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import ImageSelector from '../../common/PLImageSelector'
 import PLButton from 'PLButton';
+import DatePicker from 'react-native-datepicker';
+
 import PhoneVerification from '../../components/auth/PhoneVerification';
 const googlePlacesKey = 'AIzaSyBQOJDsIGt-XxuSNI7Joe1KRpAOJwDAEQE';
 
@@ -70,9 +72,9 @@ class VerifyProfile extends Component {
     }
 
     updateUser() {
-        let {zip, address1, address2, city, state, email, country, phone} = this.state;
+        let {zip, address1, address2, city, state, email, country, phone, birth} = this.state;
         this.setState({loading: true})
-        updateUserProfile(this.props.token, {zip, address1, address2, city, state, email, country, phone})
+        updateUserProfile(this.props.token, {zip, address1, address2, city, state, email, country, phone, birth})
         .then(response => {
             this.setState({loading: false})
             console.log('response', response)
@@ -227,8 +229,8 @@ class VerifyProfile extends Component {
             return this.renderPhoneScreen();
         }
 
-        let {zip, address1, address2, city, state, email, country, phone} = this.state
-        console.log({zip, address1, address2, city, state, email, country, phone})
+        let {zip, address1, address2, city, state, email, country, phone, facebook_id, birth} = this.state
+        console.log({zip, address1, address2, city, state, email, country, phone, birth})
             return (
             <Content contentContainerStyle={{alignItems: 'center', marginTop: 20}}>
                 <View style={{flexDirection: 'row', justifyContent: 'space-around', justifyContent: 'center'}}>
@@ -369,7 +371,21 @@ class VerifyProfile extends Component {
                                 onChangeText={(v) => this.onChange(v, 'email')}
                                 underlineColorAndroid={'transparent'}
                             />
-
+                            <View style={styles.fieldContainer}>
+                            <DatePicker 
+                                showIcon={false}
+                                mode='date'
+                                format='YYYY-MM-DD'
+                                style={{flex: 1}}
+                                customStyles={{dateInput: {width: '100%', flex: 1,textAlign: 'center', padding: 0, borderWidth: 0, color: '#eee'}, placeholderText: {color: '#eee', fontSize: 17, marginLeft: 20}, dateText: {fontSize: 14, fontWeight: '400', cololor: '#eee', marginLeft: 20}}}
+                                onDateChange={date => this.setState({date, birth: new Date(date).toISOString()})}
+                                date={this.state.date}
+                                confirmBtnText='Confirm'
+                                cancelBtnText='Cancel'
+                            />
+                            </View>
+                        {
+                            this.state.user.facebook_id &&
                         <View style={styles.fieldContainer}>
                             <View style={{flex: 1, justifyContent: 'center'}}>
                             <TouchableOpacity onPress={() => this.validatePhone()}>
@@ -377,6 +393,7 @@ class VerifyProfile extends Component {
                             </TouchableOpacity>
                             </View>
                         </View> 
+                        }
                         <View style={{padding: 20}}>
                             <Text style={{fontSize: 10, color: 'grey'}}>We may occasionally contact you via e-mail, but we will never sell your information.</Text>
                         </View>

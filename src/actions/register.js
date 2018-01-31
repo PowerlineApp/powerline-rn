@@ -143,10 +143,10 @@ function registerFromFB(data){
         });
     });
 }
-function verifyCode ({phone = '+14388004417', code}) {
+function verifyCode ({phone, username, password, code}) {
     console.log('~>' + API_URL + `/v2/security/login`, API_URL + '/v2/security/login', {
         method: 'POST',
-        body: JSON.stringify({phone, code}),
+        body: JSON.stringify({username, phone, password, code}),
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
@@ -155,7 +155,7 @@ function verifyCode ({phone = '+14388004417', code}) {
     return new Promise((fullfill, reject) => {
         fetch(API_URL + '/v2/security/login', {
             method: 'POST',
-            body: JSON.stringify({phone, code}),
+            body: JSON.stringify({phone, username, password, code}),
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',

@@ -238,9 +238,9 @@ class FeedHeader extends Component {
         let canBlock = !isAuthor;
         let canSubscribe = item.type === 'user-petition' || item.type === 'post';
         // console.log(this.props, isAuthor, item.user.id, this.props.userId, item.user.id === this.props.userId);
-        console.log('=============================');
-        console.log('item.user', item, item.user && item.user.id, this.props.userId);//, item.owner, item.id);
-        console.log('=============================');
+        // console.log('=============================');
+        // console.log('item.user', item, item.user && item.user.id, this.props.userId);//, item.owner, item.id);
+        // console.log('=============================');
         switch (item.type) {
         case 'post':
         case 'user-petition':
@@ -260,10 +260,12 @@ class FeedHeader extends Component {
                 <Left style={{flexDirection: 'row', backgroundColor: '#fff', padding: 0}}>
                     <TouchableHighlight onPress={() => this.onPressThumbnail(item)} underlayColor={'#fff'}>
                         <View>
+                            {/* <View style={{ flex: 1, borderWidth: 3, borderStyle: 'dashed', borderColor: 'silver', borderRadius: 1000}}> */}
                             <Thumbnail small
                                 source={thumbnail ? { uri: thumbnail + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")}
                                 defaultSource={require("img/blank_person.png")}
-                            />
+                                />
+                            {/* </View> */}
                         </View>
                     </TouchableHighlight>
                     <Body style={{alignItems: 'flex-start', marginLeft: 16}}>

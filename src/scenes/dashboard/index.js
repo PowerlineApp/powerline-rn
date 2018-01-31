@@ -1,5 +1,4 @@
 // This is the Home Screen (GH7). It consists of the burger menu, search bar, Group Selector (GH9), and 4 tabs: Newsfeed (GH13), Friends Feed (GH51), Messages (NA), and Notifications Feed (GH37). The option to create new content (GH8) is also on this screen.
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions, ActionConst } from 'react-native-router-flux';
@@ -310,15 +309,11 @@ class Home extends Component {
             case 'join-to-group-approved':
                 Actions.groupprofile({id: notification.additionalData.entity.target.id});
                 break;
-            case 'comment-mentioned':
-            case 'post-mentioned':
-            case 'own-post-commented':
-            case 'own-post-voted':
-            case 'own-user-petition-signed':
-                this.itemDetail(notification, options);
-                break;
             case 'follow-request':
                 Actions.myInfluences()
+            default:
+                this.itemDetail(notification, options);
+                break;
         }        
     }
 
@@ -341,7 +336,7 @@ class Home extends Component {
         let comment = getComments(token, target.type, target.id).then(
             res => {
                 Actions.commentDetail({
-                    comment: res.comments.find(comment => comment.id === target.comment_id),
+                    comment: (res.comments || []).find(comment => comment.id === target.comment_id),
                     entityType: target.type,
                     entityId: target.id
                 });
@@ -405,6 +400,10 @@ class Home extends Component {
 
     _rspv(data) {
         this.redirect(data);
+    }
+
+    _signLeaderPetition(token, data) {
+
     }
 
 
@@ -530,45 +529,48 @@ class Home extends Component {
             case 'respond-button':
             case 'view-poll-button':
             case 'rsvp-button':
-                this.redirect(type, data.notification.payload);
+                return this.redirect(type, data.notification.payload);
                 break;
             case 'reply-comment-button':
-                this.redirect(type, data.notification.payload, {commenting: true, commentText: '@' + data.notification.payload.additionalData.user.username});
+                return this.redirect(type, data.notification.payload, {commenting: true, commentText: '@' + data.notification.payload.additionalData.user.username});
                 break;
             case 'open-comment-button':
-                this._openComment(token, data);
+                return this._openComment(token, data);
                 break;
             case 'sign-petition-button':
-                this._signPetition(token, data);
+                return this._signPetition(token, data);
+                break;
+            case 'sign-leader-petition-button':
+                return this._signLeaderPetition(token, data);
                 break;
             case 'mute-petition-button':
-                this._mutePetition(token, data);
+                return this._mutePetition(token, data);
                 break;
             case 'approve-follow-request-button':
-                this._approveFollowRequest(token, data, dispatch);
+                return this._approveFollowRequest(token, data, dispatch);
                 break;
             case 'ignore-follow-request-button':
-                this._ignoreFollowRequest(token, data, dispatch);
+                return this._ignoreFollowRequest(token, data, dispatch);
                 break;
             case 'upvote-post-button':
-                this._upvotePost(token, data);
+                return this._upvotePost(token, data);
                 break;
             case 'downvote-post-button':
-                this._downvotePost(token, data);
+                return this._downvotePost(token, data);
                 break;
             case 'share-post-button':
-                this._sharePost(token, data);
+                return this._sharePost(token, data);
                 break;
             // own post boosted and own post commented, follow post commented, own post voted
             case 'mute-post-button':
-                this._mutePost(token, data);
+                return this._mutePost(token, data);
                 break;
             // invite
             case 'join-group-button':
-                this._joinGroup(token, data);
+                return this._joinGroup(token, data);
                 break;
             case 'mute-poll-button':
-                this._mutePoll(token, data);
+                return this._mutePoll(token, data);
                 break;
             // announcement
             case 'share-announcement-button':

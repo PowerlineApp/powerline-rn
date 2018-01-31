@@ -1012,6 +1012,7 @@ class ItemDetail extends Component {
         //     }
 
         return (
+            item.facebook_thumbnail &&
             <FloatingAction
                 actions={
                     [

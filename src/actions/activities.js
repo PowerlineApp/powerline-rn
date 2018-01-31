@@ -12,7 +12,7 @@ async function getActivities2(token, groupId, user, followed, cursor, type, id) 
     let res = await fetch(url, {
         method: 'GET',
         headers: {
-            'token': token,
+            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
         }
     });
@@ -48,7 +48,7 @@ async function loadActivities(token: string, page: ?number = 0, perPage: ?number
         var response = await fetch(`${API_URL}/v2/activities?_format=json&user=${user}&group=${group}&followed=${followed}&page=${page + 1}&per_page=${perPage}`, {
             method: 'GET',
             headers: {
-                'token': token,
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             }
         });
@@ -84,8 +84,8 @@ const markAsRead = (token, id) => (dispatch, state) => {
         {
           method: 'PATCH',
           headers: {
-              'token': token,
-              'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({activities: [{id: id, read: "true"}]})
         }).then(r => {
@@ -103,13 +103,12 @@ async function loadFriendsActivities(token, cursor): Promise<Action> {
         var response = await fetch(`${API_URL}/v2/activities?_format=json&followed=1&page=${page + 1}&per_page=${perPage}`, {
             method: 'GET',
             headers: {
-                'token': token,
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             }
         });
         var json = await response.json();
         if (json.totalItems) {
-            // console.log('${API_URL}/v2/activities?_format=json&followed=true&page=${page + 1}&per_page=${perPage} --- load friends activities return: ', json.payload.map(item => item.title + item.body))
             const action = {
                 type: 'LOADED_ACTIVITIES',
                 data: {
@@ -158,7 +157,7 @@ function loadActivitiesByUserId(token, page = 0, per_page = 20, group = 'all', u
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'token': token
+                'Authorization': `Bearer ${token}`,
             }
         })
             .then((res) => res.json())
@@ -182,7 +181,7 @@ function loadActivityByEntityId(token, entityType, entityId) {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'token': token
+                'Authorization': `Bearer ${token}`,
             }
         })
             .then((res) => {console.log('res', res); return res.json()})
@@ -204,7 +203,7 @@ function putSocialActivity(token, id, ignore){
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'token': token
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify({
                 ignore: ignore
