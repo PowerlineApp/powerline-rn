@@ -45,50 +45,38 @@ export default class PLLoader extends React.Component {
         const { position, size, avatar, avatarBackgroundColor, padder, interval } = this.props;
         const isCenter = position === 'center';
         let containerStyle = {};
-        if (isCenter) {
-            containerStyle = {
-                flex: 1,
-                backgroundColor: 'transparent',
-                justifyContent: 'center',
-                alignItems: 'center',
-            };
-        }
-        if (position === 'bottom') {
-            containerStyle = {
-                height: 100,
-                alignItems: 'center',
-                justifyContent: 'center'
-            };
-        }
+        // if (isCenter) {
+        containerStyle = {
+            flex: 1,
+            marginTop: this.props.marginTop || 0,
+            backgroundColor: 'transparent',
+            justifyContent: 'center',
+            alignItems: 'center',
+        };
+        // }
+        // if (position === 'bottom') {
+        //     containerStyle = {
+        //         height: 100,
+        //         alignItems: 'center',
+        //         justifyContent: 'center'
+        //     };
+        // }
 
         return (
             <View style={containerStyle}>
-                {this.state.circles.map((circle) => (
-                    <Pulse
-                        key={circle}
-                        position={position}
-                        small={!isCenter}
-                        {...this.props}
-                        padder={padder ? themeStyle.contentPadding : 0}            
-          />
-        ))}
-
-                <TouchableOpacity
-                    activeOpacity={1}
-                    style={{
-                        transform: [{
-                            scale: this.anim
-                        }],
-                        paddingTop: Platform.OS === 'ios' ? 0 : 20,
-                    }}
-        >
+                <Pulse
+                    position={position}
+                    small={!isCenter}
+                    {...this.props}
+                    padder={padder ? themeStyle.contentPadding : 0}            
+                >
                     <View style={{
                         width: isCenter ? 80 : 40,
                         height: isCenter ? 80 : 40,
                         backgroundColor: PLColors.main,
                         alignItems: 'center',
                         justifyContent: 'center',
-                        borderRadius: isCenter ? 40 : 20,
+                        borderRadius: isCenter ? 40 : 20
                     }}>
                         <Image
                             source={require("img/p_logo.png")}
@@ -96,11 +84,14 @@ export default class PLLoader extends React.Component {
                                 tintColor: 'white',
                                 width: isCenter ? 26 : 13,
                                 height: isCenter ? 40 : 20,
-                                resizeMode: 'cover',
+                                resizeMode: 'cover'
                             }}
-            />
+                    />
                     </View>
-                </TouchableOpacity>
+                </Pulse>
+                    
+
+               
             </View>
         );
     }

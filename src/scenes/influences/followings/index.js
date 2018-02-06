@@ -131,8 +131,21 @@ class Followings extends Component {
                 return (
                   <ListItem avatar key={index} onPress={() => this.goToProfile(follow.id)}>
                     <Left>
-                      {follow.avatar_file_name &&
-                        <Thumbnail source={{ uri: follow.avatar_file_name + '&w=200&h=200&auto=compress,format,q=95' }} />
+                    { 
+                        (follow.is_verified
+                        ?
+                        <Thumbnail small
+                            source={follow.avatar_file_name ? { uri: follow.avatar_file_name + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")}
+                            defaultSource={require("img/blank_person.png")}
+                        />
+                        :
+                        <View style={{ borderWidth: 2, borderStyle: 'dashed', borderColor: 'silver', borderRadius: 1000}}>
+                            <Thumbnail small
+                                source={follow.avatar_file_name ? { uri: follow.avatar_file_name + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")}
+                                defaultSource={require("img/blank_person.png")}
+                            />
+
+                        </View>)
                       }
                     </Left>
                     <Body>
@@ -161,8 +174,8 @@ class Followings extends Component {
           <Text></Text>
         }
         {/* Turning off Pulse Loader until we can stabilize its performance
-        <PLOverlayLoader visible={this.state.refreshing} logo />
         */}
+        {/* <PLOverlayLoader visible={true || this.state.refreshing} logo /> */}
       </ContentPlaceholder>
     );
     }

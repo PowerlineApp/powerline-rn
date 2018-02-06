@@ -79,7 +79,6 @@ async function loadActivities(token: string, page: ?number = 0, perPage: ?number
 }
 
 const markAsRead = (token, id) => (dispatch, state) => {
-    console.log('---------------\n----------\n------------------\nmarking as read', `${API_URL}/v2/activities`,[{id: id, read: true}] )
         fetch(`${API_URL}/v2/activities`,
         {
           method: 'PATCH',
@@ -94,6 +93,9 @@ const markAsRead = (token, id) => (dispatch, state) => {
         }).catch(e => {
             console.log('marking as read error', e)
         })
+}
+const updateActivity = (payload) => (dispatch, state) => {
+    dispatch({type: 'UPDATE_ACTIVITY', payload})
 }
 
 
@@ -221,42 +223,78 @@ function putSocialActivity(token, id, ignore){
     });
 }
 
-async function subscribeNotification(token: string, id: number, activityId: number, type: string): Promise<Action> {
-    LOG('Subscribe to notification API', id, type);
-    const response = await api.put(token, `/v2/user/${type}s/${id}`);
-    LOG(response)
-    if (response.status === 204) {
-        showToast('Notifications on');
-        return {
-            type: 'ACTIVITY_NOTIFICATION_SUBSCRIBE',
-            data: { id: activityId, type }
+function boostPost(type: string, postId: number, groupId: number, activityId: number): ThunkAction {
+    return async (dispatch, getState) => {
+        try {
+            const token = getState().user.token;
+            const members = await api.get(token, `/v2/groups/${groupId}`);
+            const { total_members } = await members.json();
+            
+            if (typeof total_members !== 'number') {
+                return;
+            }
+            
+            showAlertYesNo(`All ${total_members} group members will get a notification about this item immediately. Are you sure? Use sparingly!`, async () => {
+                const boost = await api.patch(token, `/v2/${type}s/${postId}`);
+                if (boost.ok && boost.status === 200) {
+                    // showToast('Boosted.');
+                    console.log("boost Post/Petition API Success");
+                    dispatch({ type: 'BOOST_ACTIVITY', id: activityId });
+                } else {
+                    // showToast('Boosting item failed.');
+                    handleError(response);
+                }
+            });
+        } catch (error) {
+            console.log("boost Post/Petition API Error", error);
+            handleError(error);
         }
-    } else {
-        showToast('Subscribe to post failed');
-        console.warn('FAILED TO UNSUBSCRIBE, DISPATCHING EMPTY ACTION')
-        return {type: ''}
-    }
+    };
 }
 
-async function unsubscribeNotification(token: string, id: number, activityId: number, type: string): Promise<Action> {
-    LOG('Unsubscribe to notification API', id, type);
+
+
+ const subscribeNotification = (token: string, id: number, activityId: number, type: string) => async (dispatch) => {
+        LOG('Subscribe to notification API', id, type);
+        const response = await api.put(token, `/v2/user/${type}s/${id}`);
+        LOG(response)
+        if (response.status === 204) {
+            showToast('Notifications on');
+            dispatch({
+                type: 'ACTIVITY_NOTIFICATION_SUBSCRIBE',
+                data: { id: activityId, type }
+            })
+        } else {
+            showToast('Subscribe to post failed');
+            console.warn('FAILED TO UNSUBSCRIBE, DISPATCHING EMPTY ACTION')
+        }
+}
+
+const unsubscribeNotification = (token: string, id: number, activityId: number, type: string) => async (dispatch) => {
+    LOG('Unsubscribe to notification API', id, type, token);
     const response = await api.delete(token, `/v2/user/${type}s/${id}`);
     console.log('response', response)
     if (response.status === 204) {
         showToast('Notifications Muted');
-        return {
+        dispatch({
             type: 'ACTIVITY_NOTIFICATION_UNSUBSCRIBE',
             data: { id: activityId, type }
-        }
+        })
     } else {
+        showToast('Unsubscribing failed')
         console.warn('FAILED TO UNSUBSCRIBE, DISPATCHING EMPTY ACTION')
-        return {type: ''}
     }
 }
 
 async function markAsSpam(token: string, id: number, type: string): Promise<Action> {
     LOG('Mark as spam API', id);
     const response = await api.post(token, `/v2/${type}s/${id}/spam`);
+    console.log(response);
+    if (response.ok){
+        showToast(`The ${type} was reported.`)
+    } else {
+        showToast('Failed to report.')
+    }
 }
 
 const saveOffSet = (pos) => (dispatch) => {
@@ -291,5 +329,6 @@ module.exports = {
     saveOffSet,
     setGroup,
     markAsRead,
-    updateFeedFirstItem
+    updateFeedFirstItem,
+    updateActivity
 }

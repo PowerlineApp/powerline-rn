@@ -9,7 +9,7 @@ function getFollowings(token, page, per_page){
         fetch(API_URL + '/v2/user/followings?_format=json&page='+ page +'&per_page=' + per_page, {
             method: 'GET',
             headers: {
-                'token': token,
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         })
@@ -31,7 +31,7 @@ function getFollowers(token, page,per_page){
         fetch(API_URL + '/v2/user/followers?_format=json&page='+page +'&per_page=' + per_page, {
             method: 'GET',
             headers: {
-                'token': token,
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         })
@@ -53,7 +53,7 @@ function unFollowers(token, id){
         fetch(API_URL + '/v2/user/followers/' + id, {
             method: 'DELETE',
             headers: {
-                'token': token,
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         })        
@@ -74,7 +74,7 @@ function acceptFollowers(token, id){
         fetch(API_URL + '/v2/user/followers/' + id, {
             method: 'PATCH',
             headers: {
-                'token': token,
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         })        
@@ -95,7 +95,7 @@ function searchForUsersFollowableByCurrentUser(token, queryText, page = 0, max_c
         fetch(API_URL + '/users/?unfollowing=1&page='+ page +'&max_count=' + max_count + '&q=' + queryText, {
             method: 'GET',
             headers: {
-                'token': token,
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         })      
@@ -116,7 +116,7 @@ function putFollowings(token, id, activityId: number){
         fetch(API_URL + '/v2/user/followings/' + id, {
             method: 'PUT',
             headers: {
-                'token': token,
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         })      
@@ -141,7 +141,7 @@ function unFollowings(token, id, activityId: number){
         fetch(API_URL + '/v2/user/followings/' + id, {
             method: 'DELETE',
             headers: {
-                'token': token,
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         })        
@@ -166,7 +166,7 @@ function getFollowingUser(token, id){
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'token': token
+                'Authorization': `Bearer ${token}`,
             }
         })
         .then((res) => res.json())
@@ -182,25 +182,43 @@ function getFollowingUser(token, id){
 }
 
 function editFollowers(token, id, notifying, time){
+    console.log(API_URL + '/v2/user/followers/' + id, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+            notifying: notifying,
+            do_not_disturb_till: time
+        })
+    });
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2/user/followers/' + id, {
-            method: 'PUT',
+            method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
-                'token': token
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify({
                 notifying: notifying,
                 do_not_disturb_till: time
             })
         })
-        .then((res) => res.json())
         .then(data => {
-            console.log("Edit Followers API Success", data);
-            resolve(data);
+            if (data.ok){
+                console.log("Edit Followers API Success", data);
+                showToast('User muted');
+                resolve(data);
+            } else {
+                console.log("Edit Followers API Error", err);
+                showToat('Muting user failed')
+                reject(err);
+            }
         })
         .catch(err => {
             console.log("Edit Followers API Error", err);
+            showToat('Muting user failed')
             reject(err);
         });
     });

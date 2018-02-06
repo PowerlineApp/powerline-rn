@@ -104,7 +104,7 @@ class SearchFollowing extends Component {
                         </Button>
                     </Left>
                     <Body>
-                        <Title style={{ color: 'white' }}>My Influences</Title>
+                        <Title style={{ color: 'white', flex: 4 }}>My Influences</Title>
                     </Body>
                     <Right />
                 </Header>

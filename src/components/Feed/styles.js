@@ -39,7 +39,7 @@ export default {
         backgroundColor: '#fff',
         flexDirection: 'column',
         padding: 8,
-        paddingBottom: 90,
+        paddingBottom: 45,
         marginBottom: 0,
         elevation: 2
         // sha
@@ -89,35 +89,49 @@ export default {
         alignItems: 'flex-end'
     },
     zoneIcon: {
-        fontSize: 17,
-        color: '#ED1727'
+        fontSize: 20,
+        color: '#ff1727',
+        position: 'absolute',
+        alignSelf: 'center',
+        bottom: -14
     },
     commentCount: {
         fontSize: 14,
         color: '#8694ab'
     },
     footerIcon: {
-        fontSize: 15,
+        fontSize: 20,
         color: '#8694ab',
         marginRight: 5
     },
     footerIconBlue: {
         fontSize: 15,
         color: '#53a8cd',
-        marginRight: 5
+        // marginRight: 5
     },
     footerText: {
+        fontSize: 13,
+        color: '#8694ab',
+        fontWeight: '500',
+        // backgroundColor: '#00c',
+        margin: 0
+    },
+    commentText: {
         fontSize: 14,
         color: '#8694ab',
+        alignSelf: 'flex-end',
         fontWeight: '500'
     },
     footerTextBlue: {
-        fontSize: 14,
+        fontSize: 13,
         color: '#53a8cd',
         fontWeight: '500'
     },
     footerButton: {
-        marginHorizontal: 5
+        // marginHorizontal: 5,
+        // backgroundColor: '#c00',
+        margin: 0,
+        padding: 0
     },
     slideInnerContainer: {
         width: itemWidth,
@@ -153,7 +167,9 @@ export default {
         minHeight: 50,
         alignItems: 'center',
         // justifyContent: 'flex-end',
-        flexDirection: 'row'
+        flexDirection: 'row',
+        flex: 1,
+        width: '100%'
     },
     metaContainer: {
         // backgroundColor: '#f0f',
@@ -169,7 +185,8 @@ export default {
         backgroundColor: 'black'
     },
     borderContainer: {
-        height: 1,
+        height: 2,
+        width: '100%',
         backgroundColor: PLColors.cellBorder
     },
     menuIcon: {
@@ -230,6 +247,7 @@ export default {
     attachedImage: {
         width: 80,
         marginRight: 0,
+        paddingBottom: 6,
         justifyContent: 'flex-end',
         alignItems: 'center',
         alignSelf: 'flex-end'

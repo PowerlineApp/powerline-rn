@@ -9,6 +9,14 @@ type Method = 'GET' | 'POST' | 'DELETE' | 'PUT' | 'PATCH';
 const api = {
     _request: (method: Method, token: string, endpoint: string, data: ?object): Promise<any> => {
         let body = null;
+        console.log('request: ', API_URL + endpoint, {
+            method,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+            body
+        })
         if (data) {
             body = JSON.stringify(data);
         }

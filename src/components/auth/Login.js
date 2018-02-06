@@ -106,7 +106,7 @@ class Login extends React.Component {
         <View style={styles.termsContainner}>
           <Text style={styles.termsText}>By logging in, you agree to our </Text>
           <TouchableOpacity onPress={this.onTermsOfService}>
-            <Text style={styles.termsUnderlineText}>Terms of Service </Text>
+            <Text style={styles.termsUnderlineText}>Terms of Use </Text>
           </TouchableOpacity>
           <Text style={styles.termsText}>and </Text>
           <TouchableOpacity onPress={this.onPrivacyPolicy}>
@@ -122,7 +122,7 @@ class Login extends React.Component {
         <PLButton
           style={styles.fbLoginButton}
           icon={require('img/f-logo.png')}
-          caption="Log in with Facebook"
+          caption="Login with Facebook"
           onPress={() => this.onLogInWithFacebook()}
         />
         <Text style={styles.fbTermsText}>Powerline will not post to Facebook without your permission</Text>
@@ -134,13 +134,12 @@ class Login extends React.Component {
       <View style={styles.signUpContainer}>
         <PLButton
           type="bordered"
-          caption="Sign Up With Phone"
+          caption="Sign Up With Email"
           onPress={this.onSignUp}
         />
       </View>
     );
   };
-
   sendCode(){
     let {phone, countryCode, username, password} = this.state;
     countryCode = countryCode || '+1';
@@ -427,7 +426,7 @@ class Login extends React.Component {
     return (
       <View style={{flex: 1}}>
 
-      <PLOverlayLoader visible={ this.state.isLoading} logo />
+      <PLOverlayLoader marginTop={200} visible={ this.state.isLoading} logo />
       {this.renderLoginContent()}
       </View>
     )

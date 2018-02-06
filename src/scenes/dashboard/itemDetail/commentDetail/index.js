@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Spinner, Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, List, ListItem, Item, Input } from 'native-base';
-import { Image, View, StyleSheet, TouchableOpacity, Platform, KeyboardAvoidingView, Keyboard, TextInput, ListView, RefreshControl } from 'react-native';
+import { Image, View, StyleSheet, FlatList, TouchableOpacity, Platform, KeyboardAvoidingView, Keyboard, TextInput, ListView, RefreshControl } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
 import * as Animatable from 'react-native-animatable';
@@ -26,6 +26,7 @@ import randomPlaceholder from '../../../../utils/placeholder';
 
 import { getChildComments, addComment, rateComment } from 'PLActions';
 import SuggestionBox from '../../../../common/suggestionBox';
+import ParsedComment from '../parsedComment';
 
 
 const { SlideInMenu } = renderers;
@@ -193,7 +194,8 @@ class CommentDetail extends Component {
 
     // Rendering methods
     render() {
-        console.log(this.item);
+        // console.log(this.item);
+        // if (!this.item) return null;
         return (
             <MenuContext customStyles={menuContextStyles}>
                 <Container style={styles.container}>
@@ -216,10 +218,11 @@ class CommentDetail extends Component {
                             />
                         }>
                         {this._renderRootComment(this.rootComment)}
-                        <ListView
+                        <FlatList data={this.state.dataArray} renderItem={({item}) => this._renderChildComment(comment) } />
+                        {/* <ListView
                             dataSource={this.state.dataSource} renderRow={(comment) =>
                                 this._renderChildComment(comment)
-                            } />
+                            } /> */}
                         {this._renderLoadMore()}
                         {this._renderCommentsLoading()}
                         {this._renderAddComment()}
@@ -231,7 +234,7 @@ class CommentDetail extends Component {
 
     _renderRootComment(comment) {
         var thumbnail: string = comment.author_picture ? comment.author_picture : '';
-        var title: string = (comment.user.first_name || '') + ' ' + (comment.user.last_name || '');
+        var title: string = (comment.user && comment.user.first_name) + ' ' + (comment.user && comment.user.last_name || '');
         var rateUp: number = (comment.rate_count || 0) / 2 + comment.rate_sum / 2;
         var rateDown: number = (comment.rate_count || 0) / 2 - comment.rate_sum / 2;
 
@@ -241,7 +244,8 @@ class CommentDetail extends Component {
                     <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail+'&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                     <Body style={{ alignSelf: 'flex-start' }}>
                         <Text style={styles.rootTitle}>{title}</Text>
-                        <Text style={styles.rootDescription} numberOfLines={5}>{comment.comment_body}</Text>
+                        <ParsedComment style={styles.rootDescription} item={comment} />
+
                         <Text note style={styles.subtitle}><TimeAgo time={comment.created_at} /></Text>
                         <View style={styles.commentFooterContainer}>
                             <Button iconLeft small transparent onPress={() => this._onRate(comment, 'up')}>
@@ -269,7 +273,7 @@ class CommentDetail extends Component {
     _renderChildComment(comment) {
 
         var thumbnail: string = comment.author_picture ? comment.author_picture : '';
-        var title: string = comment.user.first_name + ' ' + comment.user.last_name;
+        var title: string = (comment.user && comment.user.first_name) + ' ' + (comment.user && comment.user.last_name || '');
         var rateUp: number = (comment.rate_count || 0) / 2 + comment.rate_sum / 2;
         var rateDown: number = (comment.rate_count || 0) / 2 - comment.rate_sum / 2;
 

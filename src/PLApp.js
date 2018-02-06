@@ -55,9 +55,8 @@ class PLApp extends Component {
     async componentDidMount () {
         if (this.props.token){
             let splash = await AsyncStorage.getItem('splashScreen');
-            console.log('aaaaaaaaaaaaaaaaaa\n', splash);
             if (splash){
-                this.setState({splash}, () => setTimeout(() => this.setState({splash: false}), 1000) );
+                this.setState({splash}, () => setTimeout(() => this.setState({splash: false}), 1500) );
             } else {
                 this.setState({splash: false});
             }
@@ -93,7 +92,7 @@ class PLApp extends Component {
             console.log('splash ===>', this.state.splash);
             return <View style={{flex: 1, backgroundColor: '#fff'}}>
                 {/* <Text>This is my fake SplashScreen</Text> */}
-                {/* <CachedImage style={{flex: 1}} source={{ uri: this.state.splash }} /> */}
+                <CachedImage style={{flex: 1}} source={{ uri: this.state.splash }} />
 
                 {/* <Image source={{uri: this.state.splash}} onError={() => this.setState({splash: false})} /> */}
             </View>;

@@ -36,6 +36,7 @@ class MyInfo extends Component {
             city: props.profile.city,
             state: props.profile.state,
             email: props.profile.email,
+            phone: props.profile.phone,
             birth: props.profile.birth,
             sex: props.profile.sex,
             race: props.profile.race,
@@ -112,7 +113,14 @@ class MyInfo extends Component {
                         <Fields value={this.state.state} label='State:' onSave={(value) =>  this.updateProperty('state', value)} />
                         <Fields value={this.state.country} label='Country:' onSave={(value) =>  this.updateProperty('country', value)} />
                         <Fields value={this.state.email} label='Email:' onSave={(value) =>  this.updateProperty('email', value)} />
-                        <Fields value={this.state.phone} label='Phone:' onSave={(value) =>  this.updateProperty('phone', value)} />
+                        {/* <Fields value={this.state.phone} label='Phone:' onSave={(value) =>  this.updateProperty('phone', value)} /> */}
+                        <ListItem>
+                            <View style={{paddingHorizontal: 10, flexDirection: 'row'}}>
+                                <Icon name='contact' color={PLColors.main} style={{marginRight: 10}} />
+                                <Text style={{color: 'grey'}}>Phone:</Text>
+                            </View>
+                            <Text>{this.state.phone}</Text>
+                        </ListItem>
                         <View style={{padding: 20}}>
                             <Label>Personal Information</Label>
                         </View>

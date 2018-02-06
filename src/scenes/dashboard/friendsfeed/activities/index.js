@@ -72,6 +72,8 @@ class FriendActivity extends Component {
 
     async loadInitialActivities() {
         this.setState({ isRefreshing: true });
+        this.props.onSetLoading(true);
+
         const { props: { token, dispatch } } = this;
         try {
             await Promise.race([
@@ -81,6 +83,8 @@ class FriendActivity extends Component {
         } catch (e) {
             console.log('error=>', e)
             this.setState({ isRefreshing: false });
+            this.props.onSetLoading(false);
+
             
             const message = e.message || e;
             if (typeof message === 'string') {
@@ -88,11 +92,14 @@ class FriendActivity extends Component {
             }
         } finally {
             this.setState({ isRefreshing: false });
+            this.props.onSetLoading(false);
+
         }
     }
 
     async loadNextActivities() {
         this.setState({ isLoadingTail: true });
+        this.props.onSetLoading(true);
         const { props: { token, page, dispatch, cursor } } = this;
         try {
             await Promise.race([
@@ -101,13 +108,16 @@ class FriendActivity extends Component {
             ]);
         } catch (e) {
             this.setState({ isLoadingTail: false });
-            
+            this.props.onSetLoading(fals3);
+
             const message = e.message || e;
             if (typeof message === 'string') {
                 alert('e.message');
             }
         } finally {
             this.setState({ isLoadingTail: false });
+            this.props.onSetLoading(false);
+
         }
     }
 
@@ -161,10 +171,6 @@ class FriendActivity extends Component {
                     renderRow={item => {
                         return <FeedActivity item={item} token={this.props.token} profile={this.props.profile}/>
                 }}
-                />
-                <PLOverlayLoader
-                    visible={isLoading || isLoadingTail || isRefreshing}
-                    logo
                 />
             </Content >
         );

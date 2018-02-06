@@ -30,7 +30,7 @@ class FeedCarousel extends Component {
         // If an item has multiple attachments (leader content) it could be multiple videos or pictures, displayed as carousel, three items max
         
         let {item} = this.props;
-        console.log(item);
+        // console.log(item);
             // const slides = item.poll.educational_context.map((entry, index) => {
             //     return (
             //         <TouchableOpacity
@@ -64,7 +64,7 @@ class FeedCarousel extends Component {
                         showsHorizontalScrollIndicator={false}
                         snapOnAndroid
                         removeClippedSubviews={false}
-                        data={item.educational_contexts}
+                        data={item.educational_contexts || []}
                         renderItem={this._renderItem}
                     />
                 </CardItem>

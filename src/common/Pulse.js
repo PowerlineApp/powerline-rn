@@ -11,12 +11,14 @@ export default class Pulse extends React.Component {
     }
 
     componentDidMount() {
-        Animated.timing(this.anim, {
-            toValue: 1,
-            duration: this.props.interval,
-            easing: Easing.in,
-            useNativeDriver: true
-        })
+        Animated.loop(
+            Animated.timing(this.anim, {
+                toValue: 1,
+                duration: 1500,
+                easing: Easing.in,
+                useNativeDriver: true
+            })
+        )
 		.start();
     }
 
@@ -34,7 +36,6 @@ export default class Pulse extends React.Component {
                     style={[{
                         borderColor,
                         backgroundColor,
-                        // borderWidth: 2,
                         width: size,
                         height: size,
                         borderRadius: size/2,
@@ -46,7 +47,10 @@ export default class Pulse extends React.Component {
                             outputRange: [1, 0]
                         })
                     }, getStyle && getStyle(this.anim)]}
-				/>
+				 />
+                <View style={{marginTop: -90}}>
+                    {this.props.children}
+                </View>
             </View>
         );
     }

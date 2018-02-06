@@ -29,19 +29,10 @@ class FeedCommentPreview extends Component {
     render () {
         let {item} = this.props;
         let previewData = {};
-        // console.log(item);
 
-        // if (item.poll) {
-        //     previewData = item.poll;
-        // } else if (item.post) {
-        //     previewData = item.post;
-        // } else if (item.user_petition) {
-        //     previewData = item.user_petition;
-        // }
         let comment = item.first_comment;
-        if (!comment) { return  <View style={{marginBottom: 8}} />; }
-        console.log (comment);
-        // console.log('comment preview:', comment.user.full_name,' - ', comment.comment_body,' - ', item.title, item.body)
+        if (!comment || !comment.user || !comment.user_name) { return  <View style={{marginBottom: 8}} />; }
+        console.log('preview data: ', item);
         return (
             <TouchableOpacity onPress={() => this.redirect(item)} >
                 <CardItem style={styles.commentPreviewContainer} >
@@ -53,7 +44,7 @@ class FeedCommentPreview extends Component {
                             />
                         </View>
                         <Body>
-                            <Text style={styles.commentTitle} >{(comment.user || {full_name: 'Johnny Doe'}).full_name}</Text>
+                            <Text style={styles.commentTitle} >{(comment.user || {full_name: comment.user_name}).full_name}</Text>
                             <Text style={styles.commentPreviewText} >{this.limitString(comment.comment_body)}</Text>
                         </Body>
                     </Left>

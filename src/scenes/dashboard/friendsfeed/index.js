@@ -17,15 +17,18 @@ import {
 } from 'native-base';
 import styles from './styles';
 import FriendActivity from './activities';
+import PLOverlayLoader from 'PLOverlayLoader';
 
 //There are two tabs 1) The feed itself, and 2) a tab that is actually a shortcut to the My Influences screen
 class Friendsfeed extends Component{
+    constructor(){
+        super();
+        this.state = {
+            loading: false
+        }
+    }
     static propTypes = {
         token: React.PropTypes.string
-    }
-
-    constructor(props){
-        super(props);
     }
 
     onInfluence(){
@@ -49,7 +52,11 @@ class Friendsfeed extends Component{
                     </Col>
                 </Grid>
                 </View>
-                <FriendActivity />
+                <FriendActivity onSetLoading={(loading) => this.props.setLoading(loading)} />
+                {/* <PLOverlayLoader
+                    visible={this.state.loading}
+                    logo
+                /> */}
             </Container>
         );
     }

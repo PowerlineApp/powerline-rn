@@ -12,6 +12,7 @@ var {
     Image,
     Dimensions,
     TouchableOpacity,
+    AsyncStorage,
     Text
 } = require('react-native');
 var { connect } = require('react-redux');
@@ -21,6 +22,7 @@ import {
     NavigationActions
 } from 'react-navigation';
 import {Actions} from 'react-native-router-flux'
+import {CachedImage} from "react-native-img-cache";
 
 var styles = {
     container: {
@@ -94,22 +96,48 @@ class TourScene extends Component{
         header: null
     }
 
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
         this.state = {
-            pos: 0
+            pos: 0,
+            screens: props.screens,
+            maxPos: props.screens ? props.screens.length - 1 : 5
         };
     }
 
     componentDidMount(){
-        this.setState({
-            pos: 0
-        });
+        if (this.props.screens){
+            this.setState({maxPos: this.props.screens.length, pos: 0, ready: true})
+        } else {
+            AsyncStorage.getItem('onboarding').then(r => {
+                if (r) {
+                    r = JSON.parse(r);
+                    this.setState({
+                        pos: 0,
+                        maxPos: r.length - 1,
+                        screens: r,
+                        ready: true
+                    });
+                } else {
+                    this.setState({
+                        pos: 0,
+                        maxPos: 5,
+                        ready: true
+                    });
+                }
+            }).catch(e => {
+                this.setState({
+                    pos: 0,
+                    maxPos: 5,
+                    ready: true
+                });
+            })
+        }
     }
 
     onNext = () => {
-        var {pos} = this.state;
-        if(pos < 5){
+        var {pos, maxPos} = this.state;
+        if(pos < maxPos){
             this.setState({
                 pos: pos + 1
             });
@@ -132,23 +160,34 @@ class TourScene extends Component{
     }
 
     render(){
+        if (!this.state.ready){
+            return <View style={styles.container} />     
+        }
+
         console.log(this.props);
         let {pos} = this.state;
-        let imgs =     [
-            <Image source={require('../../assets/1.png')} style={styles.img(pos === 0)}/>,
-            <Image source={require('../../assets/2.png')} style={styles.img(pos === 1)}/>,
-            <Image source={require('../../assets/3.png')} style={styles.img(pos === 2)}/>,
-            <Image source={require('../../assets/4.png')} style={styles.img(pos === 3)}/>,
-            <Image source={require('../../assets/5.png')} style={styles.img(pos === 4)}/>,
-            <Image source={require('../../assets/6.png')} style={styles.img(pos === 5)}/>
-        ];
+        let imgs = [];
+        if (this.state.screens && this.state.screens.length){
+            imgs = this.state.screens.map((s, i) => {
+                return <CachedImage source={{uri: s.image}} style={styles.img(pos === i)} />
+            })
+        } else {
+            imgs = [
+                <Image source={require('../../assets/1.png')} style={styles.img(pos === 0)}/>,
+                <Image source={require('../../assets/2.png')} style={styles.img(pos === 1)}/>,
+                <Image source={require('../../assets/3.png')} style={styles.img(pos === 2)}/>,
+                <Image source={require('../../assets/4.png')} style={styles.img(pos === 3)}/>,
+                <Image source={require('../../assets/5.png')} style={styles.img(pos === 4)}/>,
+                <Image source={require('../../assets/6.png')} style={styles.img(pos === 5)}/>
+            ];
+        }
 
         return (
             <View style={styles.container}>     
                 {imgs[pos]}
                 <View style={styles.bottomContainer}>
                     {
-                    pos < 5? 
+                    pos < this.state.maxPos? 
                     <View style={styles.skipContainer}>
                         <TouchableOpacity onPress={this.onSkip}>
                             <Text style={styles.skitBtn}>Skip</Text> 
@@ -156,7 +195,7 @@ class TourScene extends Component{
                     </View>: null
                     }
                     {
-                    pos < 5?
+                    pos < this.state.maxPos?
                     <View style={styles.nextContainer}>
                         <TouchableOpacity onPress={this.onNext}>
                             <Text style={styles.nextBtn}>Next</Text> 
@@ -164,7 +203,7 @@ class TourScene extends Component{
                     </View>: null
                     }
                     {
-                    pos == 5?
+                    pos == this.state.maxPos?
                     <View style={styles.goBtnContainer}>
                         <TouchableOpacity style={styles.goBtn} onPress={this.onSkip}>
                             <Text style={styles.goTxt}>Let's GO</Text>

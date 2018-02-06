@@ -14,7 +14,7 @@ const fs = RNFetchBlob.fs
 
 // import {ScrollView, Modal, TouchableOpacity} from 'react-native';
 import { Spinner, Container, Header, Title, Textarea, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, List, ListItem, Item, Input, Card } from 'native-base';
-import { Image, View, StyleSheet, Modal, ScrollView, TouchableOpacity, TouchableHighlight, Platform, KeyboardAvoidingView, Keyboard, TextInput, ListView, BackHandler } from 'react-native';
+import { Image, View, ActivityIndicator, StyleSheet, Modal, ScrollView, TouchableOpacity, TouchableHighlight, Platform, KeyboardAvoidingView, Keyboard, TextInput, ListView, BackHandler, FlatList } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
 import * as Animatable from 'react-native-animatable';
@@ -30,10 +30,11 @@ import Menu, {
     MenuOption,
     renderers
 } from 'react-native-popup-menu';
-import { getComments, votePost,updateFeedFirstItem, getActivities2, getUsersByGroup, addComment, editComment, deleteComment, rateComment, loadActivityByEntityId, deletePost, deletePetition, changePost, changePetition, loadPollByEntityId, markAsRead } from 'PLActions';
+import { getComments, getChildComments, votePost,updateFeedFirstItem, getActivities2, getUsersByGroup, addComment, editComment, deleteComment, rateComment, loadActivityByEntityId, deletePost, deletePetition, changePost, changePetition, loadPollByEntityId, markAsRead } from 'PLActions';
 import PLOverlayLoader from 'PLOverlayLoader';
 import randomPlaceholder from '../../../utils/placeholder';
 import { FloatingAction } from 'react-native-floating-action';
+import {CachedImage} from "react-native-img-cache";
 import _ from 'lodash';
 
 // custom components import
@@ -48,6 +49,8 @@ import Options from '../../../components/Feed/Options';
 
 import SuggestionBox from '../../../common/suggestionBox';
 import { showToast } from '../../../utils/toast';
+import ParsedText from '../../../components/Feed/FeedDescription/ParsedText';
+import ParsedComment from './parsedComment';
 
 const { youTubeAPIKey } = require('PLEnv');
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
@@ -163,9 +166,12 @@ class ItemDetail extends Component {
 
     _onSendComment() {
         const { commentText, editedCommentId } = this.state;
-
+        if (this.state.sendingComment === true) return;
+        this.setState({sendingComment: true})
         if (commentText === '') {
-            alert("There is no comment to send. Try again.");
+            this.setState({sendingComment: false, addingComment: false}, () => {
+                alert("There is no comment to send. Try again.");
+            })            
         } else {
             if (editedCommentId !== null) {
                 this.doEditComment(commentText);
@@ -288,7 +294,7 @@ class ItemDetail extends Component {
     }
 
     async loadItem(token, type, entityId, entityType){
-            console.log('type => ', type, this.props)
+            // console.log('type => ', type, this.props)
             if (this.props.item){
                 this.item = this.props.item
             } else {
@@ -312,11 +318,9 @@ class ItemDetail extends Component {
     }
 
     async loadComments() {
-        
         const { props: { token, entityId, entityType, dispatch } } = this;
         this.setState({ isCommentsLoading: true });
-        // WARN('=> ' + this.item)
-        console.log(this.item)
+        console.log('loading comments');
         try {
             let response = await Promise.race([
                 getComments(token, !!this.item.options ? 'poll' : this.item.type, entityId),
@@ -395,28 +399,29 @@ class ItemDetail extends Component {
     //Users should be able to create comments and reply to a comment
     async doComment(commentText) {
         const { props: { entityId, token, dispatch } } = this;
-        this.setState({ isLoading: true, addingComment: false });
+        this.setState({ isLoading: true});
         let response = await addComment(token, !!this.item.options ? 'poll' : this.item.type, entityId, commentText, (this.commentToReply != null) ? this.commentToReply.id : '0');;
         // this.addCommentView.close();
         this.setState({
             isLoading: false,
             commentText: ''
         });
-        console.log('response', response)
+        // console.log('response', response)
         if (response && response.comment_body) {
-            // this.setState({ dataArray: [] });
-            // loadActivityByEntityId(token, this.item.type, entityId).then(data => {
-            //     if (data.payload && data.payload[0]) {
-            //         this.item = data.payload[0];
-                    // this.loadComments();
-                // }
-            // }).catch(err => {
+            console.log('about to load comments again.')
+            let newDataArray = this.state.dataArray.map(c => c); // create copy of current state dataArray
+
+            if (!this.commentToReply){
+                newDataArray.push({...response, children: []});
+                this.setState({dataArray: newDataArray})
+            } else {
                 this.loadComments();
-            // });
+            }
         }
         else {
             alert('Something went wrong');
         }
+        this.setState({sendingComment: false, addingComment: false})
     }
 
     editComment = (comment) => {
@@ -433,7 +438,7 @@ class ItemDetail extends Component {
         this.setState({ isLoading: true });
         let response = await editComment(this.item.type, this.props.token, this.state.editedCommentId, commentText);
 
-        this.addCommentView.close();
+        // this.addCommentView.close();
         this.setState({
             isLoading: false,
         });
@@ -445,8 +450,10 @@ class ItemDetail extends Component {
         } else {
             alert(response.message ? response.message : 'Something went wrong. Could not edit!');
             this.resetEditComment();
+            
         }
-        this.menuComment && this.menuComment.close();
+        this.setState({sendingComment: false, addingComment: false})
+        // this.menuComment && this.menuComment.close();
     }
 
     async deleteComment(comment) {
@@ -534,7 +541,7 @@ class ItemDetail extends Component {
     }
 
     substitute(mention) {
-        console.log('SUBSTITUTING...')
+        // console.log('SUBSTITUTING...')
         let { init, end } = this.state;
         let newContent = this.state.commentText;
         let initialLength = newContent.length;
@@ -544,7 +551,7 @@ class ItemDetail extends Component {
         
         let finalString = firstPart + mention + finalPart;
         try {
-            console.log('finalString', finalString)
+            // console.log('finalString', finalString)
             
             this.setState({ commentText: finalString, displaySuggestionBox: false, lockSuggestionPosition: end });
             // console.log('this.addCommentInput', this.addCommentInput)
@@ -625,11 +632,11 @@ class ItemDetail extends Component {
 
     onChangeComment(text){
         // console.log('setting state => ', text)
-        this.setState({commentText: text}, () => console.log(this.state.commentText))
+        this.setState({commentText: text})
     }
 
     onCloseComment(){
-        console.log('---------- onclose comment')
+        // console.log('---------- onclose comment')
         this.setState({addingComment: false, displaySuggestionBox: false, suggestionList: []})
     }
 
@@ -681,10 +688,14 @@ class ItemDetail extends Component {
                                             />
                                     </Body>
                                     <Right style={{ flex: 0.2 }}>
-                                        <TouchableHighlight style={{ flexDirection: 'row', alignItems: 'center', height: '100%' }} onPress={() => this._onSendComment()}>
+                                        <TouchableHighlight underlayColor="#fff" style={{ flexDirection: 'row', alignItems: 'center', height: '100%', padding: 8 }} onPress={() => this._onSendComment()}>
                                             <View style={{ flexDirection: 'row' }}>
-                                                <Text style={styles.commentSendText}>SEND</Text>
-                                                <Icon name="md-send" style={styles.commentSendIcon} />
+                                            {
+                                                this.state.sendingComment
+                                                ? <ActivityIndicator size="small" color={styles.commentSendText.color} />
+                                                :[<Text style={styles.commentSendText}>SEND</Text>,
+                                                <Icon name="md-send" style={styles.commentSendIcon} />]
+                                            }
                                             </View>
                                         </TouchableHighlight>
                                     </Right>
@@ -700,7 +711,7 @@ class ItemDetail extends Component {
     //Adding a comment to an item
     _renderAddComment() {
         const { props: { profile } } = this;
-        console.log(profile)
+        // console.log(profile)
         let thumbnail = profile.avatar_file_name ? profile.avatar_file_name : '';
         let {value} = this.state;
         return (
@@ -730,8 +741,51 @@ class ItemDetail extends Component {
         }
     }
 
+    async _onLoadMoreChildren(comment){
+        let originalComment = this.state.dataArray.find(c => c.id === comment.id);
+        let type = originalComment.type === 'post' ? 'post' : 'originalComment'
+        let perPage = originalComment.nextCursor ? 2 : 4;
+
+        let comments = await getChildComments(this.props.token, !!this.item.options ? 'poll' : this.item.type, originalComment.id, originalComment.nextCursor || 0, perPage);
+        let newCommentsArray = this.state.dataArray.map(c => {
+            if (c.id === comment.id){
+                return {...c, children: perPage === 4 ? comments.comments : c.children.concat(comments.comments), nextCursor: comments.nextCursor}
+            }
+            return c;
+        })
+        this.setState({dataArray: newCommentsArray})
+    }
+
+    loadMoreChildren(comment){
+        return (
+            <View style={{marginTop: 8, marginLeft: 60 }}>
+                <View style={{
+                    height: 1,
+                    backgroundColor: '#eee',
+                    marginHorizontal: 20}} />
+                <Button transparent small style={{padding: 0, backgroundColor: '#fff', padding: 0}} full onPress={() => this._onLoadMoreChildren(comment)}>
+                    <Text style={{
+                    fontSize: 15,
+                    color: '#8694ab',
+                    fontWeight: '500'}}>
+                        Load More
+                    </Text>
+                </Button>
+            </View>
+        );
+    }
+
     _renderComment(comment) {
-        // console.log('_renderComment', comment)
+        return (
+            <View style={{marginBottom: 20}}>
+                {this._renderRootComment(comment)}
+                <FlatList data={comment.children} scrollEnabled={false} renderItem={({item}) => this._renderRootComment(item, true)} />
+                {
+                    (comment.child_count > comment.children.length) && 
+                    this.loadMoreChildren(comment)
+                }
+            </View>
+        )
         if (comment.children) {
             if (comment.children.length === 0) {
                 return this._renderRootComment(comment);
@@ -758,7 +812,6 @@ class ItemDetail extends Component {
     }
 
     _renderRootComment = (comment, isChild = false) => {
-        // console.log('render comment', comment);
         let thumbnail = comment.author_picture ? comment.author_picture : '';
         let title = (comment.user ? comment.user.first_name : '' || '') + ' ' + (comment.user ? comment.user.last_name : '' || '');
         let rateUp = (comment.rate_count || 0) / 2 + comment.rate_sum / 2;
@@ -771,7 +824,6 @@ class ItemDetail extends Component {
             style.marginTop = 5;
         }
 
-        // console.log(thumbnail, title, rateUp, rateDown)
 
         return (
             <CardItem style={style}>
@@ -780,7 +832,7 @@ class ItemDetail extends Component {
                     <Body style={{ alignSelf: 'flex-start' }}>
                         <TouchableOpacity onPress={() => this._onCommentBody(comment)}>
                             <Text style={styles.rootTitle}>{title}</Text>
-                            <Text style={styles.rootDescription} numberOfLines={5}>{comment.comment_body}</Text>
+                            <ParsedComment style={styles.rootDescription} item={comment} />
                             <Text note style={styles.subtitle}><TimeAgo time={comment.created_at} /></Text>
                         </TouchableOpacity>
                         <View style={styles.commentFooterContainer}>
@@ -827,44 +879,76 @@ class ItemDetail extends Component {
         );
     }
 
-    // _renderChildComment(comment) {
-    //     var thumbnail: string = comment.author_picture ? comment.author_picture : '';
-    //     var title: string = comment.user.first_name + ' ' + comment.user.last_name;
-    //     var rateUp: number = (comment.rate_count || 0) / 2 + comment.rate_sum / 2;
-    //     var rateDown: number = (comment.rate_count || 0) / 2 - comment.rate_sum / 2;
-
-    //     return (
-    //         <CardItem style={{ paddingBottom: 0, marginLeft: 40, marginTop: 5 }}>
-    //             <Left>
-    //                 <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
-    //                 <Body style={{ alignSelf: 'flex-start' }}>
-    //                     <TouchableOpacity onPress={() => this._onCommentBody(comment)}>
-    //                         <Text style={styles.title}>{title}</Text>
-    //                         <Text style={styles.description} numberOfLines={5}>{comment.comment_body}</Text>
-    //                         <Text note style={styles.subtitle}><TimeAgo time={comment.created_at} /></Text>
-    //                     </TouchableOpacity>
-    //                     <View style={styles.commentFooterContainer}>
-    //                         <Button iconLeft small transparent onPress={() => this._onRate(comment, 'up')}>
-    //                             <Icon name="md-arrow-dropup" style={styles.footerIcon} />
-    //                             <Label style={styles.footerText}>{rateUp ? rateUp : 0}</Label>
-    //                         </Button>
-    //                         <Button iconLeft small transparent onPress={() => this._onRate(comment, 'down')}>
-    //                             <Icon active name="md-arrow-dropdown" style={styles.footerIcon} />
-    //                             <Label style={styles.footerText}>{rateDown ? rateDown : 0}</Label>
-    //                         </Button>
-    //                         <Button iconLeft small transparent onPress={() => this._onAddComment(comment)} >
-    //                             <Icon active name="ios-undo" style={styles.footerIcon} />
-    //                             <Label style={styles.footerText}>{comment.child_count ? comment.child_count : 0}</Label>
-    //                         </Button>
-    //                     </View>
-    //                 </Body>
-    //                 <Right style={{ flex: 0.1, alignSelf: 'flex-start' }}>
-    //                     <Icon name="md-more" style={styles.commentMoreIcon} />
-    //                 </Right>
-    //             </Left>
-    //         </CardItem>
-    //     );
-    // }
+    _renderChildComment(comment, isChild = true) {
+            let thumbnail = comment.author_picture ? comment.author_picture : '';
+            let title = (comment.user ? comment.user.first_name : '' || '') + ' ' + (comment.user ? comment.user.last_name : '' || '');
+            let rateUp = (comment.rate_count || 0) / 2 + comment.rate_sum / 2;
+            let rateDown = (comment.rate_count || 0) / 2 - comment.rate_sum / 2;
+            let rateValue = comment.rate_value;
+    
+            let style: object = { paddingBottom: 0 };
+            if (isChild) {
+                style.marginLeft = 40;
+                style.marginTop = 5;
+            }
+    
+    
+            return (
+                <CardItem style={style}>
+                    <Left>
+                        <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                        <Body style={{ alignSelf: 'flex-start' }}>
+                            <TouchableOpacity onPress={() => this._onCommentBody(comment)}>
+                                <Text style={styles.rootTitle}>{title}</Text>
+                                <ParsedComment style={styles.rootDescription} item={comment} />
+                                <Text note style={styles.subtitle}><TimeAgo time={comment.created_at} /></Text>
+                            </TouchableOpacity>
+                            <View style={styles.commentFooterContainer}>
+                                <Button iconLeft small transparent onPress={() => this._onRate(comment, 'up')}>
+                                    <Icon name="md-arrow-dropup" style={styles.footerIcon} />
+                                    <Label style={rateValue === 'up' ? styles.footerTextBlue : styles.footerText}>{rateUp ? rateUp : 0}</Label>
+                                </Button>
+                                <Button iconLeft small transparent onPress={() => this._onRate(comment, 'down')}>
+                                    <Icon active name="md-arrow-dropdown" style={styles.footerIcon} />
+                                    <Label style={rateValue === 'down' ? styles.footerTextBlue : styles.footerText}>{rateDown ? rateDown : 0}</Label>
+                                </Button>
+                                <Button iconLeft small transparent onPress={() => this._onAddComment(comment)}>
+                                    <Icon active name="ios-undo" style={styles.footerIcon} />
+                                    <Label style={styles.footerText}>{comment.child_count ? comment.child_count : 0}</Label>
+                                </Button>
+                            </View>
+                        </Body>
+                        {
+                            comment.is_owner && comment.user.id === this.props.userId &&
+                            <Right style={{ flex: 0.1, alignSelf: 'flex-start', alignContent: 'center', alignItems: 'center', paddingVertical: 4, backgroundColor: '#fff' }}>
+                                <Menu style={{ width: '100%'}} ref={ref => { this.menuComment = ref; }}>
+                                    <MenuTrigger style={{alignItems: 'center', width: '100%', justifyContent: 'center', backgroundColor: '#fff'}}>
+                                        <Icon name="md-more" style={styles.commentMoreIcon} />
+                                    </MenuTrigger>
+                                    <MenuOptions customStyles={optionsStyles}>
+                                        <MenuOption onSelect={() => this.editComment(comment)}>
+                                            <Button iconLeft transparent dark onPress={() => this.editComment(comment)}>
+                                                <Icon name="md-create" style={styles.menuIcon} />
+                                                <Text style={styles.menuText}>Edit comment</Text>
+                                            </Button>
+                                        </MenuOption>
+                                        <MenuOption onSelect={() => this.deleteComment(comment)}>
+                                            <Button iconLeft transparent dark onPress={() => this.deleteComment(comment)}>
+                                                <Icon name="md-trash" style={styles.menuIcon} />
+                                                <Text style={styles.menuText}>Delete comment</Text>
+                                            </Button>
+                                        </MenuOption>
+                                    </MenuOptions>
+                                </Menu>
+                            </Right>
+                        }
+                    </Left>
+                    <Right style={{ flex: 0.1, alignSelf: 'flex-start' }}>
+                        <Icon name="md-more" style={styles.commentMoreIcon} />
+                    </Right>
+                </CardItem>
+            );
+        }
 
     _renderLoadMore() {
         if (this.state.isCommentsLoading === false && this.isLoadedAll === false && this.state.dataArray.length > 0) {
@@ -922,7 +1006,7 @@ class ItemDetail extends Component {
         // } else {
         // }
         if (!imgURL) return;
-        console.warn(imgURL)
+        // console.warn(imgURL)
         return (
                 <CardItem>
                     <Left>
@@ -949,7 +1033,7 @@ class ItemDetail extends Component {
     _renderPostOrUserPetitionCard(item, state) {
         // console.log('got here')
         return (
-            <View style={{padding: 8, paddingBottom: 70}}>
+            <View style={{padding: 8, paddingBottom: 45}}>
                 <FeedHeader userId={this.props.userId} item={item} />
                 {
                     state.isEditMode
@@ -966,12 +1050,13 @@ class ItemDetail extends Component {
     
     _renderGroupCard(item) {
         return (
-            <View style={{backgroundColor: '#fff', padding: 8, paddingBottom: 70}}>
+            <View style={{backgroundColor: '#fff', padding: 8, paddingBottom: 45}}>
                     <FeedHeader userId={this.props.userId} item={item} />
                     <FeedDescription item={item} profile={this.props.profile} isInDetail />
                     <FeedCarousel item={item} />
                     <Options onVote={() => this.loadEntity()} item={item} profile={this.props.profile} token={this.props.token} />
                     <FeedMetaData item={item} />
+                    {/* <View style={styles.borderContainer} /> */}
                     <View style={styles.borderContainer} />
                     <FeedFooter isInDetail item={item} profile={this.props.profile} token={this.props.token} showAnalytics />
                 </View>
@@ -1044,22 +1129,33 @@ class ItemDetail extends Component {
             return null;
         }
         let item = this.item;
+        // item.banner = 'https://cdn.pixabay.com/photo/2012/04/11/11/32/letter-a-27580_960_720.png'
+        console.log(this.nextCursor);
         return (
             <MenuContext customStyles={menuContextStyles} keyboardShouldPersistTaps="always">
-                <Container style={{ flex: 1 }} keyboardShouldPersistTaps="always">
+                <Container style={{ flex: 1 }} scrollEnabled="false" keyboardShouldPersistTaps="always">
                     <HeaderImageScrollView
                     keyboardShouldPersistTaps="always"
                         maxHeight={MAX_HEIGHT}
                         minHeight={MIN_HEIGHT}
                         fadeOutForeground
-                        renderHeader={() => (
+                        refreshControl
+                        showsVerticalScrollIndicator={false}
+                        refreshin={false}
+                        onRefresh={() => {
+                             this.loadEntity();
+                             this.loadComments();
+                        }}
+                        renderHeader={() => {
                             //Eventually this should show the Group Banner GH19
                             //https://github.com/PowerlineApp/powerline-mobile/issues/596
-                            <Image
+                                return item.has_agency
+                                ? <CachedImage style={{flex: 1}} source={{ uri: item.banner }} />
+                                : <Image
                                 style={styles.headerImage}
-                                source={this.state.banner ? {uri: this.state.banner} : require('img/item_detail_header.png')}
-                            />
-                        )}
+                                source={item.banner ? {uri: item.banner} : require('img/item_detail_header.png')}
+                                />
+                        }}
                         renderFixedForeground={() => (
                             <Animatable.View
                             style={styles.navTitleView}
@@ -1099,11 +1195,18 @@ class ItemDetail extends Component {
                         <View style={styles.borderContainer} />
                         {this._renderAddComment()}
                         <View style={styles.borderContainer} />
-                        <ListView
+                        <FlatList
+                            scrollEnabled={false}
+                            data={this.state.dataArray}
+                            renderItem={({item}) => this._renderComment(item)}
+                            refreshing={false}
+                            onRefresh={() => {}}
+                        />
+                        {/* <ListView
                             scrollEnabled={false}
                             dataSource={this.state.dataSource} renderRow={(comment) =>
                                 this._renderComment(comment)
-                            } />
+                            } /> */}
                         {this._renderLoadMore()}
                         {this._renderCommentsLoading()}
                         {/* <View style={{ height: 50 }} /> */}

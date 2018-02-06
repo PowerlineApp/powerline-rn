@@ -92,20 +92,21 @@ class NewPetition extends Component {
             }
             this.setState({
                 grouplist: ret.payload,
-                showCommunity, selectedGroupIndex
+                showCommunity
             });
-            getPetitionConfig(token, this.state.grouplist[index].id)
-            .then(data => {
-                console.log('===========================');
-                console.log('=>>>>>>>>>>>>', data);
-                console.log('===========================');
-                this.setState({
-                    petition_remaining: data.petition_remaining
-                });
-            })
-            .catch(err => {
+            this.selectGroupList(selectedGroupIndex);
+            // getPetitionConfig(token, this.state.grouplist[index].id)
+            // .then(data => {
+            //     console.log('===========================');
+            //     console.log('11=>>>>>>>>>>>>', data);
+            //     console.log('===========================');
+            //     this.setState({
+            //         petition_remaining: data.petitions_remaining
+            //     });
+            // })
+            // .catch(err => {
 
-            });
+            // });
     
         }).catch(err => {
                 
@@ -134,6 +135,9 @@ class NewPetition extends Component {
 
         getPetitionConfig(token, this.state.grouplist[index].id)
             .then(data => {
+                console.log('===========================');
+                console.log('22=>>>>>>>>>>>>', data);
+                console.log('===========================');
                 this.setState({
                     petition_remaining: data.petitions_remaining
                 });

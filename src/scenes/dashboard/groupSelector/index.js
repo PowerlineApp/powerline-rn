@@ -275,10 +275,7 @@ class GroupSelector extends Component {
                     }
                     
                 </Content>
-                {/* Turning of Pulse Loader until we can stabilize its performance
-                <PLOverlayLoader visible={isLoading || isRefreshing} logo />
-                */}
-
+                {/* <PLOverlayLoader marginTop={200} visible={isLoading || isRefreshing} logo /> */}
             </Container>
         );
     }

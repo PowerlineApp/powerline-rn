@@ -40,7 +40,8 @@ const initialState = {
 const payloadStack: Array<Object> = [];
 
 function activities(state: State = initialState, action: Action): State {
-    // console.warn('action(activities):', action.type);
+    // console.log('action(activities):', action);
+    // console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
     switch (action.type) {
 
     case 'SAVE_OFFSET': {
@@ -64,7 +65,7 @@ function activities(state: State = initialState, action: Action): State {
     }
     
     case 'LOADED_ACTIVITIES': {
-        console.log('=z==zz=z=z=>', action.data)
+        // console.log('=z==zz=z=z=>', action.data)
         payloadStack = payloadStack.concat(action.data.payload);
         return {
             ...state,
@@ -194,13 +195,12 @@ function activities(state: State = initialState, action: Action): State {
             type = 'user_petition';
         }
         payloadStack = state.payload.map(activity => {
+            console.log('=> ', activity.id, id, activity.id === id)
             if (activity.id === id) {
+                console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
                 return {
                     ...activity,
-                    [type]: {
-                        ...activity[type],
-                        is_subscribed: true,
-                    }
+                    is_subscribed: true
                 };
             } else {
                 return activity;
@@ -232,6 +232,25 @@ function activities(state: State = initialState, action: Action): State {
             payload: payloadStack,
         }
     }
+
+    case ('UPDATE_ACTIVITY'): {
+        // console.log('HEY YALL')
+        let { id } = action.payload;
+        payloadStack = state.payload.map(activity => {
+            if (activity.id === id) {
+                return {
+                    ...activity, ...action.payload
+                };
+            } else {
+                return activity;
+            }
+        });
+        return {
+            ...state,
+            payload: payloadStack,
+        }
+    }
+
     default: 
     return state;
 }

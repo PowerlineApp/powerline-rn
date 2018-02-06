@@ -16,6 +16,7 @@ import styles from '../styles';
 import {CardItem} from 'native-base';
 
 class FeedActivity extends Component {
+
     onSwipeRight(item, gestureState) {
         if (item.type === 'post' && item.zone !== 'expired') {
             this.footer.vote(item, 'upvote');
@@ -41,37 +42,27 @@ class FeedActivity extends Component {
     }
 
     _renderPostOrPetition(item) {
-        console.log(this.props.profile);
+        // console.log(this.props.profile);
         return (
-            // <GestureCard
-            //     onSwipeRight={(state) => this.onSwipeRight(item, state)}
-            //     onLongPress={(state) => this.onLongPress(item, state)}
-            //     config={{
-            //         velocityThreshold: 0.3,
-            //         directionalOffsetThreshold: 80,
-            //         longPressDelay: 2000
-            //     }}
-            // >
-            <Card style={styles.container}>
-                <FeedHeader 
-                    ref={ref => { this.header = ref; }}
-                    item={item}
-                    token={this.props.token}
-                    userId={this.props.profile.id} 
+        [<Card style={styles.container}>
+            <FeedHeader 
+                ref={ref => { this.header = ref; }}
+                item={item}
+                token={this.props.token}
+                userId={this.props.profile.id} 
                    />
-                <FeedDescription item={item} profile={this.props.profile} />
-                <FeedMetaData item={item} />
-                <View style={styles.borderContainer} />
-                <FeedFooter ref={ref => { this.footer = ref; }} item={item} profile={this.props.profile} token={this.props.token} showAnalytics={this.props.showAnalytics} />
-                {/* <FeedCommentPreview item={item} /> */}
-                {/* <View style={{ backgroundColor: '#f0f', height: 5, marginTop: 8, paddingLeft: 5, paddingRight: 15, flex: 1, alignItems: 'flex-start' }} /> */}
-
-            </Card>
+            <FeedDescription item={item} profile={this.props.profile} />
+            <FeedMetaData item={item} />
+            <View style={styles.borderContainer} />
+            <FeedFooter ref={ref => { this.footer = ref; }} item={item} profile={this.props.profile} token={this.props.token} showAnalytics={this.props.showAnalytics} />
+        </Card>,
+            <FeedCommentPreview item={item} />]
             // </GestureCard>
         );
     }
 
     _renderGroupCard(item) {
+        // console.log('Feed activity render group card', item);
         return (
             
         [<Card style={styles.container}>
@@ -79,10 +70,7 @@ class FeedActivity extends Component {
             <FeedDescription item={item} profile={this.props.profile} />
             <FeedCarousel item={item} />
             <View style={styles.borderContainer} />
-            {/* <View style={{flex: 1}}> */}
-            {/* <CardItem style={{marginTop: 1, paddingTop: 1, height: 1}} /> */}
             <FeedFooter item={item} profile={this.props.profile} token={this.props.token} showAnalytics={this.props.showAnalytics} />
-            {/* </View> */}
         </Card>,
             <FeedCommentPreview item={item} />]
         );
@@ -90,7 +78,7 @@ class FeedActivity extends Component {
 
     render() {
         let { item, displayCommentPreview } = this.props;
-
+        if (!item.user) return null;
         switch (item.type) {
         case 'post':
         case 'user-petition':

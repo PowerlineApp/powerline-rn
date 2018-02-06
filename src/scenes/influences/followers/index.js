@@ -149,6 +149,7 @@ class Followers extends Component {
           }
         }}
       >
+        {/* <PLOverlayLoader visible={refreshing} logo />       */}
         { followers.length > 0 &&
           <List>
             {
@@ -156,8 +157,22 @@ class Followers extends Component {
                 return (
                   <ListItem avatar key={index} onPress={() => this.goToProfile(follow.id)}>
                     <Left>
-                      { follow.avatar_file_name &&
-                        <Thumbnail source={{ uri: follow.avatar_file_name + '&w=150&h=150&auto=compress,format,q=95' }} />
+                      { 
+                        (follow.is_verified
+                        ?
+                        <Thumbnail small
+                            source={follow.avatar_file_name ? { uri: follow.avatar_file_name + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")}
+                            defaultSource={require("img/blank_person.png")}
+                        />
+                        :
+                        <View style={{ borderWidth: 2, borderStyle: 'dashed', borderColor: 'silver', borderRadius: 1000}}>
+                            <Thumbnail small
+                                source={follow.avatar_file_name ? { uri: follow.avatar_file_name + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")}
+                                defaultSource={require("img/blank_person.png")}
+                            />
+
+                        </View>)
+                        // <Thumbnail source={{ uri: follow.avatar_file_name + '&w=150&h=150&auto=compress,format,q=95' }} />
                       }
                     </Left>
                     <Body>
@@ -189,9 +204,6 @@ class Followers extends Component {
             }
           </List>
         }
-        {/* Turning off Pulse Loader until we can stabilize its performance
-        <PLOverlayLoader visible={refreshing} logo />
-        */}
       </ContentPlaceholder>
     );
   }

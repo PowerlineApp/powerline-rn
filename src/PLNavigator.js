@@ -49,6 +49,7 @@ import GroupAddCardScene from './scenes/dashboard/managegroup/scenes/subscriptio
 import ElectedLeadersForm from './scenes/dashboard/electedLadersForm'
 import Modal from './components/Modal'
 import UserAddCard from './scenes/profile/userAddCard.js';
+import TermsList from './scenes/dashboard/termsList';
 
 
 import Share from './PLShare';
@@ -193,6 +194,7 @@ class MyRouter extends Component {
               <Scene key="electedLeadersForm" component={ElectedLeadersForm} hideNavBar />
               <Scene key="userAddCardScene" component={UserAddCard} />
               <Scene key="share" component={Share} />
+              <Scene key="terms" component={TermsList} />
             </Scene>
           </RouterWithRedux>
     )

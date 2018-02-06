@@ -41,30 +41,30 @@ class Influences extends Component {
                     <Header hasTabs style={styles.header}>
                         <Left>
                             <Button style={{width: '100%'}}  transparent onPress={this.props.openDrawer}>
-                                <Icon active name="menu" style={{ color: 'white' }} />
+                                <Icon active name='menu' style={{ color: 'white' }} />
                             </Button>
                         </Left>
-                        <Body>
+                        <Body style={{flex: 4}}>
                             <Title style={{color: '#fff'}}>My Influences</Title>
                         </Body>
                         <Right>
                             <Button transparent onPress={this.searchFollowings}>
-                                <Icon active name="add-circle" style={{ color: 'white' }} />
+                                <Icon active name='add-circle' style={{ color: 'white' }} />
                             </Button>
                         </Right>
                     </Header>
                     {/* User has choice to view Followers or Followed Users */}
-                    <Tabs initialPage={0} locked={true}>
-                        <Tab heading="Followers" tabStyle={styles.tabsStyle} activeTabStyle={styles.tabsStyle}>
+                    <Tabs initialPage={0} locked>
+                        <Tab heading='Followers' tabStyle={styles.tabsStyle} activeTabStyle={styles.tabsStyle}>
                             <Followers />
                         </Tab>
-                        <Tab heading="Following" tabStyle={styles.tabsStyle} activeTabStyle={styles.tabsStyle} onPress={Mixpanel.track("Following opened")}>
+                        <Tab heading='Following' tabStyle={styles.tabsStyle} activeTabStyle={styles.tabsStyle} onPress={Mixpanel.track("Following opened")}>
                             <Followings />
                         </Tab>
                     </Tabs>
                 </Container>
             </MenuContext>
-        )
+        );
     }
 }
 

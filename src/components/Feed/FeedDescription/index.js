@@ -91,10 +91,13 @@ class FeedDescription extends Component {
     return (
       <View style={{ marginTop: 8, paddingLeft: 5, paddingRight: 15, flex: 1, alignItems: 'flex-start' }}>
         <Left style={{backgroundColor: '#fff', width: '100%'}} >
-          <Body style={styles.descBodyContainer}>
-            <View style={{minWidth: '80%'}}>
+          <Body style={[styles.descBodyContainer, {backgroundColor: '#fff'}]}>
+            <View style={{ backgroundColor: '#fff', flex: 1}}>
             <TouchableOpacity style={{alignItems: 'flex-start', justifyContent: 'flex-start'}} onPress={() => this.redirect(item)}>
               {this._renderTitle(item)}
+              <Text>
+
+              </Text>
               <ParsedText
                 style={styles.description}
                 parse={
@@ -107,13 +110,13 @@ class FeedDescription extends Component {
                 numberOfLines={this.props.isInDetail ? null : item.type === 'post' ? 5 : 4}
                 childrenProps={{ allowFontScaling: false }}
                 >
-                {item.body || item.subject}
+                {
+                (item.body || item.subject)
+                }
               </ParsedText>
             </TouchableOpacity>
                 </View>
-                <View>
-            {this._renderAttachedImage(item)}
-                </View>
+                  {this._renderAttachedImage(item)}
           </Body>
         </Left>
       </View>
@@ -121,4 +124,3 @@ class FeedDescription extends Component {
   }
 }
 export default FeedDescription;
-

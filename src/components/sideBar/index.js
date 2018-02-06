@@ -5,7 +5,7 @@ import { Container, Content, Text, ListItem, List, Left, Icon, Right, Button } f
 import { Actions } from 'react-native-router-flux';
 
 import { closeDrawer } from '../../actions/drawer';
-import { logOut, logOutWithPrompt } from 'PLActions';
+import { logOut, logOutWithPrompt, setGroup } from 'PLActions';
 
 import styles from './style';
 import OneSignal from 'react-native-onesignal';
@@ -13,7 +13,7 @@ import { AsyncStorage, Keyboard, Modal, TextInput, View } from 'react-native';
 import {Mixpanel} from 'PLEnv';
 
 
-const datas = [
+let datas = [
   {
     name: 'Home',
     route: 'home',
@@ -56,14 +56,14 @@ const datas = [
     route: 'representatives',
     icon: 'color-filter',
     bg: '#B89EF5',
-  },
-  {
+  }];
+  let verifyProfile = [{
    name: 'Verify Profile',
    route: 'verifyProfile',
    icon: 'contact',
    bg: '#3591FA',
-  },
-  {
+  }];
+  let data2 = [{
    name: 'My Profile',
    route: 'profile',
    icon: 'contact',
@@ -113,6 +113,8 @@ const datas = [
   },
 ];
 
+
+
 class SideBar extends Component {
   constructor(){
     super();
@@ -120,6 +122,7 @@ class SideBar extends Component {
       enterCustomCode: false
     }
   }
+
   static propTypes = {
     logOut: React.PropTypes.func,
     closeDrawer: React.PropTypes.func,
@@ -136,6 +139,14 @@ class SideBar extends Component {
 
   onSelectItem(route: string, option) {
     console.log('onSelectItem', route)
+    if (route === 'home'){
+      let data =  {id: 'all', group: 'all', header: 'all'};
+      setTimeout(() => {
+        this.props.setGroup(data, this.props.token, 'all')
+      }, 100)
+    }
+
+
     if (route == 'logout') {
       let { token } = this.props;
       this.props.logOut(token);
@@ -191,12 +202,17 @@ class SideBar extends Component {
   }
 
   render() {
-    console.log('drawer rendering')
+    console.log('drawer rendering', this.props)
+    let data = datas;
+    if (!this.props.is_verified){
+      data = data.concat(verifyProfile);
+    }
+    data = data.concat(data2)
     return (
       <Container style={styles.sidebar}>
           {this.customCodeModal()}
           <List
-            dataArray={datas} renderRow={data =>
+            dataArray={data} renderRow={data =>
               <ListItem button noBorder onPress={() => this.onSelectItem(data.route, data.option)} >
                 <Left>
                   <Icon active name={data.icon} style={{ color: 'white', fontSize: 26, width: 30 }} />
@@ -223,6 +239,7 @@ function bindAction(dispatch) {
   return {
     closeDrawer: () => dispatch(closeDrawer()),
     logOut: (token) => dispatch(logOutWithPrompt(token)),
+    setGroup: (data, token, group) => dispatch(setGroup(data, token, group))
   };
 }
 

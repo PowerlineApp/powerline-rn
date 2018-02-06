@@ -65,7 +65,7 @@ function register(data){
     });
 }
 async function register2(data){
-    console.log('~>' + API_URL + `/v2/security/registration`, data);
+    console.log('registering user: ' + API_URL + `/v2/security/registration`, data);
     return new Promise((fullfill, reject) => {
         fetch(API_URL + `/v2/security/registration`, {
             method: 'POST',
@@ -115,6 +115,14 @@ async function getZipCode(GEO_KEY){
 }
 
 function registerFromFB(data){
+    console.log('registering w/ fb', '/secure/registration-facebook', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    });
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/secure/registration-facebook', {
             method: 'POST',
@@ -126,7 +134,14 @@ function registerFromFB(data){
         })
         .then((res) => res.json())
         .then(user => {
-            if (user.token) {               
+            // user =  {
+            //     id:503,
+            //     is_registration_complete:false,
+            //     token:"507668e4zbswo8soo8s8kgws8wwcgogko4cws8gwwkkggwsc4s",
+            //     username:"piubello.felipe"
+            // };             
+            console.log('response', user);
+            if (user.token) {
                 var data = {
                     id: user.id,
                     username: user.username,

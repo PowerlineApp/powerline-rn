@@ -8,11 +8,19 @@ async function getAgency(token) {
         let res = await fetch(`${API_URL}/v2.2/user/agency`, {
             method: 'GET',
             headers: {
-                'token': token,
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             }
         })
-        return res.json();
+        console.log('res agency => ', res)
+        try {
+            // console.log('trying...')
+            res = await res.json();
+            return res;
+        } catch (error) {
+            // console.log('catchng...');
+            return {};
+        }
     } catch (error) {
         console.warn(error);   
     }
@@ -22,7 +30,7 @@ async function loadUserCards(token) {
         let res = await fetch(`${API_URL}/v2/cards`, {
             method: 'GET',
             headers: {
-                'token': token,
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             }
         })
@@ -39,7 +47,7 @@ async function userAddCard (token, data) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'token': token
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify(data)
         });
@@ -55,7 +63,7 @@ async function loadUserProfile(token: string): Promise<Action> {
         var response = await fetch(`${API_URL}/v2/user?_format=json`, {
             method: 'GET',
             headers: {
-                'token': token,
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             }
         });
@@ -82,7 +90,7 @@ function loadUserData(token) {
         fetch(API_URL + '/v2/user?_format=json', {
             method: 'GET',
             headers: {
-                'token': token,
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         })
@@ -104,7 +112,7 @@ function loadUserProfileById(token, id) {
         fetch(API_URL + '/v2/users/' + id, {
             method: 'GET',
             headers: {
-                'token': token,
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         })
@@ -126,7 +134,7 @@ function getInvites(token) {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'token': token
+                'Authorization': `Bearer ${token}`,
             }
         })
             .then((res) => res.json())
@@ -143,13 +151,13 @@ function getInvites(token) {
 
 //for registering for push notifications with Powerline backend. NOT for OneSignal
 function registerDevice(token, params) {
-    console.log('/this REGISTERING : ', token, params)
+    // console.log('/this REGISTERING : ', token, params)
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2/devices', {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
-                'token': token
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify(params)
         })
@@ -171,7 +179,7 @@ function search(token, query) {
             method: 'GET',
             headers: {
                 'Content-Type': 'application',
-                'token': token
+                'Authorization': `Bearer ${token}`,
             }
         })
             .then((res) => res.json())
@@ -200,7 +208,7 @@ function getUserDiscountCode(token) {
             method: 'GET',
             headers: {
                 'Content-Type': 'application',
-                'token': token
+                'Authorization': `Bearer ${token}`,
             }
         })
             .then((res) => res.json())
@@ -217,14 +225,14 @@ function getUserDiscountCode(token) {
 
 function updateUserProfile(token, data) {
     console.log('about to update user profile', 
-    (API_URL + '/profile/update', {
+    (API_URL + '/profile/update'), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
         },
         body: (data)
-    }))
+    })
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/profile/update', {
             method: 'POST',
@@ -251,7 +259,7 @@ function blockUser(token, id) {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'token': token
+                'Authorization': `Bearer ${token}`,
             }
         })
             .then((res) => {console.log(res); return res.json()})
@@ -271,7 +279,7 @@ function unblockUser(token, id) {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
-                'token': token
+                'Authorization': `Bearer ${token}`,
             }
         })
             .then((res) => res.json())
@@ -291,7 +299,7 @@ function getBlockedUsers(token) {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'token': token
+                'Authorization': `Bearer ${token}`,
             }
         })
             .then((res) => res.json())

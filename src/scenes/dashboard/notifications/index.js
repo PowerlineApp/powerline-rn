@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
-import { Content, Text, List, ListItem, Left, Body, Right,Thumbnail, Button, Icon} from 'native-base';
+import { Content, Text, List, ListItem, Left, Body, Right,Thumbnail, Button, Icon, Container} from 'native-base';
 import {
     TouchableOpacity,
     View,
@@ -56,6 +56,7 @@ class Notifications extends Component{
             this.setState({
                 refreshing: false
             });
+            this.props.setLoading(false);
         })
         .catch(err => {
             console.log(err);
@@ -200,6 +201,7 @@ class Notifications extends Component{
         this.setState({
             refreshing: true
         });
+        this.props.setLoading(true);
         this.loadActivities();
     }
 
@@ -263,30 +265,32 @@ class Notifications extends Component{
     render() {
         // console.log(this.props.notifications);
         return (
-            <ContentPlaceholder
-                empty={
+            <Container style={{flex: 1, marginBottom: 48}}>
+
+                <ContentPlaceholder
+                    empty={
                     !this.state.refreshing && 
                     this.props.notifications.length === 0
                 }
-                title='Seems quiet a bit quiet in here. Are you following anyone?'
-                refreshControl={Platform.OS === 'android' &&
+                    title='Seems quiet a bit quiet in here. Are you following anyone?'
+                    refreshControl={Platform.OS === 'android' &&
                     <RefreshControl
                         refreshing={false}
                         onRefresh={this._onRefresh.bind(this)}
                     />
                 }
-                onScroll={(e) => {
-                    var height = e.nativeEvent.contentSize.height;
-                    var offset = e.nativeEvent.contentOffset.y;
+                    onScroll={(e) => {
+                        var height = e.nativeEvent.contentSize.height;
+                        var offset = e.nativeEvent.contentOffset.y;
 
-                    if (Platform.OS === 'ios' && offset < -3) {
-                        this._onRefresh();
-                    }
-                }}
-                style={styles.container}
+                        if (Platform.OS === 'ios' && offset < -3) {
+                            this._onRefresh();
+                        }
+                    }}
+                    style={styles.container}
             >
-                <List style={{backgroundColor: 'white'}}>
-                    {
+                    <List style={{backgroundColor: 'white'}}>
+                        {
                         this.state.invites.map((value, index) => {
                             console.log('invites', value);
                             return (
@@ -315,7 +319,7 @@ class Notifications extends Component{
                             );
                         })
                     }
-                    {
+                        {
                         this.props.notifications.map((value, index)=> {
                             console.log('notifications', value);
                             if (true) {
@@ -360,9 +364,10 @@ class Notifications extends Component{
                             }
                         })
                     }
-                </List>
-                <PLOverlayLoader visible={this.state.refreshing} logo />
-            </ContentPlaceholder>
+                    </List>
+                </ContentPlaceholder>
+                {/* <PLOverlayLoader marginTop={100} visible={this.state.refreshing} logo /> */}
+            </Container>
         );
     }
 

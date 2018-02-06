@@ -45,7 +45,7 @@ import {
 } from 'react-native';
 import { loadUserData, createGroup } from 'PLActions';
 import { showToast } from '../../../utils/toast';
-
+import { SERVICE_AGREEMENT, PRIVACY_POLICY, TERMS_OF_USE } from 'PLConstants';
 class CreateGroup extends Component{
     typeList = ["Educational", "Non-Profit (Not Campaign)", "Non-Profit (Campaign)", "Business", "Cooperative/Union", "Other"];
 
@@ -221,6 +221,20 @@ class CreateGroup extends Component{
                                     value={this.state.acronym}
                                     onChangeText={(text) => this.onChangeAcron(text)}
                                 />
+                            </View>
+                            <View style={styles.termsContainner}>
+                                <Text style={styles.termsText}>By creating this group, I agree to abide by the </Text>
+                                <TouchableOpacity onPress={() => {Actions.terms({terms: SERVICE_AGREEMENT, title: 'Services Agremeent'})}}>
+                                    <Text style={styles.termsUnderlineText}>Services Agremeent</Text>
+                                </TouchableOpacity>
+                                <Text style={styles.termsText}>, the </Text>
+                                <TouchableOpacity onPress={() => {Actions.terms({terms: TERMS_OF_USE, title: 'Terms of Use'})}}>
+                                    <Text style={styles.termsUnderlineText}>Terms of Use</Text>
+                                </TouchableOpacity>
+                                <Text style={styles.termsText}>, and the </Text>
+                                <TouchableOpacity onPress={() => {Actions.terms({terms: PRIVACY_POLICY, title: 'Privacy Policy'})}}>
+                                    <Text style={styles.termsUnderlineText}>Privacy Policy </Text>
+                                </TouchableOpacity>
                             </View>
                         </View>                        
                     </Content>

@@ -19,7 +19,7 @@ class TermsList extends React.Component {
       (<Row title={title} desc={desc} key={title} />)
     );
     return (
-      <Section title="Terms of Service">
+      <Section title="Services Agremeent">
         <ItemsWithSeparator separatorStyle={styles.separator}>
           {content}
         </ItemsWithSeparator>

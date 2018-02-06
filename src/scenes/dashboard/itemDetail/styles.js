@@ -209,8 +209,9 @@ export default {
         backgroundColor: 'black',
     },
     borderContainer: {
-        height: 1,
-        backgroundColor: PLColors.cellBorder,
+        height: 2,
+        width: '100%',
+        backgroundColor: PLColors.cellBorder
     },
     borderAllRepliesContainer: {
         height: 1,

@@ -41,6 +41,7 @@ class VerifyProfile extends Component {
             city: props.profile.city,
             state: props.profile.state,
             email: props.profile.email,
+            phone: props.profile.phone,
             country: props.profile.country,
             user: {}
         };
@@ -77,7 +78,7 @@ class VerifyProfile extends Component {
         updateUserProfile(this.props.token, {zip, address1, address2, city, state, email, country, phone, birth})
         .then(response => {
             this.setState({loading: false})
-            console.log('response', response)
+            console.log('response from updating user profile', response)
             Actions.pop();
             Actions.profile();
         })
@@ -95,40 +96,53 @@ class VerifyProfile extends Component {
     }
 
     onAutoComplete = (data, details) => {
-        console.log('!!!!!!!!!!!!!!!', data, details)
-        this.setState({
-            address1: "",
-            state: "",
-            city: "",
-            country: "",
-            zip: ""
-        });
+        // console.log('!!!!!!!!!!!!!!!', data, details)
+        // this.setState({
+        //     address1: "",
+        //     state: "",
+        //     city: "",
+        //     country: "",
+        //     zip: ""
+        // });
         var address_components = details.address_components;
         console.log(address_components);
         for(var i = 0; i < address_components.length; i++){
             if(address_components[i].types.indexOf("street_number") != -1){
-                this.state.address1 = address_components[i].long_name;
+                console.log('found : address1 ', address_components[i].long_name)
+                this.setState({
+                    address1: address_components[i].long_name
+                })
             }else if(address_components[i].types.indexOf("locality") != -1 || address_components[i].types.indexOf("neighborhood") != -1){
+                console.log('found : city ', address_components[i].long_name)
                 this.setState({
                     city: address_components[i].long_name
                 });
             }else if(address_components[i].types.indexOf("administrative_area_level_1") != -1){
+                console.log('found : state ', address_components[i].long_name)
                 this.setState({
                     state: address_components[i].long_name
                 });
             }else if(address_components[i].types.indexOf("country") != -1){                
+                console.log('found : country ', address_components[i].short_name)
                 this.setState({
                     country: address_components[i].short_name
                 });
             }else if(address_components[i].types.indexOf("postal_code") != -1){
+                console.log('found : zip ', address_components[i].long_name)
                 this.setState({
                     zip : address_components[i].long_name
                 });
             }else if(address_components[i].types.indexOf("route") != -1){
-                this.state.address1 +=" " + address_components[i].long_name;
+                console.log('found : address1 ', address_components[i].long_name)
+                this.setState((prevState) => ({
+                    address1: prevState.address1 + " " + address_components[i].long_name
+                }))
+                // this.state.address1 +=" " + address_components[i].long_name;
             }
         }
-        this.state.autoAddress.setAddressText(this.state.address1);
+        this.state.autoZip.setAddressText(this.state.zip);
+
+        // this.state.autoAddress.setAddressText(this.state.address1);
     }
 
     onChange(value, key){
@@ -203,7 +217,7 @@ class VerifyProfile extends Component {
 
     renderPhoneScreen(){
         return <PhoneVerification
-        onBack={() => this.setState({showPhoneScreen: false})}
+        onBack={() => this.setState({showPhoneScreen: false, phone: ''})}
         type='login'
         onSendCode={() => this.sendCode()}   
         onVerifycode={() => this.verifyCode()}
@@ -248,7 +262,7 @@ class VerifyProfile extends Component {
                 </View>
                 <Card style={{alignItems: 'center'}}>
                     {/* <List style={{alignItems: 'center', justifyContent: 'center'}}> */}
-                    <ScrollView contentContainerStyle={{alignItems: 'center', paddingBottom: 20}}>
+                    <ScrollView keyboardShouldPersistTaps="always" contentContainerStyle={{alignItems: 'center', paddingBottom: 20}}>
 
                         <View style={{padding: 20}}>
                             <Label>Verify or Complete your data</Label>
@@ -290,7 +304,7 @@ class VerifyProfile extends Component {
                         debounce={200}
                     /> */}
 
-                        <GooglePlacesAutocomplete
+                        {/* <GooglePlacesAutocomplete
                             placeholder='Zip Code'
                             minLength={2}
                             autoFocus={false}
@@ -298,13 +312,18 @@ class VerifyProfile extends Component {
                             listViewDisplayed='auto'
                             fetchDetails
                             getDefaultValue={() => this.state.zip}
-
+                            textInputProps={{
+                                onChangeText: (text) => {this.onChange('zip', text); this.setState({listViewDisplayed: true})},
+                                onBlur: (a) => {this.setState({listViewDisplayed: false})}
+                            }}
+                            listViewDisplayed
                             renderDescription={(row) => {console.log(row); return row.description}}  
                             onPress={this.onAutoComplete}    
                             query={{
                                 key: 'AIzaSyBQOJDsIGt-XxuSNI7Joe1KRpAOJwDAEQE',
                                 language: 'en',
-                                components: country ? `country:${country}` : ''                                
+                                components: country ? `country:${country}` : '',
+                                types: '(regions)'                              
                             }}
                             ref={(addressobj) => {
                                 this.state.autoAddress = addressobj;
@@ -320,6 +339,43 @@ class VerifyProfile extends Component {
                             nearbyPlacesAPI='GoogleReverseGeocoding'
                             filterReverseGeocodingByTypes={['postal_code']}
                             debounce={200}
+                    /> */}
+
+                    <GooglePlacesAutocomplete
+                        placeholder='Zipcode'
+                        minLength={2}
+                        autoFocus={false}
+                        getDefaultValue={() => this.state.zip}
+                        textInputProps={{
+                            onChangeText: (text) => {this.onChangeZip(text); this.setState({listViewDisplayed: true})},
+                            onBlur: (a) => {this.setState({listViewDisplayed: false})},
+                            autoFocus: false
+                        }}
+                        returnKeyType={'done'}
+                        listViewDisplayed={this.state.listViewDisplayed}
+                        fetchDetails={true}
+                        renderDescription={(row) =>{console.log(row); return row.description}}  
+                        onPress={(data, details, any) => {console.log(any); this.onAutoComplete(data, details); }}                      
+                        query={{
+                            key: googlePlacesKey,
+                            language: 'en',
+                            components: this.state.country ? `country:${this.state.country}` : '',
+                            types: '(regions)'
+                        }}
+                        ref={(zipobj) => {
+                            this.state.autoZip = zipobj;
+                        }}
+                        styles={{
+                            container: styles.autoContainer,
+                            textInputContainer: styles.autoTextInputContainer,
+                            textInput: styles.autoTextInput,
+                            description: styles.autoDescription,
+                            predefinedPlacesDescription: styles.autoPredefinedPlacesDescription
+                        }}
+                        currentLocation={false}                        
+                        nearbyPlacesAPI='GoogleReverseGeocoding'
+                        filterReverseGeocodingByTypes={['postal_code']}
+                        debounce={200}
                     />
                         {/* <View style={styles.fieldContainer}> */}
                             <TextInput
@@ -385,7 +441,7 @@ class VerifyProfile extends Component {
                             />
                             </View>
                         {
-                            this.state.user.facebook_id &&
+                            !this.state.phone &&
                         <View style={styles.fieldContainer}>
                             <View style={{flex: 1, justifyContent: 'center'}}>
                             <TouchableOpacity onPress={() => this.validatePhone()}>

@@ -13,7 +13,8 @@ import {
     AsyncStorage,
     PermissionsAndroid,
     KeyboardAvoidingView,
-    Keyboard
+    Keyboard,
+    Platform
 }  from 'react-native';
 
 import PLColors from 'PLColors';
@@ -29,7 +30,7 @@ const {width} = Dimensions.get('window');
 import {
     NavigationActions
 } from 'react-navigation';
-import { findByUsernameEmailOrPhone, register2, registerFromFB, verifyCode, sendCode, verifyNumber, getZipCode }  from 'PLActions';
+import { findByUsernameEmailOrPhone, getAgency, register2, registerFromFB, verifyCode, sendCode, verifyNumber, getZipCode }  from 'PLActions';
 import PhoneVerification from './PhoneVerification';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 
@@ -73,7 +74,9 @@ class Register extends React.Component{
         // getZipCode(googlePlacesKey).then(r => {
         //     this.setState({googleZip: r})
         // })
-        this.requestLocation()
+        if (Platform.OS === 'android'){
+            this.requestLocation()
+        }
 
         // this.props.tour(() => {
         //     this.props.onLoggedIn({token: '1234'});
@@ -145,7 +148,7 @@ class Register extends React.Component{
     }
 
     onChangeEmail = email => {
-        this.setState({ email: email });
+        this.setState({ email: email, emailConfirmed: false });
     }
     onChangeAgency = agency => {
         this.setState({ agency: agency });
@@ -162,16 +165,31 @@ class Register extends React.Component{
     }
 
     onConfirmEmail = () => {
+        if (this.state.confirmingEmail) {
+            return;
+        }
+        this.setState({confirmingEmail: true})
         var {email} = this.state;
         Alert.alert(
             'Is this e-mail right?',
             email,
             [
-                {text: 'Yes', onPress: () => {}},
-                {text: 'No', onPress: () => {this.setState({email: ''})}}            
+                {text: 'Yes', onPress: () => {this.setState({emailConfirmed: true, confirmingEmail: false}, () => this.onNext())}},
+                {text: 'No', onPress: () => {this.setState({email: '', confirmingEmail: false})}}            
             ],
             { cancelable: false }
         );
+    }
+
+    async preCacheAgencyImages(token){
+        console.log('1')
+        let agencyData = await getAgency(token)
+        console.log('2')
+        // console.log('hehe => agency', agencyData);
+        if (agencyData.onboarding_screens){
+            console.log('screens about to save => ', agencyData.onboarding_screens)
+            await AsyncStorage.setItem('onboarding', JSON.stringify(agencyData.onboarding_screens));
+        }
     }
 
     onBack = () => {
@@ -214,23 +232,29 @@ class Register extends React.Component{
                 return;
             }
 
+            if (!this.state.emailConfirmed){
+                this.onConfirmEmail();
+                return;
+            }
+            
             this.setState({
                 isLoading: true
             });
 
-            if(isFb){
-                this.setState({
-                    position: 1,
-                    isLoading: false
-                });
-            }else{
+
+            // if(isFb){
+            //     this.setState({
+            //         position: 1,
+            //         isLoading: false
+            //     });
+            // }else{
                 try {
                     let usersUsername = await findByUsernameEmailOrPhone({username});
                     let usersEmail = await findByUsernameEmailOrPhone({email});
                     this.setState({position: 1, isLoading: false})
                     
                 } catch (error) {
-                    Alert.alert('Invalid data',
+                    Alert.alert('Username or email already in use.',
                     error,
                     [
                         {text: 'Ok', onPress: () => {
@@ -238,22 +262,22 @@ class Register extends React.Component{
                         }}
                     ],
                     {cancelable: false}
-                    )
-                }
-            }                
-        }else if (position === 1) {
-            if(is_over_13 == false){
-                alert("You must be 13 or older to register to Powerline.");
-                return;
-            }
-            if(zip == "" || zip.trim() == ""){
-                alert("Zipcode is empty.");
-                return;
-            }
-            if(country == "" || country.trim() == ""){
-                alert("Country is empty.");
-                return;
-            }  
+                )
+            // }
+        }                
+    }else if (position === 1) {
+        if(is_over_13 == false){
+            alert("You must be 13 or older to register to Powerline.");
+            return;
+        }
+        if(zip == "" || zip.trim() == ""){
+            alert("Zipcode is empty.");
+            return;
+        }
+        if(country == "" || country.trim() == ""){
+            alert("Country is empty.");
+            return;
+        }  
 
             if(isFb){
                 let data = fbData;
@@ -264,21 +288,29 @@ class Register extends React.Component{
                 data.email_confirm = email;
                 data.country = country;
                 data.zip = zip;
+                data.agency = this.state.agency || undefined;
+                this.setState({
+                    isLoading: true
+                });
                 registerFromFB(data)
-                .then(ret => {
+                .then(async ret => {
                     this.setState({
                         isLoading: false
                     });
-                    AsyncStorage.setItem('freshRegister', 'true');                
-                    
-                    tour(() => {
-                        onLoggedIn(ret);
-                    });
-                })
+                    AsyncStorage.setItem('freshRegister', 'true');
+                    await this.preCacheAgencyImages(ret.token);
+                    setTimeout(() => {
+                        tour(() => {
+                            onLoggedIn(ret);
+                        });
+                    }, 500)
+                    // })
+                })         
                 .catch(err => {
                     this.setState({
                         isLoading: false
                     });
+                    console.log(err);
                     alert(JSON.stringify(err));
                     return;
                 });
@@ -292,7 +324,8 @@ class Register extends React.Component{
         }
     }
 
-    onAutoComplete = (data, details) => {
+    onAutoComplete (data, details) {
+        console.log(data, details)
         this.setState({
             address1: "",
             state: "",
@@ -301,19 +334,17 @@ class Register extends React.Component{
             zip: ""
         });
         var address_components = details.address_components;
-        console.log(address_components);
         for(var i = 0; i < address_components.length; i++){
-            if(address_components[i].types.indexOf("country") != -1){                
+            if(address_components[i].types.indexOf("country") !== -1){                
                 this.setState({
                     country: address_components[i].short_name
                 });
-            }else if(address_components[i].types.indexOf("postal_code") != -1){
+            }else if(address_components[i].types.indexOf("postal_code") !== -1){
                 this.setState({
                     zip : address_components[i].long_name
-                });
+                },() => this.state.autoZip.setAddressText(this.state.zip));
             }
         }
-        this.state.autoZip.setAddressText(this.state.zip);
         this.setState({listViewDisplayed: false})
         Keyboard.dismiss();
     }
@@ -410,9 +441,9 @@ class Register extends React.Component{
     renderContact(){
         var { city, state, country, zip, email, position, is_over_13, password, confirm } = this.state;
         return (
-            <Content>
-                <Container style={styles.container}>
-                <ScrollView>
+            <Content keyboardShouldPersistTaps="handled" >
+                <Container keyboardShouldPersistTaps="handled" style={styles.container}>
+                <ScrollView keyboardShouldPersistTaps="handled" >
 
                 <Text style={styles.titleText}>Enter your contact details.</Text>
                 <Text style={styles.descriptionText}>You're almost done!</Text>
@@ -425,20 +456,21 @@ class Register extends React.Component{
                         placeholder='Zipcode'
                         minLength={2}
                         autoFocus={false}
-                        getDefaultValue={() => this.state.zip}
+                        getDefaultValue={() => ''}
                         textInputProps={{
                             onChangeText: (text) => {this.onChangeZip(text); this.setState({listViewDisplayed: true})},
-                            onBlur: () => {this.setState({listViewDisplayed: false})}
+                            onBlur: (a) => {this.setState({listViewDisplayed: false})}
                         }}
-                        returnKeyType={'Done'}
+                        returnKeyType={'done'}
                         listViewDisplayed={this.state.listViewDisplayed}
                         fetchDetails={true}
-                        renderDescription={(row) => row.description}  
-                        onPress={this.onAutoComplete}                      
+                        renderDescription={(row) =>{console.log(row); return row.description}}  
+                        onPress={(data, details, any) => {console.log(any); this.onAutoComplete(data, details); }}                      
                         query={{
                             key: googlePlacesKey,
                             language: 'en',
-                            components: this.state.country ? `country:${this.state.country}` : ''
+                            components: this.state.country ? `country:${this.state.country}` : '',
+                            types: '(regions)'
                         }}
                         ref={(zipobj) => {
                             this.state.autoZip = zipobj;
@@ -452,7 +484,7 @@ class Register extends React.Component{
                         }}
                         currentLocation={false}                        
                         nearbyPlacesAPI='GoogleReverseGeocoding'
-                        filterReverseGeocodingByTypes={['country']}
+                        filterReverseGeocodingByTypes={['postal_code']}
                         debounce={200}
                     />
                     <View style={styles.fieldContainer}>
@@ -523,14 +555,17 @@ class Register extends React.Component{
             password,
             // confirm
         }
-        return register2(data).then(r => {
+        return register2(data).then(async r => {
             console.log('register success', r);
             this.setState({loading: false})
             if (r.token){
-                AsyncStorage.setItem('freshRegister', 'true');                
-                tour(() => {
-                    onLoggedIn(r);
-                });
+                AsyncStorage.setItem('freshRegister', 'true');
+                await this.preCacheAgencyImages(r.token);
+                setTimeout(() => {
+                    tour(() => {
+                        onLoggedIn(r);
+                    });
+                }, 500) 
             }
         }).catch(e => {
             console.log('register fail', e)
@@ -678,12 +713,13 @@ class Register extends React.Component{
     }
 
     render(){
+        console.log('isLoading', this.state.isLoading)
         var { position, isLoading } = this.state;
         return (
             <View style={styles.container}>
                 {this.renderForm(position)}
                 {this.renderBottom()}
-                {isLoading && <PLOverlayLoader visible={isLoading} logo />}
+                <PLOverlayLoader visible={isLoading} logo />
             </View>
         );
     }

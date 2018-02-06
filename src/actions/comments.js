@@ -5,6 +5,18 @@ var { Action, ThunkAction } = require('./types');
 //Allows user to add a comment to an item
 async function addComment(token: string, type: string, id: string, comment: string, parentId: ?string = '0', privacy: ?string = 'public') {
     let url = `${API_URL}/v2/${type}s/${id}/comments`;
+    console.log('addcomment => ', url, {
+        method: 'POST',
+        headers: {
+            'token': token,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            comment_body: comment,
+            parent_comment: parentId,
+            privacy: privacy,
+        })
+    });
     try {
         let response = await fetch(url, {
             method: 'POST',
@@ -19,6 +31,7 @@ async function addComment(token: string, type: string, id: string, comment: stri
             })
         });
         let responseJson = await response.json();
+        console.log('response from adding comment', responseJson)
         return responseJson;
     } catch (error) {
         handleError(error);

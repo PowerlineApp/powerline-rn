@@ -36,9 +36,11 @@ import {
     unsubscribeFromPetition,
     getComments,
     loadUserGroups,
-    getGroups
+    getGroups,
+    signLeaderPetition
 } from 'PLActions';
 import {ImageCache} from "react-native-img-cache";
+import PLOverlayLoader from 'PLOverlayLoader';
 
 
 
@@ -147,6 +149,8 @@ class Home extends Component {
         console.warn('componentWillReceiveProps at dashboard');
         if (nextProps.shouldResetHome){
             this.props.dispatch({type: 'HOME_WAS_RESET'})
+            const data =  {id: 'all', group: 'all', header: 'all'};
+            this.props.setGroup(data, this.props.token, 'all');
             this.setState({tab1: true, tab2: false, tab3: false, tab4: false})
         }
     }
@@ -198,7 +202,7 @@ class Home extends Component {
     preCacheAgencyImages(){
         getAgency(this.props.token)
         .then(r => {
-            console.log('hehe => agency', r)
+            // console.log('hehe => agency', r)
             if (r.splash_screen){ // r.splash_screen; //
                 let uri = r.splash_screen; //"https://static-cdn.jtvnw.net/jtv_user_pictures/panel-62449166-image-47d2742a-e94a-4b31-b987-1de9fffea6b5";
                 ImageCache.get().on({
@@ -211,7 +215,22 @@ class Home extends Component {
                         AsyncStorage.setItem('splashScreen', uri);
                     }
                 })
-
+            }
+            if (r.onboarding_screens){ // r.splash_screen; //
+                r.onboarding_screens.map(splash => {
+                    let uri = splash.image; //"https://static-cdn.jtvnw.net/jtv_user_pictures/panel-62449166-image-47d2742a-e94a-4b31-b987-1de9fffea6b5";
+                    ImageCache.get().on({
+                        uri
+                    }, (path) => {
+                        console.log(
+                            'TRYING TO CACHE => ', path
+                        )
+                        if (path){
+                            console.log('caching onboarding screens done.')
+                            AsyncStorage.setItem('onboarding', JSON.stringify(r.onboarding_screens || {}));
+                        }
+                    })
+                })
             }
         })
         .catch(e => {
@@ -232,29 +251,32 @@ class Home extends Component {
         // console.log('Im here...');
         // await AsyncStorage.setItem('freshRegister', 'true'); // for testing.
         AsyncStorage.getItem('freshRegister').then(item => {
-            if (item === 'true'){
-                Alert.alert('Verify now?', 'Your profile is only 50% complete.', [
-                    // missing: configure action buttons for these.
-                    {text: "Verify", onPress: () => Actions.verifyProfile()}, 
-                    {text: "Later", onPress: () => {
-                        let h_48 = (48 * 1000 * 60 * 60);
-                        OneSignal.postNotification({
-                            'en': 'Remember to finish your registration!'
-                        },
-                        [],
-                        data.userId,
-                        {
-                            send_after: new Date(new Date().getTime() + h_48)
-                        },
+            setTimeout(() => {
+                if (item === 'true'){
+                    Alert.alert('Verify now?', 'Your profile is only 50% complete.', [
+                        // missing: configure action buttons for these.
+                        {text: "Verify", onPress: () => Actions.verifyProfile()}, 
+                        {text: "Later", onPress: () => {
+                            let h_48 = (48 * 1000 * 60 * 60);
+                            OneSignal.postNotification({
+                                'en': 'Remember to finish your registration!'
+                            },
+                            [],
+                            data.userId,
+                            {
+                                send_after: new Date(new Date().getTime() + h_48)
+                            },
                         )
                     }}
                 ])
             }
+            }, 5000)
         });
         AsyncStorage.setItem('freshRegister', 'false');
     }
 
     onIds(data) {
+        OneSignal.removeEventListener('ids');
         console.log('/this idsss', data);
         var { token } = this.props;
         AsyncStorage.setItem('pushId', data.userId);
@@ -401,9 +423,10 @@ class Home extends Component {
     _rspv(data) {
         this.redirect(data);
     }
-
+    // here
     _signLeaderPetition(token, data) {
-
+        let { target } = data.notification.payload.additionalData.entity;
+        signLeaderPetition(token, target.id, target.option.id);
     }
 
 
@@ -720,13 +743,13 @@ class Home extends Component {
 
     renderSelectedTab() {
         if (this.state.tab1) {
-            return <Newsfeed />;
+            return <Newsfeed setLoading={this.setLoading} />;
         } else if (this.state.tab2) {
-            return <Friendsfeed />;
+            return <Friendsfeed setLoading={this.setLoading} />;
         } else if (this.state.tab3) {
-            return <Messages />;
+            return <Messages setLoading={this.setLoading} />;
         } else if (this.state.tab4) {
-            return <Notifications />;
+            return <Notifications setLoading={this.setLoading} />;
         } else {
             return (
                 <View style={{ flex: 1 }} />
@@ -734,21 +757,11 @@ class Home extends Component {
         }
     }
 
-    //Badge for activities should appear on the Newsfeed icon tab in the lower-left
-    //The count represents the number of Priority zone items. Priority zone items include:
-    //Leader content (new polls, fundraisers, events, discussions, petitions) and 'boosted' user posts and user petitions
-    //All priority zone items arrive to all group members with a push notification alert
+    setLoading = (loading) => {
+        this.setState({loading})
+    }
 
     showBadgeForActivities() {
-        // var count = 0;
-        // for(var i = 0; i < this.props.activities.length; i++){
-        //   if(this.props.activities[i].zone == 'non_prioritized'){
-        //     count++;
-        //   }
-        // }
-
-        // return count;
-        // WARN('COUNUNTONSODFJSODJF', this.props.newsfeedUnreadCount)
         return this.props.newsfeedUnreadCount;
     }
 
@@ -898,7 +911,7 @@ class Home extends Component {
                             </Grid>
                         </View> : null}
                     {this.renderSelectedTab()}
-
+                    <PLOverlayLoader visible={this.state.loading || this.props.loadingActions} marginTop={200} logo />
                     <Footer style={styles.footer}>
                         <FooterTab style={{ backgroundColor: 'transparent' }}>
                             <FooterTabButton
@@ -991,7 +1004,8 @@ const mapStateToProps = state => ({
     groupList: state.groups.payload,
     // selectedGroup: {},
     selectedGroup: state.activities.selectedGroup,
-    shouldResetHome: state.drawer.shouldResetHome
+    shouldResetHome: state.drawer.shouldResetHome,
+    loadingActions: state.activities.loading
 });
 
 export default connect(mapStateToProps, bindAction)(Home);

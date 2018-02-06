@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Content, Text, List, ListItem, Left, Body, Right, Thumbnail, Button, Icon } from 'native-base';
+import { Content, Text, List, ListItem, Left, Body, Right, Thumbnail, Button, Icon, Container } from 'native-base';
 import {
   TouchableOpacity,
   View
@@ -15,6 +15,8 @@ class Messages extends Component {
 
   render() {
     return (
+      <Container style={{flex: 1, marginBottom: 48}}>
+
       <ContentPlaceholder
         empty={this.state.messages.length === 0}
         title="The only announcement right now is that there are no announcements."
@@ -22,6 +24,7 @@ class Messages extends Component {
         <List style={{ backgroundColor: 'white' }}>
         </List>
       </ContentPlaceholder>
+      </Container >
     );
   }
 

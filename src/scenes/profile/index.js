@@ -36,7 +36,7 @@ import styles , { sliderWidth, itemWidth } from './styles';
 const PLColors = require('PLColors');
 import Filter from '../../common/PLSegmentedControls'
 import ImageSelector from '../../common/PLImageSelector'
-import { loadUserProfileById, resetActivities, editFollowers, votePost, loadActivitiesByUserId, getUserDiscountCode, getFollowingUser, unFollowings, putFollowings } from 'PLActions';
+import { loadUserProfileById, loadUserProfile, resetActivities, editFollowers, votePost, loadActivitiesByUserId, getUserDiscountCode, getFollowingUser, unFollowings, putFollowings } from 'PLActions';
 import TimeAgo from 'react-native-timeago';
 import ImageLoad from 'react-native-image-placeholder';
 import YouTube from 'react-native-youtube';
@@ -79,8 +79,11 @@ class Profile extends Component{
 
         var { token, id, loggedUserId } = this.props;
 
+        this.props.dispatch(loadUserProfile(token));
+
         loadUserProfileById(token, id || loggedUserId)
         .then(data => {
+            console.log('LOAD USER PROFILE BY ID RESPONSE', data)
             this.setState({
                 user: data
             });
@@ -130,7 +133,7 @@ class Profile extends Component{
         var { token, id, dispatch } = this.props;
         ActionSheet.show(
             {
-                options: ['1 hour', '8 hours', '24 hours'],
+                options: ['1 hour', '8 hours', '24 hours', 'Cancel'],
                 title: 'Temporarily mute notifications from this user'
             },
 
@@ -140,6 +143,9 @@ class Profile extends Component{
                     hours = 8;
                 } else if (buttonIndex == 2) {
                     hours = 24;
+                }
+                if (buttonIndex === 3) {
+                    return;
                 }
 
                 var newDate = new Date((new Date()).getTime() + 1000 * 60 * 60 * hours);
@@ -249,7 +255,7 @@ class Profile extends Component{
         return (
             <MenuContext customStyles={menuContextStyles}>
                 <Container style={styles.container}> 
-                    {this.state.user?      
+                    {this.state.user ?      
                     <View style={{backgroundColor: PLColors.main}}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingTop: 12 }}>
                             <View>                            
@@ -257,13 +263,15 @@ class Profile extends Component{
                                     <Icon active name="arrow-back" style={{color: 'white'}}/>
                                 </Button>                           
                             </View>
-                                <View style={{flexDirection: 'row', width: 100}}>
-                                {!isOwnUser && this.state.following_status === 'active' &&
+                                <View style={{flexDirection: 'column', right: 0, marginTop: 16, width: 50, position: 'absolute'}}>
+                                {(!isOwnUser && this.state.following_status === 'active') &&
                                     <Button transparent onPress={() => this.mute()}>
-                                        <Icon active name="md-volume-off" style={{ color: 'white' }} />
+                                        <Icon active name="md-volume-off" style={{ color: 'white', fontSize: 22 }} />
                                     </Button>}
+                                    {
+                                        !isOwnUser &&
                                     <Button transparent onPress={() => this.follow()}>                              
-                                        <View  style={{flexDirection: 'row', backgroundColor: 'white', padding: 1, width: 28, height: 28, borderRadius: 24, borderWidth: 1, borderColor: '#11c1f3'}}>
+                                        <View  style={{flexDirection: 'row', backgroundColor: 'white', padding: 0, width: 28, height: 28, borderRadius: 24, borderWidth: 1, borderColor: '#11c1f3'}}>
                                             {!isOwnUser && this.state.following_status == 'pending'?
                                             <Icon name="ios-person" style={{marginLeft: 5, fontSize: 20, color: PLColors.lightText}}/> 
                                             :
@@ -277,13 +285,17 @@ class Profile extends Component{
                                             }
                                         </View>                  
                                     </Button>  
+                                    }
                                 </View>
                         </View> 
-                        <View style={{justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}>
-
-                            <Thumbnail source={{uri: this.state.user.avatar_file_name}} style={{marginBottom: 8, borderRadius: 25}}>
+                        <View style={{justifyContent: 'center', alignItems: 'center', flexDirection: 'row', marginBottom: 8}}>
+                            <Thumbnail
+                                source={this.state.user.avatar_file_name ? { uri: this.state.user.avatar_file_name + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")}
+                                defaultSource={require("img/blank_person.png")}
+                                />
+                            {/* <Thumbnail source={{uri: this.state.user.avatar_file_name}} style={{ borderRadius: 30, width: 60, height: 60}}> */}
                                 
-                            </Thumbnail>       
+                            {/* </Thumbnail>        */}
                             { this.state.selected === "My Info"
                                 ? <View style={{position: 'absolute', alignContent: 'center', alignItems: 'center', borderRadius: 15, width: 30, height: 30, backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
                                     <ImageSelector onConfirm={this.updateUserAvatar} iconSize={27} iconColor='#fff' onError={err => console.log(err)}/>

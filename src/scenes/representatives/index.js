@@ -63,6 +63,7 @@ class Representatives extends Component {
         console.log(token);
         getRepresentatives(token, 1, 20)
             .then(data => {
+                console.log('data', data);
                 this.setState({
                     groups: data,
                     refreshing: false
@@ -120,7 +121,7 @@ class Representatives extends Component {
                         }}>
                         <List style={{ backgroundColor: 'white' }}>
                             {
-                                this.state.groups.map((group, index) => {
+                                (this.state.groups || []).map((group, index) => {
                                     return (
                                         <View key={index}>
                                             <ListItem itemHeader style={styles.itemHeaderStyle}>
@@ -153,15 +154,14 @@ class Representatives extends Component {
                             this.props.is_registration_complete
                             ? <View style={{padding: 20}}>
                                 <Button style={{width: '100%', justifyContent: 'center'}} onPress={Actions.electedLeadersForm} iconRight>
-                                    <Text>Create Representative</Text>
-                                    <Icon name='circle-plus' />
+                                    <Text>Register Representative</Text>
                                 </Button>
                             </View>
                             :   null
                         }
                         
                     </Content>
-                    <PLOverlayLoader visible={this.state.refreshing} logo />
+                    <PLOverlayLoader marginTop={200} visible={this.state.refreshing} logo />
                 </Container>
             </MenuContext>
         );

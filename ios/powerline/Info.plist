@@ -79,6 +79,22 @@
 	<dict>
 		<key>NSExtensionActivationRule</key>
 		<dict>
+			<key>New item</key>
+			<string></string>
+			<key>New item - 2</key>
+			<string></string>
+			<key>New item - 3</key>
+			<string></string>
+			<key>New item - 4</key>
+			<string></string>
+			<key>New item - 5</key>
+			<string></string>
+			<key>New item - 6</key>
+			<string></string>
+			<key>???????New item - 7</key>
+			<string></string>
+			<key>????????????????????????????</key>
+			<string></string>
 			<key>NSExtensionActivationSupportsText</key>
 			<true/>
 			<key>NSExtensionActivationSupportsImageWithMaxCount</key>
@@ -88,7 +104,7 @@
 		</dict>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string/>
+	<string></string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>gallery usage</string>
 	<key>UIAppFonts</key>
