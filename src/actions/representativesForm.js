@@ -7,7 +7,7 @@ const createRepresentative = (data) => (dispatch, getState) => {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'token': token
+            'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(data)
     })

@@ -12,30 +12,12 @@ import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { ActionSheet, Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, ListItem, Thumbnail, List, Card, CardItem, Label, Footer } from 'native-base';
 import { ScrollView, FlatList, View, RefreshControl, TouchableOpacity, Image, WebView, Platform, Share } from 'react-native';
-import Carousel from 'react-native-snap-carousel';
 import { setGroup, loadActivities, getActivities2, resetActivities, votePost, editFollowers, loadActivityByEntityId, createPostToGroup, deletePost, deletePetition, getGroups, saveOffSet } from 'PLActions';
-import styles, { sliderWidth, itemWidth } from './styles';
-import TimeAgo from 'react-native-timeago';
-import ImageLoad from 'react-native-image-placeholder';
-import YouTube from 'react-native-youtube';
-
-import Menu, {
-    MenuContext,
-    MenuTrigger,
-    MenuOptions,
-    MenuOption,
-    renderers
-} from 'react-native-popup-menu';
-import ConversationActivity from '../../../components/Conversation/ConversationActivity';
 import FeedActivity from '../../../components/Feed/FeedActivity';
 import ContentPlaceholder from '../../../components/ContentPlaceholder';
+import styles from './styles'
 
-import PLOverlayLoader from 'PLOverlayLoader';
-const PLColors = require('PLColors');
-const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
-const { youTubeAPIKey } = require('PLEnv');
 import { Dimensions } from 'react-native';
-const { width, height } = Dimensions.get('window');
 
 class Newsfeed extends Component {
 
@@ -162,6 +144,7 @@ class Newsfeed extends Component {
         this.loadInitialActivities();
         getGroups(this.props.token)
         .then(data => {
+            console.log(data)
             this.props.dispatch([{
                 type: 'LOADED_GROUPS',
                 data: { payload: data.payload }
@@ -235,9 +218,8 @@ class Newsfeed extends Component {
                 <Text style={styles.groupName}>{this.props.selectedGroup.groupName}</Text>
             </View>);
     }
-
     renderHeader(group){
-        return (group && group.group != 'all' &&
+        return (group && group.group !== 'all' &&
         <TouchableOpacity onPress={() => {
             if (group.header !== 'local' && group.header !== 'state' && group.header !== 'country')
             Actions.groupprofile({ id: this.props.selectedGroup.group })}
@@ -253,11 +235,11 @@ class Newsfeed extends Component {
 
     renderActivity = (item) => (
          <FeedActivity key={item.id} item={item.item} token={this.props.token} profile={this.props.profile} />
-    )
+    );
 
     setLoading = (loading) => {
         this.props.setLoading(loading);
-    }
+    };
 
     render() {
         const { isRefreshing, isLoading, isLoadingTail } = this.state;
@@ -270,7 +252,8 @@ class Newsfeed extends Component {
             isRefreshing
         )
 
-        let dataArray = this.state.dataArray || [];
+        let dataArray = this.props.payload || [];
+        // console.log(dataArray)
 
         this.conversationView = false;
         if (this.props.selectedGroup && this.props.selectedGroup.group !== 'all' && this.props.selectedGroup.conversationView){
@@ -279,7 +262,7 @@ class Newsfeed extends Component {
         }
 
         return (
-            <Container style={{flex: 1}}>
+            <Container style={{flex: 1, marginBottom: 48}}>
                     {    
                         this.renderHeader(this.props.selectedGroup)
                     }
@@ -290,8 +273,8 @@ class Newsfeed extends Component {
                     <FlatList 
                         data={dataArray}
                         extraData={this.state.rerenderMarreta}
-                        scrollEventThrottle={500}
-                        style={dataArray[0] && dataArray[dataArray.length - 1].first_comment ? {marginBottom: 48} : {}} // allowing to see comment preview of last activity
+                        scrollEventThrottle={200}
+                        style={dataArray[0] && dataArray[dataArray.length - 1].first_comment ? {paddingBottom: 48} : {}} // allowing to see comment preview of last activity
                         refreshing={false}
                         onRefresh={() => this._onRefresh()}
                         onEndReachedThreshold={0.8}

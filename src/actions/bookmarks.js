@@ -7,7 +7,7 @@ async function loadBookmarks(token: string, page: ?number = 0, type: ?string = '
         var response = await fetch(`${API_URL}/bookmarks/list/${type}/${page + 1}?_format=json`, {
             method: 'GET',
             headers: {
-                'token': token,
+                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             }
         });

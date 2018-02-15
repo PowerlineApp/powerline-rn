@@ -95,9 +95,6 @@ class FeedDescription extends Component {
             <View style={{ backgroundColor: '#fff', flex: 1}}>
             <TouchableOpacity style={{alignItems: 'flex-start', justifyContent: 'flex-start'}} onPress={() => this.redirect(item)}>
               {this._renderTitle(item)}
-              <Text>
-
-              </Text>
               <ParsedText
                 style={styles.description}
                 parse={

@@ -11,7 +11,7 @@ function getActivities(token, page = 1, per_page = 50){
         fetch(API_URL + '/v2/user/social-activities?_format=json&tab=you&&page='+page +'&per_page=' + per_page, {
             method: 'GET',
             headers: {
-                'token': token,
+                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         })

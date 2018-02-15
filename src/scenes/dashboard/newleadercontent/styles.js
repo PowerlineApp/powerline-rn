@@ -132,7 +132,7 @@ export default {
         paddingTop: 0,
         marginTop: 16,
         textAlignVertical: 'top',
-        width: width,
+        // width: width,
         height: height / 2 - 185,
         fontSize: 18, 
         color: 'rgba(0,0,0,0.6)',
@@ -142,10 +142,12 @@ export default {
         marginTop: 8,
         padding: 8,
         textAlignVertical: 'top',
-        width: width, 
+        // width: width,
+        // flexWrap: 'wrap',
         height: 150,
+        // paddingRight: 25,
+        fontSize: 18,
         backgroundColor: '#fff',
-        fontSize: 18, 
         color: 'rgba(0,0,0,0.6)',
         zIndex: 5,
     },
@@ -169,7 +171,7 @@ export default {
         opacity: 0.4
     },
     answerInput: {
-        flex: 9,
+        flex: 2,
         backgroundColor: '#fff',
         padding: 6,
         alignSelf: 'center',
@@ -212,6 +214,7 @@ export default {
     },
     numericInput: {
         width: 70,
+        padding: 4,
         height: '100%',
         overflow: 'visible',
         backgroundColor: '#fff',
@@ -235,7 +238,9 @@ export default {
     },
     allowUserAmountSwitch: {
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
+        justifyContent: 'space-around',
+        flex: 1
     },
     allowUserAmountTag: {
         color: '#aaa'

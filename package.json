@@ -50,7 +50,7 @@
     "react-native-htmlview": "^0.12.1",
     "react-native-hyperlink": "0.0.11",
     "react-native-image-crop-picker": "0.18.1",
-    "react-native-image-header-scroll-view": "^0.7.0",
+    "react-native-image-header-scroll-view": "^0.8.0",
     "react-native-image-placeholder": "1.0.7",
     "react-native-img-cache": "^1.5.3",
     "react-native-invertible-scroll-view": "1.0.0",

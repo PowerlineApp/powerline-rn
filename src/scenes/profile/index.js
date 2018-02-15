@@ -240,11 +240,9 @@ class Profile extends Component{
         }
     }
 
-    updateUserAvatar(image) {
-        this.setState(state => {
-            state.user.avatar_file_name = image.path
-            return state
-        })
+    updateUserAvatar = (image) => {
+        console.log(image)
+        this.setState({image_data: image.data, mime: image.mime})
         updateUserProfile(this.props.token, {avatar_file_name: image.data})
     }
     // It would appear that the below is the User Profile Screen GH44
@@ -290,7 +288,8 @@ class Profile extends Component{
                         </View> 
                         <View style={{justifyContent: 'center', alignItems: 'center', flexDirection: 'row', marginBottom: 8}}>
                             <Thumbnail
-                                source={this.state.user.avatar_file_name ? { uri: this.state.user.avatar_file_name + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")}
+                                key={this.state.user.avatar_file_name}
+                                source={this.state.image_data ? {uri: `data:${this.state.mime};base64,${this.state.image_data}`} : this.state.user.avatar_file_name ? { uri: this.state.user.avatar_file_name + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")}
                                 defaultSource={require("img/blank_person.png")}
                                 />
                             {/* <Thumbnail source={{uri: this.state.user.avatar_file_name}} style={{ borderRadius: 30, width: 60, height: 60}}> */}

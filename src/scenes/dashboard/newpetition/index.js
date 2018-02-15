@@ -73,7 +73,7 @@ class NewPetition extends Component {
     }
 
     componentDidMount() {
-        var { token, group } = this.props;
+        let { token, group } = this.props;
         loadUserData(token).then(data => {
             this.setState({
                 profile: data
@@ -83,18 +83,44 @@ class NewPetition extends Component {
 
             });
 
-        getGroups(token).then(ret => {
-            console.log('~=> ', group);
-            let showCommunity = true, selectedGroupIndex = -1;
-            if (group && group !== 'all'){
-                showCommunity = false;
-                selectedGroupIndex = ret.payload.map(grouObj => grouObj.id).indexOf(group);
-            }
-            this.setState({
-                grouplist: ret.payload,
-                showCommunity
-            });
-            this.selectGroupList(selectedGroupIndex);
+        // getGroups(token).then(ret => {
+        const ret = this.props.grouplist;
+        console.log('~=> ', group);
+        let showCommunity = true, selectedGroupIndex = -1;
+        if (group && group !== 'all'){
+            showCommunity = false;
+            selectedGroupIndex = ret.map(grouObj => grouObj.id).indexOf(group);
+        }
+        this.setState({
+            grouplist: ret,
+            showCommunity, selectedGroupIndex
+        });
+        if (selectedGroupIndex !== -1){
+
+            getPetitionConfig(token, this.props.grouplist[selectedGroupIndex].id)
+                .then(data => {
+                    console.log('===========================');
+                    console.log('=>>>>>>>>>>>>', data);
+                    console.log('===========================');
+                    this.setState({
+                        petition_remaining: data.petition_remaining
+                    });
+                })
+                .catch(err => {
+                    console.log('===========================');
+                    console.log('=>>>>>>>>>>>>', err);
+                    console.log('===========================');
+                });
+        }
+        // if (group && group !== 'all'){
+        //     showCommunity = false;
+        //     selectedGroupIndex = ret.map(grouObj => grouObj.id).indexOf(group);
+        // }
+        // this.setState({
+        //     grouplist: ret,
+        //     showCommunity
+        // });
+        // this.selectGroupList(selectedGroupIndex);
             // getPetitionConfig(token, this.state.grouplist[index].id)
             // .then(data => {
             //     console.log('===========================');
@@ -108,9 +134,9 @@ class NewPetition extends Component {
 
             // });
     
-        }).catch(err => {
+        // }).catch(err => {
                 
-        });
+        // });
     }
 
     toggleCommunity() {
@@ -131,9 +157,9 @@ class NewPetition extends Component {
         });
         if (index === -1) return;
 
-        var { token } = this.props;
+        let { token } = this.props;
 
-        getPetitionConfig(token, this.state.grouplist[index].id)
+        getPetitionConfig(token, this.props.grouplist[index].id)
             .then(data => {
                 console.log('===========================');
                 console.log('22=>>>>>>>>>>>>', data);
@@ -157,22 +183,22 @@ class NewPetition extends Component {
             return;
         }
         
-        if (this.state.selectedGroupIndex == -1) {
+        if (this.state.selectedGroupIndex === -1) {
             alert('Where do you want to post this? Select a group');
             this.setState({sending: false});
             return;
-        } else if (this.state.title == '' || this.state.title.trim() == '') {
+        } else if (this.state.title === '' || this.state.title.trim() === '') {
             alert("Please create a title for your petition");
             this.setState({sending: false});
             return;
-        } else if (this.state.content == '' || this.state.content.trim() == '') {
+        } else if (this.state.content === '' || this.state.content.trim() === '') {
             alert("Whoops! Looks like you forgot to write your petition down!");
             this.setState({sending: false});
             return;
         }
         
-        var { token } = this.props;
-        createPetition(token, this.state.grouplist[this.state.selectedGroupIndex].id, this.state.title, this.state.content, this.state.image)
+        let { token } = this.props;
+        createPetition(token, this.props.grouplist[this.state.selectedGroupIndex].id, this.state.title, this.state.content, this.state.image)
         .then(data => {
             showToast('Petition Successful!');
             Actions.itemDetail({ item: data, entityId: data.id, entityType: 'user-petition', backTo: 'home', share: this.state.share, updateFeed: true });
@@ -205,7 +231,8 @@ class NewPetition extends Component {
 
     onSelectionChange(event) {
         let { start, end } = event.nativeEvent.selection;
-        let userRole = this.state.grouplist[this.state.selectedGroupIndex].user_role;
+        if (this.state.selectedGroupIndex < 0) return;
+        let userRole = this.props.grouplist[this.state.selectedGroupIndex].user_role;
         setTimeout(() => {
             if (start !== end) return;
             if (start === this.state.lockSuggestionPosition) return;
@@ -242,7 +269,7 @@ class NewPetition extends Component {
 
     updateSuggestionList(token, suggestionSearch) {
         this.setState({ suggestionList: [] });
-        getUsersByGroup(token, this.state.grouplist[this.state.selectedGroupIndex].id, suggestionSearch).then(data => {
+        getUsersByGroup(token, this.props.grouplist[this.state.selectedGroupIndex].id, suggestionSearch).then(data => {
             this.setState({ suggestionList: data.payload });
         }).catch(err => {
 
@@ -263,7 +290,7 @@ class NewPetition extends Component {
                 options: ["Take photo", "Choose from gallery", "Cancel"],
                 title: "Attach image"
             }, buttonIndex => {
-                if (buttonIndex == 0 || buttonIndex == '0') {
+                if (buttonIndex === 0 || buttonIndex === '0') {
                     ImagePicker.openCamera({
                         cropping: true,
                         height: 1280,
@@ -275,7 +302,7 @@ class NewPetition extends Component {
                     });
                 }
 
-                if (buttonIndex == 1 || buttonIndex == '1') {
+                if (buttonIndex === 1 || buttonIndex === '1') {
                     ImagePicker.openPicker({
                         cropping: true,
                         height: 1280,
@@ -372,7 +399,7 @@ class NewPetition extends Component {
                         </View>
                         <Body style={styles.community_text_container}>
                             <Text style={{color: 'white'}}>
-                                {this.state.selectedGroupIndex == -1 ? 'Select a community' : this.state.grouplist[this.state.selectedGroupIndex].official_name}
+                                {this.state.selectedGroupIndex === -1 ? 'Select a community' : this.props.grouplist[this.state.selectedGroupIndex].official_name}
                             </Text>
                         </Body>
                         <Right style={styles.communicty_icon_container}>
@@ -418,7 +445,7 @@ class NewPetition extends Component {
                     {
                         this.state.showCommunity &&
                         <CommunityView
-                            grouplist={this.state.grouplist}
+                            grouplist={this.props.grouplist}
                             onPress={(i) => this.selectGroupList(i)}
                             onCancel={() => this.selectGroupList(this.state.selectedGroupIndex)}
 
@@ -432,7 +459,7 @@ class NewPetition extends Component {
                             this.renderAttachments()
                         }
                     <Footer style={{ maxHeight: 64, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: PLColors.main, paddingLeft: 10, paddingRight: 10 }}>
-                    {
+                        {
                                 (this.state.petition_remaining || this.state.petition_remaining === 0)
                             ? <Label style={{ color: 'white', fontSize: 10 }}>
                                 You have <Label style={{ fontWeight: 'bold' }}>{this.state.petition_remaining}</Label> petitions left in this group
@@ -461,7 +488,8 @@ class NewPetition extends Component {
 }
 
 const mapStateToProps = state => ({
-    token: state.user.token
+    token: state.user.token,
+    grouplist: state.groups.payload
 });
 
 export default connect(mapStateToProps, {updateFeedFirstItem})(NewPetition);

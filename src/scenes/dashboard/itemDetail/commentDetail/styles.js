@@ -178,7 +178,7 @@ export default {
     commentInput: {
         fontSize: 12,
         fontWeight: '100',
-        backgroundColor: '#f0f',
+        backgroundColor: '#fff',
         margin: 0,
         padding: 0,
         flex: 1,

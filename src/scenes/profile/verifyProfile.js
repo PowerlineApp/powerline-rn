@@ -26,10 +26,13 @@ import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete'
 import ImageSelector from '../../common/PLImageSelector'
 import PLButton from 'PLButton';
 import DatePicker from 'react-native-datepicker';
+import Spinner from 'react-native-loading-spinner-overlay';
+import Form from 'react-native-form';
+import CountryPicker from 'react-native-country-picker-modal';
 
 import PhoneVerification from '../../components/auth/PhoneVerification';
 const googlePlacesKey = 'AIzaSyBQOJDsIGt-XxuSNI7Joe1KRpAOJwDAEQE';
-
+const brandColor = '#6A6AD5';
 
 class VerifyProfile extends Component {
     constructor(props) {
@@ -43,7 +46,11 @@ class VerifyProfile extends Component {
             email: props.profile.email,
             phone: props.profile.phone,
             country: props.profile.country,
-            user: {}
+            user: {},
+            countryInfo: {
+                cca2: 'US',
+                callingCode: '1'
+            }
         };
 
         this.backHandler = BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
@@ -73,9 +80,10 @@ class VerifyProfile extends Component {
     }
 
     updateUser() {
-        let {zip, address1, address2, city, state, email, country, phone, birth} = this.state;
+        let {zip, address1, address2, city, state, email, country, phone, birth, user: {avatar_file_name}, countryInfo: {callingCode}} = this.state;
         this.setState({loading: true})
-        updateUserProfile(this.props.token, {zip, address1, address2, city, state, email, country, phone, birth})
+        console.log('updating => ', {zip, address1, address2, city, state, email, country, phone: '+' + callingCode + phone, birth, avatar_file_name});
+        updateUserProfile(this.props.token, {zip, address1, address2, city, state, email, country, phone: '+' + callingCode + phone, birth, avatar_file_name})
         .then(response => {
             this.setState({loading: false})
             console.log('response from updating user profile', response)
@@ -92,7 +100,7 @@ class VerifyProfile extends Component {
             state.user.avatar_file_name = image.path
             return state
         })
-        updateUserProfile(this.props.token, {avatar_file_name: image.data})
+        // updateUserProfile(this.props.token, {avatar_file_name: image.data})
     }
 
     onAutoComplete = (data, details) => {
@@ -107,32 +115,32 @@ class VerifyProfile extends Component {
         var address_components = details.address_components;
         console.log(address_components);
         for(var i = 0; i < address_components.length; i++){
-            if(address_components[i].types.indexOf("street_number") != -1){
+            if(address_components[i].types.indexOf("street_number") !== -1){
                 console.log('found : address1 ', address_components[i].long_name)
                 this.setState({
                     address1: address_components[i].long_name
                 })
-            }else if(address_components[i].types.indexOf("locality") != -1 || address_components[i].types.indexOf("neighborhood") != -1){
+            }else if(address_components[i].types.indexOf("locality") !== -1 || address_components[i].types.indexOf("neighborhood") !== -1){
                 console.log('found : city ', address_components[i].long_name)
                 this.setState({
                     city: address_components[i].long_name
                 });
-            }else if(address_components[i].types.indexOf("administrative_area_level_1") != -1){
+            }else if(address_components[i].types.indexOf("administrative_area_level_1") !== -1){
                 console.log('found : state ', address_components[i].long_name)
                 this.setState({
                     state: address_components[i].long_name
                 });
-            }else if(address_components[i].types.indexOf("country") != -1){                
+            }else if(address_components[i].types.indexOf("country") !== -1){
                 console.log('found : country ', address_components[i].short_name)
                 this.setState({
                     country: address_components[i].short_name
                 });
-            }else if(address_components[i].types.indexOf("postal_code") != -1){
+            }else if(address_components[i].types.indexOf("postal_code") !== -1){
                 console.log('found : zip ', address_components[i].long_name)
                 this.setState({
                     zip : address_components[i].long_name
                 });
-            }else if(address_components[i].types.indexOf("route") != -1){
+            }else if(address_components[i].types.indexOf("route") !== -1){
                 console.log('found : address1 ', address_components[i].long_name)
                 this.setState((prevState) => ({
                     address1: prevState.address1 + " " + address_components[i].long_name
@@ -204,15 +212,6 @@ class VerifyProfile extends Component {
             }}],
             {cancelable: false})
         }
-        // this.setState({loading: true});
-        // let {countryCode, phone} = this.state;
-        // countryCode = countryCode || '+1';
-        
-        // // update user's phone
-        // // await updateUserProfile(this.props.token, {phone: phone});
-        // // send code via sms
-        // await sendCode(countryCode + phone);
-        // this.setState({enterCode: true, loading: false})
     }
 
     renderPhoneScreen(){
@@ -236,6 +235,64 @@ class VerifyProfile extends Component {
         this.setState({ zip: zip });
     }
 
+    _changeCountry (countryInfo) {
+        this.setState({ countryInfo });
+        // this.props.setCountryCode(country.callingCode);
+        this.refs.form.refs.textInput.focus();
+    }
+
+    _renderCountryPicker () {
+        return (
+            <CountryPicker
+                ref={'countryPicker'}
+                closeable
+                style={styles.countryPicker}
+                onChange={(c) => this._changeCountry(c)}
+                cca2={this.state.countryInfo.cca2}
+                styles={{}}
+                translation='eng' />
+        );
+    }
+
+    _renderCallingCode () {
+        return (
+            <View style={styles.callingCodeView}>
+                <Text style={styles.callingCodeText}>+{this.state.countryInfo.callingCode}</Text>
+            </View>
+        );
+
+    }
+
+    _renderPhonePicker() {
+        return <Form ref={'form'} style={styles.textInput}>
+            <View style={{ flexDirection: 'row', flex: 1, alignContent: 'center', alignItems: 'center' }}>
+                {this._renderCountryPicker()}
+                {this._renderCallingCode()}
+                <TextInput
+                    ref={'textInput'}
+                    name={'phoneNumber'}
+                    type={'TextInput'}
+                    underlineColorAndroid={'transparent'}
+                    autoCapitalize={'none'}
+                    autoCorrect={false}
+                    onChangeText={(value) => {this.onChange(value, 'phone')}}
+                    placeholder={'Phone Number'}
+                    value={this.state.phone}
+                    keyboardType={'numeric'}
+                    style={styles.phonetextInput}
+                    returnKeyType='go'
+                    placeholderTextColor={brandColor}
+                    selectionColor={brandColor}
+                    maxLength={20}
+                    // onSubmitEditing={() => this._getSubmitAction()}
+                />
+            </View>
+            {/* <TouchableOpacity style={styles.button} onPress={() => this._getSubmitAction()}>
+                <Text style={styles.buttonText}>{'Submit number'}</Text>
+            </TouchableOpacity> */}
+        </Form>
+    }
+
 
     render() {
         console.log('this.state', this.state);
@@ -248,104 +305,31 @@ class VerifyProfile extends Component {
             return (
             <Content contentContainerStyle={{alignItems: 'center', marginTop: 20}}>
                 <View style={{flexDirection: 'row', justifyContent: 'space-around', justifyContent: 'center'}}>
-                    <View style={{flex: 8}}>
-                        <Button transparent onPress={() => Actions.pop()} style={{ width: 200, height: 50 }}  >
+                    <View style={{flex: 2}}>
+                        <Button transparent onPress={() => Actions.pop()} style={{ width: 60, height: 50 }}  >
                             <Icon active name='arrow-back' style={{ color: '#6A6AD5' }} />
                         </Button>
                     </View>
-                    <View style={{flex: 10}}>
-                        <Thumbnail source={{uri: this.state.user.avatar_file_name}} style={{marginTop: 8, borderRadius: 25}} />
-                        {/* <View style={{position: 'absolute', alignSelf:'center', borderRadius: 25, flex: 1, zIndex: 3, marginTop: 16}}>
+                    <View style={{flex: 10, alignItems: 'center', justifyContent: 'center'}}>
+                        <Thumbnail source={{uri: this.state.user.avatar_file_name}} />
+                        <View style={{position: 'absolute', alignItems: 'center', alignSelf:'center', width: 25, height: 25, borderRadius: 30, flex: 1, zIndex: 3, marginTop: 16, backgroundColor: '#eeeeee70'}}>
                             <ImageSelector onConfirm={(i) => this.updateUserAvatar(i)} iconSize={20} iconColor='#000' onError={err => console.log(err)}/>
-                        </View>  */}
+                        </View> 
                     </View>
+                    <View style={{flex: 2}} />
                 </View>
-                <Card style={{alignItems: 'center'}}>
-                    {/* <List style={{alignItems: 'center', justifyContent: 'center'}}> */}
+                <Card style={{alignItems: 'center', marginBottom: 40}}>
                     <ScrollView keyboardShouldPersistTaps="always" contentContainerStyle={{alignItems: 'center', paddingBottom: 20}}>
-
-                        <View style={{padding: 20}}>
-                            <Label>Verify or Complete your data</Label>
-                        </View>
-
-                        {/* <GooglePlacesAutocomplete
-                        placeholder='Zipcode'
-                        minLength={2}
-                        autoFocus={false}
-                        getDefaultValue={() => this.state.zip}
-                        textInputProps={{
-                            onChangeText: (text) => {this.onChangeZip(text); this.setState({listViewDisplayed: true})},
-                            onBlur: () => {this.setState({listViewDisplayed: false})}
-                        }}
-                        returnKeyType={'Done'}
-                        listViewDisplayed={this.state.listViewDisplayed}
-                        fetchDetails={true}
-                        renderDescription={(row) => row.description}  
-                        onPress={this.onAutoComplete}                      
-                        query={{
-                            key: googlePlacesKey,
-                            language: 'en',
-                            components: this.state.country ? `country:${this.state.country}` : ''
-                        }}
-                        ref={(zipobj) => {
-                            this.state.autoZip = zipobj;
-                        }}
-                        styles={{
-                            container: styles.autoContainer,
-                            textInputContainer: styles.autoTextInputContainer,
-                            textInput: styles.autoTextInput,
-                            description: styles.autoDescription,
-                            predefinedPlacesDescription: styles.autoPredefinedPlacesDescription
-                        }}
-                        currentLocation={false}                        
-                        nearbyPlacesAPI='GoogleReverseGeocoding'
-                        filterReverseGeocodingByTypes={['street_number', 'route','neighborhood', 'locality','administrative_area_level_1','country']}
-
-                        debounce={200}
-                    /> */}
-
-                        {/* <GooglePlacesAutocomplete
-                            placeholder='Zip Code'
-                            minLength={2}
-                            autoFocus={false}
-                            returnKeyType={'Done'}
-                            listViewDisplayed='auto'
-                            fetchDetails
-                            getDefaultValue={() => this.state.zip}
-                            textInputProps={{
-                                onChangeText: (text) => {this.onChange('zip', text); this.setState({listViewDisplayed: true})},
-                                onBlur: (a) => {this.setState({listViewDisplayed: false})}
-                            }}
-                            listViewDisplayed
-                            renderDescription={(row) => {console.log(row); return row.description}}  
-                            onPress={this.onAutoComplete}    
-                            query={{
-                                key: 'AIzaSyBQOJDsIGt-XxuSNI7Joe1KRpAOJwDAEQE',
-                                language: 'en',
-                                components: country ? `country:${country}` : '',
-                                types: '(regions)'                              
-                            }}
-                            ref={(addressobj) => {
-                                this.state.autoAddress = addressobj;
-                            }}
-                            styles={{
-                                container: styles.autoContainer,
-                                textInputContainer: styles.autoTextInputContainer,
-                                textInput: styles.autoTextInput,
-                                description: styles.autoDescription,
-                                predefinedPlacesDescription: styles.autoPredefinedPlacesDescription
-                            }}
-                            currentLocation={false}                        
-                            nearbyPlacesAPI='GoogleReverseGeocoding'
-                            filterReverseGeocodingByTypes={['postal_code']}
-                            debounce={200}
-                    /> */}
+                    <View style={{padding: 20}}>
+                        <Label>Verify or Complete your data</Label>
+                    </View>
 
                     <GooglePlacesAutocomplete
                         placeholder='Zipcode'
                         minLength={2}
                         autoFocus={false}
-                        getDefaultValue={() => this.state.zip}
+                        getDefaultValue={() => ''}
+                        placeholder={this.state.zip}
                         textInputProps={{
                             onChangeText: (text) => {this.onChangeZip(text); this.setState({listViewDisplayed: true})},
                             onBlur: (a) => {this.setState({listViewDisplayed: false})},
@@ -354,7 +338,7 @@ class VerifyProfile extends Component {
                         returnKeyType={'done'}
                         listViewDisplayed={this.state.listViewDisplayed}
                         fetchDetails={true}
-                        renderDescription={(row) =>{console.log(row); return row.description}}  
+                        renderDescription={(row) =>{console.log('row', row); return row.description}}
                         onPress={(data, details, any) => {console.log(any); this.onAutoComplete(data, details); }}                      
                         query={{
                             key: googlePlacesKey,
@@ -370,14 +354,17 @@ class VerifyProfile extends Component {
                             textInputContainer: styles.autoTextInputContainer,
                             textInput: styles.autoTextInput,
                             description: styles.autoDescription,
-                            predefinedPlacesDescription: styles.autoPredefinedPlacesDescription
+                            predefinedPlacesDescription: styles.autoPredefinedPlacesDescription,
+                            listView: {
+                                height: 200,
+                                width: '100%'
+                            }
                         }}
                         currentLocation={false}                        
                         nearbyPlacesAPI='GoogleReverseGeocoding'
                         filterReverseGeocodingByTypes={['postal_code']}
                         debounce={200}
                     />
-                        {/* <View style={styles.fieldContainer}> */}
                             <TextInput
                                 placeholder='Address 1'
                                 autoCorrect={false}
@@ -394,7 +381,6 @@ class VerifyProfile extends Component {
                                 onChangeText={(v) => this.onChange(v, 'address2')}
                                 underlineColorAndroid={'transparent'}
                             />
-                        {/* </View> */}
                             <TextInput
                                 placeholder='City'
                                 style={styles.textInput}
@@ -433,7 +419,16 @@ class VerifyProfile extends Component {
                                 mode='date'
                                 format='YYYY-MM-DD'
                                 style={{flex: 1}}
-                                customStyles={{dateInput: {width: '100%', flex: 1,textAlign: 'center', padding: 0, borderWidth: 0, color: '#eee'}, placeholderText: {color: '#eee', fontSize: 17, marginLeft: 20}, dateText: {fontSize: 14, fontWeight: '400', cololor: '#eee', marginLeft: 20}}}
+                                customStyles={{
+                                    dateInput: {
+                                        width: '100%', flex: 1,textAlign: 'center', padding: 0, borderWidth: 0, color: PLColors.lightText
+                                    },
+                                    placeholderText: {
+                                        color: PLColors.lightText, fontSize: 17, marginLeft: 20
+                                    },
+                                    dateText: {
+                                        fontSize: 14, fontWeight: '400', color: PLColors.lightText, marginLeft: 20
+                                    }}}
                                 onDateChange={date => this.setState({date, birth: new Date(date).toISOString()})}
                                 date={this.state.date}
                                 confirmBtnText='Confirm'
@@ -441,22 +436,22 @@ class VerifyProfile extends Component {
                             />
                             </View>
                         {
-                            !this.state.phone &&
-                        <View style={styles.fieldContainer}>
-                            <View style={{flex: 1, justifyContent: 'center'}}>
-                            <TouchableOpacity onPress={() => this.validatePhone()}>
-                                <Text style={styles.autoTextInput} >{phone || 'Enter phone'}</Text>
-                            </TouchableOpacity>
-                            </View>
-                        </View> 
+                            !this.props.profile.phone && this._renderPhonePicker()
+                            // <TextInput
+                            //     placeholder='Phone Number'
+                            //     style={styles.textInput}
+                            //     autoCorrect={false}
+                            //     value={this.state.phone}
+                            //     onChangeText={(v) => this.onChange(v, 'phone')}
+                            //     underlineColorAndroid={'transparent'}
+                            // />
                         }
                         <View style={{padding: 20}}>
                             <Text style={{fontSize: 10, color: 'grey'}}>We may occasionally contact you via e-mail, but we will never sell your information.</Text>
                         </View>
-                    {/* </List> */}
                     {
                         this.state.loading
-                        ? <ActivityIndicator color={'#fff'} animating={this.state.sending} />
+                        ? <ActivityIndicator color={'#020860'} animating={this.state.sending} />
                         : 
                         <PLButton
                         caption={'Update profile'}
@@ -510,7 +505,6 @@ const styles = {
         borderColor: PLColors.textInputBorder,
         paddingHorizontal: 10,
         backgroundColor: PLColors.textInputBackground,
-
         height: 44,
         fontSize: 14,
         color: PLColors.lightText,
@@ -590,14 +584,16 @@ const styles = {
         backgroundColor: '#8fd5e4'
     },
     autoContainer: {
-        marginTop: 5
+        marginTop: 5,
+        width: '83%',
+        minWidth: 300,
     },
     autoTextInputContainer: {
         borderRadius: 5,
         borderWidth: 0.5,
         borderColor: PLColors.textInputBorder,
         backgroundColor: PLColors.textInputBackground,
-        width: '95%'
+        width: '100%'
     },
     autoTextInput: {
         backgroundColor: 'transparent',
@@ -610,6 +606,62 @@ const styles = {
     },
     autoPredefinedPlacesDescription: {
         color: '#1faadb'
+    },
+    countryPicker: {
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    container: {
+        flex: 1
+    },
+    header: {
+        textAlign: 'center',
+        marginTop: 60,
+        fontSize: 22,
+        margin: 20,
+        color: '#4A4A4A',
+    },
+    form: {
+        margin: 20
+    },
+    phonetextInput: {
+        color: PLColors.lightText,
+        flex: 1
+    },
+    button: {
+        marginTop: 20,
+        height: 50,
+        backgroundColor: brandColor,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 5,
+    },
+    buttonText: {
+        color: '#fff',
+        fontFamily: 'Helvetica',
+        fontSize: 16,
+        fontWeight: 'bold'
+    },
+    wrongNumberText: {
+        margin: 10,
+        fontSize: 14,
+        textAlign: 'center'
+    },
+    disclaimerText: {
+        marginTop: 30,
+        fontSize: 12,
+        color: 'grey'
+    },
+    callingCodeView: {
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    callingCodeText: {
+        fontSize: 20,
+        color: brandColor,
+        fontFamily: 'Helvetica',
+        fontWeight: 'bold',
+        paddingRight: 10
     }
 };
 

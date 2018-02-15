@@ -6,7 +6,7 @@ function getRepresentatives(token, page, per_page){
         fetch(API_URL + '/representatives?_format=json&page='+page +'&per_page=' + per_page, {
             method: 'GET',
             headers: {
-                'token': token,
+                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         })
@@ -28,7 +28,7 @@ function loadRepresentatyInfo(token, representativeId, storageId){
         fetch(API_URL + '/representatives/info/' + representativeId + '/' + storageId, {
             method: 'GET',
             headers: {
-                'token': token,
+                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         })
@@ -49,7 +49,7 @@ function loadCommittees(token, storageId){
         fetch(API_URL + '/representatives/info/committee/' + storageId, {
             method: 'GET',
             headers: {
-                'token': token,
+                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         })
@@ -70,7 +70,7 @@ function loadSponsoredBills(token, storageId){
         fetch(API_URL + '/representatives/info/sponsored-bills/' + storageId, {
             method: 'GET',
             headers: {
-                'token': token,
+                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         })

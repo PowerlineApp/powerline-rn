@@ -8,7 +8,13 @@ import { showToast } from 'PLToast';
 async function getActivities2(token, groupId, user, followed, cursor, type, id) {
     let params = `?&user=${user || ''}&group=${groupId || ''}&followed=${followed || ''}`
     let url = cursor || `${API_URL}/v2.2/feed` + params;
-    console.log(url, token)
+    console.log(url, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        }
+    })
     let res = await fetch(url, {
         method: 'GET',
         headers: {
@@ -78,15 +84,24 @@ async function loadActivities(token: string, page: ?number = 0, perPage: ?number
     }
 }
 
-const markAsRead = (token, id) => (dispatch, state) => {
-        fetch(`${API_URL}/v2/activities`,
+const markAsRead = (token, id, type) => (dispatch, state) => {
+    console.log('marking as read', `${API_URL}/v2.2/feed`,
+    {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify([{id: id, type, is_read: "true"}])
+    });
+        fetch(`${API_URL}/v2.2/feed`,
         {
           method: 'PATCH',
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({activities: [{id: id, read: "true"}]})
+          body: JSON.stringify([{id: id, type, is_read: "true"}])
         }).then(r => {
             console.log('marking as read response', r)
             dispatch({type: 'DECREASE_NEWSFEED_COUNT'})
@@ -100,7 +115,7 @@ const updateActivity = (payload) => (dispatch, state) => {
 
 
 async function loadFriendsActivities(token, cursor): Promise<Action> {
-    return getActivities2(token, null, null, true, cursor, null, null);
+    return getActivities2(token, null, null, '1', cursor, null, null);
         try {
         var response = await fetch(`${API_URL}/v2/activities?_format=json&followed=1&page=${page + 1}&per_page=${perPage}`, {
             method: 'GET',

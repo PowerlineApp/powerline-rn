@@ -193,7 +193,7 @@ class Home extends Component {
 
             ShareExtension.data().then((data) => {
                 // console.log('SHARE EXTENSION DATA: ', data);
-                if (data.type != "" && data.value != "") {
+                if (data.type !== "" && data.value !== "") {
                         Actions.share({ token: this.props.token});
                 }
             });
@@ -224,7 +224,7 @@ class Home extends Component {
                     }, (path) => {
                         console.log(
                             'TRYING TO CACHE => ', path
-                        )
+                        );
                         if (path){
                             console.log('caching onboarding screens done.')
                             AsyncStorage.setItem('onboarding', JSON.stringify(r.onboarding_screens || {}));
@@ -250,40 +250,54 @@ class Home extends Component {
     async verifyProfile(data){
         // console.log('Im here...');
         // await AsyncStorage.setItem('freshRegister', 'true'); // for testing.
-        AsyncStorage.getItem('freshRegister').then(item => {
-            setTimeout(() => {
-                if (item === 'true'){
-                    Alert.alert('Verify now?', 'Your profile is only 50% complete.', [
-                        // missing: configure action buttons for these.
-                        {text: "Verify", onPress: () => Actions.verifyProfile()}, 
-                        {text: "Later", onPress: () => {
-                            let h_48 = (48 * 1000 * 60 * 60);
-                            OneSignal.postNotification({
-                                'en': 'Remember to finish your registration!'
-                            },
-                            [],
-                            data.userId,
-                            {
-                                send_after: new Date(new Date().getTime() + h_48)
-                            },
-                        )
-                    }}
-                ])
-            }
+        try {
+            AsyncStorage.getItem('freshRegister').then(item => {
+                setTimeout(() => {
+                    if (item === 'true'){
+                        Alert.alert('Verify now?', 'Your profile is only 50% complete.', [
+                            // missing: configure action buttons for these.
+                            {text: "Verify", onPress: () => Actions.verifyProfile()}, 
+                            {text: "Later", onPress: () => {
+                                let h_48 = (48 * 1000 * 60 * 60);
+                                try {
+                                    OneSignal.postNotification({
+                                        'en': 'Remember to finish your registration!'
+                                    },
+                                    {},
+                                    data.userId,
+                                    {
+                                        send_after: new Date(new Date().getTime() + h_48)
+                                    })
+                                } catch (error) {
+                                    console.warn('couldnt set notification to verify later', error)
+                                }
+                        }}
+                    ])
+                }
             }, 5000)
         });
         AsyncStorage.setItem('freshRegister', 'false');
+        } catch (error) {
+            console.log(error);   
+        }
+    }
+
+    componentDidCatch(err){
+        console.log('err', err)
     }
 
     onIds(data) {
+        console.log('oneSignal on ids', data)
         OneSignal.removeEventListener('ids');
-        console.log('/this idsss', data);
-        var { token } = this.props;
+        if (this.gotIds) return;
+        this.gotIds = true;
+        console.log('oneSignal /this idsss', data);
+        let { token } = this.props;
         AsyncStorage.setItem('pushId', data.userId);
-
-        this.verifyProfile(data);
-
-        var params = {
+        // AsyncStorage.setItem('freshRegister', 'true').then(item => {
+            this.verifyProfile(data);
+        // });
+        let params = {
             id: data.userId,
             identifier: DeviceInfo.getUniqueID(),
             timezone: (new Date()).getTimezoneOffset() * 60,
@@ -296,27 +310,13 @@ class Home extends Component {
         // Device needs to be registered with Powerline backend after token received from OneSignal
         registerDevice(token, params)
             .then(data => {
-                console.log('REGISTER RESPONSE', data);
+                console.log('oneSignal REGISTER RESPONSE', data);
             })
             .catch(err => {
-                console.log('REGISTER ERROR', err);
+                console.log('oneSignal REGISTER ERROR', err);
             });
     }
 
-    // redirect(item, options = {}) {
-    //     console.log('===>', item, '====>', options);
-    //     // return;
-    //     item = item.notification.payload.additionalData.entity.target;
-    //     // let type = 'poll';
-    //     // if (item.type == 'post') {
-    //     //     type = 'post'
-    //     // } else if (item.type == 'user-petition') {
-    //     //     type = 'petition'
-    //     // }
-
-    //     // console.log('about to go: ', type, item.id)
-    //     Actions.itemDetail({ entityType: item.type, entityId: item.id, ...options });
-    // }
     itemDetail(notification, options) {
         // return;
         console.log(notification);
@@ -429,88 +429,6 @@ class Home extends Component {
         signLeaderPetition(token, target.id, target.option.id);
     }
 
-
-
-
-/*
-{
-   "notification": {
-      "payload": {
-         "additionalData": {
-            "entity": {
-               "target": {
-                  "type": "post",
-                  "id": 1043,
-                  "preview": "@Zxc6"
-               },
-               "id": 6428
-            },
-            "user": {
-               "username": "Zxc6",
-               "id": 146
-            },
-            "type": "post-mentioned"
-         },
-         "actionButtons": [
-            {
-               "icon": "ic_civix_open",
-               "text": "Open",
-               "id": "open-post-button"
-            },
-            {
-               "icon": "ic_civix_ignore",
-               "text": "Ignore",
-               "id": "ignore-button"
-            }
-         ]
-      }
-   },
-   "action": {
-      "type": 0
-   }
-}
-
-
-{
-   "notification": {
-      "payload": {
-         "additionalData": {
-            "entity": {
-               "target": {
-                  "type": "post",
-                  "id": 1043
-               },
-               "id": 6429
-            },
-            "user": {
-               "username": "Zxc6",
-               "id": 146
-            },
-            "type": "follow-post-created",
-         },
-         "actionButtons": [
-            {
-               "icon": "ic_civix_upvote",
-               "text": "Upvote",
-               "id": "upvote-post-button"
-            },
-            {
-               "icon": "ic_civix_downvote",
-               "text": "Downvote",
-               "id": "downvote-post-button"
-            }
-         ],
-      },
-   },
-   "action": {
-      "type": 1,
-      "actionID": "upvote-post-button"
-   }
-}
-
-
-    */
-
     onOpened(data) {
         console.log('OPENED', data);
         
@@ -522,21 +440,6 @@ class Home extends Component {
             this.redirect(type, data.notification.payload);
             return;
         }
-
-        // switch(type){
-        //     case 'join-to-group-approved':
-        //         Actions.groupprofile({id: notification.group.id});
-        //         break;
-        //     case 'comment-mentioned':
-        //     case 'post-mentioned':
-        //     case 'own-post-commented':
-        //     case 'own-user-petition-signed':
-        //         this.itemDetail(notification, options);
-        //         break;
-        //     case 'follow-request':
-        //         Actions.myInfluences()
-
-        // }
 
         switch (actionButton) {
             // these simply do nothing
@@ -630,6 +533,8 @@ class Home extends Component {
             tab3: false,
             tab4: false
         });
+        const data =  {id: 'all', group: 'all', header: 'all'};
+        this.props.setGroup(data, this.props.token, 'all')
         Mixpanel.track("Newsfeed tab selected");
     }
 
@@ -641,6 +546,7 @@ class Home extends Component {
             tab3: false,
             tab4: false
         });
+
         Mixpanel.track("Friends Feed tab selected");
     }
 
@@ -840,7 +746,7 @@ class Home extends Component {
     }
 
     render() {
-        console.warn('render at dashboard')
+        // console.warn('render at dashboard')
         let isLeader = false; 
         for (let group of this.props.groupList) {
             if(group.user_role === 'owner' || group.user_role === 'manager') {

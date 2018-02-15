@@ -12,10 +12,10 @@ async function getAgency(token) {
                 'Content-Type': 'application/json',
             }
         })
-        console.log('res agency => ', res)
         try {
             // console.log('trying...')
             res = await res.json();
+            console.log('res agency => ', res)
             return res;
         } catch (error) {
             // console.log('catchng...');

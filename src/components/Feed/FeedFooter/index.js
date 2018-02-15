@@ -5,7 +5,7 @@ import {View, Text, TouchableHighlight} from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import { Button, Icon, Left, CardItem, Label, Thumbnail } from 'native-base';
 import styles from '../styles';
-import { votePost,updateActivity, loadActivityByEntityId, signUserPetition, unsignUserPetition, signLeaderPetition, undoVotePost, markAsRead } from 'PLActions';
+import { votePost, updateActivity, loadActivityByEntityId, signUserPetition, unsignUserPetition, signLeaderPetition, undoVotePost, markAsRead } from 'PLActions';
 import _ from 'lodash';
 import { showToast } from 'PLToast';
 import AnimatedButton from './animatedButton';
@@ -21,8 +21,12 @@ class FeedFooter extends Component {
         };
     }
 
+    updateActivity(item) {
+        this.setState({item});
+    }
+
     redirect(item, options, scene = 'itemDetail') {
-        console.log(item, item.body)
+        console.log(item, item.body);
         let type;
         if (item.poll) {
             type = 'poll';
@@ -49,8 +53,8 @@ class FeedFooter extends Component {
 
 
         // uses lodash.cloneDeep to avoid keeping references
-        let originalItem = _.cloneDeep(this.props.item);
-        let newItem = _.cloneDeep(this.props.item);
+        let originalItem = _.cloneDeep(this.state.item);
+        let newItem = _.cloneDeep(this.state.item);
 
         const { profile, token } = this.props;
         console.log('\n before --- \n votes: ',newItem.votes && newItem.vote, '\n upvotes: ', newItem.upvotes_count, '\n downvotes: ' , newItem.downvotes_count, '----------');
@@ -84,7 +88,7 @@ class FeedFooter extends Component {
                         newItem.upvotes_count = Number(newItem.upvotes_count) + 1;
                         newItem.downvotes_count = Number(newItem.downvotes_count) - 1;
                     } else {
-                        console.log('LIMBOO')
+                        console.log('LIMBOO');
                         newItem.vote = {option: 'upvote'};
                         newItem.upvotes_count = Number(newItem.upvotes_count) + 1;
                     }
@@ -111,7 +115,6 @@ class FeedFooter extends Component {
                         newItem.upvotes_count = Number(newItem.upvotes_count) - 1;
                         newItem.downvotes_count = Number(newItem.downvotes_count) + 1;
                     } else {
-                        console.log('limbo!!!!')
                         newItem.vote = {option: "downvote"};
                         newItem.downvotes_count = Number(newItem.downvotes_count) + 1;
                     }
@@ -131,10 +134,10 @@ class FeedFooter extends Component {
                 upvotes_count: newItem.upvotes_count < 0 ? 0 : newItem.upvotes_count,
             }});
 
-        this.props.updateActivity({...newItem,
+        this.updateActivity({...newItem,
             downvotes_count: newItem.downvotes_count < 0 ? 0 : newItem.downvotes_count,
             upvotes_count: newItem.upvotes_count < 0 ? 0 : newItem.upvotes_count,
-        })
+        });
 
 
         let response;
@@ -146,9 +149,9 @@ class FeedFooter extends Component {
                 response = await votePost(this.props.token, item.id, option);
                 console.log('response', response);
                 if (response.status === 200) {
-                    console.log('dispatching...', this.props)
+                    console.log('dispatching...', this.props);
                     // this.props.dispatch({type: 'UPDATE_ACTIVITY', payload: newItem})
-                    this.props.updateActivity(newItem);
+                    this.updateActivity(newItem);
 
                     if (option === 'upvote') {
                         showToast('Upvoted');
@@ -158,14 +161,14 @@ class FeedFooter extends Component {
                     }
                 } else {
                     let error = await response.json();
-                    console.log(error)
-                    showToast(error.errors.errors[0])
-                    this.props.updateActivity(originalItem);
+                    console.log(error);
+                    showToast(error.errors.errors[0]);
+                    this.updateActivity(originalItem);
                 }
             }
         } catch (error) {
             console.log('Failure on voting. was undoing? ', undo, error);
-            this.props.updateActivity(originalItem);
+            this.updateActivity(originalItem);
             
         }
         this.setState({postingVote: false});
@@ -179,11 +182,12 @@ class FeedFooter extends Component {
     async sign (item, signed, cb) {
         const { profile, token } = this.props;
         let originalItem = _.cloneDeep(item);
-        if (!item.answer){
-            item.answer = {};
-        }
+        let copyItem = _.cloneDeep(item);
+        // if (!item.answer){
+        //     item.answer = {};
+        // }
 
-        console.log(profile, item.user)
+        // console.log('profile, item.user', profile, item.user);
         // avoid double tapping until the response comes
         // user shouldn't sign his own petition
         if (Number(profile.id) === Number(item.user.id)) {
@@ -193,36 +197,35 @@ class FeedFooter extends Component {
         if (this.state.signing) {
             return;
         }
-        let entity;
-        if (item.type === 'user-petition'){
-            if (signed) item.signature.id = null;  
-            else item.signature ={id: 1};
-            this.setState({item: item});
-            entity = 'petition';
-        } else {
-            if (signed) item.answer.option_id = 2;
-            else item.answer.option_id = 1;
-            this.setState({item: item});
-            entity = 'poll';
-        }
-        let res;
         this.setState({signing: true});
+        let entity;
+        if (signed){
+            copyItem.signature.id = null;
+            copyItem.responses_count -=1;
+            copyItem.isSigned = false;
+        }
+        else {
+            copyItem.signature ={id: 1};
+            copyItem.responses_count +=1;
+            copyItem.isSigned = true;
+        }
+        // this.updateActivity({...copyItem});
+        console.log('props', this.props);
+        this.updateActivity(copyItem);
+
+        entity = 'petition';
+
+
+        let res;
         try {
-            if (entity === 'petition') {
-                if (signed){
-                    res = await unsignUserPetition(token, item.id);
-                } else {
-                    res = await signUserPetition(token, item.id);
-                }
+            if (signed){
+                res = await unsignUserPetition(token, item.id);
             } else {
-                res = await signLeaderPetition(token, item.id, signed ? 2 : 1);
+                res = await signUserPetition(token, item.id);
             }
             this.setState({signing: false});
-            // this.props.dispatch({type: 'UPDATE_ACTIVITY', payload: item})
-            this.props.updateActivity(item);
         } catch (error) {
-            console.log(error);
-            this.props.updateActivity(originalItem);
+            this.updateActivity(originalItem);
             this.setState({signing: false});
         }
     }
@@ -234,43 +237,25 @@ class FeedFooter extends Component {
         if (this.state.signing) {
             return;
         }
-        console.log(signId, unsignId)
+        this.setState({signing: true});
+        console.log(signId, unsignId);
         let option = signed ? unsignId : signId;
         item.answer = {option};
+        if (signed){
+            item.responses_count -=1;
+        } else {
+            item.responses_count -=1;
+        }
         let res;
-        this.setState({signing: true});
         try {
             res = await signLeaderPetition(token, item.id, option);
             this.setState({signing: false, item});
-            this.props.updateActivity(item)
+            this.updateActivity(item);
         } catch (error) {
             console.log(error);
-            this.props.updateActivity(originalItem)
+            this.updateActivity(originalItem);
             this.setState({signing: false});
         }
-    }
-
-    _renderZoneIcon(item) {
-        if (item.zone === 'prioritized') {
-          return (<Icon active name='ios-flash' style={styles.zoneIcon} />);
-        } else {
-          return null;
-        }
-      }
-
-    renderFirstRow(item){
-        return null;
-        return <CardItem footer style={{ marginTop: -40, flexDirection: 'row', height: 35, width: '100%', backgroundColor: '#fff', position: 'absolute' }}>
-            <Left style={{ justifyContent: 'space-between' }}>
-                {/* <TouchableHighlight onPress={() => {this.redirect(item, null, 'analyticsView'); Mixpanel.track("Viewed Post Analytics");}}>
-                    <View style={{flexDirection: 'row', width: 50, justifyContent: 'space-around'}}>
-                        {this._renderZoneIcon(item)}
-                        <Label style={styles.commentCount}>{item.responses_count}</Label>
-                    </View>
-                </TouchableHighlight> */}
-                <Text onPress={() => this.redirect(item)} style={styles.footerText}>{item.comments_count ? item.comments_count : 0} comments</Text>
-            </Left>
-        </CardItem>
     }
 
     // on this one we need this to control upvote / downvote before a response comes from the API
@@ -278,11 +263,11 @@ class FeedFooter extends Component {
         // console.log(item);
         if (item.zone === 'expired') {
             return (
-                <CardItem footer style={{ height: 35 }}>
-                    <Left style={{ justifyContent: 'space-between' }}>
-                        {this.ReplyButton({item})}
-                    </Left>
-                </CardItem>
+                <View footer style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', flex: 1, height: 35 }}>
+                    <View style={{flex: 6}} />
+                    {this.renderPulseIcon(item, 2, true)}
+                    {this.renderCommentIcon(item, 2)}
+                </View>
             );
         } else {
             let isVotedDown = false;
@@ -298,16 +283,16 @@ class FeedFooter extends Component {
             // console.log(item.body, isVotedUp)
             return (
                 <View footer style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', flex: 1, height: 35 }}>
-                        <View style={{flex: 3}}>
+                    <View style={{flex: 3}}>
                         <AnimatedButton onPress={() => { this.vote(item, 'upvote'); Mixpanel.track("Upvoted post"); }} 
                             iconName={'md-arrow-dropup'} 
                             label={'Upvote ' + (item.upvotes_count || 0)}
                             labelStyle={isVotedUp ? styles.footerTextBlue : styles.footerText}
                             animateEffect={'tada'}
                             />
-                            </View>
+                    </View>
 
-                        <View style={{flex: 3}}>
+                    <View style={{flex: 3}}>
                         <AnimatedButton onPress={() => { this.vote(item, 'downvote'); Mixpanel.track("Downvoted post"); }} 
                             iconName={'md-arrow-dropdown'} 
                             label={'Downvote ' + (item.downvotes_count || 0)}
@@ -315,49 +300,43 @@ class FeedFooter extends Component {
                             animateEffect={'shake'}
                             />
                        
-                            </View>
-                            {/* <View style={{flex: this.props.isInDetail ? 1.8 : 2.4}}> */}
-                            {/* <TouchableHighlight iconLeft transparent small style={styles.footerButton} onPress={() => {this.props.isInDetail && this.redirect(item, null, 'analyticsView'); Mixpanel.track("Viewed Post Analytics");}} >
-                                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                                    <Icon active name='pulse' style={styles.footerIcon} />
-                                    <Label style={styles.footerText} >
-                                        {item.responses_count || 0}
-                                    </Label>
-                                </View>
-                            </TouchableHighlight> */}
-                        {/* </View>  */}
-                        {this.renderPulseIcon(item, 2)}
-                        {
-                            this.renderCommentIcon(item, 2)
-                        }
+                    </View>
+                    {this.renderPulseIcon(item, 2, true)}
+                    {this.renderCommentIcon(item, 2)}
                 </View>
             );
         }
     }
 
     _renderUserPetitionFooter (item, showAnalytics) {
-      let isSigned = false;
-        if (
-            item &&
-            item.signature
-        ) {
-            let vote = item.signature;
-            if (vote.id) {
-                isSigned = true;
-            }
-        }
+        // let isSigned = false;
+        const isSigned = item && item.signature && item.signature.id;
+        console.log('isSigned', this.props.isInDetail, isSigned, item.signature);
+        // if (
+        //     item &&
+        //     item.signature
+        // ) {
+        //     let vote = item.signature;
+        //     if (vote.id) {
+        //         isSigned = true;
+        //     }
+        // }
+
+        // console.log(item);
+
+
         return (
             <CardItem footer style={{ height: 35 }}>
                 <Left style={{ justifyContent: 'space-around' }}>
                     <View style={{flex: 1}}>
-                    <AnimatedButton onPress={() => {this.sign(item, isSigned); Mixpanel.track("Signed Petition");}}
-                        icon={<Thumbnail source={require('../../../assets/petition-icon.png')} style={{height: 25, width: 25, tintColor: isSigned ? '#53a8cd' : '#8694ab'}} square />}
-                        label={isSigned ? ' Signed' : ('  ' + (item.answer_count || 0) + ' Signatures') }
-                        labelStyle={isSigned ? styles.footerTextBlue : styles.footerText}
-                        animateEffect={'tada'}
+                        <AnimatedButton onPress={() => {this.sign(item, isSigned); Mixpanel.track("Signed Petition");}}
+                            icon={<Thumbnail source={require('../../../assets/petition-icon.png')} style={{height: 25, width: 25, tintColor: isSigned ? '#53a8cd' : '#8694ab'}} square />}
+                            label={isSigned ? ' Signed' : ('  ' + (item.answer_count || 0) + ' Signatures')}
+                            labelStyle={isSigned ? styles.footerTextBlue : styles.footerText}
+                            animateEffect={'tada'}
                         />
                     </View>
-                    {this.renderPulseIcon(item, 0.8)}
+                    {this.renderPulseIcon(item, 0.8, true)}
                     {this.renderCommentIcon(item, 0.1)}
                 </Left>
             </CardItem>
@@ -370,7 +349,7 @@ class FeedFooter extends Component {
         let unsignOptionIndex = signOptionIndex === 0 ? 1 : 0;
         let signOption = item.options[signOptionIndex];
         let unsignOption = item.options[unsignOptionIndex];
-        if (item.answer && (item.options[signOptionIndex].id || {}) == item.answer.option){
+        if (item.answer && (item.options[signOptionIndex].id || {}) === item.answer.option){
             isSigned = true;
         }
         return (
@@ -379,7 +358,7 @@ class FeedFooter extends Component {
                     <View style={{flex: 1}}>
                         <AnimatedButton onPress={() => {this.signLeaderPetition(item, isSigned, signOption.id, unsignOption.id); Mixpanel.track("Signed Petition");}}
                             icon={<Thumbnail source={require('../../../assets/petition-icon.png')} style={{height: 25, width: 25, tintColor: isSigned ? '#53a8cd' : '#8694ab'}} square />}
-                            label={isSigned ? ' Signed' : ('  ' + (item.answer_count || 0) + ' Signatures') }
+                            label={isSigned ? ' Signed' : ('  ' + (item.answer_count || 0) + ' Signatures')}
                             labelStyle={isSigned ? styles.footerTextBlue : styles.footerText}
                             animateEffect={'tada'}
                             />
@@ -391,57 +370,59 @@ class FeedFooter extends Component {
         );
     }
 
-    _renderPollFooter (item, iconName, text, analytics, comments) {
+    _renderPollFooter (item, iconName, text) {
         return <CardItem footer style={{ height: 35 }}>
-        <Left style={{ justifyContent: 'space-between' }}>
-            <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
-                <Icon active name={iconName} style={styles.footerIcon} />
-                <Label style={styles.footerText}>
-                    {text}
-                </Label>
-            </View>
-                {this.renderPulseIcon(item, 0.8, true)}
+            <Left style={{ justifyContent: 'space-between' }}>
+                <TouchableHighlight style={{flex: 1, flexDirection: 'row', alignItems: 'center'}} underlayColor='#fff' onPress={() => !this.props.isInDetail && this.redirect(item)}>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}} >
+                        <Icon active name={iconName} style={styles.footerIcon} />
+                        <Label style={styles.footerText}>
+                            {text}
+                        </Label>
+                    </View>
+                </TouchableHighlight>
+                {this.renderPulseIcon(item, 0.8)}
                 {this.renderCommentIcon(item, 0.1)}
-        </Left>
-    </CardItem>
+            </Left>
+        </CardItem>;
     }
 
-    renderPulseIcon(item, flex, notLink){
+    renderPulseIcon(item, flex, link){
+        // console.log(item);
+        const activity = Number((item.comment_count || 0)) 
+        + Number((item.answer_count || 0)) 
+        // + Number((item.upvotes_count || 0)) 
+        + Number((item.responses_count || 0)); 
+        // + Number((item.downvotes_count || 0));
+
+
         return <View style={{flex: flex || 1, justifyContent: 'center', alignItems: 'center'}}>
-                    <Button iconLeft transparent style={{flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff'}} onPress={() => {!notLink && this.props.isInDetail && this.redirect(item, null, 'analyticsView'); Mixpanel.track("Viewed Petition Analytics");}}>
-                        <Icon active name='pulse' style={styles.footerIcon} />
-                        <Label style={styles.footerText} >
-                            {item.responses_count || 0}
-                        </Label>
-                    </Button>
-                </View>
+            <Button iconLeft transparent style={{flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff'}} onPress={() => {link && this.redirect(item, null, 'analyticsView'); Mixpanel.track("Viewed Petition Analytics");}}>
+                <Icon active name='pulse' style={styles.footerIcon} />
+                <Label style={styles.footerText} >
+                    {activity}
+                </Label>
+            </Button>
+        </View>;
     }
 
     renderCommentIcon(item, flex){
         return <View style={{ flex: flex || 1, backgroundColor: '#fff'}}>
-                    <Button iconLeft transparent style={{flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff'}} onPress={() => {
-                        this.props.isInDetail && this.redirect(item, null, 'analyticsView'); Mixpanel.track("Viewed Petition Analytics");}}>
-                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
-            <Icon active name='ios-text' style={styles.footerIcon} />
-                <Label style={styles.footerText}>
-                {item.comment_count || 0}
-                </Label>
-            </View>
-    </Button>
-    </View>
+            <Button iconLeft transparent style={{flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff'}} onPress={() => {
+                !this.props.isInDetail && this.redirect(item, {commenting: true}); Mixpanel.track("Viewed Petition Analytics");}}>
+                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
+                    <Icon active name='ios-text' style={styles.footerIcon} />
+                    <Label style={styles.footerText}>
+                        {item.comment_count || 0}
+                    </Label>
+                </View>
+            </Button>
+        </View>;
     }
 
-    ReplyButton = ({item}) => null
-        // <AnimatedButton onPress={() => this.redirect(item, {commenting: true})}
-        //     iconName={'ios-undo'} 
-        //     label={'Reply '}
-        //     animateEffect={'flash'}
-        // />;
     render () {
-    //  return null;
-        let {item} = this.props;
+        let {item} = this.state;
         const showAnalytics = true;
-        // console.log('item in state => ', item)
         let footer = null;
         switch (item.type) {
         case 'post':

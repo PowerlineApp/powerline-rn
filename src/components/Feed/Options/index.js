@@ -58,7 +58,7 @@ class Options extends Component {
         let {token, item} = this.props;
         loadUserCards(this.props.token).then(r => {
             console.log('CARDS => ', r);
-            let shouldAddCard =  !r.length >= 1 && this.state.options[this.state.checked].amount !== '0';
+            let shouldAddCard =  !r.length >= 1 && Number(this.state.amount) !== 0;
             if (!shouldAddCard){
                 this.sendAnswer(token, item.id , this.state.options[this.state.checked].id, this.state.options[this.state.checked].is_user_amount ? this.state.amount : null ).then(r => {
                     this.alertMessage();
@@ -80,7 +80,7 @@ class Options extends Component {
     markAsRead(item){
         // poll/fundraiser/event is ANSWERED - marked as read
         if (item.read) return;
-        this.props.markAsRead(this.props.token, item.id);
+        this.props.markAsRead(this.props.token, item.id, (item.type === 'post' || item.type === 'user-petition') ? item.type : 'poll');
     }
 
 

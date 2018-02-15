@@ -39,7 +39,8 @@ class CommunityView extends PureComponent {
             light,
             grouplist,
             onPress,
-            onCancel
+            onCancel,
+            isSharing
         } = this.props;
         console.log(grouplist);
         return (
@@ -70,7 +71,11 @@ class CommunityView extends PureComponent {
                                             <Text style={{ fontSize: 15, color: light ? 'gray' : 'white' }}>{item.official_name}</Text>
                                         </Body>
                                         <Right>
-                                            <Icon name='ios-arrow-dropright' style={{ color: light ? 'gray' : 'white' }} />
+                                            {
+                                                isSharing
+                                                ? <View style={{width: 20, height: 20, borderRadius: 10, borderColor: '#fff', borderWidth: 1, alignItems: 'center', justifyContent: 'center'}}><Text style={{color: 'white', paddingBottom: 2}}>{'>'}</Text></View>
+                                                : <Icon name='ios-arrow-dropright' style={{ color: light ? 'gray' : 'white' }} />
+                                            }
                                         </Right>
                                     </ListItem>
                                 );

@@ -6,7 +6,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   Alert,
-  Platform
+  Platform,
+  Image
 } from 'react-native';
 
 import {
@@ -130,24 +131,19 @@ class Followings extends Component {
               this.state.followings.map((follow, index) => {
                 return (
                   <ListItem avatar key={index} onPress={() => this.goToProfile(follow.id)}>
-                    <Left>
-                    { 
-                        (follow.is_verified
-                        ?
-                        <Thumbnail small
-                            source={follow.avatar_file_name ? { uri: follow.avatar_file_name + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")}
-                            defaultSource={require("img/blank_person.png")}
-                        />
-                        :
-                        <View style={{ borderWidth: 2, borderStyle: 'dashed', borderColor: 'silver', borderRadius: 1000}}>
-                            <Thumbnail small
-                                source={follow.avatar_file_name ? { uri: follow.avatar_file_name + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")}
-                                defaultSource={require("img/blank_person.png")}
-                            />
-
-                        </View>)
-                      }
-                    </Left>
+                    <View style={{width: 40, height: 40, alignItems: 'center', justifyContent: 'center'}}>
+                    {!follow.is_verified &&
+                      <Image small
+                      style={{width: 60, height: 60}}
+                      resizeMode='stretch'
+                      source={require("img/outline_8.png")}
+                      />}
+                      <Thumbnail small
+                          defaultSource={require("img/blank_person.png")}
+                          style={{position: 'absolute', alignSelf: 'center'}}
+                          source={follow.avatar_file_name ? { uri: follow.avatar_file_name + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")}
+                      />
+                    </View>
                     <Body>
                       <Text>{follow.username}</Text>
                       <Text note>{follow.status == 'active' ? follow.full_name : 'pending approval'}</Text>

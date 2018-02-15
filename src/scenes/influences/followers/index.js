@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  View,
   RefreshControl,
   TouchableOpacity,
   Alert,
-  Platform
+  Platform,
+  Image,
+  View
 } from 'react-native';
 
 import {
@@ -156,25 +157,19 @@ class Followers extends Component {
               followers.map((follow, index) => {
                 return (
                   <ListItem avatar key={index} onPress={() => this.goToProfile(follow.id)}>
-                    <Left>
-                      { 
-                        (follow.is_verified
-                        ?
-                        <Thumbnail small
-                            source={follow.avatar_file_name ? { uri: follow.avatar_file_name + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")}
-                            defaultSource={require("img/blank_person.png")}
-                        />
-                        :
-                        <View style={{ borderWidth: 2, borderStyle: 'dashed', borderColor: 'silver', borderRadius: 1000}}>
-                            <Thumbnail small
-                                source={follow.avatar_file_name ? { uri: follow.avatar_file_name + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")}
-                                defaultSource={require("img/blank_person.png")}
-                            />
-
-                        </View>)
-                        // <Thumbnail source={{ uri: follow.avatar_file_name + '&w=150&h=150&auto=compress,format,q=95' }} />
-                      }
-                    </Left>
+                    <View style={{width: 40, height: 40, alignItems: 'center', justifyContent: 'center'}}>
+                    {!follow.is_verified &&
+                      <Image small
+                      style={{width: 60, height: 60}}
+                      resizeMode='stretch'
+                      source={require("img/outline_8.png")}
+                      />}
+                      <Thumbnail small
+                          defaultSource={require("img/blank_person.png")}
+                          style={{position: 'absolute', alignSelf: 'center'}}
+                          source={follow.avatar_file_name ? { uri: follow.avatar_file_name + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")}
+                      />
+                    </View>
                     <Body>
                       <Text>{follow.username}</Text>
                       <Text note>{follow.full_name}</Text>
@@ -182,20 +177,20 @@ class Followers extends Component {
                     <Right style={styles.itemRightContainer}>
                       {follow.status === 'active' ?
                         <TouchableOpacity onPress={() => this.unFollowers(index)}>
-                          <View style={styles.buttonContainer}>
+                          <Left style={styles.buttonContainer}>
                             <Icon name="ios-person" style={styles.activeIconLarge} />
                             <Icon name="remove-circle" style={styles.activeIconSmall} />
-                          </View>
+                          </Left>
                         </TouchableOpacity>
                         :
-                        <View style={styles.buttonContainer}>
+                        <Left style={styles.buttonContainer}>
                           <TouchableOpacity onPress={() => this.acceptFollower(index)}>
                             <Icon name="checkmark" style={styles.acceptIcon} />
                           </TouchableOpacity>
                           <TouchableOpacity onPress={() => this.unFollowers(index)}>
                             <Icon name="close" style={styles.rejectIcon} />
                           </TouchableOpacity>
-                        </View>
+                        </Left>
                       }
                     </Right>
                   </ListItem>

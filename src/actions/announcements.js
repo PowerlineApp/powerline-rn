@@ -7,7 +7,7 @@ function createAnnouncement(token, groupId, body){
     return fetch(`${API_URL}/v2/groups/${groupId}/announcements`, {
         method: 'POST',
         headers: {
-            'token': token,
+             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(body)
@@ -19,7 +19,7 @@ async function publishAnnouncement(token, announcementId, attachment){
     return fetch(`${API_URL}/v2/announcements/${announcementId}`, {
         method: 'PATCH',
         headers: {
-            'token': token,
+             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(attachment)

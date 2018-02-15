@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Spinner, Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, List, ListItem, Item, Input } from 'native-base';
-import { Image, View, StyleSheet, FlatList, TouchableOpacity, Platform, KeyboardAvoidingView, Keyboard, TextInput, ListView, RefreshControl } from 'react-native';
+import { Image, ActivityIndicator, Modal, TouchableHighlight, View, StyleSheet, FlatList, TouchableOpacity, Platform, KeyboardAvoidingView, Keyboard, TextInput, ListView, RefreshControl } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
 import * as Animatable from 'react-native-animatable';
@@ -69,14 +69,15 @@ class CommentDetail extends Component {
 
     // API Handlers
 
-    async loadComments() {
+    async loadComments(all) {
         const { props: { token, entityType, dispatch } } = this;
         this.setState({ isRefreshing: true });
         try {
             let response = await Promise.race([
-                getChildComments(token, entityType, this.rootComment.id),
+                getChildComments(token, entityType === 'post' ? 'post' : entityType === 'user-petition' ? 'user-petition' : 'poll', this.rootComment.id, 0, all ? this.rootComment.child_count : 10),
                 timeout(15000),
             ]);
+            console.log(response)
             if (response.nextCursor) {
                 this.nextCursor = response.nextCursor;
             } else {
@@ -88,6 +89,7 @@ class CommentDetail extends Component {
                 dataArray: response.comments,
             });
         } catch (e) {
+            console.log(e)
             const message = e.message || e;
             if (message !== 'Timed out') {
                 alert(message);
@@ -106,10 +108,10 @@ class CommentDetail extends Component {
 
     async loadNextComments() {
         const { props: { token, comment, entityType, dispatch } } = this;
-        this.setState({ isCommentsLoading: true });
+        this.setState({ isLoading: true });
         try {
             let response = await Promise.race([
-                getChildComments(token, entityType, comment.id, this.nextCursor),
+                getChildComments(token, entityType === 'post' ? 'post' : entityType === 'user-petition' ? 'user-petition' : 'poll', comment.id, this.nextCursor),
                 timeout(15000),
             ]);
             if (response.nextCursor) {
@@ -134,26 +136,31 @@ class CommentDetail extends Component {
             }
             return;
         } finally {
-            this.setState({ isCommentsLoading: false });
+            this.setState({ isLoading: false });
         }
-        this.setState({
-            dataSource: this.state.dataSource.cloneWithRows(this.state.dataArray),
-        });
     }
 
     async doComment(commentText) {
         const { props: { entityId, entityType, token, dispatch } } = this;
-        this.setState({ isLoading: true });
-        let response = await addComment(token, entityType, entityId, commentText, (this.commentToReply != null) ? this.commentToReply.id : '0');;
-        this.setState({
-            isLoading: false,
-        });
-        this.addCommentView.close();
-        if (response && response.comment_body) {
-            this.setState({ dataArray: [] });
-            this.loadComments();
-        }
-        else {
+        const type = entityType === 'post' ? 'post' : entityType === 'user-petition' ? 'user-petition' : 'poll';
+        if (this.state.sendindComment) return;
+        this.setState({ sendindComment: true });
+        try {
+            let response = await addComment(token, type, entityId, commentText, (this.rootComment != null) ? this.rootComment.id : '0');
+            this.setState({
+                sendindComment: false,
+                commentText: ''
+            });
+            // this.addCommentView.close();
+            if (response && response.comment_body) {
+                this.setState({ dataArray: [] });
+                this.loadComments(true);
+            }
+            else {
+                alert('Something went wrong');
+            }
+        } catch (error) {
+            this.setState({sendindComment: false, commentText: ''})
             alert('Something went wrong');
         }
     }
@@ -192,45 +199,6 @@ class CommentDetail extends Component {
         this.setState({ isLoading: false });
     }
 
-    // Rendering methods
-    render() {
-        // console.log(this.item);
-        // if (!this.item) return null;
-        return (
-            <MenuContext customStyles={menuContextStyles}>
-                <Container style={styles.container}>
-                    <Header style={styles.header}>
-                        <Left>
-                            <Button style={{width: '100%'}}  transparent onPress={() => Actions.pop()} style={{width: 50, height: 50 }}  >
-                                <Icon active name="arrow-back" style={{ color: 'white' }} />
-                            </Button>
-                        </Left>
-                        <Body>
-                            <Title style={{ color: 'white' }}>All Replies</Title>
-                        </Body>
-                        <Right />
-                    </Header>
-                    <Content
-                        refreshControl={
-                            <RefreshControl
-                                refreshing={this.state.isRefreshing}
-                                onRefresh={this._onRefresh.bind(this)}
-                            />
-                        }>
-                        {this._renderRootComment(this.rootComment)}
-                        <FlatList data={this.state.dataArray} renderItem={({item}) => this._renderChildComment(comment) } />
-                        {/* <ListView
-                            dataSource={this.state.dataSource} renderRow={(comment) =>
-                                this._renderChildComment(comment)
-                            } /> */}
-                        {this._renderLoadMore()}
-                        {this._renderCommentsLoading()}
-                        {this._renderAddComment()}
-                    </Content>
-                </Container>
-            </MenuContext >
-        );
-    }
 
     _renderRootComment(comment) {
         var thumbnail: string = comment.author_picture ? comment.author_picture : '';
@@ -396,44 +364,123 @@ class CommentDetail extends Component {
         });
     }
 
+    onCloseComment(){
+        this.setState({addingComment: false})
+    }
+
+    renderAddCommentView(){
+        const { props: { profile } } = this;
+        let thumbnail = profile.avatar_file_name ? profile.avatar_file_name : '';
+        let {value} = this.state;
+        if (!this.state.addingComment){
+            return null;
+        }
+        return (
+                <Modal style={{justifyContent: 'flex-end'}} transparent onRequestClose={() => this.onCloseComment()} visible={this.state.addingComment} animationType="slide">
+                    <TouchableOpacity transparent onPress={() => this.onCloseComment()} style={{flex: 1, height: '100%', justifyContent: 'flex-end'}}>
+                    {
+                        (this.state.displaySuggestionBox && this.state.suggestionList.length > 0) 
+                        && <ScrollView style={{maxHeight: 40, backgroundColor: '#fff', marginBottom: 0, zIndex: 3}} keyboardShouldPersistTaps='always'>
+                            <SuggestionBox horizontal substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox && this.state.suggestionList.length > 0} userList={this.state.suggestionList} />
+                        </ScrollView>
+                    }
+                        <KeyboardAvoidingView behavior={Platform.select({android:'height', ios: 'padding'})}>
+                            <CardItem style={{padding: 0, backgroundColor: '#fff'}} keyboardShouldPersistTaps="always">
+                                <Left style={{height: 40, margin: 0, backgroundColor: '#fff'}} keyboardShouldPersistTaps="always">
+                                    <Thumbnail small source={thumbnail ? { uri: thumbnail + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                                    <Body keyboardShouldPersistTaps="always">
+                                        <Input
+                                            autoFocus
+                                            placeholder={this.state.placeholderTitle}
+                                            onContentSizeChange={() => {}}
+
+                                            style={styles.commentInput}
+                                            ref={this.onCommentInputRef}
+                                            value={this.state.commentText}
+                                            defaultValue={this.state.defaultInputValue}
+                                            onChangeText={(commentText) => this.setState({commentText})}
+                                            onSelectionChange={(e) => this.onSelectionChange(e)}
+                                            multiline
+                                            numberOfLines={4}
+                                            />
+                                    </Body>
+                                    <Right style={{ flex: 0.2 }}>
+                                        <TouchableHighlight underlayColor="#fff" style={{ flexDirection: 'row', alignItems: 'center', height: '100%', padding: 8 }} onPress={() => this._onSendComment()}>
+                                            <View style={{ flexDirection: 'row' }}>
+                                            {
+                                                this.state.sendindComment
+                                                ? <ActivityIndicator size="small" color={styles.commentSendText.color} />
+                                                :[<Text style={styles.commentSendText}>SEND</Text>,
+                                                <Icon name="md-send" style={styles.commentSendIcon} />]
+                                            }
+                                            </View>
+                                        </TouchableHighlight>
+                                    </Right>
+                                </Left>
+                            </CardItem>
+                        </KeyboardAvoidingView>
+                    </TouchableOpacity>
+                </Modal>
+            
+        )
+    }
+
     _renderAddComment() {
         const { props: { profile } } = this;
-        var thumbnail: string = '';
-        thumbnail = profile.avatar_file_name ? profile.avatar_file_name : '';
-
+        let thumbnail = profile.avatar_file_name ? profile.avatar_file_name : '';
+        let {value} = this.state;
         return (
-            <Menu renderer={SlideInMenu} ref={this.onRef}>
-                <MenuTrigger />
-                <MenuOptions optionsContainerStyle={{
-                    backgroundColor: 'white',
-                    width: WINDOW_WIDTH,
-                    height: WINDOW_HEIGHT / 2 + 50,
-                }}>
-                    <SuggestionBox substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox} userList={this.state.suggestionList} />
-                    <CardItem>
-                        <Left>
-                            <Thumbnail small source={thumbnail ? { uri: thumbnail+'&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
-                            <Body>
-                                <TextInput 
-                                    autoFocus
-                                    style={styles.commentInput}
-                                    ref={this.onCommentInputRef}
-                                    placeholder={this.placeholderTitle}
-                                    onChangeText={commentText => this.setState({ commentText })}
-                                    onSelectionChange={(e) => this.onSelectionChange(e)}
-                                />
-                            </Body>
-                            <Right style={{ flex: 0.3 }}>
-                                <TouchableOpacity style={{ flexDirection: 'row' }} onPress={() => this._onSendComment()}>
-                                    <Text style={styles.commentSendText}>SEND</Text>
-                                    <Icon name="md-send" style={styles.commentSendIcon} />
-                                </TouchableOpacity>
-                            </Right>
-                        </Left>
-                    </CardItem>
+            <TouchableOpacity onPress={() => this._onAddComment()}>
+                <CardItem keyboardShouldPersistTaps="always" style={styles.commentAddField}>
+                    <Left keyboardShouldPersistTaps="always">
+                        <Thumbnail small source={thumbnail ? { uri: thumbnail + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                        <Body keyboardShouldPersistTaps="always">
+                            <Text numberOfLines={1} style={styles.addCommentTitle}>Add your thoughts...</Text>
+                            {this.renderAddCommentView()}
+                        </Body>
+                        <Right />
+                    </Left>
+                </CardItem >
+            </TouchableOpacity >
+        );
+    }
 
-                </MenuOptions>
-            </Menu>
+
+    // Rendering methods
+    render() {
+        console.log(this.rootComment);
+        console.log(this.state)
+        // if (!this.item) return null;
+        return (
+            <MenuContext customStyles={menuContextStyles}>
+                <PLOverlayLoader visible={this.state.isLoading} marginTop={200} logo />
+                <Container style={styles.container}>
+                    <Header style={styles.header}>
+                        <Left>
+                            <Button style={{width: '100%'}}  transparent onPress={() => Actions.pop()} style={{width: 50, height: 50 }}  >
+                                <Icon active name="arrow-back" style={{ color: 'white' }} />
+                            </Button>
+                        </Left>
+                        <Body>
+                            <Title style={{ color: 'white' }}>All Replies</Title>
+                        </Body>
+                        <Right />
+                    </Header>
+                    <Content
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={this.state.isRefreshing}
+                                onRefresh={this._onRefresh.bind(this)}
+                            />
+                        }>
+                        {this._renderRootComment(this.rootComment)}
+                        <FlatList data={this.state.dataArray} renderItem={({item}) => this._renderChildComment(item) } />
+                        {this._renderLoadMore()}
+                        {this._renderCommentsLoading()}
+                        {this._renderAddComment()}
+                    </Content>
+                </Container>
+            </MenuContext >
         );
     }
 
@@ -446,8 +493,10 @@ class CommentDetail extends Component {
     }
 
     _onAddComment(comment) {
+        this.setState({ placeholderTitle: randomPlaceholder('comment') });
         this.commentToReply = comment ? comment : null;
-        this.addCommentView.open();
+        this.setState({addingComment: true});
+        // this.addCommentView.open();
     }
 
     _onSendComment() {

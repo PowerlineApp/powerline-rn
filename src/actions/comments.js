@@ -8,7 +8,7 @@ async function addComment(token: string, type: string, id: string, comment: stri
     console.log('addcomment => ', url, {
         method: 'POST',
         headers: {
-            'token': token,
+             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -21,7 +21,7 @@ async function addComment(token: string, type: string, id: string, comment: stri
         let response = await fetch(url, {
             method: 'POST',
             headers: {
-                'token': token,
+                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
@@ -63,7 +63,7 @@ async function getComments(token: string, type: string, id: number, cursor = 0, 
         var response = await fetch(url, {
             method: 'GET',
             headers: {
-                'token': token,
+                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             }
         });
@@ -91,7 +91,7 @@ async function getChildComments(token: string, type: string, id: number, cursor 
         var response = await fetch(url, {
             method: 'GET',
             headers: {
-                'token': token,
+                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             }
         });
@@ -113,7 +113,7 @@ async function rateComment(token: string, type: string, commentId: string, rateV
         let response = await fetch(`${API_URL}/v2/${type}-comments/${commentId}/rate`, {
             method: 'POST',
             headers: {
-                'token': token,
+                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({

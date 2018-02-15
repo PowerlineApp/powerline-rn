@@ -90,6 +90,7 @@ class Answers extends Component {
                                     </View>
                                 ]
                         }
+                        {/*<View style={{flexDirection: 'row', flex: 5}}>*/}
                             <TextInput
                                 maxLength={10000}
                                 underlineColorAndroid='rgba(0,0,0,0)'
@@ -106,7 +107,8 @@ class Answers extends Component {
                                     <Icon name='md-close-circle' style={styles.answersRemoveOptionIcon} />
                                 </Button>
                             }
-                            
+                        {/*</View>*/}
+
                         </View>)
                 }
             </View>);
@@ -139,7 +141,7 @@ class Answers extends Component {
                                     )}
                                 )}
                                 value={allowUserAmount} />
-                            <Text style={styles.allowUserAmountTag} >Allow Choose Amount</Text>
+                            <Text numberOfLines={2} style={styles.allowUserAmountTag}>Custom Amount</Text>
                         </View>
                     }
                 </View>

@@ -134,7 +134,7 @@ class GroupSearch extends Component{
                             <View>
                                 {
                              //This shows popular  groups that users have been joining recently on the platform
-                            this.state.popularGroups.map((group, index) => {
+                            (this.state.popularGroups || []).map((group, index) => {
                                 return (
                                     <ListItem style={styles.listItem} key={index} onPress={() => this.goToProfile(group)}>
                                         {

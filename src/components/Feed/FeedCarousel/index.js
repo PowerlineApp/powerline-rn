@@ -11,7 +11,7 @@ class FeedCarousel extends Component {
         return <FeedContext entry={entry} />;
     }
     _renderItem ({item, index}) {
-        console.log('item, index', item, index);
+        // console.log('item, index', item, index);
         return (
             <TouchableOpacity
                 key={`entry-${index}`}

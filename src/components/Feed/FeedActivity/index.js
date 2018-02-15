@@ -44,7 +44,7 @@ class FeedActivity extends Component {
     _renderPostOrPetition(item) {
         // console.log(this.props.profile);
         return (
-        [<Card style={styles.container}>
+        [<Card key='mainCard' style={styles.container}>
             <FeedHeader 
                 ref={ref => { this.header = ref; }}
                 item={item}
@@ -56,7 +56,8 @@ class FeedActivity extends Component {
             <View style={styles.borderContainer} />
             <FeedFooter ref={ref => { this.footer = ref; }} item={item} profile={this.props.profile} token={this.props.token} showAnalytics={this.props.showAnalytics} />
         </Card>,
-            <FeedCommentPreview item={item} />]
+            <FeedCommentPreview key='commentPreview' item={item} />
+        ]
             // </GestureCard>
         );
     }
@@ -65,18 +66,19 @@ class FeedActivity extends Component {
         // console.log('Feed activity render group card', item);
         return (
             
-        [<Card style={styles.container}>
+        [<Card key='mainCard' style={styles.container}>
             <FeedHeader item={item} token={this.props.token} />
             <FeedDescription item={item} profile={this.props.profile} />
             <FeedCarousel item={item} />
             <View style={styles.borderContainer} />
             <FeedFooter item={item} profile={this.props.profile} token={this.props.token} showAnalytics={this.props.showAnalytics} />
         </Card>,
-            <FeedCommentPreview item={item} />]
+            <FeedCommentPreview key='commentPreview' item={item} />]
         );
     }
 
     render() {
+        // return <View style={{margin: 20, padding: 8, backgroundColor: '#f0f'}} />;
         let { item, displayCommentPreview } = this.props;
         if (!item.user) return null;
         switch (item.type) {
@@ -84,6 +86,7 @@ class FeedActivity extends Component {
         case 'user-petition':
             return this._renderPostOrPetition(item, displayCommentPreview);
         default:
+            // return null;
             return this._renderGroupCard(item, displayCommentPreview);
         }
     }

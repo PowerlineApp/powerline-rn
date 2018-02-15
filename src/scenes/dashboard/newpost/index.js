@@ -98,20 +98,21 @@ class NewPost extends Component {
             
         });
         
-        getGroups(token).then(ret => {
-            console.log('~=> ', group);
-            let showCommunity = true, selectedGroupIndex = -1;
-            if (group && group !== 'all'){
-                showCommunity = false;
-                selectedGroupIndex = ret.payload.map(grouObj => grouObj.id).indexOf(group);
-            }
-            this.setState({
-                grouplist: ret.payload,
-                showCommunity, selectedGroupIndex
-            });
-            if (selectedGroupIndex !== -1){
+        // getGroups(token).then(ret => {
+        console.log('~=> ', group);
+        const ret = this.props.grouplist;
+        let showCommunity = true, selectedGroupIndex = -1;
+        if (group && group !== 'all'){
+            showCommunity = false;
+            selectedGroupIndex = ret.map(grouObj => grouObj.id).indexOf(group);
+        }
+        this.setState({
+            grouplist: ret,
+            showCommunity, selectedGroupIndex
+        });
+        if (selectedGroupIndex !== -1){
 
-                getPetitionConfig(token, this.state.grouplist[selectedGroupIndex].id)
+            getPetitionConfig(token, this.props.grouplist[selectedGroupIndex].id)
                 .then(data => {
                     console.log('===========================');
                     console.log('=>>>>>>>>>>>>', data);
@@ -125,12 +126,12 @@ class NewPost extends Component {
                     console.log('=>>>>>>>>>>>>', err);
                     console.log('===========================');
                 });
-            }
+        }
             
 
-        }).catch(err => {
+        // }).catch(err => {
             
-        });
+        // });
         this.loadSharedData(this.props.data);
         // this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (e) => this._keyboardDidShow(e));
         // this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', (e) => this._keyboardDidHide(e));
@@ -181,7 +182,7 @@ class NewPost extends Component {
 
         var { token } = this.props;
 
-        getPetitionConfig(token, this.state.grouplist[index].id)
+        getPetitionConfig(token, this.props.grouplist[index].id)
             .then(data => {
                 console.log('===========================');
                 console.log('=>>>>>>>>>>>>', data);
@@ -218,7 +219,7 @@ class NewPost extends Component {
             return;
         }
 
-        groupId = this.state.grouplist[this.state.selectedGroupIndex].id;
+        groupId = this.props.grouplist[this.state.selectedGroupIndex].id;
 
         createPostToGroup(token, groupId, this.state.content, this.state.image)
             .then(data => {
@@ -272,7 +273,8 @@ class NewPost extends Component {
 
     onSelectionChange(event) {
         let { start, end } = event.nativeEvent.selection;
-        let userRole = this.state.grouplist[this.state.selectedGroupIndex].user_role;
+        if (this.state.selectedGroupIndex < 0) return;
+        let userRole = this.props.grouplist[this.state.selectedGroupIndex].user_role;
         setTimeout(() => {
             if (start !== end) return;
             if (start === this.state.lockSuggestionPosition) return;
@@ -309,7 +311,7 @@ class NewPost extends Component {
 
     updateSuggestionList(token, suggestionSearch) {
         this.setState({ suggestionList: [] });
-        getUsersByGroup(token, this.state.grouplist[this.state.selectedGroupIndex].id, suggestionSearch).then(data => {
+        getUsersByGroup(token, this.props.grouplist[this.state.selectedGroupIndex].id, suggestionSearch).then(data => {
             this.setState({ suggestionList: data.payload });
         }).catch(err => {
 
@@ -421,7 +423,7 @@ class NewPost extends Component {
                             </View>
                             <Body style={styles.community_text_container}>
                                 <Text style={styles.community_text}>
-                                    {this.state.selectedGroupIndex == -1 ? 'Select a community' : this.state.grouplist[this.state.selectedGroupIndex].official_name}
+                                    {this.state.selectedGroupIndex == -1 ? 'Select a community' : this.props.grouplist[this.state.selectedGroupIndex].official_name}
                                 </Text>
                             </Body>
                             <Right style={styles.communicty_icon_container}>
@@ -455,7 +457,7 @@ class NewPost extends Component {
                         {
                             this.state.showCommunity &&
                             <CommunityView
-                                grouplist={this.state.grouplist}
+                                grouplist={this.props.grouplist}
                                 onPress={(i) => this.selectGroupList(i)}
                                 onCancel={() => this.selectGroupList(this.state.selectedGroupIndex)}
                             />
@@ -500,7 +502,9 @@ class NewPost extends Component {
 }
 
 const mapStateToProps = state => ({
-    token: state.user.token
+    token: state.user.token,
+    grouplist: state.groups.payload
+
 });
 
 export default connect(mapStateToProps, {updateFeedFirstItem})(NewPost);

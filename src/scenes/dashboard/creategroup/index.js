@@ -225,13 +225,13 @@ class CreateGroup extends Component{
                             <View style={styles.termsContainner}>
                                 <Text style={styles.termsText}>By creating this group, I agree to abide by the </Text>
                                 <TouchableOpacity onPress={() => {Actions.terms({terms: SERVICE_AGREEMENT, title: 'Services Agremeent'})}}>
-                                    <Text style={styles.termsUnderlineText}>Services Agremeent</Text>
+                                    <Text style={styles.termsUnderlineText}>{'Services Agremeent, '}</Text>
                                 </TouchableOpacity>
-                                <Text style={styles.termsText}>, the </Text>
+                                <Text style={styles.termsText}>{'the '}</Text>
                                 <TouchableOpacity onPress={() => {Actions.terms({terms: TERMS_OF_USE, title: 'Terms of Use'})}}>
-                                    <Text style={styles.termsUnderlineText}>Terms of Use</Text>
+                                    <Text style={styles.termsUnderlineText}>{'Terms of Use, '}</Text>
                                 </TouchableOpacity>
-                                <Text style={styles.termsText}>, and the </Text>
+                                <Text style={styles.termsText}>{'and the '}</Text>
                                 <TouchableOpacity onPress={() => {Actions.terms({terms: PRIVACY_POLICY, title: 'Privacy Policy'})}}>
                                     <Text style={styles.termsUnderlineText}>Privacy Policy </Text>
                                 </TouchableOpacity>

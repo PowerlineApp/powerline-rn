@@ -91,7 +91,7 @@ class Share extends Component {
         // this.setState({content: 'getting data'});
         
         ShareExtension.data().then(({type, value}) => {
-            this.setState({content: JSON.stringify({type, value})});
+            // this.setState({content: JSON.stringify({type, value})});
             if (type === 'jpg' || type === 'jpeg' || type === 'png' || type.split('/')[0] === 'image'){
                 fs.readFile(value, "base64").then(r => {
                     this.setState({image: r, content: ''});
@@ -100,7 +100,7 @@ class Share extends Component {
                     // this.setState({content: JSON.stringify(e)});
                 });
             } else {
-                // this.setState({content: value});
+                this.setState({content: value});
             }
         });
         RNSKBucket.get('token', myGroup).then(value => {
@@ -111,8 +111,10 @@ class Share extends Component {
     }
 
     loadGroups (token) {
-        // this.setState({content: 'loading groups with token: ' + token});
+        // this.setState({content: 'loading groups with token: ' + token + JSON.stringify(getGroups)});
+
         getGroups(token).then(ret => {
+            // this.setState({content: JSON.stringify(ret)});
             let showCommunity = true;
             let selectedGroupIndex = -1;
             this.setState({
@@ -122,10 +124,12 @@ class Share extends Component {
                 selectedGroupIndex
             });
         }).catch(err => {
+            // console.log(err);
+            // this.setState({content: JSON.stringify(err)});
             this.showToast('Error when loading groups. Try again later.');
             setTimeout(() => {
                 this.loadGroups(token);
-            }, 15000);
+            }, 5000);
         });
     }
 
@@ -325,6 +329,7 @@ class Share extends Component {
                             {
                             this.state.showCommunity &&
                             <CommunityView
+                                isSharing
                                 grouplist={this.state.grouplist}
                                 onPress={(i) => this.selectGroupList(i)}
                                 onCancel={() => this.selectGroupList(this.state.selectedGroupIndex)}

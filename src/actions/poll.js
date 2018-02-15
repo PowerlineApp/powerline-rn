@@ -7,7 +7,7 @@ async function signLeaderPetition(token, pollId, option, amount) {
         let response = await fetch(`${API_URL}/v2/polls/${pollId}/answers/${option}`, {
             method: 'PUT',
             headers: {
-                'token': token,
+                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
@@ -29,7 +29,7 @@ async function answerPollPut(token, pollId, option, amount) {
     console.log('===>> ' + `${API_URL}/v2/poll-options/${pollId}`, {
         method: 'PUT',
         headers: {
-            'token': token,
+             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -42,7 +42,7 @@ async function answerPollPut(token, pollId, option, amount) {
         let response = await fetch(`${API_URL}/v2/poll-options/${pollId}`, {
             method: 'PUT',
             headers: {
-                'token': token,
+                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
@@ -71,7 +71,7 @@ async function loadPollByEntityId(token, entityId) {
     let res = await fetch(`${API_URL}/v2/polls/${entityId}`, {
         method: 'GET',
         headers: {
-            'token': token,
+             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
         }
     });
@@ -85,7 +85,7 @@ function createPoll(token, groupId, body){
     return fetch(`${API_URL}/v2.2/groups/${groupId}/polls`, {
         method: 'POST',
         headers: {
-            'token': token,
+             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(body)
@@ -97,7 +97,7 @@ async function unsubscribeFromPoll(token: string, pollId: string) {
         let response = await fetch(`${API_URL}/v2/poll/${pollId}`, {
             method: 'DELETE',
             headers: {
-                'token': token,
+                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
@@ -115,7 +115,7 @@ async function sendAttachment(token, pollId, attachment){
     return fetch(`${API_URL}/v2/polls/${pollId}/educational-contexts`, {
         method: 'POST',
         headers: {
-            'token': token,
+             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(attachment)
@@ -127,7 +127,7 @@ async function publishPoll(token, pollId, attachment){
     return fetch(`${API_URL}/v2/polls/${pollId}`, {
         method: 'PATCH',
         headers: {
-            'token': token,
+             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(attachment)

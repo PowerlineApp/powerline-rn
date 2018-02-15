@@ -65,7 +65,7 @@ function activities(state: State = initialState, action: Action): State {
     }
     
     case 'LOADED_ACTIVITIES': {
-        // console.log('=z==zz=z=z=>', action.data)
+        console.log('LOADED ACTIVITIES', action.data)
         payloadStack = payloadStack.concat(action.data.payload);
         return {
             ...state,
@@ -197,7 +197,6 @@ function activities(state: State = initialState, action: Action): State {
         payloadStack = state.payload.map(activity => {
             console.log('=> ', activity.id, id, activity.id === id)
             if (activity.id === id) {
-                console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
                 return {
                     ...activity,
                     is_subscribed: true
@@ -234,7 +233,6 @@ function activities(state: State = initialState, action: Action): State {
     }
 
     case ('UPDATE_ACTIVITY'): {
-        // console.log('HEY YALL')
         let { id } = action.payload;
         payloadStack = state.payload.map(activity => {
             if (activity.id === id) {

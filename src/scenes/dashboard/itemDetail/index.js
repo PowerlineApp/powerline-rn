@@ -25,6 +25,7 @@ import Carousel from 'react-native-snap-carousel';
 import YouTube from 'react-native-youtube';
 import Menu, {
     MenuContext,
+    MenuProvider,
     MenuTrigger,
     MenuOptions,
     MenuOption,
@@ -123,13 +124,13 @@ class ItemDetail extends Component {
         if (item.zone === 'prioritized'){
             // boosted post/petition
             if (item.type === 'post' || item.type === 'user-petition'){
-                this.props.markAsRead(this.props.token, item.id);
+                this.props.markAsRead(this.props.token, item.id, item.type);
             }
         }
 
         // discussion
-        if (item.type === 'leader-news'){
-            this.props.markAsRead(this.props.token, item.id);
+        if (item.type === 'leader-news' || item.type === 'petition'){
+            this.props.markAsRead(this.props.token, item.id, 'poll');
         }
     }
 
@@ -494,10 +495,10 @@ class ItemDetail extends Component {
 
         if (inputDescription !== '') {
             if (this.item.type === 'post') {
-                this.props.dispatch(changePost(this.item.id, this.item.id, inputDescription));
+                this.props.changePost(this.item.id, this.item.id, inputDescription);
             }
             if (this.item.type === 'user-petition') {
-                this.props.dispatch(changePetition(this.item.id, this.item.id, inputDescription));
+                this.props.changePetition(this.item.id, this.item.id, inputDescription);
             }
             this.item.body = inputDescription;
             this.setState({ isEditMode: false });
@@ -527,7 +528,7 @@ class ItemDetail extends Component {
         }
 
         this.onBackPress();
-        this.menu && this.menu.close();
+        // this.menu && this.menu.close();
     }
 
     openedAddCommentView() {
@@ -551,11 +552,7 @@ class ItemDetail extends Component {
         
         let finalString = firstPart + mention + finalPart;
         try {
-            // console.log('finalString', finalString)
-            
             this.setState({ commentText: finalString, displaySuggestionBox: false, lockSuggestionPosition: end });
-            // console.log('this.addCommentInput', this.addCommentInput)
-            // this.addCommentInput.setNativeProps({text: finalString});// = finalString;
         } catch (error) {
             console.log(error)            
         }
@@ -563,7 +560,6 @@ class ItemDetail extends Component {
 
     onSelectionChange(event) {
         let { start, end } = event.nativeEvent.selection;
-        // let userRole = this.state.grouplist[this.state.selectedGroupIndex].user_role;
         setTimeout(() => {
             if (start !== end) return;
             if (start === this.state.lockSuggestionPosition) return;
@@ -588,15 +584,12 @@ class ItemDetail extends Component {
                 this.updateSuggestionList(this.props.token, suggestionSearch);
                 this.setState({ displaySuggestionBox: displayMention, init: i, end: end });
             } else {
-                // console.log('false');
                 this.setState({ suggestionList: [], displaySuggestionBox: false });
             }
         }, 100);
     }
 
     updateSuggestionList(token, suggestionSearch) {
-        // this.setState({suggestionList: []});
-        // console.log(this.item);
         getUsersByGroup(token, this.item.group.id, suggestionSearch).then(data => {
             this.setState({ suggestionList: data.payload });
         }).catch(err => {
@@ -631,12 +624,10 @@ class ItemDetail extends Component {
     }
 
     onChangeComment(text){
-        // console.log('setting state => ', text)
         this.setState({commentText: text})
     }
 
     onCloseComment(){
-        // console.log('---------- onclose comment')
         this.setState({addingComment: false, displaySuggestionBox: false, suggestionList: []})
     }
 
@@ -648,16 +639,6 @@ class ItemDetail extends Component {
         if (!this.state.addingComment){
             return null;
         }
-        /* <Menu
-            renderer={SlideInMenu}
-            ref={this.onRef}
-            onBackdropPress={this.resetEditComment}
-        >  <MenuTrigger />
-            <MenuOptions optionsContainerStyle={{
-                backgroundColor: 'white',
-                width: WINDOW_WIDTH,
-                minHeight: Platform.OS === 'android' ? 50 : ((WINDOW_HEIGHT / 2) + (this.props.displaySuggestionBox ? 40 : 0))
-            }}> */
         return (
                 <Modal style={{justifyContent: 'flex-end'}} transparent onRequestClose={() => this.onCloseComment()} visible={this.state.addingComment} animationType="slide">
                     <TouchableOpacity transparent onPress={() => this.onCloseComment()} style={{flex: 1, height: '100%', justifyContent: 'flex-end'}}>
@@ -711,7 +692,6 @@ class ItemDetail extends Component {
     //Adding a comment to an item
     _renderAddComment() {
         const { props: { profile } } = this;
-        // console.log(profile)
         let thumbnail = profile.avatar_file_name ? profile.avatar_file_name : '';
         let {value} = this.state;
         return (
@@ -786,29 +766,6 @@ class ItemDetail extends Component {
                 }
             </View>
         )
-        if (comment.children) {
-            if (comment.children.length === 0) {
-                return this._renderRootComment(comment);
-            } else if (comment.children.length === 1) {
-                return (
-                    <View>
-                        {this._renderRootComment(comment)}
-                        {this._renderRootComment(comment.children[0], true)}
-                    </View>
-                );
-            } else if (comment.children.length === 2) {
-                return (
-                    <View>
-                        {this._renderRootComment(comment)}
-                        {this._renderRootComment(comment.children[0], true)}
-                        {this._renderRootComment(comment.children[1], true)}
-                    </View>
-                );
-            }
-        }
-        else {
-            return this._renderRootComment(comment);
-        }
     }
 
     _renderRootComment = (comment, isChild = false) => {
@@ -823,7 +780,6 @@ class ItemDetail extends Component {
             style.marginLeft = 40;
             style.marginTop = 5;
         }
-
 
         return (
             <CardItem style={style}>
@@ -1001,12 +957,7 @@ class ItemDetail extends Component {
 
     renderAttachedImage(item){
         let imgURL = item.image;
-        // if (item.post){
-        //     imgURL = item.image;
-        // } else {
-        // }
         if (!imgURL) return;
-        // console.warn(imgURL)
         return (
                 <CardItem>
                     <Left>
@@ -1031,7 +982,6 @@ class ItemDetail extends Component {
     }
 
     _renderPostOrUserPetitionCard(item, state) {
-        // console.log('got here')
         return (
             <View style={{padding: 8, paddingBottom: 45}}>
                 <FeedHeader userId={this.props.userId} item={item} />
@@ -1056,7 +1006,6 @@ class ItemDetail extends Component {
                     <FeedCarousel item={item} />
                     <Options onVote={() => this.loadEntity()} item={item} profile={this.props.profile} token={this.props.token} />
                     <FeedMetaData item={item} />
-                    {/* <View style={styles.borderContainer} /> */}
                     <View style={styles.borderContainer} />
                     <FeedFooter isInDetail item={item} profile={this.props.profile} token={this.props.token} showAnalytics />
                 </View>
@@ -1064,7 +1013,6 @@ class ItemDetail extends Component {
     }
 
     _renderActivity(item, state) {
-        // console.log('type', item.type)
         switch (item.type) {
             case 'post':
             case 'user-petition':
@@ -1078,24 +1026,17 @@ class ItemDetail extends Component {
 
     onBackPress = () => {
         const { backTo } = this.props;
-
-        if (backTo) {
-            Actions.popTo(backTo);
-        } else {
-            Actions.pop();
-        }
+        Keyboard.dismiss();
+        return Actions.reset('home');
+        // if (backTo) {
+        //     Actions.popTo(backTo);
+        // } else {
+        //     Actions.pop();
+        // }
     }
 
     renderFloatingActionButton(item){
         let group = item.group;
-        // if (group.group_type !== "local"
-        //     && item.group.group_type !== "state"
-        //     && item.group.group_type !== "country"
-        //     && item.owner.id !== this.props.profile.id)
-        //     {
-        //         return null;
-        //     }
-
         return (
             item.facebook_thumbnail &&
             <FloatingAction
@@ -1129,10 +1070,8 @@ class ItemDetail extends Component {
             return null;
         }
         let item = this.item;
-        // item.banner = 'https://cdn.pixabay.com/photo/2012/04/11/11/32/letter-a-27580_960_720.png'
-        console.log(this.nextCursor);
         return (
-            <MenuContext customStyles={menuContextStyles} keyboardShouldPersistTaps="always">
+            <MenuProvider customStyles={menuContextStyles} keyboardShouldPersistTaps="always">
                 <Container style={{ flex: 1 }} scrollEnabled="false" keyboardShouldPersistTaps="always">
                     <HeaderImageScrollView
                     keyboardShouldPersistTaps="always"
@@ -1147,16 +1086,17 @@ class ItemDetail extends Component {
                              this.loadComments();
                         }}
                         renderHeader={() => {
-                            //Eventually this should show the Group Banner GH19
-                            //https://github.com/PowerlineApp/powerline-mobile/issues/596
-                                return item.has_agency
-                                ? <CachedImage style={{flex: 1}} source={{ uri: item.banner }} />
+                            // return null;
+                                return item.group.has_agency
+                                ? <CachedImage style={{flex: 1}} source={{ uri: item.group.banner }} />
                                 : <Image
                                 style={styles.headerImage}
-                                source={item.banner ? {uri: item.banner} : require('img/item_detail_header.png')}
+                                source={item.group.banner ? {uri: item.group.banner} : require('img/item_detail_header.png')}
                                 />
                         }}
-                        renderFixedForeground={() => (
+                        renderFixedForeground={() => {
+                            // return null;
+                            return (
                             <Animatable.View
                             style={styles.navTitleView}
                             ref={(navTitleView) => { this.navTitleView = navTitleView; }}>
@@ -1172,8 +1112,10 @@ class ItemDetail extends Component {
                                     <Right />
                                 </Header>
                             </Animatable.View>
-                        )}
-                        renderForeground={() => (
+                        )}}
+                        renderForeground={() => {
+                            // return null;
+                            return (
                             <Left style={styles.titleContainer}>
                                 <Button transparent onPress={this.onBackPress} style={{ width: 50, height: 50 }} >
                                     <Icon active name="md-arrow-back" style={{ color: 'white' }} />
@@ -1185,7 +1127,7 @@ class ItemDetail extends Component {
                                     </TouchableOpacity>
                                 </Body>
                             </Left>
-                        )}>
+                        )}}>
                 <ScrollView keyboardShouldPersistTaps="always" bounces={false}>
                         <TriggeringView
                             onHide={() => this.navTitleView.fadeInUp(200)}
@@ -1202,21 +1144,16 @@ class ItemDetail extends Component {
                             refreshing={false}
                             onRefresh={() => {}}
                         />
-                        {/* <ListView
-                            scrollEnabled={false}
-                            dataSource={this.state.dataSource} renderRow={(comment) =>
-                                this._renderComment(comment)
-                            } /> */}
+
                         {this._renderLoadMore()}
                         {this._renderCommentsLoading()}
-                        {/* <View style={{ height: 50 }} /> */}
                 </ScrollView>
                             </HeaderImageScrollView>
                 </Container>
                 {
                     this.renderFloatingActionButton(item)
                 }
-            </MenuContext>
+            </MenuProvider>
         );
     }
 }
@@ -1238,4 +1175,4 @@ const mapStateToProps = state => ({
     userId: state.user.id,
 });
 
-export default connect(mapStateToProps, {markAsRead, updateFeedFirstItem})(ItemDetail);
+export default connect(mapStateToProps, {markAsRead, updateFeedFirstItem, changePost, changePetition})(ItemDetail);

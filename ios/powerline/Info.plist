@@ -17,7 +17,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>3.1.0</string>
+	<string>3.2.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -30,7 +30,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>3</string>
+	<string>4</string>
 	<key>Fabric</key>
 	<dict>
 		<key>APIKey</key>
@@ -79,6 +79,16 @@
 	<dict>
 		<key>NSExtensionActivationRule</key>
 		<dict>
+			<key>????????????????????????????</key>
+			<string></string>
+			<key>???????New item - 7</key>
+			<string></string>
+			<key>NSExtensionActivationSupportsImageWithMaxCount</key>
+			<integer>1</integer>
+			<key>NSExtensionActivationSupportsText</key>
+			<true/>
+			<key>NSExtensionActivationSupportsWebURLWithMaxCount</key>
+			<integer>1</integer>
 			<key>New item</key>
 			<string></string>
 			<key>New item - 2</key>
@@ -91,16 +101,6 @@
 			<string></string>
 			<key>New item - 6</key>
 			<string></string>
-			<key>???????New item - 7</key>
-			<string></string>
-			<key>????????????????????????????</key>
-			<string></string>
-			<key>NSExtensionActivationSupportsText</key>
-			<true/>
-			<key>NSExtensionActivationSupportsImageWithMaxCount</key>
-			<integer>1</integer>
-			<key>NSExtensionActivationSupportsWebURLWithMaxCount</key>
-			<integer>1</integer>
 		</dict>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>

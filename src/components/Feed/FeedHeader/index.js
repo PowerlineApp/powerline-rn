@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
-import { TouchableHighlight, View, Image } from 'react-native';
+import { TouchableHighlight, TouchableOpacity, View, Image } from 'react-native';
 
 import { Text, Button, ActionSheet, Icon, Left, Right, Body, Thumbnail, CardItem } from 'native-base';
 import TimeAgo from 'react-native-timeago';
@@ -204,14 +204,29 @@ class FeedHeader extends Component {
     }
     _renderZoneIcon(item) {
         if (item.zone === 'prioritized') {
-            return (<Icon active name='ios-flash' style={styles.zoneIcon} />);
+            return (<View style={{
+                position: 'absolute',
+                flez: 1,
+                // width: 50,
+                // height: 50,
+                // backgroundColor: '#00f',
+                position: 'absolute',
+                zIndex: 5,
+                alignSelf: 'center',
+                marginLeft: 20,
+                bottom: -8
+            }}>
+                <Icon key='priotity_zone_icon' active name='ios-flash' style={styles.zoneIcon} />
+            </View>);
         } else {
             return null;
         }
     }
 
     render() {
+        // return null;
         const { item } = this.props;
+        // console.log('oneSignal', item);
         let thumbnail = '';
         let title = '';
         const isBoosted = item.zone === 'prioritized';
@@ -223,11 +238,6 @@ class FeedHeader extends Component {
         let canSpam = false;
         let canBlock = !isAuthor;
         let canSubscribe = (item.type === 'user-petition' || item.type === 'post');
-        if (!item.user) return null;
-        // console.log(this.props, isAuthor, item.user.id, this.props.userId, item.user.id === this.props.userId);
-        // console.log('=============================');
-        // console.log('item.user', item, item.user && item.user.id, this.props.userId);//, item.user, item.id);
-        // console.log('=============================');
         switch (item.type) {
         case 'post':
         case 'user-petition':
@@ -241,40 +251,43 @@ class FeedHeader extends Component {
             title = item.user.first_name +' ' +item.user.last_name;//item.user ? item.user.first_name : '' + ' ' + item.user ? item.user.last_name : '';
             break;
         }
-        // console.log('============================== token', this.props);
-//Header
         return (
-            <View style={{flexDirection: 'row', paddingBottom: 0, paddingLeft:5, flex: 1}}>
-                <Left style={{flexDirection: 'row', backgroundColor: '#fff', padding: 0}}>
-                    <TouchableHighlight onPress={() => this.onPressThumbnail(item)} underlayColor={'#fff'}>
-                        <View>
+            <View style={{flexDirection: 'row', paddingBottom: 0, paddingLeft:0, flex: 1, overflow: 'visible'}}>
+                {this._renderZoneIcon(item)}
+                <Left style={{flexDirection: 'row', backgroundColor: '#fff', padding: 0, backgroundColor:'#fff', overflow: 'visible',}}>
+                    <TouchableOpacity style={{backgroundColor: '#fff', overflow: 'visible',}} onPress={() => this.onPressThumbnail(item)} underlayColor={'#fff'}>
+                        <View style={{overflow: 'visible',}}>
                             {
-                                item.user.is_verified
-                                ?
-                                ([<Thumbnail small
-                                    source={thumbnail ? { uri: thumbnail + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")}
-                                    defaultSource={require("img/blank_person.png")}
-                                />,
-                                    this._renderZoneIcon(item)])
-                                :
-                                <View style={{ flex: 1, borderWidth: 2, borderStyle: 'dashed', borderColor: 'silver', borderRadius: 1000}}>
-
+                                // ?
+                                <View style={{overflow: 'visible',backgroundColor:'#fff', alignItems: 'center', overflow: 'visible', justifyContent: 'center', width: 50, height: 50, backgroundColor: '#fff'}}>
+                                    {!item.user.is_verified &&
+                                    <Image
+                                        style={{width: 60, height: 60}}
+                                        resizeMode='cover'
+                                        source={require("img/outline_8.png")}
+                                            />}
                                     <Thumbnail small
-                                        source={thumbnail ? { uri: thumbnail + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")}
                                         defaultSource={require("img/blank_person.png")}
+                                        style={{position: 'absolute', alignSelf: 'center'}}
+                                        source={thumbnail ? { uri: thumbnail + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")}
                                     />
-                                    {this._renderZoneIcon(item)}
-
                                 </View>
+                                // :
+                                //     <View style={{ flex: 1, }}>
+                                //         <Thumbnail small
+                                //             style={{borderStyle: 'dashed', borderWidth: 2, borderColor: 'silver'}}
+                                //             source={thumbnail ? { uri: thumbnail + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")}
+                                //             defaultSource={require("img/blank_person.png")}
+                                //     />
+                                //     </View>
                                 }
                         </View>
-                    </TouchableHighlight>
+                    </TouchableOpacity>
                     <Body style={{alignItems: 'flex-start', marginLeft: 16}}>
                         <Text style={styles.title} onPress={() => this.onPressAuthor(item)}>{title}</Text>
                         <Text note style={styles.subtitle} onPress={() => this.onPressGroup(item)}>{item.group && item.group.official_name}{` • `}
                             {
-                                moment(item.created_at).fromNow().replace(' minutes', 'm').replace('a minute', '1 m').replace('a few seconds ago', '5 s').replace(' seconds', 's').replace(' ago', '')
-                                // <TimeAgo time={item.created_at} hideAgo />
+                                moment(item.created_at).fromNow().replace(' minutes', ' m').replace('a minute', '1 m').replace('a few seconds', '5 s').replace(' seconds', 's').replace(' ago', '')
                             }
                         </Text>
                     </Body>
@@ -418,7 +431,7 @@ const optionsStyles = {
 
 const mapStateToProps = (state) => ({
     blokedUsers: state.user.blockedList,
-    userId: state.user.profile.id,
+    userId: (state.user.profile || {id: null}).id,
     token: state.user.token,
     is_verified: state.user.profile.is_verified
 });

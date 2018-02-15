@@ -10,7 +10,7 @@ export const fetchAnalytics = (postID) => (dispatch, getState) => {
     fetch(url, {
         method: 'GET',
         headers: {
-            'token': token,
+             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
         }
     })
@@ -39,7 +39,7 @@ export const fetchUserRepresentatives = () => (dispatch, getState) => {
     fetch(url, {
         method: 'GET',
         headers: {
-            'token': token,
+             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
         }
     })

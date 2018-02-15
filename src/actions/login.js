@@ -182,21 +182,28 @@ async function forgotPassword(email: string) {
 
 //for unregistering for push notifications with Powerline backend. NOT for OneSignal
 function unregisterDevice(token, id) {
-  console.log('/this UNREGISTER', token, id);
+  console.log('oneSignal /this UNREGISTER', token, id);
+  console.log('unregistering => ',API_URL + '/v2/devices/' + id,  ({
+    method: 'DELETE',
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      }
+}))
   return new Promise((resolve, reject) => {
       fetch(API_URL + '/v2/devices/' + id, {
           method: 'DELETE',
           headers: {
               'Content-Type': 'application/json',
-              'token': token
-          }
+              'Authorization': `Bearer ${token}`,
+            }
       })
           .then(data => {
-              console.log("Unregister Device API Success", JSON.stringify(data));
+              console.log("oneSignal Unregister Device API Success", data);
               resolve(data);
           })
           .catch(err => {
-              console.log("Unregister Device API Error", JSON.stringify(err));
+              console.log("oneSignal Unregister Device API Error", err);
               reject(err);
           });
   });

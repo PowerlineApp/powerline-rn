@@ -105,26 +105,27 @@ class NewLeaderContent extends Component {
         });
         // console.log('group ==> ', group)
         
-        getGroups(token).then(ret => {
-            console.log('ret => ', ret);
-            let showCommunity = true, selectedGroupIndex = -1;
-            let grouplist = ret.payload.filter(group => group.user_role === 'owner' || group.user_role === 'manager');
-            console.log('grouplist', grouplist);
-            if (group && group !== 'all'){
-                showCommunity = false;
-                selectedGroupIndex = grouplist.map(grouObj => grouObj.id).indexOf(group);
-                if (selectedGroupIndex >= 0){
-                    this.updateBankInfo(token, ret.payload[selectedGroupIndex].id, type);
-                }
+        // getGroups(token).then(ret => {
+        const ret = this.props.grouplist;
+        console.log('ret => ', ret);
+        let showCommunity = true, selectedGroupIndex = -1;
+        let grouplist = ret.filter(group => group.user_role === 'owner' || group.user_role === 'manager');
+        console.log('grouplist', grouplist);
+        if (group && group !== 'all'){
+            showCommunity = false;
+            selectedGroupIndex = grouplist.map(grouObj => grouObj.id).indexOf(group);
+            if (selectedGroupIndex >= 0){
+                this.updateBankInfo(token, ret[selectedGroupIndex].id, type);
             }
-            this.setState({
-                grouplist,
-                showCommunity,
-                selectedGroupIndex
-            });
-        }).catch(err => {
-            
+        }
+        this.setState({
+            grouplist,
+            showCommunity,
+            selectedGroupIndex
         });
+        // }).catch(err => {
+            
+        // });
     }
 
     updateBankInfo(token, groupId, type){
@@ -195,7 +196,7 @@ class NewLeaderContent extends Component {
         if (this.state.sending) return;
         this.setState({sending: true});
 
-        if (this.state.selectedGroupIndex == -1) {
+        if (this.state.selectedGroupIndex === -1) {
             alert('Please select Group.');
             this.setState({sending: false});
             return;
@@ -687,7 +688,7 @@ class NewLeaderContent extends Component {
                 }
                 <Header style={styles.header}>
                     <View style={{alignSelf: 'flex-start'}}>
-                        <Button style={{width: '100%'}}  transparent onPress={() => Actions.pop()} style={{ width: 50, height: 50, paddingLeft: 0 }}  >
+                        <Button transparent onPress={() => Actions.pop()} style={{ width: 50, height: 50, paddingLeft: 0 }}  >
                             <Icon active name='arrow-back' style={{ color: 'white' }} />
                         </Button>
                     </View>
@@ -788,7 +789,7 @@ class NewLeaderContent extends Component {
                     {
                             this.state.showCommunity &&
                             <CommunityView
-                                grouplist={this.state.grouplist}
+                                grouplist={this.state.grouplist || []}
                                 onPress={(i) => this.selectGroupList(i)}
                                 onCancel={() => this.selectGroupList(this.state.selectedGroupIndex)}
 
@@ -807,7 +808,8 @@ class NewLeaderContent extends Component {
 
 const mapStateToProps = state => ({
     token: state.user.token,
-    profile: state.user.profile
+    profile: state.user.profile,
+    grouplist: state.groups.payload
 });
 
 export default connect(mapStateToProps, {updateFeedFirstItem})(NewLeaderContent);

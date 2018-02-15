@@ -90,10 +90,12 @@ export default {
     },
     zoneIcon: {
         fontSize: 20,
-        color: '#ff1727',
-        position: 'absolute',
-        alignSelf: 'center',
-        bottom: -14
+        // color: '#f0e',
+        color: '#ff1727'
+        // position: 'absolute',
+        // zIndex: 5,
+        // alignSelf: 'center',
+        // bottom: -14
     },
     commentCount: {
         fontSize: 14,

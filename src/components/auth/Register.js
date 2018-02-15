@@ -164,7 +164,7 @@ class Register extends React.Component{
         this.setState({ is_over_13: is_over_13 });
     }
 
-    onConfirmEmail = () => {
+    onConfirmEmail = (next) => {
         if (this.state.confirmingEmail) {
             return;
         }
@@ -174,7 +174,7 @@ class Register extends React.Component{
             'Is this e-mail right?',
             email,
             [
-                {text: 'Yes', onPress: () => {this.setState({emailConfirmed: true, confirmingEmail: false}, () => this.onNext())}},
+                {text: 'Yes', onPress: () => {this.setState({emailConfirmed: true, confirmingEmail: false})}},
                 {text: 'No', onPress: () => {this.setState({email: '', confirmingEmail: false})}}            
             ],
             { cancelable: false }
@@ -233,7 +233,7 @@ class Register extends React.Component{
             }
 
             if (!this.state.emailConfirmed){
-                this.onConfirmEmail();
+                this.onConfirmEmail(true);
                 return;
             }
             

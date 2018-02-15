@@ -31,8 +31,8 @@ class FeedCommentPreview extends Component {
         let previewData = {};
 
         let comment = item.first_comment;
-        if (!comment || !comment.user || !comment.user_name) { return  <View style={{marginBottom: 8}} />; }
-        console.log('preview data: ', item);
+        if (!comment || !comment.user) { return  <View style={{marginBottom: 8}} />; }
+        // console.log('preview data: ', item);
         return (
             <TouchableOpacity onPress={() => this.redirect(item)} >
                 <CardItem style={styles.commentPreviewContainer} >
@@ -44,7 +44,7 @@ class FeedCommentPreview extends Component {
                             />
                         </View>
                         <Body>
-                            <Text style={styles.commentTitle} >{(comment.user || {full_name: comment.user_name}).full_name}</Text>
+                            <Text style={styles.commentTitle} >{(comment.user.first_name + ' ' +comment.user.last_name)}</Text>
                             <Text style={styles.commentPreviewText} >{this.limitString(comment.comment_body)}</Text>
                         </Body>
                     </Left>

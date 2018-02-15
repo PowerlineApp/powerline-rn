@@ -9,7 +9,7 @@ async function loadUserGroups(token: string, page: ?number = 0, perPage: ?number
         var response = await fetch(`${API_URL}/v2/user/groups?_format=json&page=${page + 1}&per_page=${perPage}`, {
             method: 'GET',
             headers: {
-                'token': token,
+                            'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             }
         });
@@ -61,7 +61,7 @@ function createGroup(token, groupData){
         fetch(API_URL + '/v2/user/groups', {
             method: 'POST',
             headers: {
-                'token': token,
+                            'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
             body: payload
@@ -92,12 +92,12 @@ function getGroups(token){
         fetch(API_URL + '/v2/user/groups', {
             method: 'GET',
             headers: {
-                'token': token,
+                            'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         }).then(response => {
             if (!response.ok) {
-                reject(response.statusText)
+                reject(response)
             }
             return response;
         })
@@ -118,7 +118,7 @@ function getGroupsBySort(token, sort){
         fetch(API_URL + '/groups/' + sort, {
             method: 'GET',
             headers: {
-                'token': token,
+                            'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         })
@@ -139,7 +139,7 @@ function searchGroup(token, query){
         fetch(API_URL + '/v2/groups?query='  + query, {
             method: 'GET',
             headers: {
-                'token': token,
+                            'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         })
@@ -169,7 +169,7 @@ function getGroupDetails(token, id){
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'token': token
+                            'Authorization': `Bearer ${token}`,
             }
         })
         .then((res) => res.json())
@@ -193,7 +193,7 @@ function getGroupRequiredFields(token, id){
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'token': token
+                            'Authorization': `Bearer ${token}`,
             }
         })
         .then((res) => res.json())
@@ -215,7 +215,7 @@ function getGroupMembers(token, id){
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'token': token
+                'Authorization': `Bearer ${token}`,
             }
         })
         .then((res) => res.json())
@@ -237,7 +237,7 @@ function inviteAllFollowers(token, id, users){
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'token': token
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify({
                 users: users
@@ -261,7 +261,7 @@ function followAllMembers(token, id){
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'token': token
+                'Authorization': `Bearer ${token}`,
             }
         })
         .then(data => {
@@ -281,7 +281,7 @@ function unJoinGroup(token, id){
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
-                'token': token
+                'Authorization': `Bearer ${token}`,
             }
         })
         
@@ -321,7 +321,7 @@ function joinGroup(token, id, passcode, answeredFields){
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'token': token
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify(payload)
         })
@@ -344,7 +344,7 @@ function loadFieldsToFillOnJoin(token, groupId){
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'token': token
+                'Authorization': `Bearer ${token}`,
             }
         })
         .then((res) => res.json())
@@ -367,7 +367,7 @@ function getGroupPermissions(token, groupId){
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'token': token
+                'Authorization': `Bearer ${token}`,
             }
         })
         .then((res) => res.json())
@@ -389,7 +389,7 @@ function getUsersByGroup(token, groupId, query){
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'token': token
+                'Authorization': `Bearer ${token}`,
             }
         })
         .then((res) => res.json())
@@ -409,7 +409,7 @@ async function groupBankAccounts(token, groupId) {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'token': token
+            'Authorization': `Bearer ${token}`,
         }
     })
 }
@@ -420,7 +420,7 @@ function updateGroupAvatar(token, groupId, image) {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'token': token
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify({avatar: image})
         })
@@ -443,7 +443,7 @@ function updateGroupBanner(token, groupId, image) {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'token': token
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify({banner: image})
         })
@@ -468,7 +468,7 @@ const getGroupPendingUsers = (groupId, cb) => (dispatch, getState) => {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'token': token
+            'Authorization': `Bearer ${token}`,
         }
     })
     .then((res) => res.json())
@@ -493,7 +493,7 @@ const promoteUserToManager = (groupId, userId, cb) => (dispatch, getState) => {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
-            'token': token
+                        'Authorization': `Bearer ${token}`,
         }
     })
     .then((res) => res.json())
@@ -522,7 +522,7 @@ const unPromoteUserToMember = (groupId, userId, cb) => (dispatch, getState) => {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
-            'token': token
+            'Authorization': `Bearer ${token}`,
         }
     })
     .then(data => {
@@ -550,7 +550,7 @@ const approveUserToGroup = (groupId, userId, cb) => (dispatch, getState) => {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
-            'token': token
+            'Authorization': `Bearer ${token}`,
         }
     })
     .then((res) => res.json())
@@ -575,7 +575,7 @@ const removeUserFromGroup = (groupId, userId, cb) => (dispatch, getState) => {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
-            'token': token
+            'Authorization': `Bearer ${token}`,
         }
     })
     .then(data => {
@@ -599,7 +599,7 @@ const getGroupAdvancedAttributes = (groupId, cb) => (dispatch, getState) => {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'token': token
+            'Authorization': `Bearer ${token}`,
         }
     })
     .then(res => res.json())
@@ -623,7 +623,7 @@ const getGroupTags = () => (dispatch, getState) => {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'token': token
+            'Authorization': `Bearer ${token}`,
         }
     })
     .then(res => res.json())
@@ -646,7 +646,7 @@ const getGroupOwnTags = (groupId, cb) => (dispatch, getState) => {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'token': token
+                        'Authorization': `Bearer ${token}`,
         }
     })
     .then(res => res.json())
@@ -670,7 +670,7 @@ const updateGroupAdvancedAttributes = (groupId, data, cb) => (dispatch, getState
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
-            'token': token
+                        'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(data)
     })
@@ -699,7 +699,7 @@ const groupSaveTag = (groupId, tagId, dispatch, getState) => {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
-            'token': token
+                        'Authorization': `Bearer ${token}`,
         },
     })
     .then(response => {
@@ -719,7 +719,7 @@ const groupRemoveTag = (groupId, tagId, dispatch, getState) =>  {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
-            'token': token
+                        'Authorization': `Bearer ${token}`,
         },
     })
     .then(response => {
@@ -754,7 +754,7 @@ const groupGetBankAccounts = (groupId, cb) => (dispatch, getState) => {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'token': token
+                        'Authorization': `Bearer ${token}`,
         },
     })
     .then(response => response.json())
@@ -777,7 +777,7 @@ const groupCreateBankAccount = (groupId, data, cb) => (dispatch, getState) => {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'token': token,
+                        'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(data)
     })
@@ -810,7 +810,7 @@ const groupDeleteBankAccount = (groupId, accountId, cb) => (dispatch, getState) 
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
-            'token': token
+                        'Authorization': `Bearer ${token}`,
         }
     })
     .then(response => response.json())
@@ -837,7 +837,7 @@ const groupDeleteCard = (groupId, cardID, cb) => (dispatch, getState) => {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
-            'token': token
+                        'Authorization': `Bearer ${token}`,
         }
     })
     .then(res => {
@@ -860,7 +860,7 @@ const groupCreateCard = (groupId, data, cb) => (dispatch, getState) => {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'token': token,
+                        'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(data)
     })
@@ -889,7 +889,7 @@ const groupGetCards = (groupId, cb) => (dispatch, getState) => {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'token': token
+                        'Authorization': `Bearer ${token}`,
         },
     })
     .then(response => response.json())
@@ -912,7 +912,7 @@ const groupGetSubscriptions = (groupId, cb) => (dispatch, getState) => {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'token': token
+                        'Authorization': `Bearer ${token}`,
         },
     })
     .then(response => response.json())
@@ -934,7 +934,7 @@ const groupUpdateSubscriptions = (groupId, package_type, referral, cb) => (dispa
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
-            'token': token
+                        'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({package_type, coupon: referral})
     })
@@ -943,7 +943,7 @@ const groupUpdateSubscriptions = (groupId, package_type, referral, cb) => (dispa
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
-            'token': token
+                        'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({package_type, coupon: referral})
     })

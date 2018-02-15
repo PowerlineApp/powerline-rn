@@ -22,7 +22,12 @@ const PLColors = require('PLColors');
 import styles from './styles';
 
 class SearchGroups extends Component{
-
+    constructor(){
+        super();
+        this.state = {
+            joiningGroup: false
+        };
+    }
     goToProfile(group){
         Actions.groupprofile(group);
     }
@@ -41,12 +46,16 @@ class SearchGroups extends Component{
     
     doJoin(id){
         var { token } = this.props;
+        if (this.state.joiningGroup) return;
+        this.setState({joiningGroup: true});
         joinGroup(token, id).then(data => {
+            this.setState({joiningGroup: false});
             if(data.join_status == 'active'){
                 Actions.myGroups();
             }
         })
         .catch(err => {
+            this.setState({joiningGroup: false});
     
         });
     }
@@ -91,13 +100,13 @@ class SearchGroups extends Component{
                                         {
                                             group.avatar_file_path?
                                                 <Thumbnail square source={{uri: group.avatar_file_path+'&w=150&h=150&auto=compress,format,q=95'}} />:
-                                            <View style={{width: 56, height: 56}} />
+                                                <View style={{width: 56, height: 56}} />
                                         }
                                         <Body style={{flex: 3}}>
                                             <Text style={styles.text1}>{group.official_name}</Text>
                                         </Body>
                                         <Right style={{flex: 1}}>
-                                            <Button transparent>
+                                            <Button transparent onPress={() => group.joined ? this.unjoin(group) : this.join(group)}>
                                                 {   group.joined 
                                                     ? <Icon active name='add-circle' style={{color: '#802000'}} onPress={() => this.unjoin(group)} />
                                                     : <Icon active name='add-circle' style={{color: '#11c1f3'}} onPress={() => this.join(group)} />

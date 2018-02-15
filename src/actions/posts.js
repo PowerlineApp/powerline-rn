@@ -9,7 +9,7 @@ async function loadPost(token: string, entityId: number): Promise<Action> {
         var response = await fetch(`${API_URL}/v2/posts/${entityId}`, {
             method: 'GET',
             headers: {
-                'token': token,
+                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             }
         });
@@ -29,7 +29,7 @@ async function votePost(token: string, postId: string, option: string) {
     console.log(`${API_URL}/v2/posts/${postId}/vote`, {
         method: 'POST',
         headers: {
-            'token': token,
+             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -39,7 +39,7 @@ async function votePost(token: string, postId: string, option: string) {
     return fetch(`${API_URL}/v2/posts/${postId}/vote`, {
             method: 'POST',
             headers: {
-                'token': token,
+                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
@@ -53,7 +53,7 @@ async function undoVotePost(token: string, postId: string) {
     return fetch(`${API_URL}/v2/posts/${postId}/vote`, {
             method: 'DELETE',
             headers: {
-                'token': token,
+                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({})
@@ -68,7 +68,7 @@ async function unsubscribeFromPost(token: string, postId: string) {
         let response = await fetch(`${API_URL}/v2/user/posts/${postId}`, {
             method: 'DELETE',
             headers: {
-                'token': token,
+                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
@@ -86,7 +86,7 @@ async function addCommentToPost(token: string, postId: string, comment: string, 
         let response = await fetch(`${API_URL}/v2/posts/${postId}/comments`, {
             method: 'POST',
             headers: {
-                'token': token,
+                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
@@ -112,7 +112,7 @@ async function loadPostComments(token: string, entityId: number, page: ?number =
         var response = await fetch(`${API_URL}/v2/posts/${entityId}/comments?_format=json&page=${page + 1}&per_page=${perPage}&sort=${sort}&sort_dir=${sortDir}`, {
             method: 'GET',
             headers: {
-                'token': token,
+                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             }
         });
@@ -133,7 +133,7 @@ async function ratePostComment(token: string, commentId, rateValue: string) {
         let response = await fetch(`${API_URL}/v2/post-comments/${commentId}/rate`, {
             method: 'POST',
             headers: {
-                'token': token,
+                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
@@ -162,7 +162,7 @@ function createPostToGroup(token, groupId, content, base64image) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'token': token
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify(body)
         })
@@ -193,7 +193,7 @@ function createPetition(token, groupId, title, content, base64image) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'token': token
+                'Authorization': `Bearer ${token}`,
             },
             body:  JSON.stringify(data)
         })
@@ -215,7 +215,7 @@ function getPetitionConfig(token, groupId){
             method: 'GET',
             headers: {
                 'Content-Type': 'application',
-                'token':  token
+                'Authorization': `Bearer ${token}`,
             }
         })
         .then((res) => res.json())
