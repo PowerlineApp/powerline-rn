@@ -16,7 +16,7 @@ const stripeProd = 'pk_live_hRBIgf1WvZ1qyhDpP3KQHEyE';
 const stagingURL = 'https://api-staging.powerli.ne/api';
 const prodURL = 'https://api.powerli.ne/api';
 const devURL = 'https://api-dev.powerli.ne/api';
-const staging =  false;
+const staging =  true;
 const forceDev = false;
 
 
@@ -32,7 +32,7 @@ if (!dev || staging) {
 let env = {
     testMenuEnabled: true,
     // API_URL: (dev && !staging) ? devURL : staging ? stagingURL : prodURL,
-    API_URL: prodURL,
+    API_URL: stagingURL,
     version: 301,
     fontFamily: undefined,
     PER_PAGE: 20,

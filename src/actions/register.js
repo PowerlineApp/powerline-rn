@@ -208,7 +208,10 @@ function login2 (username, password) {
             } else {
                 reject(res);
             }
-        }).catch(e => {reject(e);});
+        }).catch(e => {
+            console.log('error on login > ', e);
+            reject(e);
+        });
     });
 }
 

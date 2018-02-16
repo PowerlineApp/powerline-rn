@@ -17,6 +17,8 @@ import {
     Platform
 }  from 'react-native';
 
+
+
 import PLColors from 'PLColors';
 import PLConstants from 'PLConstants';
 import PLButton from 'PLButton';
@@ -165,6 +167,7 @@ class Register extends React.Component{
     }
 
     onConfirmEmail = (next) => {
+        // this.setState({emailConfirmed: true})
         if (this.state.confirmingEmail) {
             return;
         }
@@ -255,7 +258,7 @@ class Register extends React.Component{
                     
                 } catch (error) {
                     Alert.alert('Username or email already in use.',
-                    error,
+                    error.message,
                     [
                         {text: 'Ok', onPress: () => {
                             this.setState({position: 0, isLoading: false})

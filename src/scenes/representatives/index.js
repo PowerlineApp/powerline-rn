@@ -70,6 +70,7 @@ class Representatives extends Component {
                 });
             })
             .catch(err => {
+                console.log(err);
                 this.setState({
                     refreshing: false
                 });
@@ -96,15 +97,15 @@ class Representatives extends Component {
             <MenuContext customStyles={menuContextStyles}>
                 <Container>
                     <Header style={styles.header}>
-                        <Left>
-                            <Button style={{width: '100%'}}  transparent onPress={this.props.openDrawer}>
+                        <Left style={{flex: 1}}>
+                            <Button style={{width: '100%'}} transparent onPress={this.props.openDrawer}>
                                 <Icon active name='menu' style={{ color: 'white' }} />
                             </Button>
                         </Left>
-                        <Body>
+                        <Body style={{flex: 5, alignItems: 'center', justifyContent: 'center'}}>
                             <Title style={{color: '#fff'}}>My Representatives</Title>
                         </Body>
-                        <Right />
+                        <View style={{flex: 1}} />
                     </Header>
                     <Content
                         refreshControl={Platform.OS === 'android' &&

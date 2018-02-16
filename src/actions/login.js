@@ -84,6 +84,7 @@ async function queryFacebookAPI(path, ...args): Promise {
 function logInWithFacebook() {
   return new Promise((resolve, reject) => {
     FacebookSDK.login((result) => {
+      console.log('logInWithFacebook result', result)
       if (result.error) {
         console.log(result.error);
         reject(result.error);

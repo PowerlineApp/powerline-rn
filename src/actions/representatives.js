@@ -1,19 +1,32 @@
 var { API_URL } =  require('../PLEnv');
 
 function getRepresentatives(token, page, per_page){
-    console.log(API_URL + '/representatives?_format=json&page='+page +'&per_page=' + per_page, token)
+    console.log(API_URL + '/representatives?_format=json&page='+page +'&per_page=' + per_page, token);
     return new Promise((resolve, reject) => {
+        console.log('loading representatives on staging: ', API_URL + '/representatives?_format=json&page='+page +'&per_page=' + per_page, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
         fetch(API_URL + '/representatives?_format=json&page='+page +'&per_page=' + per_page, {
             method: 'GET',
             headers: {
-                 'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+                "Accept": "application/json"
             }
         })
-        .then((res) => res.json())
+        .then((res) => res.ok && res.json())
         .then(data => {
-            console.log("Representatives API call Success:", data);
-            resolve(data);
+            console.log('loading representatives on staging response', data);
+            if (data){
+                console.log("Representatives API call Success:", data);
+                resolve(data);
+            } else {
+                reject(new Error('Invalid response' + JSON.stringify(data)));
+            }
         })
         .catch(err => {
             console.log("Representatives API call Error", err);
@@ -28,7 +41,7 @@ function loadRepresentatyInfo(token, representativeId, storageId){
         fetch(API_URL + '/representatives/info/' + representativeId + '/' + storageId, {
             method: 'GET',
             headers: {
-                 'Authorization': `Bearer ${token}`,
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         })
@@ -49,7 +62,7 @@ function loadCommittees(token, storageId){
         fetch(API_URL + '/representatives/info/committee/' + storageId, {
             method: 'GET',
             headers: {
-                 'Authorization': `Bearer ${token}`,
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         })
@@ -61,7 +74,7 @@ function loadCommittees(token, storageId){
         .catch(err => {
             console.log("Representative Commit API Error", err);
             reject(err);
-        })
+        });
     });
 }
 
@@ -70,7 +83,7 @@ function loadSponsoredBills(token, storageId){
         fetch(API_URL + '/representatives/info/sponsored-bills/' + storageId, {
             method: 'GET',
             headers: {
-                 'Authorization': `Bearer ${token}`,
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         })
@@ -82,7 +95,7 @@ function loadSponsoredBills(token, storageId){
         .catch(err => {
             console.log("Representative SponsoredBill API Error", err);
             reject(err);
-        })
+        });
     });
 }
 

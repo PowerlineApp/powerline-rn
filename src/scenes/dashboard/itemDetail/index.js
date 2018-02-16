@@ -1071,27 +1071,23 @@ class ItemDetail extends Component {
         }
         let item = this.item;
         return (
-            <MenuProvider customStyles={menuContextStyles} keyboardShouldPersistTaps="always">
-                <Container style={{ flex: 1 }} scrollEnabled="false" keyboardShouldPersistTaps="always">
+
+            <MenuContext customStyles={menuContextStyles}>
+                <Container scrollEnabled={false} style={{ flex: 1 }}>
                     <HeaderImageScrollView
-                    keyboardShouldPersistTaps="always"
                         maxHeight={MAX_HEIGHT}
                         minHeight={MIN_HEIGHT}
+                        keyboardShouldPersistTaps='always'
                         fadeOutForeground
-                        refreshControl
-                        showsVerticalScrollIndicator={false}
-                        refreshin={false}
-                        onRefresh={() => {
-                             this.loadEntity();
-                             this.loadComments();
-                        }}
                         renderHeader={() => {
-                            // return null;
                                 return item.group.has_agency
                                 ? <CachedImage style={{flex: 1}} source={{ uri: item.group.banner }} />
                                 : <Image
                                 style={styles.headerImage}
+                                // resizeMode='contain'
                                 source={item.group.banner ? {uri: item.group.banner} : require('img/item_detail_header.png')}
+                                // source={{uri: 'https://facebook.github.io/react-native/docs/assets/favicon.png'}}
+                                // source={{uri: 'https://lh6.googleusercontent.com/N5KgN1brOd6X-AxD0go0Ex2xOzjhPFFytLJV-JBv1d8C-X6K58bXWUcVIEoftEHGaycHkujLD4wIgK1LA_Zq=w1107-h984'}}
                                 />
                         }}
                         renderFixedForeground={() => {
@@ -1128,8 +1124,8 @@ class ItemDetail extends Component {
                                 </Body>
                             </Left>
                         )}}>
-                <ScrollView keyboardShouldPersistTaps="always" bounces={false}>
-                        <TriggeringView
+                <ScrollView scrollEnabled={false} keyboardShouldPersistTaps="always" contentContainerStyle={{padding: 8, backgroundColor: '#fff'}} bounces={false}>
+                         <TriggeringView
                             onHide={() => this.navTitleView.fadeInUp(200)}
                             onDisplay={() => this.navTitleView.fadeOut(100)}>
                         </TriggeringView>
@@ -1153,7 +1149,90 @@ class ItemDetail extends Component {
                 {
                     this.renderFloatingActionButton(item)
                 }
-            </MenuProvider>
+            </MenuContext>
+            // <MenuProvider customStyles={menuContextStyles} keyboardShouldPersistTaps="always">
+            //     <Container style={{ flex: 1 }} scrollEnabled="false" keyboardShouldPersistTaps="always">
+            //         <HeaderImageScrollView
+            //         keyboardShouldPersistTaps="always"
+            //             maxHeight={MAX_HEIGHT}
+            //             minHeight={MIN_HEIGHT}
+            //             fadeOutForeground
+            //             refreshControl
+            //             showsVerticalScrollIndicator={false}
+            //             refreshin={false}
+            //             onRefresh={() => {
+            //                  this.loadEntity();
+            //                  this.loadComments();
+            //             }}
+            //             renderHeader={() => {
+            //                 // return null;
+            //                     return item.group.has_agency
+            //                     ? <CachedImage style={{flex: 1}} source={{ uri: item.group.banner }} />
+            //                     : <Image
+            //                     style={styles.headerImage}
+            //                     source={item.group.banner ? {uri: item.group.banner} : require('img/item_detail_header.png')}
+            //                     />
+            //             }}
+            //             renderFixedForeground={() => {
+            //                 // return null;
+            //                 return (
+            //                 <Animatable.View
+            //                 style={styles.navTitleView}
+            //                 ref={(navTitleView) => { this.navTitleView = navTitleView; }}>
+            //                     <Header style={{ backgroundColor: 'transparent' }}>
+            //                         <Left>
+            //                             <Button style={{width: '100%'}}  transparent onPress={this.onBackPress} style={{ width: 50, height: 50 }}  >
+            //                                 <Icon active name="arrow-back" style={{ color: 'white' }} />
+            //                             </Button>
+            //                         </Left>
+            //                         <Body style={{ flex: 4 }}>
+            //                             <Title style={styles.navTitle}>{item.group.official_name}</Title>
+            //                         </Body>
+            //                         <Right />
+            //                     </Header>
+            //                 </Animatable.View>
+            //             )}}
+            //             renderForeground={() => {
+            //                 // return null;
+            //                 return (
+            //                 <Left style={styles.titleContainer}>
+            //                     <Button transparent onPress={this.onBackPress} style={{ width: 50, height: 50 }} >
+            //                         <Icon active name="md-arrow-back" style={{ color: 'white' }} />
+            //                     </Button>
+            //                     <Body style={{ marginTop: -12 }}>
+            //                         <TouchableOpacity onPress={() => Actions.groupprofile({id: item.group.id})} style={{alignContent: 'center', alignItems: 'center'}} >
+            //                             <Thumbnail size={50} source={item.group.avatar ? { uri: item.group.avatar + '&w=200&h=200&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+            //                             <Text style={styles.imageTitle} >{item.group.official_name}</Text>
+            //                         </TouchableOpacity>
+            //                     </Body>
+            //                 </Left>
+            //             )}}>
+            //     <ScrollView keyboardShouldPersistTaps="always" bounces={false}>
+            //             <TriggeringView
+            //                 onHide={() => this.navTitleView.fadeInUp(200)}
+            //                 onDisplay={() => this.navTitleView.fadeOut(100)}>
+            //             </TriggeringView>
+            //                 {this._renderActivity(item, this.state)}
+            //             <View style={styles.borderContainer} />
+            //             {this._renderAddComment()}
+            //             <View style={styles.borderContainer} />
+            //             <FlatList
+            //                 scrollEnabled={false}
+            //                 data={this.state.dataArray}
+            //                 renderItem={({item}) => this._renderComment(item)}
+            //                 refreshing={false}
+            //                 onRefresh={() => {}}
+            //             />
+
+            //             {this._renderLoadMore()}
+            //             {this._renderCommentsLoading()}
+            //     </ScrollView>
+            //                 </HeaderImageScrollView>
+            //     </Container>
+            //     {
+            //         this.renderFloatingActionButton(item)
+            //     }
+            // </MenuProvider>
         );
     }
 }

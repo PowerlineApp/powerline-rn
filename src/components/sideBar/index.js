@@ -143,7 +143,7 @@ class SideBar extends Component {
       let data =  {id: 'all', group: 'all', header: 'all'};
       setTimeout(() => {
         this.props.setGroup(data, this.props.token, 'all')
-      }, 100)
+      }, 1000)
     }
 
 

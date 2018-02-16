@@ -282,28 +282,32 @@ class FeedFooter extends Component {
             }
             // console.log(item.body, isVotedUp)
             return (
-                <View footer style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', flex: 1, height: 35 }}>
-                    <View style={{flex: 3}}>
-                        <AnimatedButton onPress={() => { this.vote(item, 'upvote'); Mixpanel.track("Upvoted post"); }} 
-                            iconName={'md-arrow-dropup'} 
-                            label={'Upvote ' + (item.upvotes_count || 0)}
-                            labelStyle={isVotedUp ? styles.footerTextBlue : styles.footerText}
-                            animateEffect={'tada'}
+                // <CardItem footer style={{ height: 35, padding: 0, backgroundColor: '#f0f' }}>
+                <View footer style={{flexDirection: 'row', paddingLeft: 4, justifyContent: 'space-between', alignItems: 'center', flex: 1, height: 35 }}>
+                    <View style={{flex: 6, flexDirection: 'row'}}>
+                        <View style={{flex: 3}}>
+                            <AnimatedButton onPress={() => { this.vote(item, 'upvote'); Mixpanel.track("Upvoted post"); }} 
+                                iconName={'md-arrow-dropup'} 
+                                label={'Upvote ' + (item.upvotes_count || 0)}
+                                labelStyle={isVotedUp ? styles.footerTextBlue : styles.footerText}
+                                animateEffect={'tada'}
                             />
-                    </View>
+                        </View>
 
-                    <View style={{flex: 3}}>
-                        <AnimatedButton onPress={() => { this.vote(item, 'downvote'); Mixpanel.track("Downvoted post"); }} 
-                            iconName={'md-arrow-dropdown'} 
-                            label={'Downvote ' + (item.downvotes_count || 0)}
-                            labelStyle={isVotedDown ? styles.footerTextBlue : styles.footerText}
-                            animateEffect={'shake'}
+                        <View style={{flex: 3}}>
+                            <AnimatedButton onPress={() => { this.vote(item, 'downvote'); Mixpanel.track("Downvoted post"); }} 
+                                iconName={'md-arrow-dropdown'} 
+                                label={'Downvote ' + (item.downvotes_count || 0)}
+                                labelStyle={isVotedDown ? styles.footerTextBlue : styles.footerText}
+                                animateEffect={'shake'}
                             />
                        
+                        </View>
                     </View>
                     {this.renderPulseIcon(item, 2, true)}
                     {this.renderCommentIcon(item, 2)}
                 </View>
+                // </CardItem>
             );
         }
     }
@@ -326,20 +330,20 @@ class FeedFooter extends Component {
 
 
         return (
-            <CardItem footer style={{ height: 35 }}>
-                <Left style={{ justifyContent: 'space-around' }}>
-                    <View style={{flex: 1}}>
-                        <AnimatedButton onPress={() => {this.sign(item, isSigned); Mixpanel.track("Signed Petition");}}
-                            icon={<Thumbnail source={require('../../../assets/petition-icon.png')} style={{height: 25, width: 25, tintColor: isSigned ? '#53a8cd' : '#8694ab'}} square />}
-                            label={isSigned ? ' Signed' : ('  ' + (item.answer_count || 0) + ' Signatures')}
-                            labelStyle={isSigned ? styles.footerTextBlue : styles.footerText}
-                            animateEffect={'tada'}
+            // <CardItem fo oter style={{ height: 35 }}>
+            <View footer style={{flexDirection: 'row', paddingLeft: 4, justifyContent: 'space-between', alignItems: 'center', flex: 1, height: 35 }}>
+                <View style={{flex: 6, flexDirection: 'row'}}>
+                    <AnimatedButton onPress={() => {this.sign(item, isSigned); Mixpanel.track("Signed Petition");}}
+                        icon={<Thumbnail source={require('../../../assets/petition-icon.png')} style={{height: 25, width: 25, tintColor: isSigned ? '#53a8cd' : '#8694ab'}} square />}
+                        label={isSigned ? ' Signed' : ('  ' + (item.answer_count || 0) + ' Signatures')}
+                        labelStyle={isSigned ? styles.footerTextBlue : styles.footerText}
+                        animateEffect={'tada'}
                         />
-                    </View>
-                    {this.renderPulseIcon(item, 0.8, true)}
-                    {this.renderCommentIcon(item, 0.1)}
-                </Left>
-            </CardItem>
+                </View>
+                {this.renderPulseIcon(item, 2)}
+                {this.renderCommentIcon(item, 2)}
+            </View>
+            // </CardItem>
         );
     }
     _renderLeaderPetitionFooter (item) {
@@ -353,47 +357,48 @@ class FeedFooter extends Component {
             isSigned = true;
         }
         return (
-            <CardItem footer style={{ height: 35 }}>
-                <Left style={{ justifyContent: 'space-around' }}>
-                    <View style={{flex: 1}}>
-                        <AnimatedButton onPress={() => {this.signLeaderPetition(item, isSigned, signOption.id, unsignOption.id); Mixpanel.track("Signed Petition");}}
-                            icon={<Thumbnail source={require('../../../assets/petition-icon.png')} style={{height: 25, width: 25, tintColor: isSigned ? '#53a8cd' : '#8694ab'}} square />}
-                            label={isSigned ? ' Signed' : ('  ' + (item.answer_count || 0) + ' Signatures')}
-                            labelStyle={isSigned ? styles.footerTextBlue : styles.footerText}
-                            animateEffect={'tada'}
+            // <CardItem footer style={{ height: 35 }}>
+            <View footer style={{flexDirection: 'row', paddingLeft: 4, justifyContent: 'space-between', alignItems: 'center', flex: 1, height: 35 }}>
+                <View style={{flex: 6, flexDirection: 'row'}}>
+                    <AnimatedButton onPress={() => {this.signLeaderPetition(item, isSigned, signOption.id, unsignOption.id); Mixpanel.track("Signed Petition");}}
+                        icon={<Thumbnail source={require('../../../assets/petition-icon.png')} style={{height: 25, width: 25, tintColor: isSigned ? '#53a8cd' : '#8694ab'}} square />}
+                        label={isSigned ? ' Signed' : ('  ' + (item.answer_count || 0) + ' Signatures')}
+                        labelStyle={isSigned ? styles.footerTextBlue : styles.footerText}
+                        animateEffect={'tada'}
                             />
-                    </View>
-                    {this.renderPulseIcon(item, 0.8)}
-                    {this.renderCommentIcon(item, 0.1)}
-                </Left>
-            </CardItem>
+                </View>
+                {this.renderPulseIcon(item, 2)}
+                {this.renderCommentIcon(item, 2)}
+            </View>
+            // </CardItem>
         );
     }
 
     _renderPollFooter (item, iconName, text) {
-        return <CardItem footer style={{ height: 35 }}>
-            <Left style={{ justifyContent: 'space-between' }}>
-                <TouchableHighlight style={{flex: 1, flexDirection: 'row', alignItems: 'center'}} underlayColor='#fff' onPress={() => !this.props.isInDetail && this.redirect(item)}>
-                    <View style={{flexDirection: 'row', alignItems: 'center'}} >
-                        <Icon active name={iconName} style={styles.footerIcon} />
-                        <Label style={styles.footerText}>
-                            {text}
-                        </Label>
-                    </View>
-                </TouchableHighlight>
-                {this.renderPulseIcon(item, 0.8)}
-                {this.renderCommentIcon(item, 0.1)}
-            </Left>
-        </CardItem>;
+        return( 
+        // <CardItem footer style={{ height: 35 }}>
+            <View footer style={{flexDirection: 'row', paddingLeft: 4, justifyContent: 'space-between', alignItems: 'center', flex: 1, height: 35 }}>
+                <View style={{flex: 6, flexDirection: 'row'}}>
+                    <TouchableHighlight style={{flex: 1, flexDirection: 'row', alignItems: 'center'}} underlayColor='#fff' onPress={() => !this.props.isInDetail && this.redirect(item)}>
+                        <View style={{flexDirection: 'row', alignItems: 'center'}} >
+                            <Icon active name={iconName} style={styles.footerIcon} />
+                            <Label style={styles.footerText}>
+                                {text}
+                            </Label>
+                        </View>
+                    </TouchableHighlight>
+                </View>
+                {this.renderPulseIcon(item, 2)}
+                {this.renderCommentIcon(item, 2)}
+            </View>);
+        // </CardItem>;
     }
 
     renderPulseIcon(item, flex, link){
         // console.log(item);
         const activity = Number((item.comment_count || 0)) 
         + Number((item.answer_count || 0)) 
-        // + Number((item.upvotes_count || 0)) 
         + Number((item.responses_count || 0)); 
-        // + Number((item.downvotes_count || 0));
 
 
         return <View style={{flex: flex || 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -407,10 +412,10 @@ class FeedFooter extends Component {
     }
 
     renderCommentIcon(item, flex){
-        return <View style={{ flex: flex || 1, backgroundColor: '#fff'}}>
+        return <View style={{ flex: flex || 1, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center'}}>
             <Button iconLeft transparent style={{flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff'}} onPress={() => {
                 !this.props.isInDetail && this.redirect(item, {commenting: true}); Mixpanel.track("Viewed Petition Analytics");}}>
-                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
+                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
                     <Icon active name='ios-text' style={styles.footerIcon} />
                     <Label style={styles.footerText}>
                         {item.comment_count || 0}
