@@ -3,13 +3,6 @@ var { API_URL } =  require('../PLEnv');
 function getRepresentatives(token, page, per_page){
     console.log(API_URL + '/representatives?_format=json&page='+page +'&per_page=' + per_page, token);
     return new Promise((resolve, reject) => {
-        console.log('loading representatives on staging: ', API_URL + '/representatives?_format=json&page='+page +'&per_page=' + per_page, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
         fetch(API_URL + '/representatives?_format=json&page='+page +'&per_page=' + per_page, {
             method: 'GET',
             headers: {
