@@ -118,10 +118,10 @@ class FeedHeader extends Component {
 
     delete(item) {
         if (item.type === 'post') {
-            this.props.dispatch(deletePost(item.id, item.id));
+            this.props.deletePost(item.id, item.id);
         }
         if (item.type === 'user-petition') {
-            this.props.dispatch(deletePetition(item.id, item.id));
+            this.props.deletePetition(item.id, item.id);
         }
 
         this.menu && this.menu.close();
@@ -260,7 +260,7 @@ class FeedHeader extends Component {
                             {
                                 // ?
                                 <View style={{overflow: 'visible',backgroundColor:'#fff', alignItems: 'center', overflow: 'visible', justifyContent: 'center', width: 50, height: 50, backgroundColor: '#fff'}}>
-                                    {!item.user.is_verified &&
+                                    {!item.user.is_verified && (item.type === 'post' || item.type === 'user-petition') &&
                                     <Image
                                         style={{width: 60, height: 60}}
                                         resizeMode='cover'
@@ -436,4 +436,4 @@ const mapStateToProps = (state) => ({
     is_verified: state.user.profile.is_verified
 });
 
-export default connect(mapStateToProps, {subscribeNotification, unsubscribeNotification})(FeedHeader);
+export default connect(mapStateToProps, {subscribeNotification, unsubscribeNotification, deletePost, deletePetition})(FeedHeader);

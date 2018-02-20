@@ -1,15 +1,49 @@
-var { API_URL } =  require('../PLEnv');
+import { API_URL } from '../PLEnv';
+import axios from 'axios';
 
 function getRepresentatives(token, page, per_page){
     console.log(API_URL + '/representatives?_format=json&page='+page +'&per_page=' + per_page, token);
+    console.log({
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            "Accept": "application/json"
+        }
+    });
     return new Promise((resolve, reject) => {
-        console.log('loading representatives on staging: ', API_URL + '/representatives?_format=json&page='+page +'&per_page=' + per_page, {
+        // axios.get(API_URL + '/representatives?_format=json&page='+page +'&per_page=' + per_page, {
+        //     headers: {
+        //         'Authorization': `Bearer ${token}`,
+        //         'Content-Type': 'application/json'
+        //     }   
+        // }).then(r => {
+        //     console.log(r);
+        // }).catch(e => {
+        //     console.log(e );
+        // });
+
+        let url = `${API_URL}` + '/representatives?_format=json&page='+page +'&per_page=' + per_page;
+        console.log(url, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             }
         });
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            }
+        }).then(r => r.json())
+        .then(data => console.log('test', data))
+        .catch(e => console.log('test error', e));
+
+
+
+
         fetch(API_URL + '/representatives?_format=json&page='+page +'&per_page=' + per_page, {
             method: 'GET',
             headers: {

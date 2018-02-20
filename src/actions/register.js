@@ -202,7 +202,7 @@ function login2 (username, password) {
                 'Content-Type': 'application/json',
             },
         }).then(res => {
-            console.log('res', res.ok);
+            console.log('login res', res);
             if (res.ok){
                 fullfill(res);
             } else {

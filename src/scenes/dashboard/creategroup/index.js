@@ -43,7 +43,7 @@ import {
     Picker,
     Alert
 } from 'react-native';
-import { loadUserData, createGroup } from 'PLActions';
+import { loadUserData, createGroup, getGroups } from 'PLActions';
 import { showToast } from '../../../utils/toast';
 import { SERVICE_AGREEMENT, PRIVACY_POLICY, TERMS_OF_USE } from 'PLConstants';
 class CreateGroup extends Component{
@@ -131,7 +131,22 @@ class CreateGroup extends Component{
         createGroup(token, data)
         .then(data => {
             this.setState({loading: false})
+
             if(!data.message){
+                getGroups(this.props.token)
+                .then(data => {
+                    console.log(data)
+                    this.props.dispatch([{
+                        type: 'LOADED_GROUPS',
+                        data: { payload: data.payload }
+                    }, {
+                        type: 'SET_NEWSFEED_COUNT',
+                        count: data.payload.reduce((a, b) => a += b.priority_item_count, 0),
+                    }]);
+                });
+
+
+
                 Alert.alert(
                     "Alert",
                     "Way to go! You've created a new Powerline group. Invite all of your followers at once from the next screen, send invites from Manage Group screen, or tell people to search for your group using Search.",
@@ -254,7 +269,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    openDrawer: () => dispatch(openDrawer())
+    openDrawer: () => dispatch(openDrawer()),
+    dispatch: (action) => dispatch(action)
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateGroup);

@@ -23,7 +23,7 @@ const forceDev = false;
 const dev = __DEV__ || forceDev;
 
 if (!dev || staging) {
-    console.log = () => {};
+    console.log = () => {};;
     console.warn = () => {};
 }
 // console.log = () => {};
@@ -31,8 +31,7 @@ if (!dev || staging) {
 
 let env = {
     testMenuEnabled: true,
-    // API_URL: (dev && !staging) ? devURL : staging ? stagingURL : prodURL,
-    API_URL: stagingURL,
+    API_URL: (dev && !staging) ? devURL : staging ? stagingURL : prodURL,
     version: 301,
     fontFamily: undefined,
     PER_PAGE: 20,

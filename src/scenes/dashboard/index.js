@@ -320,6 +320,8 @@ class Home extends Component {
     itemDetail(notification, options) {
         // return;
         console.log(notification);
+        if (!notification.additionalData) return;
+        console.log('didnt return');
         let item = notification.additionalData.entity.target;
 
         Actions.itemDetail({ entityType: item.type, entityId: item.id, ...options });
@@ -502,8 +504,8 @@ class Home extends Component {
             case 'share-announcement-button':
                 this._shareAnnouncement(token, data);
                 break;
-                default:
-                this.redirect(data);
+            default:
+                this.redirect(type, data);
         }
     }
 

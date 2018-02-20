@@ -230,8 +230,7 @@ function getPetitionConfig(token, groupId){
     });
 }
 
-function deletePost(postId: number, activityId: number): ThunkAction {
-    return async (dispatch, getState) => {
+deletePost = (postId, activityId) => async (dispatch, getState) => {
         try {
             const token = getState().user.token;
             const response = await api.delete(token, `/v2/posts/${postId}`);
@@ -247,11 +246,9 @@ function deletePost(postId: number, activityId: number): ThunkAction {
             console.log("delete Post API Error", error);
             handleError(error);
         }
-    };
 }
 
-function deletePetition(petitionId: number, activityId: number): ThunkAction {
-    return async (dispatch, getState) => {
+deletePetition = (petitionId: number, activityId: number) => async (dispatch, getState) => {
         try {
             const token = getState().user.token; 
             const response = await api.delete(token, `/v2/user-petitions/${petitionId}`);
@@ -267,7 +264,6 @@ function deletePetition(petitionId: number, activityId: number): ThunkAction {
             console.log("delete Petition API Error", error);
             handleError(error);
         }
-    };
 }
 
 function updateActivityDescription(dispatch, id, description) {

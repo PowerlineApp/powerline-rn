@@ -99,8 +99,8 @@ class NewPost extends Component {
         });
         
         // getGroups(token).then(ret => {
-        console.log('~=> ', group);
         const ret = this.props.grouplist;
+        console.log('~=> ', group);
         let showCommunity = true, selectedGroupIndex = -1;
         if (group && group !== 'all'){
             showCommunity = false;
@@ -145,21 +145,21 @@ class NewPost extends Component {
 
 
     async loadSharedData(data){
-        if (!data) {
-            this.setState({showCommunity: true});
-            return;
-        }
-        if (data.type.split('/')[0] !== 'image' && data.type !== 'jpeg' && data.type !== 'png' && data.type !== 'jpg') {
-            this.setState({showCommunity: true, content: data.value});
-            return;
-        }
-        this.setState({content : JSON.stringify(data)});
-        fs.readFile(data.value, "base64").then(r => {
-            this.setState({image: r, content: '', showCommunity: true});
-        }).catch(e => {
-            showToast('Error ocurred reading file.');
-            this.setState({showCommunity: true});
-        });
+        // if (!data) {
+        //     this.setState({showCommunity: true});
+        //     return;
+        // }
+        // if (data.type.split('/')[0] !== 'image' && data.type !== 'jpeg' && data.type !== 'png' && data.type !== 'jpg') {
+        //     this.setState({showCommunity: true, content: data.value});
+        //     return;
+        // }
+        // this.setState({content : JSON.stringify(data)});
+        // fs.readFile(data.value, "base64").then(r => {
+        //     this.setState({image: r, content: '', showCommunity: true});
+        // }).catch(e => {
+        //     showToast('Error ocurred reading file.');
+        //     this.setState({showCommunity: true});
+        // });
     }
 
 

@@ -10,6 +10,7 @@
     "flow": "flow --show-all-errors"
   },
   "dependencies": {
+    "axios": "^0.17.1",
     "babel-preset-react-native-stage-0": "^1.0.1",
     "color": "^2.0.1",
     "eslint": "^3.19.0",

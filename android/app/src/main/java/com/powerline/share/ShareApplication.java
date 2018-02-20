@@ -1,7 +1,7 @@
 // your package you defined in ShareActivity
-package com.powerline.share;
+package ne.powerli.share;
 // import build config
-import com.powerline.BuildConfig;
+import ne.powerli.BuildConfig;
 
 import com.alinz.parkerdan.shareextension.SharePackage;
 

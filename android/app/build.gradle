@@ -111,10 +111,10 @@ android {
         disable 'ValidFragment'
     }
     defaultConfig {
-        applicationId "com.powerline"
+        applicationId "ne.powerli"
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 16
+        versionCode 20111
         versionName "1.0"
         ndk {
             abiFilters "armeabi-v7a", "x86"
@@ -122,7 +122,7 @@ android {
         manifestPlaceholders = [
             onesignal_app_id: "6728c7ff-e832-4472-9fef-84dcf2af5328",
             onesignal_google_project_number: "354736666363",
-            tipsiStripeRedirectScheme: "com.powerline"
+            tipsiStripeRedirectScheme: "ne.powerli"
         ]
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true

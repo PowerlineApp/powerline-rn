@@ -21,8 +21,10 @@ class FeedFooter extends Component {
         };
     }
 
+
     updateActivity(item) {
         this.setState({item});
+        this.props.updateActivity(item);
     }
 
     redirect(item, options, scene = 'itemDetail') {
@@ -190,10 +192,13 @@ class FeedFooter extends Component {
         // console.log('profile, item.user', profile, item.user);
         // avoid double tapping until the response comes
         // user shouldn't sign his own petition
-        if (Number(profile.id) === Number(item.user.id)) {
-            alert("You're not supposed to sign your own Petition.");
-            return;
-        }
+        // if (Number(profile.id) === Number(item.user.id)) {
+        //     alert("You're not supposed to sign your own Petition.");
+        //     return;
+        // }
+
+        copyItem.responses_count = Number(copyItem.responses_count);
+
         if (this.state.signing) {
             return;
         }
@@ -240,11 +245,13 @@ class FeedFooter extends Component {
         this.setState({signing: true});
         console.log(signId, unsignId);
         let option = signed ? unsignId : signId;
+        item.answer_count = Number(item.answer_count);
+
         item.answer = {option};
         if (signed){
-            item.responses_count -=1;
+            item.answer_count -=1;
         } else {
-            item.responses_count -=1;
+            item.answer_count +=1;
         }
         let res;
         try {
@@ -335,7 +342,7 @@ class FeedFooter extends Component {
                 <View style={{flex: 6, flexDirection: 'row'}}>
                     <AnimatedButton onPress={() => {this.sign(item, isSigned); Mixpanel.track("Signed Petition");}}
                         icon={<Thumbnail source={require('../../../assets/petition-icon.png')} style={{height: 25, width: 25, tintColor: isSigned ? '#53a8cd' : '#8694ab'}} square />}
-                        label={isSigned ? ' Signed' : ('  ' + (item.answer_count || 0) + ' Signatures')}
+                        label={isSigned ? ' Signed' : ('  ' + (item.responses_count || 0) + ' Signatures')}
                         labelStyle={isSigned ? styles.footerTextBlue : styles.footerText}
                         animateEffect={'tada'}
                         />
@@ -395,10 +402,10 @@ class FeedFooter extends Component {
     }
 
     renderPulseIcon(item, flex, link){
-        // console.log(item);
+        console.log(item.type, 'counting: ', ' comment: ', item.comment_count, ' answer: ', item.answer_count,' responses:', item.responses_count);
         const activity = Number((item.comment_count || 0)) 
         + Number((item.answer_count || 0)) 
-        + Number((item.responses_count || 0)); 
+        + ((item.type === 'petition' || item.type === 'user-petition' || item.type === 'post') ? Number((item.responses_count || 0)) : 0); 
 
 
         return <View style={{flex: flex || 1, justifyContent: 'center', alignItems: 'center'}}>

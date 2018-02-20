@@ -74,7 +74,7 @@ class CommentDetail extends Component {
         this.setState({ isRefreshing: true });
         try {
             let response = await Promise.race([
-                getChildComments(token, entityType === 'post' ? 'post' : entityType === 'user-petition' ? 'user-petition' : 'poll', this.rootComment.id, 0, all ? this.rootComment.child_count : 10),
+                getChildComments(token, entityType === 'post' ? 'post' : entityType === 'user-petition' ? 'user-petition' : 'poll', this.rootComment.id, 0, all ? 100 : 10),
                 timeout(15000),
             ]);
             console.log(response)
@@ -253,7 +253,7 @@ class CommentDetail extends Component {
                         <TouchableOpacity onPress={() => this._onCommentBody(comment)}>
                             <Text style={styles.childTitle}>{title}</Text>
                             <Text style={styles.childDescription} numberOfLines={5}>{comment.comment_body}</Text>
-                            <Text note style={styles.subtitle}><TimeAgo time={comment.created_at} /></Text>
+                            <Text note style={styles.subtitle}><TimeAgo time={new Date(comment.created_at)} /></Text>
                         </TouchableOpacity>
                         <View style={styles.commentFooterContainer}>
                             <Button iconLeft small transparent onPress={() => this._onRate(comment, 'up')}>

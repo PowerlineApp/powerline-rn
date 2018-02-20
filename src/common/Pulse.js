@@ -35,7 +35,7 @@ export default class Pulse extends React.Component {
                 <Animated.View
                     style={[{
                         borderColor,
-                        backgroundColor,
+                        backgroundColor: '#020860',
                         width: size,
                         height: size,
                         borderRadius: size/2,

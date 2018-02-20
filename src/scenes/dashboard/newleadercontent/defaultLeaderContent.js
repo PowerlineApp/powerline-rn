@@ -110,7 +110,7 @@ class NewLeaderContent extends Component {
         console.log('ret => ', ret);
         let showCommunity = true, selectedGroupIndex = -1;
         let grouplist = ret.filter(group => group.user_role === 'owner' || group.user_role === 'manager');
-        console.log('grouplist', grouplist);
+        console.log('grouplist', grouplist, group);
         if (group && group !== 'all'){
             showCommunity = false;
             selectedGroupIndex = grouplist.map(grouObj => grouObj.id).indexOf(group);
@@ -118,6 +118,8 @@ class NewLeaderContent extends Component {
                 this.updateBankInfo(token, ret[selectedGroupIndex].id, type);
             }
         }
+
+        console.log(group, selectedGroupIndex, showCommunity);
         this.setState({
             grouplist,
             showCommunity,

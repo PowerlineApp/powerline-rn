@@ -83,7 +83,8 @@ class ItemDetail extends Component {
             inputDescription: '',
             placeholderTitle: '',
             sharing: false,
-            addingComment: false
+            addingComment: false,
+            suggestionList: []
         };
         this.commentToReply = null;
         this.isLoadedAll = false;
@@ -643,7 +644,7 @@ class ItemDetail extends Component {
                 <Modal style={{justifyContent: 'flex-end'}} transparent onRequestClose={() => this.onCloseComment()} visible={this.state.addingComment} animationType="slide">
                     <TouchableOpacity transparent onPress={() => this.onCloseComment()} style={{flex: 1, height: '100%', justifyContent: 'flex-end'}}>
                     {
-                        (this.state.displaySuggestionBox && this.state.suggestionList.length > 0) 
+                        (this.state.displaySuggestionBox && this.state.suggestionList && this.state.suggestionList.length > 0) 
                         && <ScrollView style={{maxHeight: 40, backgroundColor: '#fff', marginBottom: 0, zIndex: 3}} keyboardShouldPersistTaps='always'>
                             <SuggestionBox horizontal substitute={(mention) => this.substitute(mention)} displaySuggestionBox={this.state.displaySuggestionBox && this.state.suggestionList.length > 0} userList={this.state.suggestionList} />
                         </ScrollView>
@@ -655,9 +656,10 @@ class ItemDetail extends Component {
                                     <Body keyboardShouldPersistTaps="always">
                                         <Input
                                             autoFocus
+                                            // onFocus={() => this.setState({commentText: 'aloha'})}
                                             placeholder={this.state.placeholderTitle}
                                             onContentSizeChange={() => {}}
-
+                                            placeholderTextColor={styles.addCommentTitle.color}
                                             style={styles.commentInput}
                                             ref={this.onCommentInputRef}
                                             value={this.state.commentText}
@@ -789,7 +791,7 @@ class ItemDetail extends Component {
                         <TouchableOpacity onPress={() => this._onCommentBody(comment)}>
                             <Text style={styles.rootTitle}>{title}</Text>
                             <ParsedComment style={styles.rootDescription} item={comment} />
-                            <Text note style={styles.subtitle}><TimeAgo time={comment.created_at} /></Text>
+                            <Text note style={styles.subtitle}><TimeAgo time={new Date(comment.created_at)} /></Text>
                         </TouchableOpacity>
                         <View style={styles.commentFooterContainer}>
                             <Button iconLeft small transparent onPress={() => this._onRate(comment, 'up')}>
@@ -857,7 +859,7 @@ class ItemDetail extends Component {
                             <TouchableOpacity onPress={() => this._onCommentBody(comment)}>
                                 <Text style={styles.rootTitle}>{title}</Text>
                                 <ParsedComment style={styles.rootDescription} item={comment} />
-                                <Text note style={styles.subtitle}><TimeAgo time={comment.created_at} /></Text>
+                                <Text note style={styles.subtitle}><TimeAgo time={new Date(comment.created_at)} /></Text>
                             </TouchableOpacity>
                             <View style={styles.commentFooterContainer}>
                                 <Button iconLeft small transparent onPress={() => this._onRate(comment, 'up')}>

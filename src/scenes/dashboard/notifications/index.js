@@ -256,7 +256,7 @@ class Notifications extends Component{
         }
 
         return <Text note style={styles.text2}>
-            {icon}<TimeAgo time={notification.created_at} />
+            {icon}<TimeAgo time={new Date(notification.created_at)} />
         </Text>;
     }
 
@@ -304,7 +304,7 @@ class Notifications extends Component{
                                     <Body style={styles.listItemBody}>
                                         <Text style={styles.text1}>You were invited you a group: <Text style={styles.text3}>{value.official_name}</Text></Text>
                                         <Text note style={styles.text2}>
-                                            <Icon name='people' style={styles.icon} /> <TimeAgo time={value.created_at} />
+                                            <Icon name='people' style={styles.icon} /> <TimeAgo time={new Date(value.created_at)} />
                                         </Text>
                                     </Body>
                                     <Right style={styles.inviteRightItem}>
@@ -358,7 +358,7 @@ class Notifications extends Component{
                                         </Left>
                                         <Body>
                                             <Text style={{color: PLColors.main}}>{this.showText(value.html_message)}</Text>
-                                            <Text note style={{color: PLColors.lightText}}><Icon name='people' style={styles.icon} /> <TimeAgo time={value.created_at} /></Text>
+                                            <Text note style={{color: PLColors.lightText}}><Icon name='people' style={styles.icon} /> <TimeAgo time={new Date(value.created_at)} /></Text>
                                         </Body>
                                     </ListItem>);
                             }

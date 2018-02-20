@@ -72,7 +72,7 @@ class Notifications extends Component{
 
     // There are three general types of activities that show up in the Notifications Feed. A social activity update (e.g someone mentioned you in a comment), a Social Follow Request (User A wants to follow you), and a Group Join invite (You were invited to Save the Whales)
     render() {
-        WARN(JSON.stringify(this.state.notifications))
+        WARN(JSON.stringify(this.state.notifications));
         return (
             <Content>
                 <List style={{backgroundColor: 'white'}}>
@@ -89,12 +89,12 @@ class Notifications extends Component{
                                             <Text style={{color: PLColors.main}}>{this.showText(value.html_message)}</Text>
                                             {
                                               value.type == 'comment-mentioned' || value.type == 'post-mentioned'?
-                                              <Text note style={{color: PLColors.lightText}}>                                                    
-                                                    <Icon name="chatboxes" style={styles.icon}/> <TimeAgo time={value.created_at} />
-                                              </Text>:
-                                              <Text note style={{color: PLColors.lightText}}>                                                   
-                                                    <Icon name="podium" style={styles.icon}/> <TimeAgo time={value.created_at} />
-                                              </Text>
+                                                  <Text note style={{color: PLColors.lightText}}>                                                    
+                                                      <Icon name='chatboxes' style={styles.icon} /> <TimeAgo time={new Date(value.created_at)} />
+                                                  </Text>:
+                                                  <Text note style={{color: PLColors.lightText}}>                                                   
+                                                      <Icon name='podium' style={styles.icon} /> <TimeAgo time={new Date(value.created_at)} />
+                                                  </Text>
                                             }
                                         </Body>
                                     </ListItem>
@@ -104,7 +104,7 @@ class Notifications extends Component{
                                     <ListItem avatar key={index} style={{height: 130}} onPress={() => this.followers(value)}>
                                         <Body style={{height: 130}}>
                                             <Text style={{color: PLColors.main}}>{this.showText(value.html_message)}</Text>
-                                            <Text note style={{color: PLColors.lightText}}><Icon name="contact" style={styles.icon}/> <TimeAgo time={value.created_at} /></Text>
+                                            <Text note style={{color: PLColors.lightText}}><Icon name='contact' style={styles.icon} /> <TimeAgo time={new Date(value.created_at)} /></Text>
                                         </Body>
                                         <Right>
                                             <TouchableOpacity>
@@ -124,7 +124,7 @@ class Notifications extends Component{
                                     <ListItem avatar key={index} style={{height: 95}} onPress={() => this.groupDetail(value)}>
                                         <Body style={{height: 95}}>
                                             <Text style={{color: PLColors.main}}>{this.showText(value.html_message)}</Text>
-                                            <Text note style={{color: PLColors.lightText}}><Icon name="people" style={styles.icon}/> <TimeAgo time={value.created_at} /></Text>
+                                            <Text note style={{color: PLColors.lightText}}><Icon name='people' style={styles.icon} /> <TimeAgo time={new Date(value.created_at)} /></Text>
                                         </Body>
                                         <Right>
                                             <TouchableOpacity>
