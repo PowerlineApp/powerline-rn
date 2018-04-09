@@ -1,11 +1,16 @@
 import React from "react";
-import { Text, View, TouchableHighlight } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
+import { Text, View, TouchableHighlight } from "react-native";
+import { Actions } from "react-native-router-flux";
 
 import styles from "./styles";
 
 const icons = [
-  { icon: "md-lock", label: "Privacy Settings", onPress: () => {} },
+  {
+    icon: "md-lock",
+    label: "Privacy Settings",
+    onPress: () => Actions.privacySettings()
+  },
   { icon: "md-options", label: "Customization Code", onPress: () => {} },
   { icon: "md-eye-off", label: "Blocked Users", onPress: () => {} },
   { icon: "md-card", label: "Payment Info", onPress: () => {} },

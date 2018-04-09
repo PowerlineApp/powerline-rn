@@ -16,6 +16,7 @@ import { StatusBar, View, Text } from "react-native";
 import { Drawer } from "native-base";
 import { closeDrawer } from "./actions/drawer";
 import Settings from "./scenes/settings";
+import PrivacySettings from "./scenes/settings/privacy";
 import Home from "./scenes/dashboard/";
 import GroupSelector from "./scenes/dashboard/groupSelector/";
 import ItemDetail from "./scenes/dashboard/itemDetail/";
@@ -106,6 +107,8 @@ class PLNavigator extends React.Component {
         return <Search />;
       case "settings":
         return <Settings />;
+      case "privacySettings":
+        return <PrivacySettings />;
       default:
         return <Home />;
     }
@@ -172,6 +175,7 @@ class MyRouter extends Component {
       <RouterWithRedux onBackPress={this.onBackPress} key="router">
         <Scene key="root" hideNavBar>
           <Scene key="settings" component={Settings} />
+          <Scene key="privacySettings" component={PrivacySettings} />
           <Scene key="analyticsView" component={AnalyticsView} hideNavBar />
           <Scene key="home" component={Home} initial hideNavBar />
           <Scene key="groupSelector" component={GroupSelector} />
