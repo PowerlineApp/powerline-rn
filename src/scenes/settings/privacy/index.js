@@ -1,24 +1,70 @@
 import React from "react";
 import { connect } from "react-redux";
 import { ScrollView, View, Text, TouchableOpacity } from "react-native";
+import ActionSheet from "react-native-actionsheet";
 import Icon from "react-native-vector-icons/Ionicons";
 
 import styles from "./styles";
 
 class PrivacySettings extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      ...props.privacy_settings,
+      actionSheet: {
+        title: "",
+        options: [],
+        cancelButtonIndex: 0,
+        destructiveButtonIndex: null,
+        onPress: () => {}
+      }
+    };
+  }
+
   render() {
     return (
       <ScrollView style={styles.container}>
-        {Object.keys(this.props.privacy_settings).map((key, index) => {
+        {Object.keys(this.state).map((key, index) => {
+          if (key == "actionSheet") return null;
+          const options = map[key].options;
           return (
             <Setting
               key={key}
               first={index === 0}
               label={key}
-              value={this.props.privacy_settings[key]}
+              value={this.state[key]}
+              onPress={
+                options == null
+                  ? null
+                  : () => {
+                      this.setState({
+                        actionSheet: {
+                          title: "Select one",
+                          options: options.concat("Cancel"),
+                          cancelButtonIndex: options.length,
+                          onPress: index => {
+                            if (index == this.state.cancelButtonIndex) {
+                              return;
+                            }
+
+                            var updateObj = {};
+                            updateObj[key] = options[index];
+                            this.setState(updateObj);
+                          }
+                        }
+                      });
+
+                      this.actionSheet.show();
+                    }
+              }
             />
           );
         })}
+
+        <ActionSheet
+          ref={ref => (this.actionSheet = ref)}
+          {...this.state.actionSheet}
+        />
       </ScrollView>
     );
   }
@@ -58,17 +104,22 @@ class Setting extends React.Component {
           {this.remapLabel(this.props.label)}
         </Text>
         <View style={styles.itemActionContainer}>
-          <TouchableOpacity onPress={() => {}}>
+          <TouchableOpacity
+            onPress={this.props.onPress}
+            disabled={this.props.onPress == null}
+          >
             <View style={{ flexDirection: "row", justifyContent: "center" }}>
               <Text style={styles.itemValue}>
                 {this.remapValue(this.props.value)}
               </Text>
-              <Icon
-                name="ios-arrow-forward"
-                size={22}
-                color="#C6C6C6"
-                style={{ marginLeft: 10 }}
-              />
+              {this.props.onPress && (
+                <Icon
+                  name="ios-arrow-forward"
+                  size={22}
+                  color="#C6C6C6"
+                  style={{ marginLeft: 10 }}
+                />
+              )}
             </View>
           </TouchableOpacity>
         </View>
