@@ -16,6 +16,7 @@ import {
 } from "../../../actions/users";
 
 import styles from "./styles";
+var PLColors = require("PLColors");
 
 const menuContextStyles = {
   menuContextWrapper: { height: 50 },
@@ -124,7 +125,11 @@ class PrivacySettings extends React.Component {
   render() {
     return (
       <MenuContext>
-        <Header searchBar rounded style={styles.header}>
+        <Header
+          searchBar
+          rounded
+          style={[styles.header, { backgroundColor: PLColors.main }]}
+        >
           <Left
             style={{
               flex: 0.1,

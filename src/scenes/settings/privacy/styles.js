@@ -2,7 +2,7 @@ import ScaleSheet from "react-native-scalesheet";
 
 export default ScaleSheet.create({
   container: {
-    flex: 500,
+    flex: 1,
     backgroundColor: "#EFEFF4"
   },
   item: {
