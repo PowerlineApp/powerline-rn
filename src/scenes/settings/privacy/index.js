@@ -2,6 +2,7 @@ import _ from "lodash";
 import React from "react";
 import ActionSheet from "react-native-actionsheet";
 import Ionicon from "react-native-vector-icons/Ionicons";
+import PLOverlayLoader from "PLOverlayLoader";
 import { connect } from "react-redux";
 import { Actions } from "react-native-router-flux";
 import { Alert, ScrollView, View, Text, TouchableOpacity } from "react-native";
@@ -9,6 +10,11 @@ import { MenuContext } from "react-native-popup-menu";
 import { Header, Left, Title, Body, Button, Icon, Item } from "native-base";
 
 import { openDrawer } from "../../../actions/drawer";
+import {
+  getPrivacySettings,
+  updatePrivacySettings
+} from "../../../actions/users";
+
 import styles from "./styles";
 
 const menuContextStyles = {
@@ -21,6 +27,7 @@ class PrivacySettings extends React.Component {
     super(props);
     this.state = {
       ...props.privacy_settings,
+      loading: true,
       actionSheet: {
         title: "",
         options: [],
@@ -31,24 +38,81 @@ class PrivacySettings extends React.Component {
     };
   }
 
+  componentDidMount = () => {
+    getPrivacySettings(this.props.token)
+      .then(data => {
+        this.props.dispatch({
+          type: "PRIVACY_SETTINGS_STATE",
+          payload: data
+        });
+      })
+      .catch(err => {
+        Alert.alert(
+          "Oops..",
+          "There was an error loading your privacy settings, please try again later."
+        );
+        console.error("Err:", err.message);
+        this.setState({ loading: false });
+        Actions.pop();
+      });
+  };
+
   componentWillReceiveProps = nextProps => {
-    var obj = { ...nextProps.privacy_settings };
+    var obj = { ...nextProps.privacy_settings, loading: false };
     this.setState(obj);
   };
 
   saveOnExit = () => {
-    const purgedState = _.omit(this.state, "actionSheet");
+    const purgedState = _.omit(
+      this.state,
+      "actionSheet",
+      "loading",
+      "email",
+      "name",
+      "country",
+      "zip",
+      "responses",
+      "karma",
+      "referral_code",
+      "username"
+    );
+
+    const purgedProps = _.omit(
+      this.props.privacy_settings,
+      "email",
+      "name",
+      "country",
+      "zip",
+      "responses",
+      "karma",
+      "referral_code",
+      "username"
+    );
 
     let promise = Promise.resolve();
     if (!_.isEqual(this.props.privacy_settings, purgedState)) {
-      promise = Promise.resolve();
+      this.setState({ loading: true });
+      promise = new Promise((resolve, reject) => {
+        updatePrivacySettings(this.props.token, purgedState)
+          .then(data => {
+            this.props.dispatch({
+              type: "PRIVACY_SETTINGS_STATE",
+              payload: data
+            });
+            resolve();
+            console.error("Success", data);
+          })
+          .catch(err => reject(err));
+      });
     }
 
     promise
       .then(() => {
+        this.setState({ loading: false });
         Actions.pop();
       })
       .catch(err => {
+        this.setState({ loading: false });
         Alert.alert(
           "Oops",
           "There was an unexpected error when saving your settings.",
@@ -82,7 +146,8 @@ class PrivacySettings extends React.Component {
         </Header>
         <ScrollView style={styles.container}>
           {Object.keys(this.state).map((key, index) => {
-            if (key == "actionSheet") return null;
+            if (key == "actionSheet" || key == "loading") return null;
+            console.warn("Key:", key);
             const options = map[key].options;
             return (
               <Setting
@@ -121,6 +186,14 @@ class PrivacySettings extends React.Component {
             ref={ref => (this.actionSheet = ref)}
             {...this.state.actionSheet}
           />
+
+          {this.state.loading && (
+            <PLOverlayLoader
+              visible={this.state.loading}
+              marginTop={200}
+              logo
+            />
+          )}
         </ScrollView>
       </MenuContext>
     );
@@ -232,30 +305,34 @@ const map = {
 
 const mapStateToProps = state => ({
   privacy_settings: {
-    name: null || map.name.default,
-    country: null || map.country.default,
-    zip: null || map.zip.default,
-    email: null || map.email.default,
-    responses: null || map.responses.default,
-    karma: null || map.karma.default,
-    referral_code: null || map.referral_code.default,
-    username: null || map.username.default,
-    street_address: null || map.street_address.default,
-    phone: null || map.phone.default,
-    joined_groups: null || map.joined_groups.default,
-    followers: null || map.followers.default,
-    followings: null || map.followings.default,
-    birthdate: null || map.birthdate.default,
-    city: null || map.city.default,
-    state: null || map.state.default,
-    social_media_links: null || map.social_media_links.default,
-    number_of_followers: null || map.number_of_followers.default,
-    number_of_followings: null || map.number_of_followings.default
-  }
+    ...state.privacySettings
+  },
+  // name: null || map.name.default,
+  // country: null || map.country.default,
+  // zip: null || map.zip.default,
+  // email: null || map.email.default,
+  // responses: null || map.responses.default,
+  // karma: null || map.karma.default,
+  // referral_code: null || map.referral_code.default,
+  // username: null || map.username.default,
+  // street_address: null || map.street_address.default,
+  // phone: null || map.phone.default,
+  // joined_groups: null || map.joined_groups.default,
+  // followers: null || map.followers.default,
+  // followings: null || map.followings.default,
+  // birthdate: null || map.birthdate.default,
+  // city: null || map.city.default,
+  // state: null || map.state.default,
+  // social_media_links: null || map.social_media_links.default,
+  // number_of_followers: null || map.number_of_followers.default,
+  // number_of_followings: null || map.number_of_followings.default
+
+  token: state.user.token
 });
 
-const mapDispatch = {
-  openDrawer: openDrawer
-};
+const mapDispatch = dispatch => ({
+  openDrawer: () => dispatch(openDrawer()),
+  dispatch: e => dispatch(e)
+});
 
 export default connect(mapStateToProps, mapDispatch)(PrivacySettings);
