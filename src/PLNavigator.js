@@ -4,65 +4,64 @@
  * @flow
  */
 
-'use strict';
-import React, {Component} from 'React';
-import Platform from 'Platform';
-import BackAndroid from 'BackAndroid';
-import StyleSheet from 'StyleSheet';
-import { Router, Scene } from 'react-native-router-flux';
-import { connect } from 'react-redux';
-import { StatusBar, View, Text } from 'react-native';
+"use strict";
+import React, { Component } from "React";
+import Platform from "Platform";
+import BackAndroid from "BackAndroid";
+import StyleSheet from "StyleSheet";
+import { Router, Scene } from "react-native-router-flux";
+import { connect } from "react-redux";
+import { StatusBar, View, Text } from "react-native";
 
-import { Drawer } from 'native-base';
-import { closeDrawer } from './actions/drawer';
-import Home from './scenes/dashboard/';
-import GroupSelector from './scenes/dashboard/groupSelector/';
-import ItemDetail from './scenes/dashboard/itemDetail/';
-import CommentDetail from './scenes/dashboard/itemDetail/commentDetail';
-import SideBar from './components/sideBar';
-import getTheme from '../native-base-theme/components';
-import material from '../native-base-theme/variables/material';
-import { StyleProvider, variables } from 'native-base';
-import TourScene from './scenes/auth/TourScene';
-import Influences from './scenes/influences/';
-import SearchFollowing from './scenes/influences/search/';
-import AnalyticsView from './scenes/dashboard/analyticsView'
-import Representatives from './scenes/representatives/';
-import RepresentatyProfile from './scenes/representatives/profile/';
-import Profile from './scenes/profile/';
-import VerifyProfile from './scenes/profile/verifyProfile';
-import CreateGroup from './scenes/dashboard/creategroup/';
-import GroupProfile from './scenes/dashboard/groupprofile/';
-import GroupList from './scenes/dashboard/grouplist/';
-import GroupJoin from './scenes/dashboard/groupJoin/';
-import GroupSearch from './scenes/dashboard/grouplist/search/';
-import GroupMembers from './scenes/dashboard/groupmembers/';
-import GroupInvite from './scenes/dashboard/groupinvite/';
-import ManageGroup from './scenes/dashboard/managegroup/';
-import NewPost from './scenes/dashboard/newpost/';
-import NewPetition from './scenes/dashboard/newpetition';
-import NewLeaderContent from './scenes/dashboard/newleadercontent';
-import Search from './scenes/search/';
-import GroupMembersManagementScene from './scenes/dashboard/managegroup/scenes/userManagement'
-import GroupBankAccountScene from './scenes/dashboard/managegroup/scenes/fundraiser'
-import GroupAddCardScene from './scenes/dashboard/managegroup/scenes/subscription'
-import ElectedLeadersForm from './scenes/dashboard/electedLadersForm'
-import Modal from './components/Modal'
-import UserAddCard from './scenes/profile/userAddCard.js';
-import TermsList from './scenes/dashboard/termsList';
+import { Drawer } from "native-base";
+import { closeDrawer } from "./actions/drawer";
+import Settings from "./scenes/settings";
+import Home from "./scenes/dashboard/";
+import GroupSelector from "./scenes/dashboard/groupSelector/";
+import ItemDetail from "./scenes/dashboard/itemDetail/";
+import CommentDetail from "./scenes/dashboard/itemDetail/commentDetail";
+import SideBar from "./components/sideBar";
+import getTheme from "../native-base-theme/components";
+import material from "../native-base-theme/variables/material";
+import { StyleProvider, variables } from "native-base";
+import TourScene from "./scenes/auth/TourScene";
+import Influences from "./scenes/influences/";
+import SearchFollowing from "./scenes/influences/search/";
+import AnalyticsView from "./scenes/dashboard/analyticsView";
+import Representatives from "./scenes/representatives/";
+import RepresentatyProfile from "./scenes/representatives/profile/";
+import Profile from "./scenes/profile/";
+import VerifyProfile from "./scenes/profile/verifyProfile";
+import CreateGroup from "./scenes/dashboard/creategroup/";
+import GroupProfile from "./scenes/dashboard/groupprofile/";
+import GroupList from "./scenes/dashboard/grouplist/";
+import GroupJoin from "./scenes/dashboard/groupJoin/";
+import GroupSearch from "./scenes/dashboard/grouplist/search/";
+import GroupMembers from "./scenes/dashboard/groupmembers/";
+import GroupInvite from "./scenes/dashboard/groupinvite/";
+import ManageGroup from "./scenes/dashboard/managegroup/";
+import NewPost from "./scenes/dashboard/newpost/";
+import NewPetition from "./scenes/dashboard/newpetition";
+import NewLeaderContent from "./scenes/dashboard/newleadercontent";
+import Search from "./scenes/search/";
+import GroupMembersManagementScene from "./scenes/dashboard/managegroup/scenes/userManagement";
+import GroupBankAccountScene from "./scenes/dashboard/managegroup/scenes/fundraiser";
+import GroupAddCardScene from "./scenes/dashboard/managegroup/scenes/subscription";
+import ElectedLeadersForm from "./scenes/dashboard/electedLadersForm";
+import Modal from "./components/Modal";
+import UserAddCard from "./scenes/profile/userAddCard.js";
+import TermsList from "./scenes/dashboard/termsList";
 
-
-import Share from './PLShare';
-import {Actions} from 'react-native-router-flux';
+import Share from "./PLShare";
+import { Actions } from "react-native-router-flux";
 
 var RouterWithRedux = connect()(Router);
 
 class PLNavigator extends React.Component {
-
   static propTypes = {
     drawerState: React.PropTypes.string,
-    closeDrawer: React.PropTypes.func,
-  }
+    closeDrawer: React.PropTypes.func
+  };
 
   // componentDidMount(){
   //   Actions.share();
@@ -88,22 +87,25 @@ class PLNavigator extends React.Component {
   //   // }
   // }
 
-  _renderScene(props) { // eslint-disable-line class-methods-use-this
+  _renderScene(props) {
+    // eslint-disable-line class-methods-use-this
     switch (props.scene.route.key) {
-      case 'home':
+      case "home":
         return <Home />;
-      case 'takeTour':
+      case "takeTour":
         return <TourScene />;
-      case 'myInfluences':
+      case "myInfluences":
         return <Influences />;
-      case 'representatives':
+      case "representatives":
         return <Representatives />;
-      case 'createGroup':
+      case "createGroup":
         return <CreateGroup />;
-      case 'myGroups':
+      case "myGroups":
         return <GroupList />;
-      case 'search':
-        return <Search/>;
+      case "search":
+        return <Search />;
+      case "settings":
+        return <Settings />;
       default:
         return <Home />;
     }
@@ -111,10 +113,16 @@ class PLNavigator extends React.Component {
 
   render() {
     return (
-      <StyleProvider style={getTheme((this.props.themeState === 'material') ? material : undefined)}>
+      <StyleProvider
+        style={getTheme(
+          this.props.themeState === "material" ? material : undefined
+        )}
+      >
         <Drawer
-          ref={(ref) => { this._drawer = ref; }}
-          open={this.props.drawerState === 'opened'}
+          ref={ref => {
+            this._drawer = ref;
+          }}
+          open={this.props.drawerState === "opened"}
           type="overlay"
           tweenDuration={150}
           content={<SideBar />}
@@ -125,17 +133,17 @@ class PLNavigator extends React.Component {
           panCloseMask={0.2}
           styles={{
             drawer: {
-              shadowColor: '#000000',
+              shadowColor: "#000000",
               shadowOpacity: 0.8,
-              shadowRadius: 3,
-            },
+              shadowRadius: 3
+            }
           }}
-          tweenHandler={(ratio) => {
+          tweenHandler={ratio => {
             return {
               drawer: { shadowRadius: ratio < 0.2 ? ratio * 5 * 5 : 5 },
               main: {
-                opacity: (2 - ratio) / 2,
-              },
+                opacity: (2 - ratio) / 2
+              }
             };
           }}
           negotiatePan
@@ -148,67 +156,88 @@ class PLNavigator extends React.Component {
 }
 
 class MyRouter extends Component {
-  shouldComponentUpdate () {
+  shouldComponentUpdate() {
     // so we keep our state when opening the drawer!!!
     return false;
   }
   onBackPress() {
     if (Actions.state.index === 0) {
-      return false
+      return false;
     }
-    Actions.pop()
-    return true
+    Actions.pop();
+    return true;
   }
-  render (){
+  render() {
     return (
-          <RouterWithRedux onBackPress={this.onBackPress}  key="router">
-            <Scene key="root" hideNavBar>
-              <Scene key="analyticsView" component={AnalyticsView} hideNavBar/>
-              <Scene key="home" component={Home} initial hideNavBar />
-              <Scene key="groupSelector" component={GroupSelector} />
-              <Scene key="takeTour" component={TourScene} />
-              <Scene key="itemDetail" component={ItemDetail} animation={'fade'} />
-              <Scene key="commentDetail" component={CommentDetail} />
-              <Scene key="myInfluences" component={Influences} />
-              <Scene key="searchFollowing" component={SearchFollowing} />
-              <Scene key="representatives" component={Representatives} />
-              <Scene key="representatyprofile" component={RepresentatyProfile} />
-              <Scene key="profile" component={Profile} />
-              <Scene key="verifyProfile" component={VerifyProfile} />
-              <Scene key="createGroup" component={CreateGroup} />
-              <Scene key="groupprofile" component={GroupProfile} />
-              <Scene key="myGroups" component={GroupList} />
-              <Scene key="groupsearch" component={GroupSearch} />
-              <Scene key="groupmembers" component={GroupMembers} />
-              <Scene key="newpost" component={NewPost} animation={'fade'} />
-              <Scene key="newpetition" component={NewPetition} animation={'fade'} />
-              <Scene key="newleadercontent" component={NewLeaderContent} animation={'fade'} />
-              <Scene key="search" component={Search}/>
-              <Scene key="groupInvite" component={GroupInvite} />
-              <Scene key="groupJoin" component={GroupJoin} />
-              <Scene key="managegroup" component={ManageGroup}/>
-              <Scene key="manageGroupMembers" component={GroupMembersManagementScene}/>
-              <Scene key="groupBankAccountScene" component={GroupBankAccountScene}/>
-              <Scene key="groupAddCardScene" component={GroupAddCardScene}/>
-              <Scene key='formModal' hideNavBar={false} component={Modal} direction='vertical' rightTitle='Save'/>
-              <Scene key="electedLeadersForm" component={ElectedLeadersForm} hideNavBar />
-              <Scene key="userAddCardScene" component={UserAddCard} />
-              <Scene key="share" component={Share} />
-              <Scene key="terms" component={TermsList} />
-            </Scene>
-          </RouterWithRedux>
-    )
+      <RouterWithRedux onBackPress={this.onBackPress} key="router">
+        <Scene key="root" hideNavBar>
+          <Scene key="settings" component={Settings} />
+          <Scene key="analyticsView" component={AnalyticsView} hideNavBar />
+          <Scene key="home" component={Home} initial hideNavBar />
+          <Scene key="groupSelector" component={GroupSelector} />
+          <Scene key="takeTour" component={TourScene} />
+          <Scene key="itemDetail" component={ItemDetail} animation={"fade"} />
+          <Scene key="commentDetail" component={CommentDetail} />
+          <Scene key="myInfluences" component={Influences} />
+          <Scene key="searchFollowing" component={SearchFollowing} />
+          <Scene key="representatives" component={Representatives} />
+          <Scene key="representatyprofile" component={RepresentatyProfile} />
+          <Scene key="profile" component={Profile} />
+          <Scene key="verifyProfile" component={VerifyProfile} />
+          <Scene key="createGroup" component={CreateGroup} />
+          <Scene key="groupprofile" component={GroupProfile} />
+          <Scene key="myGroups" component={GroupList} />
+          <Scene key="groupsearch" component={GroupSearch} />
+          <Scene key="groupmembers" component={GroupMembers} />
+          <Scene key="newpost" component={NewPost} animation={"fade"} />
+          <Scene key="newpetition" component={NewPetition} animation={"fade"} />
+          <Scene
+            key="newleadercontent"
+            component={NewLeaderContent}
+            animation={"fade"}
+          />
+          <Scene key="search" component={Search} />
+          <Scene key="groupInvite" component={GroupInvite} />
+          <Scene key="groupJoin" component={GroupJoin} />
+          <Scene key="managegroup" component={ManageGroup} />
+          <Scene
+            key="manageGroupMembers"
+            component={GroupMembersManagementScene}
+          />
+          <Scene
+            key="groupBankAccountScene"
+            component={GroupBankAccountScene}
+          />
+          <Scene key="groupAddCardScene" component={GroupAddCardScene} />
+          <Scene
+            key="formModal"
+            hideNavBar={false}
+            component={Modal}
+            direction="vertical"
+            rightTitle="Save"
+          />
+          <Scene
+            key="electedLeadersForm"
+            component={ElectedLeadersForm}
+            hideNavBar
+          />
+          <Scene key="userAddCardScene" component={UserAddCard} />
+          <Scene key="share" component={Share} />
+          <Scene key="terms" component={TermsList} />
+        </Scene>
+      </RouterWithRedux>
+    );
   }
 }
 
 function bindAction(dispatch) {
   return {
-    closeDrawer: () => dispatch(closeDrawer()),
+    closeDrawer: () => dispatch(closeDrawer())
   };
 }
 
 const mapStateToProps = state => ({
-  drawerState: state.drawer.drawerState,
+  drawerState: state.drawer.drawerState
 });
 
 module.exports = connect(mapStateToProps, bindAction)(PLNavigator);
