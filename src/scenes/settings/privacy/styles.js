@@ -2,8 +2,7 @@ import ScaleSheet from "react-native-scalesheet";
 
 export default ScaleSheet.create({
   container: {
-    flex: 1,
-    flexDirection: "column",
+    flex: 500,
     backgroundColor: "#EFEFF4"
   },
   item: {
@@ -32,5 +31,9 @@ export default ScaleSheet.create({
   itemValue: {
     fontSize: 16,
     color: "#A6A6A6"
+  },
+  backdrop: {
+    backgroundColor: "black",
+    opacity: 0.5
   }
 });

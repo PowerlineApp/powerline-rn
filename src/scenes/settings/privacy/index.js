@@ -1,10 +1,20 @@
+import _ from "lodash";
 import React from "react";
-import { connect } from "react-redux";
-import { ScrollView, View, Text, TouchableOpacity } from "react-native";
 import ActionSheet from "react-native-actionsheet";
-import Icon from "react-native-vector-icons/Ionicons";
+import Ionicon from "react-native-vector-icons/Ionicons";
+import { connect } from "react-redux";
+import { Actions } from "react-native-router-flux";
+import { Alert, ScrollView, View, Text, TouchableOpacity } from "react-native";
+import { MenuContext } from "react-native-popup-menu";
+import { Header, Left, Title, Body, Button, Icon, Item } from "native-base";
 
+import { openDrawer } from "../../../actions/drawer";
 import styles from "./styles";
+
+const menuContextStyles = {
+  menuContextWrapper: { height: 50 },
+  backdrop: styles.backdrop
+};
 
 class PrivacySettings extends React.Component {
   constructor(props) {
@@ -21,51 +31,98 @@ class PrivacySettings extends React.Component {
     };
   }
 
+  componentWillReceiveProps = nextProps => {
+    var obj = { ...nextProps.privacy_settings };
+    this.setState(obj);
+  };
+
+  saveOnExit = () => {
+    const purgedState = _.omit(this.state, "actionSheet");
+
+    let promise = Promise.resolve();
+    if (!_.isEqual(this.props.privacy_settings, purgedState)) {
+      promise = Promise.resolve();
+    }
+
+    promise
+      .then(() => {
+        Actions.pop();
+      })
+      .catch(err => {
+        Alert.alert(
+          "Oops",
+          "There was an unexpected error when saving your settings.",
+          [{ text: "Ok" }, { text: "Leave anyway", onPress: Actions.pop }]
+        );
+      });
+  };
+
   render() {
     return (
-      <ScrollView style={styles.container}>
-        {Object.keys(this.state).map((key, index) => {
-          if (key == "actionSheet") return null;
-          const options = map[key].options;
-          return (
-            <Setting
-              key={key}
-              first={index === 0}
-              label={key}
-              value={this.state[key]}
-              onPress={
-                options == null
-                  ? null
-                  : () => {
-                      this.setState({
-                        actionSheet: {
-                          title: "Select one",
-                          options: options.concat("Cancel"),
-                          cancelButtonIndex: options.length,
-                          onPress: index => {
-                            if (index == this.state.cancelButtonIndex) {
-                              return;
+      <MenuContext>
+        <Header searchBar rounded style={styles.header}>
+          <Left
+            style={{
+              flex: 0.1,
+              alignItems: "center",
+              justifyContent: "center"
+            }}
+          >
+            <Button
+              style={{ width: "100%" }}
+              transparent
+              onPress={this.saveOnExit}
+            >
+              <Icon active name="arrow-back" style={{ color: "white" }} />
+            </Button>
+          </Left>
+          <Body>
+            <Title>Privacy Settings</Title>
+          </Body>
+        </Header>
+        <ScrollView style={styles.container}>
+          {Object.keys(this.state).map((key, index) => {
+            if (key == "actionSheet") return null;
+            const options = map[key].options;
+            return (
+              <Setting
+                key={key}
+                first={index === 0}
+                label={key}
+                value={this.state[key]}
+                onPress={
+                  options == null
+                    ? null
+                    : () => {
+                        this.setState({
+                          actionSheet: {
+                            title: "Select one",
+                            options: options.concat("Cancel"),
+                            cancelButtonIndex: options.length,
+                            onPress: index => {
+                              if (index == options.length) {
+                                return;
+                              }
+
+                              var updateObj = {};
+                              updateObj[key] = options[index];
+                              this.setState(updateObj);
                             }
-
-                            var updateObj = {};
-                            updateObj[key] = options[index];
-                            this.setState(updateObj);
                           }
-                        }
-                      });
+                        });
+                        this.actionSheet.show();
+                      }
+                }
+              />
+            );
+          })}
 
-                      this.actionSheet.show();
-                    }
-              }
-            />
-          );
-        })}
-
-        <ActionSheet
-          ref={ref => (this.actionSheet = ref)}
-          {...this.state.actionSheet}
-        />
-      </ScrollView>
+          <ActionSheet
+            ref={ref => (this.actionSheet = ref)}
+            {...this.state.actionSheet}
+          />
+        </ScrollView>
+      </MenuContext>
     );
   }
 }
@@ -113,7 +170,7 @@ class Setting extends React.Component {
                 {this.remapValue(this.props.value)}
               </Text>
               {this.props.onPress && (
-                <Icon
+                <Ionicon
                   name="ios-arrow-forward"
                   size={22}
                   color="#C6C6C6"
@@ -197,4 +254,8 @@ const mapStateToProps = state => ({
   }
 });
 
-export default connect(mapStateToProps)(PrivacySettings);
+const mapDispatch = {
+  openDrawer: openDrawer
+};
+
+export default connect(mapStateToProps, mapDispatch)(PrivacySettings);
