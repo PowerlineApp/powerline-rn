@@ -10,6 +10,7 @@ import styles from "./styles";
 import { openDrawer } from "../../actions/drawer";
 
 var PLColors = require("PLColors");
+var { TERMS_OF_SERVICE, PRIVACY_POLICY } = require("PLConstants");
 
 const icons = [
   {
@@ -21,10 +22,29 @@ const icons = [
   { icon: "md-eye-off", label: "Blocked Users", onPress: () => {} },
   { icon: "md-card", label: "Payment Info", onPress: () => {} },
   { icon: "md-notifications", label: "Notifications", onPress: () => {} },
-  { icon: "md-person", label: "My Profile", onPress: () => {} },
+  {
+    icon: "md-person",
+    label: "My Profile",
+    onPress: () => {
+      Actions.pop();
+      Actions.profile();
+    }
+  },
   { icon: "md-mail", label: "Contact Us", onPress: () => {} },
-  { icon: "md-list", label: "Terms of Service", onPress: () => {} },
-  { icon: "md-list", label: "Privacy Policy", onPress: () => {} }
+  {
+    icon: "md-list",
+    label: "Terms of Service",
+    onPress: () => {
+      Actions.terms({ terms: TERMS_OF_SERVICE, title: "Terms of Service" });
+    }
+  },
+  {
+    icon: "md-list",
+    label: "Privacy Policy",
+    onPress: () => {
+      Actions.terms({ terms: PRIVACY_POLICY, title: "Privacy Policy" });
+    }
+  }
 ];
 
 const Component = () => (
