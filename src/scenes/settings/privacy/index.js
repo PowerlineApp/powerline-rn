@@ -238,11 +238,14 @@ class Setting extends React.Component {
       case "number_of_followers":
         return "# of Followers";
       case "number_of_followings":
-        return "# of Followings";
+        return "# of Followed Users";
       case "social_media_links":
         return "Social Media";
       default:
-        return label.charAt(0).toUpperCase() + label.slice(1);
+        return (label.charAt(0).toUpperCase() + label.slice(1)).replace(
+          "Followings",
+          "Followed Users"
+        );
     }
   };
 
