@@ -20,6 +20,7 @@ export default ScaleSheet.create({
   itemLabel: {
     flex: 2,
     fontSize: 16,
+    fontWeight: "bold",
     paddingLeft: 20
   },
   itemActionContainer: {
