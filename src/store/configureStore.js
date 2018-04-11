@@ -3,18 +3,18 @@
  * @flow
  */
 
-'use strict';
+"use strict";
 
-import { applyMiddleware, createStore } from 'redux';
-import thunk from 'redux-thunk';
-import { createLogger } from 'redux-logger';
-import { persistStore, autoRehydrate } from 'redux-persist';
+import { applyMiddleware, createStore } from "redux";
+import thunk from "redux-thunk";
+import { createLogger } from "redux-logger";
+import { persistStore, autoRehydrate } from "redux-persist";
 
-var promise = require('./promise');
-var array = require('./array');
-var analytics = require('./analytics');
-var reducers = require('../reducers');
-var { AsyncStorage } = require('react-native');
+var promise = require("./promise");
+var array = require("./array");
+var analytics = require("./analytics");
+var reducers = require("../reducers");
+var { AsyncStorage } = require("react-native");
 
 var isDebuggingInChrome = __DEV__ && !!window.navigator.userAgent;
 
@@ -24,7 +24,9 @@ var isDebuggingInChrome = __DEV__ && !!window.navigator.userAgent;
 //   duration: true,
 // });
 
-var createPLStore = applyMiddleware(thunk, promise, array, analytics)(createStore);
+var createPLStore = applyMiddleware(thunk, promise, array, analytics)(
+  createStore
+);
 
 function configureStore(onComplete: ?() => void) {
   // TODO(frantic): reconsider usage of redux-persist, maybe add cache breaker

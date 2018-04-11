@@ -17,6 +17,8 @@ import { Drawer } from "native-base";
 import { closeDrawer } from "./actions/drawer";
 import Settings from "./scenes/settings";
 import PrivacySettings from "./scenes/settings/privacy";
+import BlockedUsers from "./scenes/settings/blocking";
+import ManageCards from "./scenes/settings/cards";
 import Home from "./scenes/dashboard/";
 import GroupSelector from "./scenes/dashboard/groupSelector/";
 import ItemDetail from "./scenes/dashboard/itemDetail/";
@@ -109,6 +111,10 @@ class PLNavigator extends React.Component {
         return <Settings />;
       case "privacySettings":
         return <PrivacySettings />;
+      case "blockedUsers":
+        return <BlockedUsers />;
+      case "manageCards":
+        return <ManageCards />;
       default:
         return <Home />;
     }
@@ -176,6 +182,8 @@ class MyRouter extends Component {
         <Scene key="root" hideNavBar>
           <Scene key="settings" component={Settings} />
           <Scene key="privacySettings" component={PrivacySettings} />
+          <Scene key="blockedUsers" component={BlockedUsers} />
+          <Scene key="manageCards" component={ManageCards} />
           <Scene key="analyticsView" component={AnalyticsView} hideNavBar />
           <Scene key="home" component={Home} initial hideNavBar />
           <Scene key="groupSelector" component={GroupSelector} />

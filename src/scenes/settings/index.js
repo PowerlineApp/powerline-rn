@@ -19,8 +19,20 @@ const icons = [
     onPress: () => Actions.privacySettings()
   },
   { icon: "md-options", label: "Customization Code", onPress: () => {} },
-  { icon: "md-eye-off", label: "Blocked Users", onPress: () => {} },
-  { icon: "md-card", label: "Payment Info", onPress: () => {} },
+  {
+    icon: "md-eye-off",
+    label: "Blocked Users",
+    onPress: () => {
+      Actions.blockedUsers();
+    }
+  },
+  {
+    icon: "md-card",
+    label: "Payment Info",
+    onPress: () => {
+      Actions.manageCards();
+    }
+  },
   { icon: "md-notifications", label: "Notifications", onPress: () => {} },
   {
     icon: "md-person",
@@ -61,7 +73,7 @@ const Component = () => (
           justifyContent: "center"
         }}
       >
-        <Button style={{ width: "100%" }} transparent onPress={this.saveOnExit}>
+        <Button style={{ width: "100%" }} transparent onPress={Actions.pop}>
           <Icon active name="arrow-back" style={{ color: "white" }} />
         </Button>
       </Left>
@@ -80,7 +92,7 @@ const Component = () => (
                 underlayColor="#474b87"
                 onPress={icon.onPress}
               >
-                <Ionicon name={icon.icon} size={40} color="#121768" />
+                <Ionicon name={icon.icon} size={40} color={PLColors.main} />
               </TouchableHighlight>
               <Text style={styles.label}>{icon.label}</Text>
             </View>

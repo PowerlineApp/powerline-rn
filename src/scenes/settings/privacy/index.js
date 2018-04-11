@@ -9,7 +9,6 @@ import { Alert, ScrollView, View, Text, TouchableOpacity } from "react-native";
 import { MenuContext } from "react-native-popup-menu";
 import { Header, Left, Title, Body, Button, Icon, Item } from "native-base";
 
-import { openDrawer } from "../../../actions/drawer";
 import {
   getPrivacySettings,
   updatePrivacySettings
@@ -40,26 +39,35 @@ class PrivacySettings extends React.Component {
   }
 
   componentDidMount = () => {
+    console.log("Privacy Mounted");
     getPrivacySettings(this.props.token)
       .then(data => {
+        console.log("Privacy Resolved");
         this.props.dispatch({
           type: "PRIVACY_SETTINGS_STATE",
           payload: data
         });
+
+        console.log("Privacy dispatched:", Date.now());
+
+        this.setState({ loading: false });
       })
       .catch(err => {
+        console.log("Privacy Error:", err);
         Alert.alert(
           "Oops..",
-          "There was an error loading your privacy settings, please try again later."
+          err == "timeout"
+            ? "Response timed out."
+            : "There was an error loading your privacy settings, please try again later."
         );
-        console.error("Err:", err.message);
         this.setState({ loading: false });
         Actions.pop();
       });
   };
 
   componentWillReceiveProps = nextProps => {
-    var obj = { ...nextProps.privacy_settings, loading: false };
+    console.warn("Privacy ComponentWillReceiveProps executed:", Date.now());
+    var obj = { ...nextProps.privacy_settings };
     this.setState(obj);
   };
 
@@ -101,7 +109,6 @@ class PrivacySettings extends React.Component {
               payload: data
             });
             resolve();
-            console.error("Success", data);
           })
           .catch(err => reject(err));
       });
@@ -312,32 +319,7 @@ const mapStateToProps = state => ({
   privacy_settings: {
     ...state.privacySettings
   },
-  // name: null || map.name.default,
-  // country: null || map.country.default,
-  // zip: null || map.zip.default,
-  // email: null || map.email.default,
-  // responses: null || map.responses.default,
-  // karma: null || map.karma.default,
-  // referral_code: null || map.referral_code.default,
-  // username: null || map.username.default,
-  // street_address: null || map.street_address.default,
-  // phone: null || map.phone.default,
-  // joined_groups: null || map.joined_groups.default,
-  // followers: null || map.followers.default,
-  // followings: null || map.followings.default,
-  // birthdate: null || map.birthdate.default,
-  // city: null || map.city.default,
-  // state: null || map.state.default,
-  // social_media_links: null || map.social_media_links.default,
-  // number_of_followers: null || map.number_of_followers.default,
-  // number_of_followings: null || map.number_of_followings.default
-
   token: state.user.token
 });
 
-const mapDispatch = dispatch => ({
-  openDrawer: () => dispatch(openDrawer()),
-  dispatch: e => dispatch(e)
-});
-
-export default connect(mapStateToProps, mapDispatch)(PrivacySettings);
+export default connect(mapStateToProps)(PrivacySettings);

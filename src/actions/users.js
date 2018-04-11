@@ -319,20 +319,36 @@ function getBlockedUsers(token) {
   });
 }
 
+function timeout(ms, promise) {
+  return new Promise(function(resolve, reject) {
+    setTimeout(function() {
+      reject(new Error("timeout"));
+    }, ms);
+    promise.then(resolve, reject);
+  });
+}
+
 function getPrivacySettings(token) {
   return new Promise((resolve, reject) => {
-    fetch(API_URL + "/v2.2/user/privacy_settings", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
-      }
-    })
-      .then(res => res.json())
+    timeout(
+      5000,
+      fetch(API_URL + "/v2.2/user/privacy_settings", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        }
+      })
+    )
+      .then(function(response) {
+        return response.json();
+      })
       .then(data => {
         resolve(data);
       })
-      .catch(err => reject(err));
+      .catch(function(error) {
+        reject(error);
+      });
   });
 }
 

@@ -19,10 +19,10 @@ export default ScaleSheet.create({
     marginTop: "3%"
   },
   iconContainer: {
-    width: "15vh",
-    height: "15vh",
-    borderRadius: "7.5vh",
-    backgroundColor: "#5559A1",
+    width: "12vh",
+    height: "12vh",
+    borderRadius: "6vh",
+    backgroundColor: "#61C1FF",
     justifyContent: "center",
     alignItems: "center"
   },
