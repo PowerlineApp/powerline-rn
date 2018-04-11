@@ -30,12 +30,6 @@ let datas = [
     option: { type: "reset" }
   },
   {
-    name: "Settings",
-    route: "settings",
-    icon: "settings",
-    bg: "#C5F442"
-  },
-  {
     name: "Search",
     route: "search",
     icon: "search",
@@ -113,6 +107,12 @@ let data2 = [
   //  icon: 'more',
   //  bg: '#3591FA',
   //},
+  {
+    name: "Settings",
+    route: "settings",
+    icon: "settings",
+    bg: "#C5F442"
+  },
   {
     name: "Take Tour",
     route: "takeTour",
