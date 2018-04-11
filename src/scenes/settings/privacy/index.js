@@ -83,7 +83,10 @@ class PrivacySettings extends React.Component {
       "responses",
       "karma",
       "referral_code",
-      "username"
+      "username",
+      "post_upvotes_downvotes",
+      "petition_responses",
+      "poll_responses"
     );
 
     const purgedProps = _.omit(
@@ -95,7 +98,10 @@ class PrivacySettings extends React.Component {
       "responses",
       "karma",
       "referral_code",
-      "username"
+      "username",
+      "post_upvotes_downvotes",
+      "petition_responses",
+      "poll_responses"
     );
 
     let promise = Promise.resolve();
@@ -224,18 +230,26 @@ class PrivacySettings extends React.Component {
 }
 
 class Setting extends React.Component {
-  remapValue = value => {
+  remapValue = (label, value) => {
     switch (value) {
       case "group leaders":
         return "approved group leaders";
+    }
+
+    if (label == "poll_responses" || label == "post_upvotes_downvotes") {
+      return value.replace("and", "&").concat("*");
     }
     return value.replace("and", "&");
   };
 
   remapLabel = label => {
     switch (label) {
-      case "responses":
+      case "poll_responses":
         return "Poll Responses";
+      case "petition_responses":
+        return "Petition Responses";
+      case "post_upvotes_downvotes":
+        return "Post Upvotes & Downvotes";
       case "referral_code":
         return "Referral Code";
       case "street_address":
@@ -272,7 +286,7 @@ class Setting extends React.Component {
           >
             <View style={{ flexDirection: "row", justifyContent: "center" }}>
               <Text style={styles.itemValue}>
-                {this.remapValue(this.props.value)}
+                {this.remapValue(this.props.label, this.props.value)}
               </Text>
               {this.props.onPress && (
                 <Ionicon
@@ -291,12 +305,12 @@ class Setting extends React.Component {
 }
 
 const EVERYONE = "everyone";
-const EVERYONE_AND_AUTHOR = "item author and group leaders";
+const LEADERS_AND_AUTHOR = "item author and group leaders";
+const ITEM_AUTHOR = "item author";
 const GROUP_LEADERS = "group leaders";
 const APPROVED_AND_GROUP_LEADERS = "group leaders and followers";
 const APPROVED_FOLLOWERS = "followers";
 const NOBODY = "no one";
-
 const map = {
   name: { default: EVERYONE },
   country: { default: EVERYONE },
@@ -305,8 +319,14 @@ const map = {
   username: { default: EVERYONE },
   karma: { default: EVERYONE },
   referral_code: { default: EVERYONE },
-  responses: { default: EVERYONE_AND_AUTHOR },
-  street_address: { default: GROUP_LEADERS, options: [GROUP_LEADERS, NOBODY] },
+  poll_responses: { default: LEADERS_AND_AUTHOR },
+  petition_responses: { default: EVERYONE },
+  post_upvotes_downvotes: { default: ITEM_AUTHOR },
+  responses: { default: LEADERS_AND_AUTHOR },
+  street_address: {
+    default: GROUP_LEADERS,
+    options: [GROUP_LEADERS, NOBODY]
+  },
   phone: { default: GROUP_LEADERS, options: [GROUP_LEADERS, NOBODY] },
   joined_groups: { default: NOBODY, options: [NOBODY, APPROVED_FOLLOWERS] },
   followers: { default: NOBODY, options: [NOBODY, EVERYONE] },
@@ -337,11 +357,16 @@ const map = {
   }
 };
 
-const mapStateToProps = state => ({
-  privacy_settings: {
-    ...state.privacySettings
-  },
-  token: state.user.token
-});
+const mapStateToProps = state => {
+  let privacy_settings = {};
+  Object.keys(map).forEach(key => {
+    privacy_settings[key] = state.privacySettings[key] || map[key].default;
+  });
+
+  return {
+    privacy_settings,
+    token: state.user.token
+  };
+};
 
 export default connect(mapStateToProps)(PrivacySettings);
