@@ -157,6 +157,12 @@ class PrivacySettings extends React.Component {
           </Body>
         </Header>
         <ScrollView style={styles.container}>
+          <Text style={styles.description}>
+            Your profile information is visible according to the settings below.
+            Remember: 1) You always have the choice to approve a follower, and
+            2) You are informed about the information you will be sharing with a
+            group's leaders when joining that group.
+          </Text>
           {Object.keys(this.state).map((key, index) => {
             if (key == "actionSheet" || key == "loading") return null;
             console.warn("Key:", key);

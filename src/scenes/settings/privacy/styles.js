@@ -5,6 +5,13 @@ export default ScaleSheet.create({
     flex: 1,
     backgroundColor: "#EFEFF4"
   },
+  description: {
+    fontSize: 15,
+    marginVertical: 15,
+    paddingHorizontal: 20,
+    fontColor: "#C0C0C0",
+    textAlign: "center"
+  },
   item: {
     flexDirection: "row",
     alignItems: "center",
