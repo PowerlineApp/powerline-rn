@@ -200,6 +200,11 @@ class PrivacySettings extends React.Component {
             );
           })}
 
+          <Text style={styles.description}>
+            An asterisk (*) denotes this information is anonymized for public
+            reports.
+          </Text>
+
           <ActionSheet
             ref={ref => (this.actionSheet = ref)}
             {...this.state.actionSheet}
@@ -229,6 +234,8 @@ class Setting extends React.Component {
 
   remapLabel = label => {
     switch (label) {
+      case "responses":
+        return "Poll Responses";
       case "referral_code":
         return "Referral Code";
       case "street_address":
@@ -282,7 +289,9 @@ class Setting extends React.Component {
     );
   }
 }
+
 const EVERYONE = "everyone";
+const EVERYONE_AND_AUTHOR = "item author and group leaders";
 const GROUP_LEADERS = "group leaders";
 const APPROVED_AND_GROUP_LEADERS = "group leaders and followers";
 const APPROVED_FOLLOWERS = "followers";
@@ -293,10 +302,10 @@ const map = {
   country: { default: EVERYONE },
   zip: { default: GROUP_LEADERS },
   email: { default: GROUP_LEADERS },
-  responses: { default: EVERYONE },
+  username: { default: EVERYONE },
   karma: { default: EVERYONE },
   referral_code: { default: EVERYONE },
-  username: { default: EVERYONE },
+  responses: { default: EVERYONE_AND_AUTHOR },
   street_address: { default: GROUP_LEADERS, options: [GROUP_LEADERS, NOBODY] },
   phone: { default: GROUP_LEADERS, options: [GROUP_LEADERS, NOBODY] },
   joined_groups: { default: NOBODY, options: [NOBODY, APPROVED_FOLLOWERS] },
