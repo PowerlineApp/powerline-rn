@@ -214,6 +214,10 @@ class PrivacySettings extends React.Component {
 
 class Setting extends React.Component {
   remapValue = value => {
+    switch (value) {
+      case "group leaders":
+        return "approved group leaders";
+    }
     return value.replace("and", "&");
   };
 
