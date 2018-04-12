@@ -54,6 +54,3 @@ fastlane/Preview.html
 fastlane/screenshots
 ios/fastlane/README.md
 ios/fastlane/report.xml
-
-
-src/scenes/settings/blocking
