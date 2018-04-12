@@ -25,20 +25,25 @@ async function getAgency(token) {
     console.warn(error);
   }
 }
-async function loadUserCards(token) {
-  try {
-    let res = await fetch(`${API_URL}/v2/cards`, {
+
+const loadUserCards = token => {
+  return new Promise((resolve, reject) => {
+    console.warn("Load cards:");
+    fetch(`${API_URL}/v2/cards`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json"
       }
-    });
-    return res.json();
-  } catch (error) {
-    console.warn(error);
-  }
-}
+    })
+      .then(res => res.json())
+      .then(data => resolve(data))
+      .catch(err => {
+        console.error("Reject cards:", err);
+        reject(err);
+      });
+  });
+};
 
 async function userAddCard(token, data) {
   console.log(API_URL + "/v2/cards", token, data);
@@ -57,6 +62,20 @@ async function userAddCard(token, data) {
     console.warn(error);
   }
 }
+
+const userRemoveCard = (token, id) => {
+  return new Promise((resolve, reject) => {
+    fetch(API_URL + "/v2/cards/" + id, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      }
+    })
+      .then(response => resolve(response))
+      .catch(err => reject(err));
+  });
+};
 
 async function loadUserProfile(token: string): Promise<Action> {
   try {
@@ -366,7 +385,9 @@ function updatePrivacySettings(token, data) {
       .then(data => {
         resolve(data);
       })
-      .catch(err => reject(err));
+      .catch(err => {
+        reject(err);
+      });
   });
 }
 
@@ -375,6 +396,7 @@ module.exports = {
   loadUserProfile,
   loadUserCards,
   userAddCard,
+  userRemoveCard,
   loadUserProfileById,
   loadUserData,
   getInvites,
