@@ -12,50 +12,41 @@ export default ScaleSheet.create({
   item: {
     flexDirection: "row",
     backgroundColor: "white",
-    height: 80,
+    height: 54,
     alignItems: "center",
-    justifyContent: "center"
-  },
-  itemAvatar: {
-    width: 60,
-    height: 60,
-    marginHorizontal: 10,
-    borderRadius: 30
+    justifyContent: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee"
   },
   itemInfoContainer: {
     flex: 1,
-    flexDirection: "row",
     height: 80,
     marginLeft: 10,
-    alignItems: "center",
-    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    justifyContent: "center",
     borderBottomWidth: 1,
     borderBottomColor: "#D6D6D6"
   },
   itemLabel: {
-    fontSize: 18,
-    color: "black"
-  },
-  itemSubLabel: {
-    color: "#898A8B"
-  },
-  header: {
-    backgroundColor: PLColors.main
-  },
-  cardIcon: {
-    fontSize: 60,
-    marginLeft: 20
-  },
-  numberGroup: {
     fontSize: 14,
     fontWeight: "bold",
     marginLeft: 5
   },
-  mask: {
-    fontSize: 30
+  headerContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 10
+  },
+  headerLabel: {
+    fontSize: 16,
+    paddingVertical: 5
+  },
+  header: {
+    backgroundColor: PLColors.main
   },
   deleteIcon: {
     marginRight: 20,
-    fontSize: 35
+    fontSize: 26
   }
 });

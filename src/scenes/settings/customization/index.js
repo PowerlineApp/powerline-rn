@@ -1,4 +1,5 @@
 import React from "react";
+import Prompt from "react-native-prompt";
 import {
   Alert,
   FlatList,
@@ -29,14 +30,41 @@ import styles from "./styles";
 
 class UserCards extends React.Component {
   state = {
+    isPromptOpen: false,
     codes: [
       { key: 1, code: "aHiej7UeFiuxkeQz" },
-      { key: 2, code: "0u7Knub47NuqzTw" },
-      { key: "add", add: true }
+      { key: 2, code: "0u7Knub47NuqzTw" }
     ]
   };
 
   componentDidMount = () => {};
+
+  addCode = () => {
+    const { codes } = this.state;
+    if (codes.length >= 2) {
+      Alert.alert(
+        "Oops",
+        "You may only have a maximum of two customization codes."
+      );
+      return;
+    }
+
+    this.setState({ isPromptOpen: true });
+  };
+
+  removeCode = code => {
+    Alert.alert("Are you sure?", "Removing this code will ...?", [
+      { text: "Nevermind" },
+      {
+        text: "Yes I'm sure",
+        onPress: () => {
+          this.setState({
+            codes: this.state.codes.filter(c => c.key != code.key)
+          });
+        }
+      }
+    ]);
+  };
 
   render() {
     return (
@@ -62,57 +90,58 @@ class UserCards extends React.Component {
           Powerline experience.
         </Text>
         <FlatList
-          data={this.state.cards.concat({ key: "add", add: true })}
-          renderItem={({ item }) => {
-            if (item.add) {
-              return (
-                <View
-                  style={{
-                    marginVertical: 20,
-                    width: "100%",
-                    justifyContent: "center",
-                    alignItems: "center"
-                  }}
-                >
-                  <TouchableOpacity
-                    onPress={() => {
-                      Actions.userAddCardScene({
-                        onSuccess: data => {
-                          Actions.pop();
-                          const { id, cards } = data;
-                          this.setState({ cards });
-                          alert("You've successfully added a new card");
-                        }
-                      });
-                    }}
-                  >
-                    <Text style={styles.itemLabel}>Add a new code</Text>
-                  </TouchableOpacity>
-                </View>
-              );
-            } else {
-              return (
-                <View style={styles.item}>
-                  <View style={styles.itemInfoContainer}>
-                    <Text style={styles.numberGroup}>{item.code}</Text>
-                  </View>
-                  <TouchableOpacity onPress={() => this.deleteCard(item)}>
-                    <Icon
-                      style={styles.deleteIcon}
-                      name="md-close-circle"
-                      color="black"
-                    />
-                  </TouchableOpacity>
-                </View>
-              );
-            }
+          style={{ marginTop: 40 }}
+          data={this.state.codes}
+          ListHeaderComponent={() => {
+            return (
+              <View style={styles.headerContainer}>
+                <Text style={styles.headerLabel}>ACTIVE CODES</Text>
+                <TouchableOpacity onPress={this.addCode}>
+                  <Text style={styles.headerLabel}>Add Code</Text>
+                </TouchableOpacity>
+              </View>
+            );
           }}
+          renderItem={({ item }) => (
+            <View style={styles.item}>
+              <View style={styles.itemInfoContainer}>
+                <Text style={styles.itemLabel}>{item.code}</Text>
+              </View>
+              <TouchableOpacity onPress={() => this.removeCode(item)}>
+                <Icon
+                  style={styles.deleteIcon}
+                  name="md-close-circle"
+                  color="black"
+                />
+              </TouchableOpacity>
+            </View>
+          )}
         />
 
         <Text style={styles.description}>
           Your code may link you to other users or groups. You may manually
           leave groups or unfollow users at any time.
         </Text>
+
+        <Prompt
+          title="Enter your code"
+          placeholder="Start typing"
+          visible={this.state.isPromptOpen}
+          onCancel={() => {
+            /* cancel */
+            this.setState({ isPromptOpen: false });
+          }}
+          onSubmit={value => {
+            /* onSubmit */
+            this.setState({
+              isPromptOpen: false,
+              codes: this.state.codes.concat({
+                key: Math.random(),
+                code: value
+              })
+            });
+          }}
+        />
       </MenuContext>
     );
   }

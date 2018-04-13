@@ -18,7 +18,13 @@ const icons = [
     label: "Privacy Settings",
     onPress: () => Actions.privacySettings()
   },
-  { icon: "md-options", label: "Customization Code", onPress: () => {} },
+  {
+    icon: "md-options",
+    label: "Customization Code",
+    onPress: () => {
+      Actions.customizationSettings();
+    }
+  },
   {
     icon: "md-eye-off",
     label: "Blocked Users",
