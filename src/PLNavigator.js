@@ -19,6 +19,7 @@ import Settings from "./scenes/settings";
 import PrivacySettings from "./scenes/settings/privacy";
 import BlockedUsers from "./scenes/settings/blocking";
 import CustomizationSettings from "./scenes/settings/customization";
+import NotificationSettings from "./scenes/settings/notifications";
 import ManageCards from "./scenes/settings/cards";
 import Home from "./scenes/dashboard/";
 import GroupSelector from "./scenes/dashboard/groupSelector/";
@@ -118,6 +119,8 @@ class PLNavigator extends React.Component {
         return <ManageCards />;
       case "customizationSettings":
         return <CustomizationSettings />;
+      case "notificationSettings":
+        return <NotificationSettings />;
       default:
         return <Home />;
     }
@@ -191,6 +194,7 @@ class MyRouter extends Component {
             key="customizationSettings"
             component={CustomizationSettings}
           />
+          <Scene key="notificationSettings" component={NotificationSettings} />
           <Scene key="analyticsView" component={AnalyticsView} hideNavBar />
           <Scene key="home" component={Home} initial hideNavBar />
           <Scene key="groupSelector" component={GroupSelector} />

@@ -39,7 +39,13 @@ const icons = [
       Actions.manageCards();
     }
   },
-  { icon: "md-notifications", label: "Notifications", onPress: () => {} },
+  {
+    icon: "md-notifications",
+    label: "Notifications",
+    onPress: () => {
+      Actions.notificationSettings();
+    }
+  },
   {
     icon: "md-person",
     label: "My Profile",
