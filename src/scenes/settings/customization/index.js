@@ -37,7 +37,12 @@ class UserCards extends React.Component {
     ]
   };
 
-  componentDidMount = () => {};
+  componentDidMount = () => {
+    Alert.alert(
+      "Information",
+      "There's currently not an API endpoint set up for this, I've referenced the documentation and the .XLS file.  api-profile-update has been removed and v2.2-user-agency only has a GET parameter."
+    );
+  };
 
   addCode = () => {
     const { codes } = this.state;
