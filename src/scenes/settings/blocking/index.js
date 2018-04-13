@@ -1,5 +1,12 @@
 import React from "react";
-import { FlatList, TouchableHighlight, View, Image, Text } from "react-native";
+import {
+  Alert,
+  FlatList,
+  TouchableHighlight,
+  View,
+  Image,
+  Text
+} from "react-native";
 import { MenuContext } from "react-native-popup-menu";
 import { connect } from "react-redux";
 import { Actions } from "react-native-router-flux";
@@ -47,14 +54,39 @@ const PLACEHOLDER_SOURCE = [
 ];
 
 class BlockedUsers extends React.Component {
+  state = { users: [] };
+
   componentDidMount = () => {
     getBlockedUsers(this.props.token)
       .then(data => {
-        console.error("BlockedUsers:", data);
+        this.setState({ users: data });
       })
       .catch(err => {
-        console.error("Error:", err);
+        Actions.pop();
       });
+  };
+
+  unblock = user => {
+    Alert.alert(
+      "Information",
+      "Are you sure you want to unblock " + user.first_name + "?",
+      [
+        {
+          text: "Yes",
+          onPress: () => {
+            unblockUser(this.props.token, user.id)
+              .then(() => {
+                const users = this.state.users.filter(u => u.id != user.id);
+                this.setState({ users });
+              })
+              .catch(err => {
+                console.error("Erro unblocking user:", err);
+              });
+          }
+        },
+        { text: "Nevermind" }
+      ]
+    );
   };
 
   render() {
@@ -68,11 +100,7 @@ class BlockedUsers extends React.Component {
               justifyContent: "center"
             }}
           >
-            <Button
-              style={{ width: "100%" }}
-              transparent
-              onPress={this.saveOnExit}
-            >
+            <Button style={{ width: "100%" }} transparent onPress={Actions.pop}>
               <Icon active name="arrow-back" style={{ color: "white" }} />
             </Button>
           </Left>
@@ -109,17 +137,28 @@ class BlockedUsers extends React.Component {
           Tap and hold on user to unblock.
         </Text>
         <FlatList
-          data={PLACEHOLDER_SOURCE}
+          data={this.state.users}
           renderItem={({ item }) => (
-            <View style={styles.item}>
-              <Image style={styles.itemAvatar} source={{ uri: item.avatar }} />
-              <View style={styles.itemInfoContainer}>
-                <Text style={styles.itemLabel}>{item.name}</Text>
-                <Text style={styles.itemSubLabel}>
-                  You blocked {item.name} on {item.date}
-                </Text>
+            <TouchableHighlight
+              onLongPress={() => {
+                this.unblock(item);
+              }}
+            >
+              <View style={styles.item}>
+                <Image
+                  style={styles.itemAvatar}
+                  source={{ uri: item.avatar_file_name }}
+                />
+                <View style={styles.itemInfoContainer}>
+                  <Text style={styles.itemLabel}>
+                    {item.first_name + " " + item.last_name}
+                  </Text>
+                  <Text style={styles.itemSubLabel}>
+                    You blocked {item.first_name} on PLACEHOLDER_DATE
+                  </Text>
+                </View>
               </View>
-            </View>
+            </TouchableHighlight>
           )}
         />
       </MenuContext>

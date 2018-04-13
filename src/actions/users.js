@@ -306,7 +306,6 @@ function unblockUser(token, id) {
         Authorization: `Bearer ${token}`
       }
     })
-      .then(res => res.json())
       .then(data => {
         console.log("Unblock user success", data);
         resolve(data);
@@ -317,9 +316,10 @@ function unblockUser(token, id) {
       });
   });
 }
+
 function getBlockedUsers(token) {
   return new Promise((resolve, reject) => {
-    fetch(API_URL + `/v2.2/user/blocked-users/`, {
+    fetch(API_URL + `/v2.2/user/blocked-users`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
