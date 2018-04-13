@@ -28,7 +28,7 @@ import {} from "../../../actions/users";
 
 import styles from "./styles";
 
-class UserCards extends React.Component {
+class CustomizationSettings extends React.Component {
   state = {
     isPromptOpen: false,
     codes: [
@@ -87,7 +87,7 @@ class UserCards extends React.Component {
             </Button>
           </Left>
           <Body>
-            <Title>Manage Cards</Title>
+            <Title>Customization</Title>
           </Body>
         </Header>
         <Text style={styles.description}>
@@ -156,4 +156,4 @@ const mapStateToProps = ({ user }) => ({
   token: user.token
 });
 
-export default connect(mapStateToProps)(UserCards);
+export default connect(mapStateToProps)(CustomizationSettings);
