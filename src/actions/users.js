@@ -244,14 +244,6 @@ function getUserDiscountCode(token) {
 }
 
 function updateUserProfile(token, data) {
-  console.log("about to update user profile", API_URL + "/profile/update", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
-    },
-    body: data
-  });
   return new Promise((resolve, reject) => {
     fetch(API_URL + "/profile/update", {
       method: "POST",

@@ -35,8 +35,6 @@ class Notifications extends React.Component {
     super(props);
     const { user: { profile } } = props;
 
-    console.error("Err:", profile);
-
     this.state = {
       dnd: profile.do_not_disturb,
       newPosts: profile.is_notif_micro_following,

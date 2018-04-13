@@ -9,6 +9,7 @@ import { Header, Left, Title, Body, Button, Icon, Item } from "native-base";
 
 import styles from "./styles";
 import { openDrawer } from "../../actions/drawer";
+import { updateUserProfile } from "../../actions/users";
 
 var PLColors = require("PLColors");
 var { TERMS_OF_SERVICE, PRIVACY_POLICY } = require("PLConstants");
@@ -25,7 +26,7 @@ const icons = [
     onPress: $this => {
       $this.setState(
         {
-          promptValue: $this.props.agency ? $this.props.agency.code : ""
+          promptValue: $this.props.user.profile.agency || ""
         },
         () => {
           $this.setState({
@@ -147,6 +148,57 @@ class Component extends React.Component {
           }}
           onSubmit={value => {
             /* onSubmit */
+
+            var a = ({
+              first_name,
+              last_name,
+              email,
+              city,
+              state,
+              zip,
+              country,
+              avatar_file_name,
+              interests,
+              sex,
+              orientation,
+              agency
+            } = this.props.user.profile);
+
+            var b = ({
+              race,
+              income_level,
+              employment_status,
+              education_level,
+              marital_status,
+              religion,
+              party,
+              philosophy,
+              donor,
+              registration,
+              facebook_link,
+              twitter_link,
+              bio,
+              phone,
+              code,
+              slogan,
+              birth,
+              address1,
+              address2
+            } = this.props.user);
+
+            updateUserProfile(
+              this.props.user.token,
+              _.merge(a, b, { agency: value })
+            )
+              .then(() => {
+                this.props.dispatch({
+                  type: "USER_STATE",
+                  payload: { profile: { agency: value } }
+                });
+              })
+              .catch(err => {
+                console.error("Error:", err.message);
+              });
             this.setState({
               isPromptOpen: false
             });
@@ -157,11 +209,9 @@ class Component extends React.Component {
   }
 }
 
-const mapStateToProps = ({ agency }) => ({
-  agency
+const mapStateToProps = ({ agency, user }) => ({
+  agency,
+  user
 });
-const mapDispatch = {
-  openDrawer
-};
 
-export default connect(mapStateToProps, mapDispatch)(Component);
+export default connect(mapStateToProps)(Component);
