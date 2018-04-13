@@ -62,6 +62,10 @@ class BlockedUsers extends React.Component {
         this.setState({ users: data });
       })
       .catch(err => {
+        Alert.alert(
+          "Oops",
+          "There was an error getting the list of blocked users, please try again."
+        );
         Actions.pop();
       });
   };
