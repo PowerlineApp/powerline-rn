@@ -1,3 +1,4 @@
+import _ from "lodash";
 import React from "react";
 import Prompt from "react-native-prompt";
 import {
@@ -25,15 +26,80 @@ import {
   Input
 } from "native-base";
 
-import {} from "../../../actions/users";
+import { setProfileSettings } from "../../../actions/users";
 
 import styles from "./styles";
 
 class Notifications extends React.Component {
-  state = {
-    dnd: false,
-    newPosts: false,
-    boostedPosts: true
+  constructor(props) {
+    super(props);
+    const { user: { profile } } = props;
+
+    console.error("Err:", profile);
+
+    this.state = {
+      dnd: profile.do_not_disturb,
+      newPosts: profile.is_notif_micro_following,
+      boostedPosts: profile.is_notif_micro_group
+    };
+  }
+
+  saveAndExit = () => {
+    const {
+      dnd: do_not_disturb,
+      newPosts: is_notif_micro_following,
+      boostedPosts: is_notif_micro_group
+    } = this.state;
+
+    const originalValues = {
+      do_not_disturb: this.props.user.profile.do_not_disturb,
+      is_notif_micro_following: this.props.user.profile
+        .is_notif_micro_following,
+      is_notif_micro_group: this.props.user.profile.is_notif_micro_group
+    };
+
+    const {
+      followed_do_not_disturb_till,
+      is_notif_questions,
+      is_notif_discussions,
+      is_notif_messages,
+      is_notif_scheduled,
+      is_notif_own_post_changed,
+      scheduled_from,
+      scheduled_to
+    } = this.props.user.profile;
+
+    if (!_.isEqual(this.state, originalValues)) {
+      setProfileSettings(this.props.user.token, {
+        do_not_disturb,
+        is_notif_micro_following,
+        is_notif_micro_group,
+        followed_do_not_disturb_till,
+        is_notif_questions,
+        is_notif_discussions,
+        is_notif_messages,
+        is_notif_scheduled,
+        is_notif_own_post_changed,
+        scheduled_from,
+        scheduled_to
+      })
+        .then(profile => {
+          this.props.dispatch({
+            type: "USER_STATE",
+            payload: { profile }
+          });
+          Actions.pop();
+        })
+        .catch(err => {
+          console.error("Error:", err.message);
+          Alert.alert("Oops", "There was an error saving your settings.", [
+            { text: "Try again", onPress: this.saveAndExit },
+            { text: "Leave anyway", onPress: Actions.pop }
+          ]);
+        });
+    } else {
+      Actions.pop();
+    }
   };
 
   render() {
@@ -47,7 +113,11 @@ class Notifications extends React.Component {
               justifyContent: "center"
             }}
           >
-            <Button style={{ width: "100%" }} transparent onPress={Actions.pop}>
+            <Button
+              style={{ width: "100%" }}
+              transparent
+              onPress={this.saveAndExit}
+            >
               <Icon active name="arrow-back" style={{ color: "white" }} />
             </Button>
           </Left>
@@ -112,7 +182,7 @@ const CheckBox = ({ checked, onPress }) => {
 };
 
 const mapStateToProps = ({ user }) => ({
-  token: user.token
+  user
 });
 
 export default connect(mapStateToProps)(Notifications);

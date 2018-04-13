@@ -389,6 +389,26 @@ function updatePrivacySettings(token, data) {
   });
 }
 
+const setProfileSettings = (token, data) => {
+  return new Promise((resolve, reject) => {
+    fetch(API_URL + "/profile/settings", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(data)
+    })
+      .then(res => res.json())
+      .then(data => {
+        resolve(data);
+      })
+      .catch(err => {
+        reject(err);
+      });
+  });
+};
+
 module.exports = {
   getAgency,
   loadUserProfile,
@@ -407,5 +427,6 @@ module.exports = {
   getPrivacySettings,
   blockUser,
   unblockUser,
-  getBlockedUsers
+  getBlockedUsers,
+  setProfileSettings
 };
