@@ -17,6 +17,7 @@ import analytics from "./analytics";
 import groupManagement from "./groupManagement";
 import representativesForm from "./representativesForm";
 import privacySettings from "./privacySettings";
+import agency from "./agency";
 
 module.exports = combineReducers({
   user,
@@ -29,5 +30,6 @@ module.exports = combineReducers({
   followers,
   groupManagement,
   representativesForm,
-  privacySettings
+  privacySettings,
+  agency
 });

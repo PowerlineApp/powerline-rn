@@ -3,28 +3,26 @@ var { Action, ThunkAction } = require("./types");
 var FacebookSDK = require("FacebookSDK");
 import api from "../utils/api";
 
-async function getAgency(token) {
-  try {
-    let res = await fetch(`${API_URL}/v2.2/user/agency`, {
+const getAgency = token => {
+  return new Promise((resolve, reject) => {
+    console.log("Agency Token:", token);
+    console.log("Agency Link:", `${API_URL}/v2.2/user/agency`);
+
+    fetch(`${API_URL}/v2.2/user/agency`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json"
       }
-    });
-    try {
-      // console.log('trying...')
-      res = await res.json();
-      console.log("res agency => ", res);
-      return res;
-    } catch (error) {
-      // console.log('catchng...');
-      return {};
-    }
-  } catch (error) {
-    console.warn(error);
-  }
-}
+    })
+      .then(res => {
+        console.error("Res:", res);
+        res.json();
+      })
+      .then(data => resolve(data))
+      .catch(err => reject(err));
+  });
+};
 
 const loadUserCards = token => {
   return new Promise((resolve, reject) => {

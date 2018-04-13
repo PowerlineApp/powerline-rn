@@ -1,5 +1,6 @@
 import React from "react";
 import Ionicon from "react-native-vector-icons/Ionicons";
+import Prompt from "react-native-prompt";
 import { connect } from "react-redux";
 import { Text, View, TouchableHighlight } from "react-native";
 import { Actions } from "react-native-router-flux";
@@ -21,8 +22,18 @@ const icons = [
   {
     icon: "md-options",
     label: "Customization Code",
-    onPress: () => {
-      Actions.customizationSettings();
+    onPress: $this => {
+      $this.setState(
+        {
+          promptValue: $this.props.agency ? $this.props.agency.code : ""
+        },
+        () => {
+          $this.setState({
+            isPromptOpen: true
+          });
+        }
+      );
+      // Actions.customizationSettings();
     }
   },
   {
@@ -71,51 +82,84 @@ const icons = [
   }
 ];
 
-const Component = () => (
-  <MenuContext>
-    <Header
-      searchBar
-      rounded
-      style={[styles.header, { backgroundColor: PLColors.main }]}
-    >
-      <Left
-        style={{
-          flex: 0.1,
-          alignItems: "center",
-          justifyContent: "center"
-        }}
-      >
-        <Button style={{ width: "100%" }} transparent onPress={Actions.pop}>
-          <Icon active name="arrow-back" style={{ color: "white" }} />
-        </Button>
-      </Left>
-      <Body>
-        <Title>Settings</Title>
-      </Body>
-    </Header>
-    <View style={styles.container}>
-      <View style={styles.wrapper}>
-        {icons.map((icon, index) => {
-          return (
-            <View style={styles.item}>
-              <TouchableHighlight
-                key={index}
-                style={styles.iconContainer}
-                underlayColor="#474b87"
-                onPress={icon.onPress}
-              >
-                <Ionicon name={icon.icon} size={40} color={PLColors.main} />
-              </TouchableHighlight>
-              <Text style={styles.label}>{icon.label}</Text>
-            </View>
-          );
-        })}
-      </View>
-    </View>
-  </MenuContext>
-);
+class Component extends React.Component {
+  state = {
+    isPromptOpen: false,
+    promptValue: ""
+  };
 
-const mapStateToProps = () => ({});
+  componentDidMount = () => {
+    console.error("Agency:", JSON.stringify(this.props.agency, null, 2));
+  };
+
+  render() {
+    return (
+      <MenuContext>
+        <Header
+          searchBar
+          rounded
+          style={[styles.header, { backgroundColor: PLColors.main }]}
+        >
+          <Left
+            style={{
+              flex: 0.1,
+              alignItems: "center",
+              justifyContent: "center"
+            }}
+          >
+            <Button style={{ width: "100%" }} transparent onPress={Actions.pop}>
+              <Icon active name="arrow-back" style={{ color: "white" }} />
+            </Button>
+          </Left>
+          <Body>
+            <Title>Settings</Title>
+          </Body>
+        </Header>
+
+        <View style={styles.container}>
+          <View style={styles.wrapper}>
+            {icons.map((icon, index) => {
+              return (
+                <View style={styles.item}>
+                  <TouchableHighlight
+                    key={index}
+                    style={styles.iconContainer}
+                    underlayColor="#474b87"
+                    onPress={() => icon.onPress(this)}
+                  >
+                    <Ionicon name={icon.icon} size={40} color={PLColors.main} />
+                  </TouchableHighlight>
+                  <Text style={styles.label}>{icon.label}</Text>
+                </View>
+              );
+            })}
+          </View>
+        </View>
+
+        <Prompt
+          title="Enter your code"
+          placeholder="Start typing"
+          visible={this.state.isPromptOpen}
+          defaultValue={this.state.promptValue}
+          onCancel={() => {
+            /* cancel */
+            this.setState({ isPromptOpen: false });
+          }}
+          onSubmit={value => {
+            /* onSubmit */
+            this.setState({
+              isPromptOpen: false
+            });
+          }}
+        />
+      </MenuContext>
+    );
+  }
+}
+
+const mapStateToProps = ({ agency }) => ({
+  agency
+});
 const mapDispatch = {
   openDrawer
 };
