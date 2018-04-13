@@ -63,7 +63,10 @@ class Notifications extends React.Component {
             <View style={styles.item}>
               <View style={styles.switchBox}>
                 <Text style={styles.itemLabel}>Do Not Disturb</Text>
-                <Switch />
+                <Switch
+                  value={this.state.dnd}
+                  onValueChange={dnd => this.setState({ dnd })}
+                />
               </View>
             </View>
             <View style={styles.item}>
