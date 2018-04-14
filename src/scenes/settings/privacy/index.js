@@ -145,7 +145,9 @@ class PrivacySettings extends React.Component {
         >
           <Left
             style={{
-              flex: 0.1,
+              flex: null,
+              paddingLeft: 10,
+              width: 50,
               alignItems: "center",
               justifyContent: "center"
             }}
@@ -158,7 +160,11 @@ class PrivacySettings extends React.Component {
               <Icon active name="arrow-back" style={{ color: "white" }} />
             </Button>
           </Left>
-          <Body>
+          <Body
+            style={{
+              justifyContent: "flex-start"
+            }}
+          >
             <Title>Privacy Settings</Title>
           </Body>
         </Header>

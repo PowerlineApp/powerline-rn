@@ -99,7 +99,9 @@ class BlockedUsers extends React.Component {
         <Header searchBar rounded style={styles.header}>
           <Left
             style={{
-              flex: 1,
+              flex: null,
+              paddingLeft: 10,
+              width: 50,
               alignItems: "center",
               justifyContent: "center"
             }}
@@ -108,12 +110,18 @@ class BlockedUsers extends React.Component {
               <Icon active name="arrow-back" style={{ color: "white" }} />
             </Button>
           </Left>
-          <Body style={{ flex: 6 }}>
+          <Body
+            style={{
+              justifyContent: "flex-start"
+            }}
+          >
             <Title>Blocked Users</Title>
           </Body>
           <Right
             style={{
-              flex: 1,
+              flex: null,
+              paddingRight: 10,
+              width: 50,
               alignItems: "center",
               justifyContent: "center"
             }}
