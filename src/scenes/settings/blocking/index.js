@@ -117,19 +117,6 @@ class BlockedUsers extends React.Component {
           >
             <Title>Blocked Users</Title>
           </Body>
-          <Right
-            style={{
-              flex: null,
-              paddingRight: 10,
-              width: 50,
-              alignItems: "center",
-              justifyContent: "center"
-            }}
-          >
-            <Button style={{ width: "100%" }} transparent onPress={Actions.pop}>
-              <Icon active name="md-add" color="white" size={32} />
-            </Button>
-          </Right>
         </Header>
         <Item style={styles.searchBar}>
           <Input
