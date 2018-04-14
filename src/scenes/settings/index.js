@@ -154,48 +154,7 @@ class Component extends React.Component {
           }}
           onSubmit={value => {
             /* onSubmit */
-
-            var a = ({
-              first_name,
-              last_name,
-              email,
-              city,
-              state,
-              zip,
-              country,
-              avatar_file_name,
-              interests,
-              sex,
-              orientation,
-              agency
-            } = this.props.user.profile);
-
-            var b = ({
-              race,
-              income_level,
-              employment_status,
-              education_level,
-              marital_status,
-              religion,
-              party,
-              philosophy,
-              donor,
-              registration,
-              facebook_link,
-              twitter_link,
-              bio,
-              phone,
-              code,
-              slogan,
-              birth,
-              address1,
-              address2
-            } = this.props.user);
-
-            updateUserProfile(
-              this.props.user.token,
-              _.merge(a, b, { agency: value })
-            )
+            updateUserProfile(this.props.user.token, { agency: value })
               .then(() => {
                 this.props.dispatch({
                   type: "USER_STATE",
