@@ -1,0 +1,10 @@
+- [x]  take a look at the above... it looks like maybe a petition that expired and the footer is not showing... (edited)
+- [x] user taps Newsfeed tab. should refresh and load feed into the view <-- should be an easy fix. Thought I said this
+  earlier but may have forgotten. My bad. (edited)
+- [ ]  white screen of death after user enters verification code on manual login. if user closes app and restarts app,
+user is logged in with the previously-entered manual credentials...
+- [x] Friends Feed cache/redux issue https://powerline.slack.com/archives/G5AH0QJG2/p1518029013000742
+- [x] Plus sign should function as "Join" button, but doesn't seem to work on the search results screen here
+- [x] ui issues allow custom amount. Placeholder text size for body runs off screen above. No padding for amount text
+field
+- [x] user should not need to enter credit card for $0 option
