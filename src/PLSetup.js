@@ -4,9 +4,8 @@
 
 "use strict";
 
+import React, { Component } from 'react';
 var PLApp = require("PLApp");
-var React = require("React");
-
 var { Provider } = require("react-redux");
 var configureStore = require("./store/configureStore");
 
