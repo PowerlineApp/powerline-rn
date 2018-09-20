@@ -137,6 +137,23 @@ android {
 }
 
 dependencies {
+    compile project(':tipsi-stripe')
+    compile project(':react-native-youtube')
+    compile project(':react-native-vector-icons')
+    compile project(':react-native-swiss-knife')
+    compile project(':react-native-splash-screen')
+    compile project(':react-native-share-extension')
+    compile project(':react-native-share')
+    compile project(':react-native-onesignal')
+    compile project(':react-native-mixpanel')
+    compile project(':react-native-linear-gradient')
+    compile project(':react-native-image-crop-picker')
+    compile project(':react-native-fs')
+    compile project(':react-native-fetch-blob')
+    compile project(':react-native-fbsdk')
+    compile project(':react-native-device-info')
+    compile project(':react-native-android-sms-listener')
+    compile project(':react-native-add-calendar-event')
     compile fileTree(dir: "libs", include: ["*.jar"])
     compile "com.android.support:appcompat-v7:23.0.1"
     compile "com.facebook.react:react-native:+"  // From node_modules
