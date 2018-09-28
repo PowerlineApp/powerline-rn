@@ -13,5 +13,21 @@ project './powerline.xcodeproj'
   pod 'QBImagePickerController'
   pod 'Stripe', '~> 11.2.0'
   pod 'RNFS', :path => '../node_modules/react-native-fs'
-
+  pod 'yoga', path: '../node_modules/react-native/ReactCommon/yoga'
+  pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
+  pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
+  pod 'GLog', :podspec => '../node_modules/react-native/third-party-podspecs/GLog.podspec'
+  pod 'React', path: '../node_modules/react-native', subspecs: [
+    'Core',
+    'jschelpers',
+    'cxxreact',
+    'CxxBridge',
+    'DevSupport',
+    'RCTText',
+    'RCTImage',
+    'RCTNetwork',
+    'RCTActionSheet',
+    'RCTAnimation',
+    'RCTWebSocket',
+  ]
 end
