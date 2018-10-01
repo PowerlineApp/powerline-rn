@@ -553,6 +553,13 @@
 			remoteGlobalIDString = DA5891D81BA9A9FC002B4DB2;
 			remoteInfo = RNDeviceInfo;
 		};
+		D02EEA56216165500008593C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6F87DA5B2007424500A3B788 /* RNFS.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F12AFB9A1ADAF8F800E0535D;
+			remoteInfo = RNFS;
+		};
 		EB519C0D1EC94E3E001C8D63 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = EB519C091EC94E3E001C8D63 /* BVLinearGradient.xcodeproj */;
@@ -596,7 +603,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTActionSheet.xcodeproj; path = "../node_modules/react-native/Libraries/ActionSheetIOS/RCTActionSheet.xcodeproj"; sourceTree = "<group>"; };
 		00C302B51ABCB90400DB3ED1 /* RCTGeolocation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTGeolocation.xcodeproj; path = "../node_modules/react-native/Libraries/Geolocation/RCTGeolocation.xcodeproj"; sourceTree = "<group>"; };
 		00C302BB1ABCB91800DB3ED1 /* RCTImage.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTImage.xcodeproj; path = "../node_modules/react-native/Libraries/Image/RCTImage.xcodeproj"; sourceTree = "<group>"; };
@@ -946,7 +952,6 @@
 				9F4682CD1FA8589D00E4F9E9 /* ImageCropPickerSDK */,
 				C8BC8E7B1F9108F3000589B6 /* Powerline.entitlements */,
 				C820D65D1F86408600F68FFA /* Fonts */,
-				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -1445,6 +1450,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				D02EEA57216165500008593C /* PBXTargetDependency */,
 				6F338CE81FACB6A700010FBC /* PBXTargetDependency */,
 			);
 			name = Powerline;
@@ -2363,6 +2369,11 @@
 			isa = PBXTargetDependency;
 			target = 6F338CDD1FACB6A600010FBC /* PowerlineShare */;
 			targetProxy = 6F338CE71FACB6A700010FBC /* PBXContainerItemProxy */;
+		};
+		D02EEA57216165500008593C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = RNFS;
+			targetProxy = D02EEA56216165500008593C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
