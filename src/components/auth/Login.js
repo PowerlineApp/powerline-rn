@@ -151,7 +151,7 @@ class Login extends React.Component {
     }).catch(e => {
         console.log(e);
         Alert.alert('Invalid data',
-        'Validation failed.',
+        '1.',
         [
             {text: 'Ok', onPress: () => {
                 this.setState({isLoading: false})
@@ -178,7 +178,7 @@ class Login extends React.Component {
     }).catch(e => {
         console.log('\n------------------------------', e);
         Alert.alert('Invalid data',
-        'Validation failed.',
+        '2.',
         [
             {text: 'Ok', onPress: () => {
                 this.setState({isLoading: false})
@@ -208,7 +208,7 @@ class Login extends React.Component {
     }).catch(e => {
       console.warn(e);
       Alert.alert('Invalid data',
-      'Validation failed.',
+      '3.',
       [
           {text: 'Ok', onPress: () => {
               this.setState({isLoading: false})
@@ -256,7 +256,7 @@ class Login extends React.Component {
         this.setState({displayPhoneVerification: true, isLoading: false})
     }).catch(e => {
         Alert.alert('Invalid data',
-        'Validation failed.',
+        '4.',
         [
             {text: 'Ok', onPress: () => {
                 this.setState({isLoading: false})
