@@ -56,7 +56,7 @@ class PLApp extends Component {
         if (this.props.token){
             let splash = await AsyncStorage.getItem('splashScreen');
             if (splash){
-                this.setState({splash}, () => setTimeout(() => this.setState({splash: false}), 1500) );
+                this.setState({ splash });
             } else {
                 this.setState({splash: false});
             }
