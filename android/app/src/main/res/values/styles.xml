@@ -2,7 +2,7 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
+        <item name="android:windowBackground">@drawable/launch_screen</item>
     </style>
     <style name="Share.Window" parent="android:Theme">
         <item name="android:windowEnterAnimation">@null</item>
