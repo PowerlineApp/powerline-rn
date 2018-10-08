@@ -493,7 +493,7 @@ class NewLeaderContent extends Component {
             }).catch(e => {
                 // alert(e);
                 this.setState({sending: false});
-                console.warn(JSON.parse(e));
+                //console.warn(JSON.parse(e));
             });
 
         } else {

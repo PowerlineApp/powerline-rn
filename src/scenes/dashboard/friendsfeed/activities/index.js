@@ -25,6 +25,7 @@ import Menu, {
 
 // custom components imports
 import FeedActivity from '../../../../components/Feed/FeedActivity';
+import ContentPlaceholder from '../../../../components/ContentPlaceholder';
 
 const PLColors = require('PLColors');
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
@@ -145,9 +146,10 @@ class FriendActivity extends Component {
             isLoadingTail,
             isRefreshing,
         } = this.state;
-
         return (
-            <Content
+            <ContentPlaceholder
+                empty={this.state.dataArray.length === 0}
+                title="Looks like your Friends haven't posted anything in a while!"
                 refreshControl={Platform.OS === 'android' &&
                     <RefreshControl
                         refreshing={false}
@@ -172,7 +174,7 @@ class FriendActivity extends Component {
                         return <FeedActivity item={item} token={this.props.token} profile={this.props.profile}/>
                 }}
                 />
-            </Content >
+            </ContentPlaceholder>
         );
     }
 }

@@ -1082,12 +1082,12 @@ class ItemDetail extends Component {
                         keyboardShouldPersistTaps='always'
                         fadeOutForeground
                         renderHeader={() => {
-                                return item.group.has_agency
+                                return item && item.group && item.group.has_agency
                                 ? <CachedImage style={{flex: 1}} source={{ uri: item.group.banner }} />
                                 : <Image
                                 style={styles.headerImage}
                                 // resizeMode='contain'
-                                source={item.group.banner ? {uri: item.group.banner} : require('img/item_detail_header.png')}
+                                source={item && item.group && item.group.banner ? {uri: item.group.banner} : require('img/item_detail_header.png')}
                                 // source={{uri: 'https://facebook.github.io/react-native/docs/assets/favicon.png'}}
                                 // source={{uri: 'https://lh6.googleusercontent.com/N5KgN1brOd6X-AxD0go0Ex2xOzjhPFFytLJV-JBv1d8C-X6K58bXWUcVIEoftEHGaycHkujLD4wIgK1LA_Zq=w1107-h984'}}
                                 />
@@ -1105,7 +1105,7 @@ class ItemDetail extends Component {
                                         </Button>
                                     </Left>
                                     <Body style={{ flex: 4 }}>
-                                        <Title style={styles.navTitle}>{item.group.official_name}</Title>
+                                        <Title style={styles.navTitle}>{item && item.group && item.group.official_name}</Title>
                                     </Body>
                                     <Right />
                                 </Header>
@@ -1120,8 +1120,8 @@ class ItemDetail extends Component {
                                 </Button>
                                 <Body style={{ marginTop: -12 }}>
                                     <TouchableOpacity onPress={() => Actions.groupprofile({id: item.group.id})} style={{alignContent: 'center', alignItems: 'center'}} >
-                                        <Thumbnail size={50} source={item.group.avatar ? { uri: item.group.avatar + '&w=200&h=200&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
-                                        <Text style={styles.imageTitle} >{item.group.official_name}</Text>
+                                        <Thumbnail size={50} source={item && item.group && item.group.avatar ? { uri: item.group.avatar + '&w=200&h=200&auto=compress,format,q=95' } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                                        <Text style={styles.imageTitle} >{item && item.group && item.group.official_name}</Text>
                                     </TouchableOpacity>
                                 </Body>
                             </Left>

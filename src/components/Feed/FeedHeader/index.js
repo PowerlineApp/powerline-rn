@@ -238,17 +238,22 @@ class FeedHeader extends Component {
         let canSpam = false;
         let canBlock = !isAuthor;
         let canSubscribe = (item.type === 'user-petition' || item.type === 'post');
+        const user = item && item.user;
+        const first_name = user && user.first_name;
+        const last_name = user && user.last_name;
+        const is_verified = user && user.is_verified;
+
         switch (item.type) {
         case 'post':
         case 'user-petition':
             thumbnail = item.user.avatar || '';
-            title = item.user.first_name + ' ' +  item.user.last_name;//item.user ? item.user.first_name : '' + ' ' + item.user ? item.user.last_name : '';
+            title = first_name + ' ' +  last_name;//item.user ? item.user.first_name : '' + ' ' + item.user ? item.user.last_name : '';
             canInviteUpvoters = isBoosted;
             canSpam = true;
             break;
         default:
             thumbnail = item.group && item.group.avatar ? item.group.avatar : '';
-            title = item.user.first_name +' ' +item.user.last_name;//item.user ? item.user.first_name : '' + ' ' + item.user ? item.user.last_name : '';
+            title = first_name +' ' + last_name;//item.user ? item.user.first_name : '' + ' ' + item.user ? item.user.last_name : '';
             break;
         }
         return (
@@ -260,7 +265,7 @@ class FeedHeader extends Component {
                             {
                                 // ?
                                 <View style={{overflow: 'visible',backgroundColor:'#fff', alignItems: 'center', overflow: 'visible', justifyContent: 'center', width: 50, height: 50, backgroundColor: '#fff'}}>
-                                    {!item.user.is_verified && (item.type === 'post' || item.type === 'user-petition') &&
+                                    {!is_verified && (item.type === 'post' || item.type === 'user-petition') &&
                                     <Image
                                         style={{width: 60, height: 60}}
                                         resizeMode='cover'
