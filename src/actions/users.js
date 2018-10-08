@@ -16,7 +16,7 @@ const getAgency = token => {
       }
     })
       .then(res => {
-        console.error("Res:", res);
+        // console.error("Res:", res);
         res.json();
       })
       .then(data => resolve(data))

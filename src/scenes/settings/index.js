@@ -90,7 +90,7 @@ class Component extends React.Component {
   };
 
   componentDidMount = () => {
-    console.error("Agency:", JSON.stringify(this.props.agency, null, 2));
+    // console.error("Agency:", JSON.stringify(this.props.agency, null, 2));
   };
 
   render() {
