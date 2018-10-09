@@ -36,7 +36,7 @@ class Options extends Component {
         super(props);
         
         this.state = {
-            options: props.item.options.map(opt => ({...opt, checked: props.item.type !== 'crowdfunding-payment-request' && props.item.type !== 'payment-request' && props.item.answer && props.item.answer.option === opt.id})),
+            options: props.item && props.item.options && props.item.options.map(opt => ({...opt, checked: props.item.type !== 'crowdfunding-payment-request' && props.item.type !== 'payment-request' && props.item.answer && props.item.answer.option === opt.id})),
             checked: null
         };
     }
@@ -90,7 +90,7 @@ class Options extends Component {
         if (this.state.voting) return;
         let {options} = this.state;
         let {token, item} = this.props;
-        options = options.map((opt, i) => ({...opt, checked: i === index }));
+        options = options && options.map((opt, i) => ({...opt, checked: i === index }));
 
         this.setState({options, checked: index, amount});
         if (this.props.item.type !== 'crowdfunding-payment-request' && this.props.item.type !== 'payment-request' ){
@@ -191,7 +191,7 @@ class Options extends Component {
                     this.crowdfundingInfo(item)
                 }
                 {
-                    options.map((opt, i) => {
+                    options && options.map((opt, i) => {
                         return <Option key={i} type={item.type} opt={opt} onCheck={(value) => this.setChecked(i, value)} />;
                     })
                 }
