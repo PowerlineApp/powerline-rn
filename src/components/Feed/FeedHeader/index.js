@@ -175,7 +175,9 @@ class FeedHeader extends Component {
 
     onPressAuthor(item) {
         console.log('just pressed author');
-        Actions.profile({ id: item.user.id });
+        if(item && item.user) {
+            Actions.profile({ id: item.user.id });
+        }
     }
 
     onPressGroup(item) {
