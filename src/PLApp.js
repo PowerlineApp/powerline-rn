@@ -56,19 +56,18 @@ class PLApp extends Component {
         if (this.props.token){
             let splash = await AsyncStorage.getItem('splashScreen');
             if (splash){
-                this.setState({splash}, () => setTimeout(() => this.setState({splash: false}), 500) );
+                this.setState({ splash });
             } else {
                 this.setState({splash: false});
             }
         } else {
             this.setState({splash: false});
         }
-        SplashScreen.hide();
         Stripe.init({
             publishableKey: stripeAPIKey
         });
         // console.log('=>', SplashScreen);
-        
+        SplashScreen.hide();
 
         const myGroup = 'group.ne.powerline.share';
         RNSKBucket.set('token', this.props.token, myGroup);
