@@ -20,16 +20,16 @@ PODS:
   - boost/preprocessor-includes (1.59.0)
   - boost/shared_ptr-includes (1.59.0)
   - boost/string_algorithms-includes (1.59.0)
-  - Crashlytics (3.10.8):
-    - Fabric (~> 1.7.12)
+  - Crashlytics (3.10.9):
+    - Fabric (~> 1.7.13)
   - DoubleConversion (1.1.5)
-  - Fabric (1.7.12)
-  - FBSDKCoreKit (4.36.0):
+  - Fabric (1.7.13)
+  - FBSDKCoreKit (4.37.0):
     - Bolts (~> 1.7)
-  - FBSDKLoginKit (4.36.0):
+  - FBSDKLoginKit (4.37.0):
     - FBSDKCoreKit
-  - FBSDKShareKit (4.36.0):
-    - FBSDKCoreKit (~> 4.36.0)
+  - FBSDKShareKit (4.37.0):
+    - FBSDKCoreKit (~> 4.37.0)
   - Folly (2016.09.26.00):
     - boost
     - DoubleConversion
@@ -140,12 +140,12 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Bolts: ac6567323eac61e203f6a9763667d0f711be34c8
   boost: 30a15ffb6d9aa4646dd3caffc960753f4cb4ca4e
-  Crashlytics: 058dc1ba579f6c100bc60a6878703779bff383c4
+  Crashlytics: 55e24fc23989680285a21cb1146578d9d18e432c
   DoubleConversion: ebb6747c5b66026ad4f97b789c3ceac6f18e57a6
-  Fabric: d7387db9a31aadff63b147a4b91d982c53afaa4f
-  FBSDKCoreKit: 3b8e6570eedb443f9fc4af196a7bf39f18e3a3d8
-  FBSDKLoginKit: 8bccb6064708ab2f4251a7fc4e3b6d8d00ad91ba
-  FBSDKShareKit: 7090fdd55c39b03941efddb64c83a64ff6b3949f
+  Fabric: 25d0963b691fc97be566392243ff0ecef5a68338
+  FBSDKCoreKit: fe5f3474499a81963e11e3f3a5c753d0a95ca2b4
+  FBSDKLoginKit: 2f7249686d1e30ce8a5ef5400eedf50b3e3df332
+  FBSDKShareKit: 52e0083222c38e930eb6878007478326599195c3
   Folly: b7255b29f1d693c375d642d0f04f0592181156d9
   GLog: 3e4e4ae9746ce6bf6e9420c7fc1e08ad59c8ba1a
   Mixpanel: 3c3925c27f7a321d5978319a72f53f8f0885afc5
