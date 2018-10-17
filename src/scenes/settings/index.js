@@ -2,7 +2,7 @@ import React from "react";
 import Ionicon from "react-native-vector-icons/Ionicons";
 import Prompt from "react-native-prompt";
 import { connect } from "react-redux";
-import { Text, View, TouchableHighlight } from "react-native";
+import { Text, View, TouchableHighlight, Alert } from "react-native";
 import { Actions } from "react-native-router-flux";
 import { MenuContext } from "react-native-popup-menu";
 import { Header, Left, Title, Body, Button, Icon, Item } from "native-base";
@@ -116,10 +116,11 @@ class Component extends React.Component {
           </Left>
           <Body
             style={{
-              justifyContent: "flex-start"
+              justifyContent: "flex-start",
+              alignItems: 'center' 
             }}
           >
-            <Title>Settings</Title>
+            <Title style={{ color: 'white' }}>Settings</Title>
           </Body>
         </Header>
 
@@ -160,6 +161,19 @@ class Component extends React.Component {
                   type: "USER_STATE",
                   payload: { profile: { agency: value } }
                 });
+                Alert.alert(
+                    "Alert",
+                    "The Customization Code was applied successfully and will take effect the next time you restart the app.",
+                    [
+                        {
+                            text: 'OK',
+                            onPress: () => {
+                                Actions.pop();
+                            }
+                        }
+                    ],
+                    { cancelable: false }
+                );
               })
               .catch(err => {
                 console.error("Error:", err.message);
