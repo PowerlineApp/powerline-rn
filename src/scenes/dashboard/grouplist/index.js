@@ -52,13 +52,16 @@ class GroupList extends Component{
     }
 
     componentWillMount(){
-        this._onRefresh();
+       this._onRefresh();
     }
 
     //Simple listing of user's CURRENT groups. Only shows groups the user is joined to
     loadGroups(){
-        this.state.groupList = [];
+        let groupList = [];
         var { token }  = this.props;
+        this.setState({
+            refreshing: true
+        });
         getGroups(token).then(data => {
             let groups = data.payload;
             groups.map((item, index) => {
@@ -66,35 +69,36 @@ class GroupList extends Component{
                     var letter = item.official_name.toUpperCase()[0];
                     var i = this.check(letter);
                     if(i == -1){
-                        this.state.groupList[this.state.groupList.length] = {
+                        groupList[groupList.length] = {
                             letter: letter,
                             groups: [item]
                         };
                         
                     }else{
-                        this.state.groupList[i].groups.push(item);
+                        groupList[i].groups.push(item);
                         
                     }
                 }        
 
                 if(index == groups.length - 1){
-                    console.log(this.state.groupList);
-                    
-                    this.state.groupList.sort(function(a, b){
+                   
+                    groupList.sort(function(a, b){
                         return a.letter < b.letter ? -1: (a.letter == b.letter ? 0: 1 );
                     });
                     
                     this.setState({
-                        groupList: this.state.groupList,
-                        refreshing: false
+                        refreshing: false,
+                        groupList: groupList,
+                        
                     });
                 }
             });
-            this.setState({refreshing: false});
+            this.setState({ refreshing: false });
 
         })
         .catch(err => {
-            console.log(err);
+            this.setState({ refreshing: false });
+            //console.log(err);
         });
     }
 
@@ -118,10 +122,7 @@ class GroupList extends Component{
         Actions.groupprofile(group);
     }
 
-    _onRefresh(){
-        this.setState({
-            refreshing: true
-        });
+    _onRefresh = () => {
         this.loadGroups();
     }
 
@@ -153,9 +154,9 @@ class GroupList extends Component{
                         /> : null}
                         onScroll={(e) => {
                             var offset = e.nativeEvent.contentOffset.y;
-                            // if (Platform.OS === 'ios' && offset < -3) {
-                            //     this._onRefresh();
-                            // }
+                            if (Platform.OS === 'ios' && offset < -3) {
+                                this._onRefresh();
+                            }
                         }}
                         >
                         <ContentPlaceholder
