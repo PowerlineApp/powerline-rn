@@ -153,9 +153,9 @@ class GroupList extends Component{
                         /> : null}
                         onScroll={(e) => {
                             var offset = e.nativeEvent.contentOffset.y;
-                            if (Platform.OS === 'ios' && offset < -3) {
-                                this._onRefresh();
-                            }
+                            // if (Platform.OS === 'ios' && offset < -3) {
+                            //     this._onRefresh();
+                            // }
                         }}
                         >
                         <ContentPlaceholder
