@@ -126,7 +126,7 @@ class Notifications extends React.Component {
               justifyContent: "flex-start"
             }}
           >
-            <Title>Notifications</Title>
+            <Title style={{ color: 'white' }}>Notifications</Title>
           </Body>
         </Header>
         <View style={styles.container}>

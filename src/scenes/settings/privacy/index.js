@@ -165,7 +165,7 @@ class PrivacySettings extends React.Component {
               justifyContent: "flex-start"
             }}
           >
-            <Title>Privacy Settings</Title>
+            <Title style={{ color: 'white' }}>Privacy Settings</Title>
           </Body>
         </Header>
         <ScrollView style={styles.container}>
