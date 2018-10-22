@@ -59,7 +59,7 @@ class Representatives extends Component {
     console.log(token);
     getRepresentatives(token, 1, 20)
       .then(data => {
-        console.error("data", data);
+        console.log("data", data);
         this.setState({
           groups: data,
           refreshing: false
