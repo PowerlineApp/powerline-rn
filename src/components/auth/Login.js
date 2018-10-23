@@ -11,7 +11,7 @@ import PLConstants, { WINDOW_WIDTH } from 'PLConstants';
 import { logInManually, logInWithFacebook, verifyCode, sendCode, sendRecoveryEmail, finishRecovery, login2 }  from 'PLActions';
 import PLOverlayLoader from 'PLOverlayLoader';
 import PhoneVerification from './PhoneVerification';
-
+import logo from '../../assets/logo.png';
 class Login extends React.Component {
 
 
@@ -413,7 +413,7 @@ class Login extends React.Component {
     }
     return (
       <LinearGradient colors={['#afcbe6', '#fff', '#afcbe6']} style={styles.container}>
-        <Image source={require("img/logo.png")} style={styles.imgLogo} />
+        <Image source={logo} style={styles.imgLogo} />
         {this.renderLoginForm()}
         {this.renderFBLoginForm()}
         <View style={{ flex: 1 }} />
