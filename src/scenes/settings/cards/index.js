@@ -115,7 +115,7 @@ class UserCards extends React.Component {
               justifyContent: "flex-start"
             }}
           >
-            <Title>Manage Cards</Title>
+            <Title style={{ color: 'white' }}>Manage Cards</Title>
           </Body>
         </Header>
         <Text style={styles.description}>

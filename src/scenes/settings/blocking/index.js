@@ -115,7 +115,7 @@ class BlockedUsers extends React.Component {
               justifyContent: "flex-start"
             }}
           >
-            <Title>Blocked Users</Title>
+            <Title style={{ color: 'white' }}>Blocked Users</Title>
           </Body>
         </Header>
         <Item style={styles.searchBar}>

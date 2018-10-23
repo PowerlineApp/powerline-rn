@@ -93,7 +93,7 @@ class CustomizationSettings extends React.Component {
               justifyContent: "flex-start"
             }}
           >
-            <Title>Customization</Title>
+            <Title style={{ color: 'white' }}>Customization</Title>
           </Body>
         </Header>
         <Text style={styles.description}>

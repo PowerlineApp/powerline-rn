@@ -201,7 +201,7 @@ class Register extends React.Component {
     let agencyData = await getAgency(token);
     console.log("2");
     // console.log('hehe => agency', agencyData);
-    if (agencyData.onboarding_screens) {
+    if (agencyData && agencyData.onboarding_screens) {
       console.log("screens about to save => ", agencyData.onboarding_screens);
       await AsyncStorage.setItem(
         "onboarding",

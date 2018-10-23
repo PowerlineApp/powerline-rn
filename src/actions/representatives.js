@@ -23,7 +23,7 @@ function getRepresentatives(token, page, per_page){
         //     console.log(e );
         // });
 
-        let url = `${API_URL}` + '/representatives?_format=json&page='+page +'&per_page=' + per_page;
+        let url = `${API_URL}` + '/v2/representatives?_format=json&page='+page +'&per_page=' + per_page;
         console.log(url, {
             method: 'GET',
             headers: {
@@ -44,7 +44,7 @@ function getRepresentatives(token, page, per_page){
 
 
 
-        fetch(API_URL + '/representatives?_format=json&page='+page +'&per_page=' + per_page, {
+        fetch(API_URL + '/v2/representatives?_format=json&page='+page +'&per_page=' + per_page, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
