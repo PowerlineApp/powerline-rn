@@ -23,7 +23,7 @@ import PLButton from "PLButton";
 import { connect } from "react-redux";
 import PLOverlayLoader from "PLOverlayLoader";
 import DeviceInfo from "react-native-device-info";
-
+import { ImageCache } from "react-native-img-cache";
 import { Button, Icon, Content, Container } from "native-base";
 
 const { width } = Dimensions.get("window");
