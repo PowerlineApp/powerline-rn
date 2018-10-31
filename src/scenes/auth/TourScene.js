@@ -167,7 +167,7 @@ class TourScene extends Component{
         console.log(this.props);
         let {pos} = this.state;
         let imgs = [];
-        if (this.state.screens && this.state.screens.length){
+        if (this.state.screens && this.state.screens.length > 0){
             imgs = this.state.screens.map((s, i) => {
                 return <CachedImage source={{uri: s.image}} style={styles.img(pos === i)} />
             })
