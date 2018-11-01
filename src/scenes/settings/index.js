@@ -2,14 +2,19 @@ import React from "react";
 import Ionicon from "react-native-vector-icons/Ionicons";
 import Prompt from "react-native-prompt";
 import { connect } from "react-redux";
-import { Text, View, TouchableHighlight, Alert } from "react-native";
+import { Text, View, TouchableHighlight, Alert, AsyncStorage } from "react-native";
 import { Actions } from "react-native-router-flux";
 import { MenuContext } from "react-native-popup-menu";
 import { Header, Left, Title, Body, Button, Icon, Item } from "native-base";
+import { ImageCache } from "react-native-img-cache";
 
 import styles from "./styles";
 import { openDrawer } from "../../actions/drawer";
 import { updateUserProfile } from "../../actions/users";
+
+import {
+  getAgency,
+} from "PLActions";
 
 var PLColors = require("PLColors");
 var { TERMS_OF_SERVICE, PRIVACY_POLICY } = require("PLConstants");
@@ -161,19 +166,40 @@ class Component extends React.Component {
                   type: "USER_STATE",
                   payload: { profile: { agency: value } }
                 });
-                Alert.alert(
-                    "Alert",
-                    "The Customization Code was applied successfully and will take effect the next time you restart the app.",
-                    [
-                        {
-                            text: 'OK',
-                            onPress: () => {
-                                Actions.pop();
-                            }
+                getAgency(this.props.user.token)
+                .then(r => {
+                  if (r.splash_screen) {
+                    let uri = r.splash_screen; //"https://static-cdn.jtvnw.net/jtv_user_pictures/panel-62449166-image-47d2742a-e94a-4b31-b987-1de9fffea6b5";
+                    ImageCache.get().on(
+                      {
+                        uri
+                      },
+                      path => {
+                        console.log("TRYING TO CACHE => ", path);
+                        if (path) {
+                          AsyncStorage.setItem("splashScreen", uri);
+                          Alert.alert(
+                              "Alert",
+                              "The Customization Code was applied successfully and will take effect the next time you restart the app.",
+                              [
+                                  {
+                                      text: 'OK',
+                                      onPress: () => {
+                                          Actions.pop();
+                                      }
+                                  }
+                              ],
+                              { cancelable: false }
+                          );
                         }
-                    ],
-                    { cancelable: false }
-                );
+                      }
+                    );
+                  }
+                })
+                .catch(e => {
+                  console.log(e);
+                });
+                
               })
               .catch(err => {
                 console.error("Error:", err.message);

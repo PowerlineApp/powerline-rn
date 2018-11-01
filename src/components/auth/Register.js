@@ -23,7 +23,7 @@ import PLButton from "PLButton";
 import { connect } from "react-redux";
 import PLOverlayLoader from "PLOverlayLoader";
 import DeviceInfo from "react-native-device-info";
-
+import { ImageCache } from "react-native-img-cache";
 import { Button, Icon, Content, Container } from "native-base";
 
 const { width } = Dimensions.get("window");
@@ -198,21 +198,64 @@ class Register extends React.Component {
 
   async preCacheAgencyImages(token) {
     console.log("1");
-    let agencyData = await getAgency(token);
+    getAgency(token)
+      .then(r => {
+        this.props.dispatch({
+          type: "AGENCY_STATE",
+          payload: r
+        });
+        if (r.onboarding_screens) {
+          // r.splash_screen; //
+          r.onboarding_screens.map(splash => {
+            let uri = splash.image; //"https://static-cdn.jtvnw.net/jtv_user_pictures/panel-62449166-image-47d2742a-e94a-4b31-b987-1de9fffea6b5";
+            ImageCache.get().on(
+              {
+                uri
+              },
+              path => {
+                console.log("TRYING TO CACHE => ", path);
+                if (path) {
+                  console.log("caching onboarding screens done.");
+                  AsyncStorage.setItem(
+                    "onboarding",
+                    JSON.stringify(r.onboarding_screens || {})
+                  );
+                }
+              }
+            );
+          });
+        }
+        if (r.splash_screen && this.state.agency) {
+          let uri = r.splash_screen; //"https://static-cdn.jtvnw.net/jtv_user_pictures/panel-62449166-image-47d2742a-e94a-4b31-b987-1de9fffea6b5";
+          ImageCache.get().on(
+            {
+              uri
+            },
+            path => {
+              console.log("TRYING TO CACHE => ", path);
+              if (path) {
+                console.log('splash screen saved upon registration');
+                AsyncStorage.setItem("splashScreen", uri);
+              }
+            }
+          );
+        }
+      })
+      .catch(e => {
+        console.log(e);
+      });
+
     console.log("2");
     // console.log('hehe => agency', agencyData);
-    if (agencyData && agencyData.onboarding_screens) {
-      console.log("screens about to save => ", agencyData.onboarding_screens);
-      await AsyncStorage.setItem(
-        "onboarding",
-        JSON.stringify(agencyData.onboarding_screens)
-      );
-    }
+    // if (agencyData && agencyData.onboarding_screens) {
+    //   console.log("screens about to save => ", agencyData.onboarding_screens);
+    //   await AsyncStorage.setItem(
+    //     "onboarding",
+    //     JSON.stringify(agencyData.onboarding_screens)
+    //   );
+    // }
 
-    this.props.dispatch({
-      type: "AGENCY_STATE",
-      payload: agencyData
-    });
+    
   }
 
   onBack = () => {

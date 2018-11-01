@@ -49,7 +49,7 @@ class FeedActivity extends Component {
                 ref={ref => { this.header = ref; }}
                 item={item}
                 token={this.props.token}
-                userId={this.props.profile.id} 
+                userId={this.props.profile && this.props.profile.id} 
                    />
             <FeedDescription item={item} profile={this.props.profile} />
             <FeedMetaData item={item} />
