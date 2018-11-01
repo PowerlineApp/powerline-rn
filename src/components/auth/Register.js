@@ -198,10 +198,12 @@ class Register extends React.Component {
 
   async preCacheAgencyImages(token) {
     console.log("1");
-    let agencyData = await getAgency(token);
-
     getAgency(token)
       .then(r => {
+        this.props.dispatch({
+          type: "AGENCY_STATE",
+          payload: r
+        });
         if (r.onboarding_screens) {
           // r.splash_screen; //
           r.onboarding_screens.map(splash => {
@@ -223,6 +225,21 @@ class Register extends React.Component {
             );
           });
         }
+        if (r.splash_screen && this.state.agency) {
+          let uri = r.splash_screen; //"https://static-cdn.jtvnw.net/jtv_user_pictures/panel-62449166-image-47d2742a-e94a-4b31-b987-1de9fffea6b5";
+          ImageCache.get().on(
+            {
+              uri
+            },
+            path => {
+              console.log("TRYING TO CACHE => ", path);
+              if (path) {
+                console.log('splash screen saved upon registration');
+                AsyncStorage.setItem("splashScreen", uri);
+              }
+            }
+          );
+        }
       })
       .catch(e => {
         console.log(e);
@@ -238,10 +255,7 @@ class Register extends React.Component {
     //   );
     // }
 
-    this.props.dispatch({
-      type: "AGENCY_STATE",
-      payload: agencyData
-    });
+    
   }
 
   onBack = () => {
