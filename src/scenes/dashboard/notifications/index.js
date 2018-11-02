@@ -215,8 +215,6 @@ class Notifications extends Component{
     }
 
     navigate(notification){
-        console.log('notification------------', notification);
-
         switch(notification.type){
         case 'join-to-group-approved':
             Actions.groupprofile({id: notification.group.id});
@@ -239,7 +237,6 @@ class Notifications extends Component{
     getIcon(notification){
         
     }
-    break;
 
     renderIcon(notification){
         let icon;

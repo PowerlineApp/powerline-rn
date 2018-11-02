@@ -208,7 +208,7 @@ class FeedHeader extends Component {
         if (item.zone === 'prioritized') {
             return (<View style={{
                 position: 'absolute',
-                flez: 1,
+                flex: 1,
                 // width: 50,
                 // height: 50,
                 // backgroundColor: '#00f',
