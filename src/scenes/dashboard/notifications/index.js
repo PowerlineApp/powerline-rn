@@ -215,7 +215,7 @@ class Notifications extends Component{
     }
 
     navigate(notification){
-        // console.log(notification);
+        console.log('notification------------', notification);
 
         switch(notification.type){
         case 'join-to-group-approved':
@@ -223,6 +223,7 @@ class Notifications extends Component{
             break;
         case 'follow-request':
             Actions.myInfluences();
+            break;
         case 'comment-mentioned':
         case 'post-mentioned':
         case 'own-post-commented':
@@ -238,6 +239,7 @@ class Notifications extends Component{
     getIcon(notification){
         
     }
+    break;
 
     renderIcon(notification){
         let icon;
