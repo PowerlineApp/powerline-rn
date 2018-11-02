@@ -215,14 +215,13 @@ class Notifications extends Component{
     }
 
     navigate(notification){
-        // console.log(notification);
-
         switch(notification.type){
         case 'join-to-group-approved':
             Actions.groupprofile({id: notification.group.id});
             break;
         case 'follow-request':
             Actions.myInfluences();
+            break;
         case 'comment-mentioned':
         case 'post-mentioned':
         case 'own-post-commented':

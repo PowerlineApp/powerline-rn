@@ -378,6 +378,7 @@ class Home extends Component {
         break;
       case "follow-request":
         Actions.myInfluences();
+        break;
       default:
         this.itemDetail(notification, options);
         break;

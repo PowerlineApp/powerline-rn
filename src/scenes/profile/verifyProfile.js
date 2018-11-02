@@ -200,13 +200,13 @@ class VerifyProfile extends Component {
                 console.log('send code fail', e)
                 this.setState({loading: false})
                 setTimeout(() => {
-                    alert(JSON.stringify(e));
+                    alert(e.message);
                 }, 200)
                 console.log(e);
             })
         } catch (error) {
             Alert.alert('Invalid data',
-            JSON.stringify(error),
+            error,
             [{text: 'Ok', onPress: () => {
                 this.setState({loading: false})
             }}],
