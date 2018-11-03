@@ -16,8 +16,8 @@ const stripeProd = "pk_live_hRBIgf1WvZ1qyhDpP3KQHEyE";
 const stagingURL = "https://api-staging.powerli.ne/api";
 const prodURL = "https://api.powerli.ne/api";
 const devURL = "https://api-dev.powerli.ne/api";
-const staging = false;
-const forceDev = true;
+const staging = true;
+const forceDev = false;
 
 const dev = __DEV__ || forceDev;
 
