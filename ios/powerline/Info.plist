@@ -30,7 +30,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>3</string>
+	<string>4</string>
 	<key>Fabric</key>
 	<dict>
 		<key>APIKey</key>
@@ -74,7 +74,7 @@
 	<key>NSCalendarsUsageDescription</key>
 	<string>This app would like to access your calendar</string>
 	<key>NSCameraUsageDescription</key>
-	<string>camera usage</string>
+	<string>Powerline needs to access camera for taking profile photos</string>
 	<key>NSExtensionAttributes</key>
 	<dict>
 		<key>NSExtensionActivationRule</key>
@@ -104,9 +104,9 @@
 		</dict>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>Powerline needs to get your current location</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>gallery usage</string>
+	<string>Powerline needs to access photo library</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Andale Mono.ttf</string>
