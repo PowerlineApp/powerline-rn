@@ -40,7 +40,7 @@ var styles = {
         opacity: visible ? 1 : 0,
         width: width,
         height: height,
-        resizeMode: 'cover'
+        resizeMode: 'contain'
     }),
     bottomContainer: {
         marginBottom: 5,
