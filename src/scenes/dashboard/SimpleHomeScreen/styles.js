@@ -1,9 +1,9 @@
 import ScaleSheet from 'react-native-scalesheet'
-import { Theme } from 'powerline/configs'
 
 export default ScaleSheet.create({
     container: {
-        ...Theme.pageContainer,
+        flex: 1,
+        backgroundColor: background,
         marginBottom: 0
     },
     header: {
@@ -28,7 +28,7 @@ export default ScaleSheet.create({
         width: '7.5vh',
         height: '7.5vh',
         borderRadius: '3.75vh',
-        backgroundColor: Theme.secondary,
+        backgroundColor: '#61C1FF',
         justifyContent: 'center',
         alignItems: 'center'
     },

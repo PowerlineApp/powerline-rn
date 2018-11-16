@@ -16,7 +16,7 @@ import { Actions } from 'react-native-router-flux'
 import Ionicon from 'react-native-vector-icons/Ionicons'
 
 import styles from './styles'
-
+const  homeNavigator = require('./').navigator;
 class SimpleHomeScreen extends React.Component {
     constructor(props) {
         super(props)
@@ -86,14 +86,14 @@ class SimpleHomeScreen extends React.Component {
     }
 
     gotoSchedule = () => {
-        require('powerline/business').navigator.instance.goTo('conferenceEvents', {
+        homeNavigator.instance.goTo('conferenceEvents', {
             title: 'Events',
             back: true
         })
     }
 
     gotoAttendees = () => {
-        require('powerline/business').navigator.instance.goTo(
+        homeNavigator.instance.goTo(
             'conferenceAttendees',
             {
                 title: 'Attendees',
@@ -105,7 +105,7 @@ class SimpleHomeScreen extends React.Component {
     gotoCalendar = () => {}
 
     gotoProfile = () => {
-        require('powerline/business').navigator.instance.goTo('userProfile', {
+        homeNavigator.instance.goTo('userProfile', {
             title: 'My Profile',
             back: true
         })
@@ -123,11 +123,11 @@ class SimpleHomeScreen extends React.Component {
                 payload: { activeGroup: 'all' }
             })
         }
-        require('powerline/business').navigator.instance.goTo('rootTabs', {
+        homeNavigator.instance.goTo('rootTabs', {
             title: 'Recent Posts',
             rightItem: {
                 onPress: () => {
-                    require('powerline/business').navigator.instance.goTo('search', {
+                    homeNavigator.instance.goTo('search', {
                         content: (
                             <TextInput
                                 style={{ flex: 1, color: 'white' }}
@@ -145,7 +145,7 @@ class SimpleHomeScreen extends React.Component {
     }
 
     gotoRepresentatives = () => {
-        require('powerline/business').navigator.instance.goTo('representatives', {
+        homeNavigator.instance.goTo('representatives', {
             title: 'Representatives',
             back: true
         })
@@ -155,7 +155,7 @@ class SimpleHomeScreen extends React.Component {
         // this.gotoFeed(false)
 
         setTimeout(() => {
-            require('powerline/business').navigator.instance.goTo(
+            homeNavigator.instance.goTo(
                 'createPost',
                 {
                     title: `New post`,
@@ -199,7 +199,7 @@ class SimpleHomeScreen extends React.Component {
                         payload: { isVisible: false }
                     })
 
-                    let result = await require('powerline/business').services.request(
+                    let result = await require('./').services.request(
                         service.id
                     )
                     if (result.success) {
