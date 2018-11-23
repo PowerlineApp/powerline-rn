@@ -3,7 +3,7 @@ import ScaleSheet from 'react-native-scalesheet'
 export default ScaleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: background,
+        backgroundColor: '#E2E7EA',
         marginBottom: 0
     },
     header: {
