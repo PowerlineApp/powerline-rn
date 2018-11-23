@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import { Actions } from 'react-native-router-flux'
-import { redux } from 'powerline/instances'
+//import { redux } from 'powerline/instances'
 import { Keyboard } from 'react-native'
 
 class Navigator {
@@ -24,10 +24,10 @@ class Navigator {
         )
 
         this.navigationStack.push(navOptions)
-        redux.store.dispatch({
-            type: 'NAVIGATIONBAR_STATE',
-            payload: navOptions
-        })
+        // redux.store.dispatch({
+        //     type: 'NAVIGATIONBAR_STATE',
+        //     payload: navOptions
+        // })
     }
 
     getConfig = () => {
@@ -56,10 +56,10 @@ class Navigator {
         }
 
         this.navigationStack[this.navigationStack.length - 1] = a
-        redux.store.dispatch({
-            type: 'SET_NAVIGATIONBAR_STATE',
-            payload: a
-        })
+        // redux.store.dispatch({
+        //     type: 'SET_NAVIGATIONBAR_STATE',
+        //     payload: a
+        // })
     }
 
     goTo = (key, navOptions, props = {}) => {
@@ -100,10 +100,10 @@ class Navigator {
 
         Keyboard.dismiss()
         page(props)
-        redux.store.dispatch({
-            type: 'SET_NAVIGATIONBAR_STATE',
-            payload: navOptions
-        })
+        // redux.store.dispatch({
+        //     type: 'SET_NAVIGATIONBAR_STATE',
+        //     payload: navOptions
+        // })
     }
 
     pop = () => {
@@ -111,10 +111,10 @@ class Navigator {
         this.navigationStack.push(options)
         Keyboard.dismiss()
         Actions.pop()
-        redux.store.dispatch({
-            type: 'SET_NAVIGATIONBAR_STATE',
-            payload: options
-        })
+        // redux.store.dispatch({
+        //     type: 'SET_NAVIGATIONBAR_STATE',
+        //     payload: options
+        // })
     }
 }
 

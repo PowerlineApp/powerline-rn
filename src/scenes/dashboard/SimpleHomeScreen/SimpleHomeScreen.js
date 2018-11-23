@@ -112,11 +112,14 @@ class SimpleHomeScreen extends React.Component {
     }
 
     gotoFeed = (home = true) => {
+        const { conference } = this.state;
         if (!home) {
-            this.props.dispatch({
-                type: 'NEWSFEED_STATE',
-                payload: { activeGroup: this.state.conference.groupId }
-            })
+            if(conference) {
+                this.props.dispatch({
+                    type: 'NEWSFEED_STATE',
+                    payload: { activeGroup: conference.groupId }
+                })
+            }
         } else {
             this.props.dispatch({
                 type: 'NEWSFEED_STATE',
@@ -153,23 +156,25 @@ class SimpleHomeScreen extends React.Component {
 
     gotoCreatePost = () => {
         // this.gotoFeed(false)
-
-        setTimeout(() => {
-            homeNavigator.instance.goTo(
-                'createPost',
-                {
-                    title: `New post`,
-                    back: true
-                },
-                {
-                    _selectedGroup: this.state.conference.groupId,
-                    scope: {
-                        group: true,
-                        type: 'post'
+        const { conference } = this.state;
+        if(conference) {
+            setTimeout(() => {
+                homeNavigator.instance.goTo(
+                    'createPost',
+                    {
+                        title: `New post`,
+                        back: true
+                    },
+                    {
+                        _selectedGroup: conference.groupId,
+                        scope: {
+                            group: true,
+                            type: 'post'
+                        }
                     }
-                }
-            )
-        }, 1000)
+                )
+            }, 1000)
+        }
     }
 
     requestServices = () => {
