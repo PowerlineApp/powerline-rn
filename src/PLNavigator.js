@@ -22,6 +22,7 @@ import CustomizationSettings from "./scenes/settings/customization";
 import NotificationSettings from "./scenes/settings/notifications";
 import ManageCards from "./scenes/settings/cards";
 import Home from "./scenes/dashboard/";
+import SimpleHomeScreen from "./scenes/dashboard/SimpleHomeScreen/SimpleHomeScreen";
 import GroupSelector from "./scenes/dashboard/groupSelector/";
 import ItemDetail from "./scenes/dashboard/itemDetail/";
 import CommentDetail from "./scenes/dashboard/itemDetail/commentDetail";
@@ -96,7 +97,7 @@ class PLNavigator extends React.Component {
     // eslint-disable-line class-methods-use-this
     switch (props.scene.route.key) {
       case "home":
-        return <Home />;
+        return <SimpleHomeScreen />;
       case "takeTour":
         return <TourScene />;
       case "myInfluences":
@@ -122,7 +123,7 @@ class PLNavigator extends React.Component {
       case "notificationSettings":
         return <NotificationSettings />;
       default:
-        return <Home />;
+        return <SimpleHomeScreen />;
     }
   }
 
@@ -196,7 +197,7 @@ class MyRouter extends Component {
           />
           <Scene key="notificationSettings" component={NotificationSettings} />
           <Scene key="analyticsView" component={AnalyticsView} hideNavBar />
-          <Scene key="home" component={Home} initial hideNavBar />
+          <Scene key="home" component={SimpleHomeScreen} initial hideNavBar />
           <Scene key="groupSelector" component={GroupSelector} />
           <Scene key="takeTour" component={TourScene} />
           <Scene key="itemDetail" component={ItemDetail} animation={"fade"} />
