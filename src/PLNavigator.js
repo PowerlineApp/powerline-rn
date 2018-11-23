@@ -123,7 +123,7 @@ class PLNavigator extends React.Component {
       case "notificationSettings":
         return <NotificationSettings />;
       default:
-        return <Home />;
+        return <SimpleHomeScreen />;
     }
   }
 
@@ -197,7 +197,7 @@ class MyRouter extends Component {
           />
           <Scene key="notificationSettings" component={NotificationSettings} />
           <Scene key="analyticsView" component={AnalyticsView} hideNavBar />
-          <Scene key="home" component={Home} initial hideNavBar />
+          <Scene key="home" component={SimpleHomeScreen} initial hideNavBar />
           <Scene key="groupSelector" component={GroupSelector} />
           <Scene key="takeTour" component={TourScene} />
           <Scene key="itemDetail" component={ItemDetail} animation={"fade"} />

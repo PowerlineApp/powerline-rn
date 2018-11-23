@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
 import { connect } from 'react-redux'
-import { CachedImage } from 'react-native-cached-image'
+import { CachedImage } from 'react-native-img-cache'
 import {
     Platform,
     ScrollView,
