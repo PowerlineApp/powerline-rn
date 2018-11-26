@@ -8,6 +8,7 @@
 const navigationActions = require('./navigation');
 const loginActions = require('./login');
 const groupActions = require('./groups');
+const conferenceActions = require('./conferences');
 const bookmarkActions = require('./bookmarks');
 const activityActions = require('./activities');
 const postActions = require('./posts');
@@ -28,6 +29,7 @@ module.exports = {
     ...loginActions,
     ...navigationActions,
     ...groupActions,
+    ...conferenceActions,
     ...bookmarkActions,
     ...activityActions,
     ...postActions,

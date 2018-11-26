@@ -1,9 +1,9 @@
 import _ from 'lodash'
 import { AsyncStorage } from 'react-native'
-import { redux, privateAPI } from 'powerline/instances'
-import { to } from 'powerline/utils'
+import { redux, privateAPI } from '../instances'
+import { to } from '../utils'
 
-export const fetch = async () => {
+export const fetchConferences = async () => {
     const getConferences = await to(
         privateAPI.get('/v2.2/conferences'),
         'conferences'
