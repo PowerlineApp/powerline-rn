@@ -112,14 +112,12 @@ class SimpleHomeScreen extends React.Component {
     }
 
     gotoFeed = (home = true) => {
-        const { conference } = this.state;
         if (!home) {
-            if(conference) {
-                this.props.dispatch({
-                    type: 'NEWSFEED_STATE',
-                    payload: { activeGroup: conference.groupId }
-                })
-            }
+            this.props.dispatch({
+                type: 'NEWSFEED_STATE',
+                payload: { activeGroup: this.state.conference.groupId }
+            })
+            
         } else {
             this.props.dispatch({
                 type: 'NEWSFEED_STATE',
@@ -156,25 +154,22 @@ class SimpleHomeScreen extends React.Component {
 
     gotoCreatePost = () => {
         // this.gotoFeed(false)
-        const { conference } = this.state;
-        if(conference) {
-            setTimeout(() => {
-                homeNavigator.instance.goTo(
-                    'createPost',
-                    {
-                        title: `New post`,
-                        back: true
-                    },
-                    {
-                        _selectedGroup: conference.groupId,
-                        scope: {
-                            group: true,
-                            type: 'post'
-                        }
+        setTimeout(() => {
+            homeNavigator.instance.goTo(
+                'createPost',
+                {
+                    title: `New post`,
+                    back: true
+                },
+                {
+                    _selectedGroup: this.state.conference.groupId,
+                    scope: {
+                        group: true,
+                        type: 'post'
                     }
-                )
-            }, 1000)
-        }
+                }
+            )
+        }, 1000)
     }
 
     requestServices = () => {
@@ -231,13 +226,13 @@ class SimpleHomeScreen extends React.Component {
     }
 
     render() {
-        const { conference } = this.state
+        
 
         return (
             <ScrollView style={styles.container}>
-                {conference && conference.image && (
+                {this.state.conference && this.state.conference.image && (
                     <CachedImage
-                        source={{ uri: conference.image }}
+                        source={{ uri: this.state.conference.image }}
                         style={styles.header}
                     />
                 )}
