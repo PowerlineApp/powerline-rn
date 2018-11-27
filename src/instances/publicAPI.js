@@ -1,9 +1,9 @@
 import _ from 'lodash'
 import axios from 'axios'
-import { Environment } from 'powerline/configs'
+var { API_URL } = require('../PLEnv');
 
 const instance = axios.create({
-    baseURL: Environment.publicAPIURL,
+    baseURL: API_URL,
     timeout: 5000
 })
 

@@ -20,8 +20,9 @@ const  homeNavigator = require('./').navigator;
 class SimpleHomeScreen extends React.Component {
     constructor(props) {
         super(props)
+        console.log('props-------------', props.conferences);
         const conferences = Object.values(props.conferences || {})
-        if (conferences.length === 0) return null
+        if (conferences.length === 0) return null;
         const conference = conferences[0]
 
         this.state = {
@@ -83,6 +84,13 @@ class SimpleHomeScreen extends React.Component {
                 })
             })
         }
+    }
+
+    componentWillReceiveProps(nextProps) {
+      console.warn("componentWillReceiveProps at custom home screen");
+      if (nextProps.confenrences !== state.conferences) {
+        this.setState({ conferences: nextProps.conferences });
+      }
     }
 
     gotoSchedule = () => {
@@ -226,8 +234,6 @@ class SimpleHomeScreen extends React.Component {
     }
 
     render() {
-        
-
         return (
             <ScrollView style={styles.container}>
                 {this.state.conference && this.state.conference.image && (

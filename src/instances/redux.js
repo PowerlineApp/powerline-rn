@@ -1,10 +1,9 @@
 import _ from 'lodash'
-import { createReducer } from 'powerline/utils'
-import { reducers as componentReducers } from 'powerline/components'
-import { reducers as containerReducers } from 'powerline/containers'
+import { createReducer } from '../utils'
+
 import { createStore, combineReducers } from 'redux'
 
-const reducers = _.merge({}, componentReducers, containerReducers, {
+const reducers = _.merge({}, {
     api: createReducer('api', { token: null }),
     user: createReducer('user'),
     conferences: createReducer('conferences'),
