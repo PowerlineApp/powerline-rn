@@ -15,62 +15,79 @@ import {
 import { Actions } from 'react-native-router-flux'
 import Ionicon from 'react-native-vector-icons/Ionicons'
 
+import {
+  fetchConferences
+} from "PLActions";
+
 import styles from './styles'
 const  homeNavigator = require('./').navigator;
+
 class SimpleHomeScreen extends React.Component {
     constructor(props) {
         super(props)
         console.log('props-------------', props.conferences);
-        const conferences = Object.values(props.conferences || {})
-        if (conferences.length === 0) return null;
-        const conference = conferences[0]
-
+        
         this.state = {
-            conference,
-            items: [
-                {
-                    label: 'Home',
-                    icon: 'md-home',
-                    onPress: this.gotoFeed
-                },
-                {
-                    label: 'Schedule',
-                    icon: 'md-calendar',
-                    onPress: this.gotoSchedule
-                },
-                {
-                    label: 'Attendees',
-                    icon: 'md-contacts',
-                    onPress: this.gotoAttendees
-                },
-                {
-                    label: 'Feed',
-                    icon: 'md-star',
-                    onPress: () => this.gotoFeed(false)
-                },
-                {
-                    label: 'New Post',
-                    icon: 'md-add',
-                    onPress: this.gotoCreatePost
-                },
-                {
-                    label: 'My Reps',
-                    icon: 'md-book',
-                    onPress: this.gotoRepresentatives
-                }
-            ]
-        }
+          items: [
+              {
+                  label: 'Home',
+                  icon: 'md-home',
+                  onPress: this.gotoFeed
+              },
+              {
+                  label: 'Schedule',
+                  icon: 'md-calendar',
+                  onPress: this.gotoSchedule
+              },
+              {
+                  label: 'Attendees',
+                  icon: 'md-contacts',
+                  onPress: this.gotoAttendees
+              },
+              {
+                  label: 'Feed',
+                  icon: 'md-star',
+                  onPress: () => this.gotoFeed(false)
+              },
+              {
+                  label: 'New Post',
+                  icon: 'md-add',
+                  onPress: this.gotoCreatePost
+              },
+              {
+                  label: 'My Reps',
+                  icon: 'md-book',
+                  onPress: this.gotoRepresentatives
+              }
+          ]
+        };
 
         console.warn('Services:', props.conciergeServices)
 
-        if (Object.values(props.conciergeServices).length > 0) {
+        if (props.conciergeServices && Object.values(props.conciergeServices).length > 0) {
             this.state.items.push({
                 label: 'Services',
                 icon: 'ios-link',
                 onPress: () => this.requestServices()
             })
         }
+   
 
+        
+    }
+
+    componentDidMount() {
+      console.log('componentDidMount');
+      this.props.fetchConferences().then(data => {
+        console.log('data-----', data);
+      });
+    }
+
+    componentWillReceiveProps(nextProps) {
+      console.log("componentWillReceiveProps at custom home screen");
+      if (nextProps.conferences && nextProps.confenrences !== this.state.conferences) {
+        this.setState({ conferences: nextProps.conferences });
+        conference = conferences[0];
         if (conference && conference.links) {
             conference.links.forEach(link => {
                 console.warn('LINK:', link)
@@ -84,12 +101,6 @@ class SimpleHomeScreen extends React.Component {
                 })
             })
         }
-    }
-
-    componentWillReceiveProps(nextProps) {
-      console.warn("componentWillReceiveProps at custom home screen");
-      if (nextProps.confenrences !== state.conferences) {
-        this.setState({ conferences: nextProps.conferences });
       }
     }
 
@@ -272,4 +283,5 @@ const mapStateToProps = ({ conferences, conciergeServices }) => ({
     conciergeServices
 })
 
-export default connect(mapStateToProps)(SimpleHomeScreen)
+
+export default connect(mapStateToProps, {fetchConferences})(SimpleHomeScreen)

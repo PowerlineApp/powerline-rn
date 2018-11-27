@@ -22,7 +22,7 @@ async function fetchConferences (): Promise<Action> {
         return Promise.resolve(action);
        
     } catch (error) {
-        console.log(error);
+        console.log('error-----------', error);
         return Promise.reject(error);
     }
 }

@@ -7,9 +7,10 @@ const initialState = {
 
 const payloadStack: Array<Object> = [];
 
-function conferences(state = initialState, action){
-    console.log('action------------', action);
-    if(action.type == 'LOADED_CONFERENCES'){
+export default function conferences(state = initialState, action:Action){
+    
+    if(action.type === 'LOADED_CONFERENCES') {
+        console.log('action------------', action);
         payloadStack = payloadStack.concat(action.data);
         return {
             ...state,
@@ -19,5 +20,3 @@ function conferences(state = initialState, action){
 
     return state;
 }
-
-module.exports = conferences;
