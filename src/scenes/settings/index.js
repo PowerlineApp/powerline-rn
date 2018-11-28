@@ -150,13 +150,13 @@ class Component extends React.Component {
               );
             })}
           </View>
-          {
-            <PLOverlayLoader
-              visible={loading}
-              marginTop={200}
-              logo
-            />
-          }
+          
+          <PLOverlayLoader
+            visible={loading}
+            marginTop={200}
+            logo
+          />
+          
         </View>
         
         <Prompt
