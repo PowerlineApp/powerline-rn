@@ -20,7 +20,7 @@ import {
 } from "PLActions";
 
 import styles from './styles'
-const  homeNavigator = require('./').navigator;
+const  homeNavigator = require('./navigator');
 
 class SimpleHomeScreen extends React.Component {
     constructor(props) {
@@ -122,7 +122,7 @@ class SimpleHomeScreen extends React.Component {
     gotoCalendar = () => {}
 
     gotoProfile = () => {
-        homeNavigator.instance.goTo('userProfile', {
+        homeNavigator.instance.goTo('profile', {
             title: 'My Profile',
             back: true
         })
@@ -130,16 +130,17 @@ class SimpleHomeScreen extends React.Component {
 
     gotoFeed = (home = true) => {
         if (!home) {
+          if (this.state.conference && this.state.conferece) {
             this.props.dispatch({
-                type: 'NEWSFEED_STATE',
-                payload: { activeGroup: this.state.conference.groupId }
+              type: 'NEWSFEED_STATE',
+              payload: { activeGroup: this.state.conference.groupId }
             })
-            
+          }
         } else {
-            this.props.dispatch({
-                type: 'NEWSFEED_STATE',
-                payload: { activeGroup: 'all' }
-            })
+          this.props.dispatch({
+              type: 'NEWSFEED_STATE',
+              payload: { activeGroup: 'all' }
+          })
         }
         homeNavigator.instance.goTo('rootTabs', {
             title: 'Recent Posts',
@@ -173,7 +174,7 @@ class SimpleHomeScreen extends React.Component {
         // this.gotoFeed(false)
         setTimeout(() => {
             homeNavigator.instance.goTo(
-                'createPost',
+                'newpost',
                 {
                     title: `New post`,
                     back: true
