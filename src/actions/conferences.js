@@ -1,9 +1,8 @@
 var { Action, ThunkAction } = require('./types');
 var { API_URL } = require('../PLEnv');
 
-async function fetchConferences (): Promise<Action> {
+async function fetchConferences (token: string): Promise<Action> {
     try {
-        console.log('fetchConferences');
 
         var response = await fetch(`${API_URL}/v2.2/conferences`, {
             method: 'GET',
@@ -14,7 +13,7 @@ async function fetchConferences (): Promise<Action> {
         });
 
         var json = await response.json();
-        
+        console.log('fetchConferences', json);
         const action = {
             type: 'LOADED_CONFERENCES',
             data: json,

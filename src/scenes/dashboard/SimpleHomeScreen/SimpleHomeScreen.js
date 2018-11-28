@@ -25,8 +25,7 @@ const  homeNavigator = require('./').navigator;
 class SimpleHomeScreen extends React.Component {
     constructor(props) {
         super(props)
-        console.log('props-------------', props.conferences);
-        
+       
         this.state = {
           items: [
               {
@@ -61,30 +60,19 @@ class SimpleHomeScreen extends React.Component {
               }
           ]
         };
-
-        console.warn('Services:', props.conciergeServices)
-
-        if (props.conciergeServices && Object.values(props.conciergeServices).length > 0) {
-            this.state.items.push({
-                label: 'Services',
-                icon: 'ios-link',
-                onPress: () => this.requestServices()
-            })
-        }
-   
-
         
     }
 
     componentDidMount() {
-      console.log('componentDidMount');
-      this.props.fetchConferences().then(data => {
+      const { token } = this.props;
+      console.log('componentDidMount----------', this.state);
+      this.props.fetchConferences(token).then(data => {
         console.log('data-----', data);
       });
     }
 
     componentWillReceiveProps(nextProps) {
-      console.log("componentWillReceiveProps at custom home screen");
+      console.log("componentWillReceiveProps at custom home screen", nextProps);
       if (nextProps.conferences && nextProps.confenrences !== this.state.conferences) {
         this.setState({ conferences: nextProps.conferences });
         conference = conferences[0];
@@ -100,6 +88,16 @@ class SimpleHomeScreen extends React.Component {
                     icon: 'ios-link'
                 })
             })
+        }
+      }
+      if (nextProps.conciergeServices && nextProps.conciergeServices !== this.state.conciergeServices) {
+        console.warn('Services:', props.conciergeServices)
+        if (props.conciergeServices && Object.values(props.conciergeServices).length > 0) {
+          this.state.items.push({
+              label: 'Services',
+              icon: 'ios-link',
+              onPress: () => this.requestServices()
+          })
         }
       }
     }
@@ -278,10 +276,23 @@ class SimpleHomeScreen extends React.Component {
     }
 }
 
-const mapStateToProps = ({ conferences, conciergeServices }) => ({
-    conferences,
-    conciergeServices
-})
+function bindAction(dispatch) {
+  return {
+    openDrawer: () => {
+      Keyboard.dismiss();
+      dispatch(openDrawer());
+    },
+    loadUserGroups: token => dispatch(loadUserGroups(token)),
+    dispatch: a => dispatch(a),
+    setGroup: (data, token, id) => dispatch(setGroup(data, token, id)),
+    fetchConferences: token => dispatch(fetchConferences(token)),
+  };
+}
 
+const mapStateToProps = state => ({
+    token: state.user.token,
+    conferences: state.conferences,
+    conciergeServices: state.conciergeServices
+});
 
-export default connect(mapStateToProps, {fetchConferences})(SimpleHomeScreen)
+export default connect(mapStateToProps, bindAction)(SimpleHomeScreen)
