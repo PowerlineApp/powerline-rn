@@ -15,6 +15,7 @@ import { updateUserProfile } from "../../actions/users";
 import {
   getAgency,
 } from "PLActions";
+import PLOverlayLoader from "PLOverlayLoader";
 
 var PLColors = require("PLColors");
 var { TERMS_OF_SERVICE, PRIVACY_POLICY } = require("PLConstants");
@@ -91,7 +92,8 @@ const icons = [
 class Component extends React.Component {
   state = {
     isPromptOpen: false,
-    promptValue: ""
+    promptValue: "",
+    loading: false,
   };
 
   componentDidMount = () => {
@@ -99,6 +101,7 @@ class Component extends React.Component {
   };
 
   render() {
+    const { loading } = this.state;
     return (
       <MenuContext>
         <Header
@@ -147,8 +150,15 @@ class Component extends React.Component {
               );
             })}
           </View>
+          
+          <PLOverlayLoader
+            visible={loading}
+            marginTop={200}
+            logo
+          />
+          
         </View>
-
+        
         <Prompt
           title="Enter your code"
           placeholder="Start typing"
@@ -160,6 +170,7 @@ class Component extends React.Component {
           }}
           onSubmit={value => {
             /* onSubmit */
+            this.setState({ loading: true });
             updateUserProfile(this.props.user.token, { agency: value })
               .then(() => {
                 this.props.dispatch({
@@ -178,6 +189,7 @@ class Component extends React.Component {
                         console.log("TRYING TO CACHE => ", path);
                         if (path) {
                           AsyncStorage.setItem("splashScreen", uri);
+                          this.setState({ loading: false });
                           Alert.alert(
                               "Alert",
                               "The Customization Code was applied successfully and will take effect the next time you restart the app.",
@@ -197,15 +209,17 @@ class Component extends React.Component {
                   }
                 })
                 .catch(e => {
+                  this.setState({ loading: false });
                   console.log(e);
                 });
                 
               })
               .catch(err => {
+                this.setState({ loading: false });
                 console.error("Error:", err.message);
               });
             this.setState({
-              isPromptOpen: false
+              isPromptOpen: false,
             });
           }}
         />
