@@ -97,6 +97,8 @@ class PLNavigator extends React.Component {
     // eslint-disable-line class-methods-use-this
     switch (props.scene.route.key) {
       case "home":
+        return <Home />;
+      case "customHome":
         return <SimpleHomeScreen />;
       case "takeTour":
         return <TourScene />;
@@ -123,7 +125,7 @@ class PLNavigator extends React.Component {
       case "notificationSettings":
         return <NotificationSettings />;
       default:
-        return <SimpleHomeScreen />;
+        return <Home />;
     }
   }
 
@@ -197,7 +199,8 @@ class MyRouter extends Component {
           />
           <Scene key="notificationSettings" component={NotificationSettings} />
           <Scene key="analyticsView" component={AnalyticsView} hideNavBar />
-          <Scene key="home" component={SimpleHomeScreen} initial hideNavBar />
+          <Scene key="home" component={Home} initial hideNavBar />
+          <Scene key="customHome" component={SimpleHomeScreen} hideNavBar  />
           <Scene key="groupSelector" component={GroupSelector} />
           <Scene key="takeTour" component={TourScene} />
           <Scene key="itemDetail" component={ItemDetail} animation={"fade"} />

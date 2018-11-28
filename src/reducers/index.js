@@ -10,6 +10,7 @@ import drawer from "./drawer";
 import user from "./user";
 import groups from "./groups";
 import bookmarks from "./bookmarks";
+import conferences from "./conferences";
 import activities from "./activities";
 import notifications from "./notifications";
 import followers from "./followers";
@@ -25,6 +26,7 @@ module.exports = combineReducers({
   analytics,
   groups,
   bookmarks,
+  conferences,
   activities,
   notifications,
   followers,

@@ -15,61 +15,67 @@ import {
 import { Actions } from 'react-native-router-flux'
 import Ionicon from 'react-native-vector-icons/Ionicons'
 
+import {
+  fetchConferences
+} from "PLActions";
+
 import styles from './styles'
 const  homeNavigator = require('./').navigator;
+
 class SimpleHomeScreen extends React.Component {
     constructor(props) {
         super(props)
-        const conferences = Object.values(props.conferences || {})
-        if (conferences.length === 0) return null
-        const conference = conferences[0]
-
+       
         this.state = {
-            conference,
-            items: [
-                {
-                    label: 'Home',
-                    icon: 'md-home',
-                    onPress: this.gotoFeed
-                },
-                {
-                    label: 'Schedule',
-                    icon: 'md-calendar',
-                    onPress: this.gotoSchedule
-                },
-                {
-                    label: 'Attendees',
-                    icon: 'md-contacts',
-                    onPress: this.gotoAttendees
-                },
-                {
-                    label: 'Feed',
-                    icon: 'md-star',
-                    onPress: () => this.gotoFeed(false)
-                },
-                {
-                    label: 'New Post',
-                    icon: 'md-add',
-                    onPress: this.gotoCreatePost
-                },
-                {
-                    label: 'My Reps',
-                    icon: 'md-book',
-                    onPress: this.gotoRepresentatives
-                }
-            ]
-        }
+          items: [
+              {
+                  label: 'Home',
+                  icon: 'md-home',
+                  onPress: this.gotoFeed
+              },
+              {
+                  label: 'Schedule',
+                  icon: 'md-calendar',
+                  onPress: this.gotoSchedule
+              },
+              {
+                  label: 'Attendees',
+                  icon: 'md-contacts',
+                  onPress: this.gotoAttendees
+              },
+              {
+                  label: 'Feed',
+                  icon: 'md-star',
+                  onPress: () => this.gotoFeed(false)
+              },
+              {
+                  label: 'New Post',
+                  icon: 'md-add',
+                  onPress: this.gotoCreatePost
+              },
+              {
+                  label: 'My Reps',
+                  icon: 'md-book',
+                  onPress: this.gotoRepresentatives
+              }
+          ]
+        };
+        
+    }
 
-        console.warn('Services:', props.conciergeServices)
+    componentDidMount() {
+      const { token } = this.props;
+      console.log('componentDidMount----------', this.state);
+      this.props.fetchConferences(token).then(data => {
+        console.log('data-----', data);
+      });
+    }
 
-        if (Object.values(props.conciergeServices).length > 0) {
-            this.state.items.push({
-                label: 'Services',
-                icon: 'ios-link',
-                onPress: () => this.requestServices()
-            })
-        }
-
+    componentWillReceiveProps(nextProps) {
+      console.log("componentWillReceiveProps at custom home screen", nextProps);
+      if (nextProps.conferences && nextProps.confenrences !== this.state.conferences) {
+        this.setState({ conferences: nextProps.conferences });
+        conference = conferences[0];
         if (conference && conference.links) {
             conference.links.forEach(link => {
                 console.warn('LINK:', link)
@@ -83,6 +89,17 @@ class SimpleHomeScreen extends React.Component {
                 })
             })
         }
+      }
+      if (nextProps.conciergeServices && nextProps.conciergeServices !== this.state.conciergeServices) {
+        console.warn('Services:', props.conciergeServices)
+        if (props.conciergeServices && Object.values(props.conciergeServices).length > 0) {
+          this.state.items.push({
+              label: 'Services',
+              icon: 'ios-link',
+              onPress: () => this.requestServices()
+          })
+        }
+      }
     }
 
     gotoSchedule = () => {
@@ -112,14 +129,12 @@ class SimpleHomeScreen extends React.Component {
     }
 
     gotoFeed = (home = true) => {
-        const { conference } = this.state;
         if (!home) {
-            if(conference) {
-                this.props.dispatch({
-                    type: 'NEWSFEED_STATE',
-                    payload: { activeGroup: conference.groupId }
-                })
-            }
+            this.props.dispatch({
+                type: 'NEWSFEED_STATE',
+                payload: { activeGroup: this.state.conference.groupId }
+            })
+            
         } else {
             this.props.dispatch({
                 type: 'NEWSFEED_STATE',
@@ -156,25 +171,22 @@ class SimpleHomeScreen extends React.Component {
 
     gotoCreatePost = () => {
         // this.gotoFeed(false)
-        const { conference } = this.state;
-        if(conference) {
-            setTimeout(() => {
-                homeNavigator.instance.goTo(
-                    'createPost',
-                    {
-                        title: `New post`,
-                        back: true
-                    },
-                    {
-                        _selectedGroup: conference.groupId,
-                        scope: {
-                            group: true,
-                            type: 'post'
-                        }
+        setTimeout(() => {
+            homeNavigator.instance.goTo(
+                'createPost',
+                {
+                    title: `New post`,
+                    back: true
+                },
+                {
+                    _selectedGroup: this.state.conference.groupId,
+                    scope: {
+                        group: true,
+                        type: 'post'
                     }
-                )
-            }, 1000)
-        }
+                }
+            )
+        }, 1000)
     }
 
     requestServices = () => {
@@ -231,13 +243,11 @@ class SimpleHomeScreen extends React.Component {
     }
 
     render() {
-        const { conference } = this.state
-
         return (
             <ScrollView style={styles.container}>
-                {conference.image && (
+                {this.state.conference && this.state.conference.image && (
                     <CachedImage
-                        source={{ uri: conference.image }}
+                        source={{ uri: this.state.conference.image }}
                         style={styles.header}
                     />
                 )}
@@ -266,9 +276,23 @@ class SimpleHomeScreen extends React.Component {
     }
 }
 
-const mapStateToProps = ({ conferences, conciergeServices }) => ({
-    conferences,
-    conciergeServices
-})
+function bindAction(dispatch) {
+  return {
+    openDrawer: () => {
+      Keyboard.dismiss();
+      dispatch(openDrawer());
+    },
+    loadUserGroups: token => dispatch(loadUserGroups(token)),
+    dispatch: a => dispatch(a),
+    setGroup: (data, token, id) => dispatch(setGroup(data, token, id)),
+    fetchConferences: token => dispatch(fetchConferences(token)),
+  };
+}
 
-export default connect(mapStateToProps)(SimpleHomeScreen)
+const mapStateToProps = state => ({
+    token: state.user.token,
+    conferences: state.conferences,
+    conciergeServices: state.conciergeServices
+});
+
+export default connect(mapStateToProps, bindAction)(SimpleHomeScreen)
