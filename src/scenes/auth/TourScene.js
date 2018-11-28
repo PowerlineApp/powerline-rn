@@ -86,7 +86,8 @@ var styles = {
         // lineHeight: 32,
         // textAlign: 'center',
         color: '#006',
-        textAlignVertical: 'top'
+        textAlignVertical: 'top',
+        fontSize: 20,
     }
 };
 
@@ -206,7 +207,7 @@ class TourScene extends Component{
                     pos == this.state.maxPos?
                     <View style={styles.goBtnContainer}>
                         <TouchableOpacity style={styles.goBtn} onPress={this.onSkip}>
-                            <Text style={styles.goTxt}>Let's GO</Text>
+                            <Text style={styles.goTxt}>Let's Go</Text>
                         </TouchableOpacity>
                     </View>: null
                     }
