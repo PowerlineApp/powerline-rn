@@ -14,7 +14,7 @@ export const showToast = (text) => {
         shadow: true,
         delay: 0,
         hideOnPress: true,
-        style: {color: '#f0f', margin: 20, borderRadius: 20},
+        style: {textColor: '#f0f', margin: 20, borderRadius: 20},
         textStyle: {textAlign: 'center'},
         duration: 2500
     });
