@@ -1082,7 +1082,7 @@ class ItemDetail extends Component {
                         keyboardShouldPersistTaps='always'
                         fadeOutForeground
                         renderHeader={() => {
-                                return item && item.group && item.group.has_agency
+                                return item && item.group && item.group.has_agency && item.group.banner
                                 ? <CachedImage style={{flex: 1}} source={{ uri: item.group.banner }} />
                                 : <Image
                                 style={styles.headerImage}
