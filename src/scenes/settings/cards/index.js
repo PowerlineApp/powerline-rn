@@ -143,7 +143,6 @@ class UserCards extends React.Component {
                           Actions.pop();
                           const { id, cards } = data;
                           this.setState({ cards }, () => {
-                            console.log('added cards------------', cards);
                             Alert.alert(
                               "Saved!",
                               "You've successfully added a new card"

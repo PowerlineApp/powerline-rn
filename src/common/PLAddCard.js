@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Image, Linking} from 'react-native';
 import { connect } from 'react-redux';
 import Stripe, {PaymentCardTextField} from 'tipsi-stripe';
 import {
@@ -22,7 +22,7 @@ import {
     Icon,
     Form,
     Text,
-    Picker
+    Picker,
 } from 'native-base';
 import { showToast } from 'PLToast';
 import PLColors from 'PLColors';
