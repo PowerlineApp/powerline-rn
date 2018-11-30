@@ -507,11 +507,11 @@ class Register extends React.Component {
               </View>
             </View>
             <Text style={[styles.requireText, {marginTop: 10}]}>
-                Custom Code (optional)
-              </Text>
+              Custom Code (optional)
+            </Text>
             <View style={styles.fieldContainer}>
               <TextInput
-                placeholder="If you have a Custom Code, enter it here. Otherwise, skip."
+                placeholder="If you have a Custom Code, enter it here."
                 style={styles.textInput}
                 autoCorrect={false}
                 autoCapitalize={false}

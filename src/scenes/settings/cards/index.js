@@ -124,7 +124,7 @@ class UserCards extends React.Component {
           remove your card at any time.
         </Text>
         <FlatList
-          data={this.state.cards.concat({ key: "add", add: true })}
+          data={this.state.cards ? this.state.cards.concat({ key: "add", add: true }) : []}
           renderItem={({ item }) => {
             if (item.add) {
               return (
@@ -142,8 +142,13 @@ class UserCards extends React.Component {
                         onSuccess: data => {
                           Actions.pop();
                           const { id, cards } = data;
-                          this.setState({ cards });
-                          alert("You've successfully added a new card");
+                          this.setState({ cards }, () => {
+                            console.log('added cards------------', cards);
+                            Alert.alert(
+                              "Saved!",
+                              "You've successfully added a new card"
+                            );
+                          });
                         }
                       });
                     }}

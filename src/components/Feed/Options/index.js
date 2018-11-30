@@ -151,6 +151,7 @@ class Options extends Component {
     }
 
     alreadyDonatedText(item){
+        console.log('donation----------', item);
         if (item.type === 'crowdfunding-payment-request' && this.props.item.answer) {
             return (
                 <Text style={styles.alreadyDonatedText}>{`You've already donated to this crowdfunding. \nYou can change your donation option before the deadline.`}</Text>
