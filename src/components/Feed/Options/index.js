@@ -51,7 +51,7 @@ class Options extends Component {
             message = fundraiserThanksMessage(this.state.amount, moment().format('MMMM Do YYYY') );
         }
 
-        alert(message);
+        Alert.alert('Thank you!', message);
     }
 
     verifyCardAndSendAnswer(){
