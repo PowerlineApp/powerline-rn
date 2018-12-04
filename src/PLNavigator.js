@@ -58,6 +58,7 @@ import Modal from "./components/Modal";
 import UserAddCard from "./scenes/profile/userAddCard.js";
 import TermsList from "./scenes/dashboard/termsList";
 import ConferenceAttendees from "./scenes/dashboard/ConferenceAttendees/ConferenceAttendees";
+import ConferenceEvents from "./scenes/dashboard/ConferenceEvents/ConferenceEvents";
 
 import Share from "./PLShare";
 import { Actions } from "react-native-router-flux";
@@ -127,6 +128,8 @@ class PLNavigator extends React.Component {
         return <NotificationSettings />;
       case "conferenceAttendees":
         return <ConferenceAttendees />;
+      case "conferenceEvents":
+        return <ConferenceEvents />;
       default:
         return <Home />;
     }
@@ -205,6 +208,7 @@ class MyRouter extends Component {
           <Scene key="home" component={Home} initial hideNavBar />
           <Scene key="customHome" component={SimpleHomeScreen} hideNavBar  />
           <Scene key="conferenceAttendees" component={ConferenceAttendees} hideNavBar  />
+          <Scene key="conferenceEvents" component={ConferenceEvents} hideNavBar  />
           <Scene key="groupSelector" component={GroupSelector} />
           <Scene key="takeTour" component={TourScene} />
           <Scene key="itemDetail" component={ItemDetail} animation={"fade"} />
