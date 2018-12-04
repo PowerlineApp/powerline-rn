@@ -64,9 +64,7 @@ class SimpleHomeScreen extends React.Component {
 
     componentDidMount() {
       const { token } = this.props;
-      console.log('componentDidMount----------', this.state);
       this.props.fetchConferences(token).then(data => {
-        console.log('data-----', data);
       });
     }
 
@@ -102,20 +100,28 @@ class SimpleHomeScreen extends React.Component {
     }
 
     gotoSchedule = () => {
+      const { conferences } = this.props;
+      if(conferences && conferences.length > 0) {
         homeNavigator.instance.goTo('conferenceEvents', {
-            title: 'Events',
-            back: true
+          title: 'Events',
+          back: true,
+          id: this.props.conferences[0].id
         })
+      }
     }
 
     gotoAttendees = () => {
+      const { conferences } = this.props;
+      if(conferences && conferences.length > 0) {
         homeNavigator.instance.goTo(
             'conferenceAttendees',
             {
                 title: 'Attendees',
-                back: true
+                back: true,
+                id: this.props.conferences[0].id
             }
         )
+      }
     }
 
     gotoCalendar = () => {}

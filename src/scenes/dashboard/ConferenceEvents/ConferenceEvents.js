@@ -2,21 +2,39 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { ScrollView, View, Text, TouchableOpacity } from 'react-native'
 import Ionicon from 'react-native-vector-icons/Ionicons'
+import {
+  fetchEvents
+} from "PLActions";
 
 import styles from './styles'
 
 class ConferenceEvents extends React.Component {
     // USe the header bar (Back) (Title) (Change Day)
     constructor(props) {
-        super(props)
-
-        const key = Object.keys(props.schedule)[0]
-
+        super(props);
         this.state = {
             selectedIndex: 0,
+        }
+    }
+
+    componentDidMount() {
+      const { token } = this.props;
+      this.props.fetchEvents(token).then(data => {
+        console.log('data-----', data);
+      });
+    }
+
+    componentWillReceiveProps(nextProps) {
+      console.log("componentWillReceiveProps at conferenceevents", nextProps);
+      if (nextProps.conferences && nextProps.schedule !== this.state.schedule) {
+        const key = Object.keys(nextProps.schedule)[0]
+
+        this.setState({
+
             selected: key,
             label: this.getDateFromKey(key)
-        }
+        });
+      }
     }
 
     next = () => {
@@ -95,7 +113,7 @@ class ConferenceEvents extends React.Component {
                 </View>
                 <ScrollView style={styles.container}>
                     <Text>
-                        {this.props.schedule[this.state.selected].map(
+                        {this.props.schedule && this.props.schedule[this.state.selected].map(
                             (item, index) => {
                                 return (
                                     <View key={item.id} style={styles.item}>
@@ -129,8 +147,14 @@ class ConferenceEvents extends React.Component {
     }
 }
 
+function bindAction(dispatch) {
+  return {
+    fetchEvents: token => dispatch(fetchEvents(token, id)),
+  };
+}
+
 const mapStateToProps = ({ schedule }) => ({
     schedule
 })
 
-export default connect(mapStateToProps)(ConferenceEvents)
+export default connect(mapStateToProps, bindAction)(ConferenceEvents)
