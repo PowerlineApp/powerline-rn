@@ -427,8 +427,10 @@ class ItemDetail extends Component {
     }
 
     editComment = (comment) => {
-        this.setState({ editedCommentId: comment.id, defaultInputValue: comment.comment_body });
+        console.log('edit comment');
         this.addCommentView && this.addCommentView.open();
+        //this.setState({ editedCommentId: comment.id, defaultInputValue: comment.comment_body });
+        
     }
 
     resetEditComment = () => this.setState({
