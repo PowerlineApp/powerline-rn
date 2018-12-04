@@ -1,8 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { View } from 'react-native'
-import Components from 'powerline/components'
-const { UserList } = Components
+import UserList from '../../../components/UserList'
 
 import styles from './styles'
 

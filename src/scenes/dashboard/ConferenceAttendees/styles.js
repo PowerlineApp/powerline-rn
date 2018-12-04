@@ -1,5 +1,5 @@
 import ScaleSheet from 'react-native-scalesheet'
-import { Theme } from 'powerline/configs'
+import Theme from '../../../configs/theme'
 
 export default ScaleSheet.create({
     container: {
