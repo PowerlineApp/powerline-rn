@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
 
-import {View, ScrollView, Text, KeyboardAvoidingView, Platform, Modal} from 'react-native';
+import {View, ScrollView, Text, KeyboardAvoidingView, Platform, Modal, Alert} from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import moment from 'moment';
 import PLAddCard from '../../../common/PLAddCard';
@@ -27,7 +27,7 @@ import {
 
 import Option from './option';
 
-const fundraiserThanksMessage = (amount, date) => (`Thank you! A receipt has been sent to your e-mail address on file confirming that you paid ${amount} on ${date}.`);
+const fundraiserThanksMessage = (amount, date) => (`Thank you! Your $${amount} payment was successful. A receipt has been sent to your e-mail address.`);
 const crowdfundingThanksMessage = (amount, deadline, goal) => (`Thanks for your pledge. You will be charged $${amount} on ${deadline} if  this campaign reaches ${goal} in pledges and a receipt will be e-mailed at that time.`);
 
 class Options extends Component {
@@ -51,7 +51,7 @@ class Options extends Component {
             message = fundraiserThanksMessage(this.state.amount, moment().format('MMMM Do YYYY') );
         }
 
-        alert(message);
+        Alert.alert('Thank you!', message);
     }
 
     verifyCardAndSendAnswer(){
@@ -72,7 +72,7 @@ class Options extends Component {
             } else {
                 alert("You don't have any credit cards setup yet, please add your card info to proceed with payment");
                 this.setState({voting: false});
-                Actions.userAddCardScene({onSuccess: () => {Actions.pop(); alert('Your default payment method is now setup. Please try again.');}});
+                Actions.userAddCardScene({onSuccess: () => {Actions.pop(); Alert.alert('Saved!', 'Your default payment method is now setup. Please try again.');}});
             }
         });
     }
@@ -151,6 +151,7 @@ class Options extends Component {
     }
 
     alreadyDonatedText(item){
+        console.log('donation----------', item);
         if (item.type === 'crowdfunding-payment-request' && this.props.item.answer) {
             return (
                 <Text style={styles.alreadyDonatedText}>{`You've already donated to this crowdfunding. \nYou can change your donation option before the deadline.`}</Text>

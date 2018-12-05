@@ -31,15 +31,15 @@ export default {
     },
     activeIconLarge: {
         color: '#11c1f3',
-        fontSize: 25,
-        width: 15,
+        fontSize: 30,
+        width: 18,
         marginRight: 0
     },
 
     activeIconSmall: {
         color: PLColors.lightText,
-        fontSize: 8,
-        width: 8,
+        fontSize: 10,
+        width: 10,
         marginTop: 15,
         marginRight: 5
     },

@@ -24,50 +24,47 @@ const  homeNavigator = require('./navigator');
 
 class SimpleHomeScreen extends React.Component {
     constructor(props) {
-        super(props)
-       
-        this.state = {
-          items: [
-              {
-                  label: 'Home',
-                  icon: 'md-home',
-                  onPress: this.gotoFeed
-              },
-              {
-                  label: 'Schedule',
-                  icon: 'md-calendar',
-                  onPress: this.gotoSchedule
-              },
-              {
-                  label: 'Attendees',
-                  icon: 'md-contacts',
-                  onPress: this.gotoAttendees
-              },
-              {
-                  label: 'Feed',
-                  icon: 'md-star',
-                  onPress: () => this.gotoFeed(false)
-              },
-              {
-                  label: 'New Post',
-                  icon: 'md-add',
-                  onPress: this.gotoCreatePost
-              },
-              {
-                  label: 'My Reps',
-                  icon: 'md-book',
-                  onPress: this.gotoRepresentatives
-              }
-          ]
-        };
-        
+      super(props)
+     
+      this.state = {
+        items: [
+          {
+              label: 'Home',
+              icon: 'md-home',
+              onPress: this.gotoFeed
+          },
+          {
+              label: 'Schedule',
+              icon: 'md-calendar',
+              onPress: this.gotoSchedule
+          },
+          {
+              label: 'Attendees',
+              icon: 'md-contacts',
+              onPress: this.gotoAttendees
+          },
+          {
+              label: 'Feed',
+              icon: 'md-star',
+              onPress: () => this.gotoFeed(false)
+          },
+          {
+              label: 'New Post',
+              icon: 'md-add',
+              onPress: this.gotoCreatePost
+          },
+          {
+              label: 'My Reps',
+              icon: 'md-book',
+              onPress: this.gotoRepresentatives
+          }
+        ]
+      };
     }
 
     componentDidMount() {
       const { token } = this.props;
-      console.log('componentDidMount----------', this.state);
       this.props.fetchConferences(token).then(data => {
-        console.log('data-----', data);
       });
     }
 
@@ -76,6 +73,9 @@ class SimpleHomeScreen extends React.Component {
       if (nextProps.conferences && nextProps.confenrences !== this.state.conferences) {
         this.setState({ conferences: nextProps.conferences });
         conference = conferences[0];
+        if(conference) {
+          this.setState({ conference });
+        }
         if (conference && conference.links) {
             conference.links.forEach(link => {
                 console.warn('LINK:', link)
@@ -103,20 +103,27 @@ class SimpleHomeScreen extends React.Component {
     }
 
     gotoSchedule = () => {
+      const { conference } = this.state;
+      if(conference) {
         homeNavigator.instance.goTo('conferenceEvents', {
-            title: 'Events',
-            back: true
+          title: 'Events',
+          back: true,
         })
+      }
     }
 
     gotoAttendees = () => {
+      const { conference } = this.state;
+      if(conference) {
         homeNavigator.instance.goTo(
             'conferenceAttendees',
             {
                 title: 'Attendees',
-                back: true
+                back: true,
+                id: conference.id
             }
         )
+      }
     }
 
     gotoCalendar = () => {}
@@ -129,45 +136,45 @@ class SimpleHomeScreen extends React.Component {
     }
 
     gotoFeed = (home = true) => {
-        if (!home) {
-          if (this.state.conference && this.state.conferece) {
-            this.props.dispatch({
-              type: 'NEWSFEED_STATE',
-              payload: { activeGroup: this.state.conference.groupId }
-            })
-          }
-        } else {
+      if (!home) {
+        if (this.state.conference && this.state.conferece) {
           this.props.dispatch({
-              type: 'NEWSFEED_STATE',
-              payload: { activeGroup: 'all' }
+            type: 'NEWSFEED_STATE',
+            payload: { activeGroup: this.state.conference.groupId }
           })
         }
-        homeNavigator.instance.goTo('rootTabs', {
-            title: 'Recent Posts',
-            rightItem: {
-                onPress: () => {
-                    homeNavigator.instance.goTo('search', {
-                        content: (
-                            <TextInput
-                                style={{ flex: 1, color: 'white' }}
-                                onChangeText={this.onSearchQueryChanged}
-                                placeholder="Search groups, people, topics"
-                                placeholderTextColor="rgba(255, 255, 255, 0.6)"
-                            />
-                        ),
-                        back: true
-                    })
-                },
-                component: <Ionicon name="md-search" size={24} color="white" />
-            }
+      } else {
+        this.props.dispatch({
+            type: 'NEWSFEED_STATE',
+            payload: { activeGroup: 'all' }
         })
+      }
+      homeNavigator.instance.goTo('rootTabs', {
+          title: 'Recent Posts',
+          rightItem: {
+              onPress: () => {
+                  homeNavigator.instance.goTo('search', {
+                      content: (
+                          <TextInput
+                              style={{ flex: 1, color: 'white' }}
+                              onChangeText={this.onSearchQueryChanged}
+                              placeholder="Search groups, people, topics"
+                              placeholderTextColor="rgba(255, 255, 255, 0.6)"
+                          />
+                      ),
+                      back: true
+                  })
+              },
+              component: <Ionicon name="md-search" size={24} color="white" />
+          }
+      })
     }
 
     gotoRepresentatives = () => {
-        homeNavigator.instance.goTo('representatives', {
-            title: 'Representatives',
-            back: true
-        })
+      homeNavigator.instance.goTo('representatives', {
+        title: 'Representatives',
+        back: true
+      })
     }
 
     gotoCreatePost = () => {
