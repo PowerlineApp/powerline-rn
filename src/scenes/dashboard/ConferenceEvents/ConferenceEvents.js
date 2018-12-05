@@ -18,8 +18,9 @@ class ConferenceEvents extends React.Component {
     }
 
     componentDidMount() {
-      const { token } = this.props;
-      this.props.fetchEvents(token).then(data => {
+      const { token, id } = this.props;
+      console.log('event props token--', this.props);
+      this.props.fetchEvents(token, id).then(data => {
         console.log('data-----', data);
       });
     }
@@ -149,12 +150,13 @@ class ConferenceEvents extends React.Component {
 
 function bindAction(dispatch) {
   return {
-    fetchEvents: token => dispatch(fetchEvents(token, id)),
+    fetchEvents: (token, id) => dispatch(fetchEvents(token, id)),
   };
 }
 
-const mapStateToProps = ({ schedule }) => ({
-    schedule
+const mapStateToProps = state => ({
+    token: state.user.token,
+    schedule: state.schedule,
 })
 
 export default connect(mapStateToProps, bindAction)(ConferenceEvents)

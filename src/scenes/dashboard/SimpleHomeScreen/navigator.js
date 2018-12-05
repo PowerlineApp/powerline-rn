@@ -95,7 +95,7 @@ class Navigator {
         if (navOptions.back && !navOptions.onBack) {
             navOptions.onBack = this.pop
         }
-
+        console.log('navoptions-----------', navOptions);
         this.navigationStack.push(navOptions)
 
         Keyboard.dismiss()

@@ -73,6 +73,9 @@ class SimpleHomeScreen extends React.Component {
       if (nextProps.conferences && nextProps.confenrences !== this.state.conferences) {
         this.setState({ conferences: nextProps.conferences });
         conference = conferences[0];
+        if(conference) {
+          this.setState({ conference });
+        }
         if (conference && conference.links) {
             conference.links.forEach(link => {
                 console.warn('LINK:', link)
@@ -100,25 +103,25 @@ class SimpleHomeScreen extends React.Component {
     }
 
     gotoSchedule = () => {
-      const { conferences } = this.props;
-      if(conferences && conferences.length > 0) {
+      const { conference } = this.state;
+      if(conference) {
         homeNavigator.instance.goTo('conferenceEvents', {
           title: 'Events',
           back: true,
-          id: this.props.conferences[0].id
+          id: conference.id
         })
       }
     }
 
     gotoAttendees = () => {
-      const { conferences } = this.props;
-      if(conferences && conferences.length > 0) {
+      const { conference } = this.state;
+      if(conference) {
         homeNavigator.instance.goTo(
             'conferenceAttendees',
             {
                 title: 'Attendees',
                 back: true,
-                id: this.props.conferences[0].id
+                id: conference.id
             }
         )
       }
