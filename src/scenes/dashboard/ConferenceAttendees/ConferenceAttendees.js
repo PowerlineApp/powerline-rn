@@ -11,10 +11,12 @@ import styles from './styles'
 
 class ConferenceAttendees extends React.Component {
     componentDidMount() {
-      const { token, id } = this.props;
-      this.props.fetchAttendees(token, id).then(data => {
-        console.log('data-----', data);
-      });
+      const { token, conferences } = this.props;
+      if(conferences && conferences.length > 0) {
+        this.props.fetchAttendees(token, conferences[0].id).then(data => {
+          console.log('data-----', data);
+        });
+      }
     }
 
     componentWillReceiveProps(nextProps) {
@@ -48,12 +50,14 @@ class ConferenceAttendees extends React.Component {
 
 function bindAction(dispatch) {
   return {
-    fetchAttendees: token => dispatch(fetchAttendees(token, id)),
+    fetchAttendees: (token, id) => dispatch(fetchAttendees(token, id)),
   };
 }
 
-const mapStateToProps = ({ attendees }) => ({
-    attendees: Object.values(attendees || {})
+const mapStateToProps = state => ({
+  conferences: state.conferences,
+  token: state.user.token,
+  attendees: state.attendees,
 })
 
 export default connect(mapStateToProps, bindAction)(ConferenceAttendees)

@@ -108,7 +108,6 @@ class SimpleHomeScreen extends React.Component {
         homeNavigator.instance.goTo('conferenceEvents', {
           title: 'Events',
           back: true,
-          id: conference.id
         })
       }
     }

@@ -87,7 +87,8 @@ class Navigator {
                 back: null,
                 content: null,
                 title: null,
-                addonComponent: null
+                addonComponent: null,
+                id: null,
             },
             navOptions
         )
@@ -95,9 +96,7 @@ class Navigator {
         if (navOptions.back && !navOptions.onBack) {
             navOptions.onBack = this.pop
         }
-        console.log('navoptions-----------', navOptions);
         this.navigationStack.push(navOptions)
-
         Keyboard.dismiss()
         page(props)
         // redux.store.dispatch({

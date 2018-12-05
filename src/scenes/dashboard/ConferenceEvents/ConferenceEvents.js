@@ -18,11 +18,13 @@ class ConferenceEvents extends React.Component {
     }
 
     componentDidMount() {
-      const { token, id } = this.props;
-      console.log('event props token--', this.props);
-      this.props.fetchEvents(token, id).then(data => {
-        console.log('data-----', data);
-      });
+      const { token, conferences } = this.props;
+      console.log('event props navigation', conferences);
+      if(conferences && conferences.length > 0) {
+          this.props.fetchEvents(token, conferences[0].id).then(data => {
+            console.log('data-----', data);
+          });
+      }
     }
 
     componentWillReceiveProps(nextProps) {
@@ -155,6 +157,7 @@ function bindAction(dispatch) {
 }
 
 const mapStateToProps = state => ({
+    conferences: state.conferences,
     token: state.user.token,
     schedule: state.schedule,
 })

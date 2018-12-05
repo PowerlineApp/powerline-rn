@@ -1,4 +1,3 @@
-var { Action, ThunkAction } = require('./types');
 var { API_URL } = require('../PLEnv');
 
 async function fetchAttendees (token: string, id: string): Promise<Action> {

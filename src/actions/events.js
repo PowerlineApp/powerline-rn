@@ -1,9 +1,8 @@
-var { Action, ThunkAction } = require('./types');
 var { API_URL } = require('../PLEnv');
 
 async function fetchEvents (token: string, id: string): Promise<Action> {
     try {
-
+        console.log('id-----------', id);
         var response = await fetch(`${API_URL}/v2.2/${id}/events`, {
             method: 'GET',
             headers: {
