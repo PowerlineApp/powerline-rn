@@ -27,7 +27,6 @@ const announcementActions = require('./announcements');
 const attendeesActions = require('./attendees');
 const eventsActions = require('./events');
 const servicesActions = require('./services');
-const settingsActions = require('./settings');
 
 module.exports = {
     ...loginActions,
@@ -52,5 +51,4 @@ module.exports = {
     ...attendeesActions,
     ...eventsActions,
     ...servicesActions,
-    ...settingsActions
 };

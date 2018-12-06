@@ -16,12 +16,12 @@ import {
   Input,
   Spinner
 } from "native-base";
-import {
+/*import {
   updateUserProfileAsync
-} from "../../actions/settings";
+} from "../../actions/settings";*/
 import { Actions } from "react-native-router-flux";
 import styles from "./styles";
-import { listServices, offerService, removeService } from "../../actions/pl/services";
+import { listServices, offerService, removeService } from "../../actions/services";
 import commonColor from "../../../../native-base-theme/variables/commonColor";
 
 class Services extends Component {
@@ -106,7 +106,7 @@ class Services extends Component {
       res => {
         let serviceIds = this.props.userDetails.serviceIds;
         let index = serviceIds.indexOf(this.state.selectedService.id);
-        if (index === -1) this.props.updateUserProfileAsync({serviceIds: this.props.userDetails.serviceIds.push(this.state.selectedService.id)});
+        //if (index === -1) this.props.updateUserProfileAsync({serviceIds: this.props.userDetails.serviceIds.push(this.state.selectedService.id)});
         let newServices = this.state.services;
         newServices.forEach((service) => {
           if (service.id == this.state.selectedService.id) {
@@ -143,7 +143,7 @@ class Services extends Component {
         let serviceIds = this.props.userDetails.serviceIds;
         let index = serviceIds.indexOf(this.state.selectedService.id);
         if (index !== -1) serviceIds.splice(index, 1);
-        this.props.updateUserProfileAsync({serviceIds: serviceIds});
+        //this.props.updateUserProfileAsync({serviceIds: serviceIds});
         let newServices = this.state.services;
         newServices.forEach((service) => {
           if (service.id == this.state.selectedService.id) {

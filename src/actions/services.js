@@ -1,24 +1,27 @@
 var { API_URL } = require('../PLEnv');
 
- function listServices(token) {
-     return new Promise((fullfill, reject) => {
-         fetch(`${API_URL}/v2.2/user/concierge-services`, {
-             method: 'GET',
-             headers: {
-               'Content-Type': 'application/json',
-               Authorization: `Bearer ${token}`
-             }
-         }).then(res => {
-             if (res.ok){
-                 fullfill(res);
-             } else {
-                 reject(res);
-             }
-         }).catch(e => {
-             console.log('error while getting service list > ', e);
-             reject(e);
-         });
-     });
+async function listServices(token): Promise<Action> {
+    try {
+        var response = await fetch(`${API_URL}/v2.2/user/concierge-services`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            }
+        });
+
+        var json = await response.json();
+        console.log('listServices', json);
+        const action = {
+            type: 'LOADED_CONCIERGE_SERVICES',
+            data: json,
+        };
+        return Promise.resolve(action);
+       
+    } catch (error) {
+        console.log('error-----------', error);
+        return Promise.reject(error);
+    }
  };
 
  module.exports = {

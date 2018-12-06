@@ -16,7 +16,8 @@ import { Actions } from 'react-native-router-flux'
 import Ionicon from 'react-native-vector-icons/Ionicons'
 
 import {
-  fetchConferences
+  fetchConferences,
+  listServices,
 } from "PLActions";
 
 import styles from './styles'
@@ -65,6 +66,9 @@ class SimpleHomeScreen extends React.Component {
     componentDidMount() {
       const { token } = this.props;
       this.props.fetchConferences(token).then(data => {
+        
+      });
+      this.props.listServices(token).then(data => {
       });
     }
 
@@ -91,6 +95,7 @@ class SimpleHomeScreen extends React.Component {
         }
       }
       if (nextProps.conciergeServices && nextProps.conciergeServices !== this.state.conciergeServices) {
+        this.setState({ conciergeServices: nextProps.conciergeServices });
         console.warn('Services:', props.conciergeServices)
         if (props.conciergeServices && Object.values(props.conciergeServices).length > 0) {
           this.state.items.push({
@@ -198,6 +203,7 @@ class SimpleHomeScreen extends React.Component {
     }
 
     requestServices = () => {
+      if(this.props.conciergeServices) {
         let services = Object.values(this.props.conciergeServices)
         if (services.length === 0) {
             return Alert.alert(
@@ -248,6 +254,7 @@ class SimpleHomeScreen extends React.Component {
                 }
             }
         })
+      } 
     }
 
     render() {
@@ -294,6 +301,7 @@ function bindAction(dispatch) {
     dispatch: a => dispatch(a),
     setGroup: (data, token, id) => dispatch(setGroup(data, token, id)),
     fetchConferences: token => dispatch(fetchConferences(token)),
+    listServices: token => dispatch(listServices(token)),
   };
 }
 
