@@ -59,14 +59,15 @@ class SimpleHomeScreen extends React.Component {
               icon: 'md-book',
               onPress: this.gotoRepresentatives
           }
-        ]
+        ],
+        conferences: [],
+        conciergeServices: [],
       };
     }
 
     componentDidMount() {
       const { token } = this.props;
       this.props.fetchConferences(token).then(data => {
-        
       });
       this.props.listServices(token).then(data => {
       });
@@ -75,29 +76,31 @@ class SimpleHomeScreen extends React.Component {
     componentWillReceiveProps(nextProps) {
       console.log("componentWillReceiveProps at custom home screen", nextProps);
       if (nextProps.conferences && nextProps.confenrences !== this.state.conferences) {
-        this.setState({ conferences: nextProps.conferences });
-        conference = conferences[0];
-        if(conference) {
+        if (Object.values(nextProps.conferences.data).length > 0) {
+          this.setState({ conferences: nextProps.conferences.data });
+          const conference = nextProps.conferences.data[0];
           this.setState({ conference });
-        }
-        if (conference && conference.links) {
-            conference.links.forEach(link => {
-                console.warn('LINK:', link)
-                this.state.items.push({
-                    label: link.label,
-                    onPress: () =>
-                        Linking.openURL(
-                            Platform.OS === 'android' ? link.androidUrl : link.iosUrl
-                        ),
-                    icon: 'ios-link'
-                })
-            })
+          if (conference && conference.links) {
+              conference.links.forEach(link => {
+                  console.warn('LINK:', link)
+                  this.state.items.push({
+                      label: link.label,
+                      onPress: () =>
+                          Linking.openURL(
+                              Platform.OS === 'android' ? link.androidUrl : link.iosUrl
+                          ),
+                      icon: 'ios-link'
+                  })
+              })
+          }
         }
       }
+
       if (nextProps.conciergeServices && nextProps.conciergeServices !== this.state.conciergeServices) {
-        this.setState({ conciergeServices: nextProps.conciergeServices });
-        console.warn('Services:', props.conciergeServices)
-        if (props.conciergeServices && Object.values(props.conciergeServices).length > 0) {
+
+        if (Object.values(nextProps.conciergeServices.data).length > 0) {
+          this.setState({ conciergeServices: nextProps.conciergeServices.data });
+          console.log('Services:', nextProps.conciergeServices)
           this.state.items.push({
               label: 'Services',
               icon: 'ios-link',
