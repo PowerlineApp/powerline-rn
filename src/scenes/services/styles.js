@@ -1,4 +1,4 @@
-import commonColor from '../../../../native-base-theme/variables/commonColor';
+import commonColor from "../../configs/commonColor";
 import { Dimensions } from 'react-native';
 const { width, height } = Dimensions.get('window');
 

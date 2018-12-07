@@ -96,18 +96,18 @@ class SimpleHomeScreen extends React.Component {
         }
       }
 
-      if (nextProps.conciergeServices && nextProps.conciergeServices !== this.state.conciergeServices) {
+      // if (nextProps.conciergeServices && nextProps.conciergeServices !== this.state.conciergeServices) {
 
-        if (Object.values(nextProps.conciergeServices.data).length > 0) {
-          this.setState({ conciergeServices: nextProps.conciergeServices.data });
-          console.log('Services:', nextProps.conciergeServices)
+      //   if (Object.values(nextProps.conciergeServices.data).length > 0) {
+      //     this.setState({ conciergeServices: nextProps.conciergeServices.data });
+      //     console.log('Services:', nextProps.conciergeServices)
           this.state.items.push({
               label: 'Services',
               icon: 'ios-link',
-              onPress: () => this.requestServices()
-          })
-        }
-      }
+              onPress: () => this.gotoServices()
+           })
+      //   }
+      // }
     }
 
     gotoSchedule = () => {
@@ -181,6 +181,13 @@ class SimpleHomeScreen extends React.Component {
     gotoRepresentatives = () => {
       homeNavigator.instance.goTo('representatives', {
         title: 'Representatives',
+        back: true
+      })
+    }
+
+    gotoServices = () => {
+      homeNavigator.instance.goTo('services', {
+        title: 'Services',
         back: true
       })
     }

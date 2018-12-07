@@ -22,7 +22,7 @@ import {
 import { Actions } from "react-native-router-flux";
 import styles from "./styles";
 import { listServices, offerService, removeService } from "../../actions/services";
-import commonColor from "../../../../native-base-theme/variables/commonColor";
+import commonColor from "../../configs/commonColor";
 
 class Services extends Component {
   constructor() {
