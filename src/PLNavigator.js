@@ -262,6 +262,7 @@ class MyRouter extends Component {
           <Scene key="userAddCardScene" component={UserAddCard} />
           <Scene key="share" component={Share} />
           <Scene key="terms" component={TermsList} />
+          <Scene key="services" component={Services} />
         </Scene>
       </RouterWithRedux>
     );

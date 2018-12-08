@@ -40,14 +40,16 @@ class Services extends Component {
       isFetching: true
     }
   }
-  componentWillMount() {
+  componentDidMount() {
     this.loadServices();
   }
   loadServices = () => {
-    listServices(this.props.userDetails.plAccessToken).then(r => r.json())
+    //console.log('service props----', this.props);
+    listServices(this.props.userDetails.token)
     .then(r => {
+      console.log('service props-------------', r);
       this.setState({
-        services: r,
+        services: r.data,
         isFetching: false
       });
     });
@@ -137,7 +139,7 @@ class Services extends Component {
   }
   removeService() {
     this.setState({isFetching: true});
-    removeService(this.state.selectedService.id, this.props.userDetails.plAccessToken)
+    removeService(this.state.selectedService.id, this.props.userDetails.token)
     .then(
       res => {
         let serviceIds = this.props.userDetails.serviceIds;
@@ -434,18 +436,19 @@ class Services extends Component {
   }
 }
 
-function bindActions(dispatch) {
-  return {
-    updateUserProfileAsync: userDetails =>
-      dispatch(updateUserProfileAsync(userDetails, null, false))
-  };
-}
+// function bindActions(dispatch) {
+//   return {
+//     // updateUserProfileAsync: userDetails =>
+//     //   dispatch(updateUserProfileAsync(userDetails, null, false))
+//     listServices: token => dispatch(listServices(token)),
+//   };
+// }
 
 function mapStateToProps(state) {
   return {
-    userDetails: state.driver.user,
-    profileUpdating: state.driver.user.profileUpdating
+    userDetails: state.user,
+    profileUpdating: state.user.profileUpdating
   };
 }
 
-export default connect(mapStateToProps, bindActions)(Services);
+export default connect(mapStateToProps)(Services);
