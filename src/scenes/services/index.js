@@ -99,7 +99,8 @@ class Services extends Component {
     }
   }
   isServiceProvided(serviceId) {
-    return this.props.userDetails.serviceIds.indexOf(serviceId) > -1;
+    const { userDetails } = this.props;
+    return userDetails && userDetails.serviceIds && userDetails.serviceIds.indexOf(serviceId) > -1;
   }
   offerService() {
     this.setState({isFetching: true});
@@ -258,7 +259,7 @@ class Services extends Component {
         <Button
           full
           disabled={
-            this.props.userDetails.serviceIds.length == 0
+            this.props.userDetails && this.props.userDetails.serviceIds && this.props.userDetails.serviceIds.length == 0
           }
           style={styles.buttonContinue}
           onPress={() => Actions.pop()}
