@@ -104,7 +104,7 @@ class Services extends Component {
   }
   offerService() {
     this.setState({isFetching: true});
-    offerService(this.state.selectedService.id, this.state.signupCode, this.props.userDetails.plAccessToken)
+    offerService(this.state.selectedService.id, this.state.signupCode, this.props.userDetails.token)
     .then(
       res => {
         let serviceIds = this.props.userDetails.serviceIds;
@@ -291,7 +291,7 @@ class Services extends Component {
                     {this.state.selectedService.title}
                   </Text>
                   {
-                    this.state.selectedService.description &&
+                    !!this.state.selectedService.description &&
                     <Text style={styles.serviceConfirmDescription}>
                       {this.state.selectedService.description}
                     </Text>
