@@ -213,7 +213,7 @@ class Services extends Component {
 
   continueServiceProcess = () => {
     this.setState({serviceInfoVisible: false});
-    if (this.props.service.third_party_name != null) {
+    if (this.state.selectedService.third_party_name != null) {
       this.setState({thirdPartyAlertVisible: true});
     }
   }

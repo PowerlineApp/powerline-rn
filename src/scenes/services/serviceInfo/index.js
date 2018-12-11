@@ -29,7 +29,7 @@ class ServiceInfo extends Component {
     constructor(props) {
         super(props);
         this.state = {
-          memo: '',
+          memo: props.service.memo_placeholder,
           reservation_date: moment().format('YYYY-MM-DD hh:mm:ss A'),
           reservation_number: 1,
           editable: props.editable,
@@ -40,7 +40,7 @@ class ServiceInfo extends Component {
     componentDidMount() {
         let props = this.props;
         this.setState({
-            memo: props.service.memo_placeholder,
+            memo: props.service.memo,
             reservation_date: (props.service.reservation_details && props.service.reservation_details.indexOf(' | ') > -1) ? moment(props.service.reservation_details.split(' | ')[0]).format('YYYY-MM-DD hh:mm:ss A') : moment().format('YYYY-MM-DD hh:mm:ss A'),
             reservation_number: (props.service.reservation_details && props.service.reservation_details.indexOf(' | ') > -1) ? parseInt(props.service.reservation_details.split(' | ')[1]) : 1
         });
@@ -69,7 +69,7 @@ class ServiceInfo extends Component {
     render() {
         const { service } = this.props;
         console.log('selected service---------', service);
-        const popupHeight = service && service.is_reservation ? 440 : 310;
+        const popupHeight = 440;
         const popupTop = (deviceHeight - popupHeight) / 2;
         return (
             <View style={styles.overlay}>
