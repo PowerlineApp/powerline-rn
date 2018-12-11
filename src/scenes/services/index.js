@@ -179,9 +179,10 @@ class Services extends Component {
     this.setState({signupCode: ''});
   }
   renderIcon = (serviceId) => {
-    iconName = this.isServiceProvided(serviceId) ? "ios-remove-circle" : "ios-add-circle";
+    iconName = "chevron-right"
     return (
       <Icon
+        type="MaterialIcons"
         name={iconName}
         style={{
           ...styles.textColor,
@@ -266,18 +267,7 @@ class Services extends Component {
             style={{ borderTopWidth: 2, borderTopColor: "#ddd" }}
           />
         </Content>
-        <Button
-          full
-          disabled={
-            this.props.userDetails && this.props.userDetails.serviceIds && this.props.userDetails.serviceIds.length == 0
-          }
-          style={styles.buttonContinue}
-          onPress={() => Actions.pop()}
-        >
-          <Text style={{ alignSelf: "center", fontWeight: "bold" }}>
-            Continue
-          </Text>
-        </Button>
+
         {
           this.state.selectedService &&
           <Modal visible={this.state.serviceOfferConfirmVisible} transparent>
@@ -308,23 +298,7 @@ class Services extends Component {
                   </Text>
                   <Input value={this.state.signupCode} onChangeText={(text) => {this.setState({signupCode: text})}} placeholder='Enter your signup code here' style={styles.serviceConfirmInput}/>
                 </View>
-                <View style={styles.buttonPanel}>
-                  <Button
-                    full
-                    onPress={() => {
-                      if (this.state.selectedService.is_signup_protected && this.state.signupCode.length == 0) {
-                        Alert.alert("Please input signup code");
-                        return;
-                      }
-                      this.setState({serviceOfferTryAgainVisible: false});
-                      this.offerService();
-                    }}
-                  >
-                    <Text>
-                      Continue
-                    </Text>
-                  </Button>
-                </View>
+
               </View>
             </View>
           </Modal>
