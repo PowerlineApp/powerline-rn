@@ -74,8 +74,9 @@ class SimpleHomeScreen extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-      console.log("componentWillReceiveProps at custom home screen", nextProps);
-      if (nextProps.conferences && nextProps.confenrences !== this.state.conferences) {
+      
+      if (nextProps.conferences && this.state.conferences.length === 0) {
+        console.log("componentWillReceiveProps at custom home screen", nextProps);
         if (Object.values(nextProps.conferences.data).length > 0) {
           this.setState({ conferences: nextProps.conferences.data });
           const conference = nextProps.conferences.data[0];
@@ -96,7 +97,7 @@ class SimpleHomeScreen extends React.Component {
         }
       }
 
-      if (nextProps.conciergeServices && nextProps.conciergeServices !== this.state.conciergeServices) {
+      if (nextProps.conciergeServices && this.state.conciergeServices.length === 0) {
 
         if (Object.values(nextProps.conciergeServices.data).length > 0) {
           this.setState({ conciergeServices: nextProps.conciergeServices.data });

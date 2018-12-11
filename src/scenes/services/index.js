@@ -20,6 +20,7 @@ import {
   updateUserProfileAsync
 } from "../../actions/settings";*/
 import { Actions } from "react-native-router-flux";
+import ServiceInfo from "./serviceInfo";
 import styles from "./styles";
 import { listServices, offerService, removeService } from "../../actions/services";
 import commonColor from "../../configs/commonColor";
@@ -37,7 +38,8 @@ class Services extends Component {
       serviceRemoveConfirmVisible: false,
       serviceOfferTryAgainVisible: false,
       errorAlertVisible: false,
-      isFetching: true
+      isFetching: true,
+      serviceInfoEditable: true,
     }
   }
   componentDidMount() {
@@ -208,6 +210,14 @@ class Services extends Component {
       </ListItem>
     );
   };
+
+  continueServiceProcess = () => {
+    this.setState({serviceInfoVisible: false});
+    if (this.props.service.third_party_name != null) {
+      this.setState({thirdPartyAlertVisible: true});
+    }
+  }
+
   render() {
     console.log(this.props.userDetails);
     return (
@@ -271,55 +281,7 @@ class Services extends Component {
         {
           this.state.selectedService &&
           <Modal visible={this.state.serviceOfferConfirmVisible} transparent>
-            <View style={styles.overlay}>
-              <TouchableOpacity
-                onPress={() => {
-                  this.setState({
-                    serviceOfferConfirmVisible: false,
-                    signupCode: ''
-                  });
-                }}
-                style={styles.overlayTouch}
-              >
-              </TouchableOpacity>
-              <View style={styles.serviceOfferConfirm}>
-                <View style={styles.serviceConfirmContent}>
-                  <Text style={styles.serviceConfirmText}>
-                    Offer the following service?
-                  </Text>
-                  <Text style={styles.serviceConfirmTitle}>
-                    {this.state.selectedService.title}
-                  </Text>
-                  {
-                    !!this.state.selectedService.description &&
-                    <Text style={styles.serviceConfirmDescription}>
-                      {this.state.selectedService.description}
-                    </Text>
-                  }
-                  {
-                    this.state.selectedService.is_signup_protected &&
-                    <Input value={this.state.signupCode} onChangeText={(text) => {this.setState({signupCode: text})}} placeholder='Enter your signup code here' style={styles.serviceConfirmInput}/>
-                  }
-                </View>
-                <View style={styles.buttonPanel}>
-                  <Button
-                    full
-                    onPress={() => {
-                      if (this.state.selectedService.is_signup_protected && this.state.signupCode.length == 0) {
-                        Alert.alert("Please input signup code");
-                        return;
-                      }
-                      this.setState({serviceOfferConfirmVisible: false});
-                      this.offerService();
-                    }}
-                  >
-                    <Text>
-                      Continue
-                    </Text>
-                  </Button>
-                </View>
-              </View>
-            </View>
+            <ServiceInfo onContinue={this.continueServiceProcess} editable={this.state.serviceInfoEditable}/>
           </Modal>
         }
         {
