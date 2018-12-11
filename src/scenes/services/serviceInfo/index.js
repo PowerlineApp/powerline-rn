@@ -40,7 +40,7 @@ class ServiceInfo extends Component {
     componentDidMount() {
         let props = this.props;
         this.setState({
-            memo: props.service.memo,
+            memo: props.service.memo_placeholder,
             reservation_date: (props.service.reservation_details && props.service.reservation_details.indexOf(' | ') > -1) ? moment(props.service.reservation_details.split(' | ')[0]).format('YYYY-MM-DD hh:mm:ss A') : moment().format('YYYY-MM-DD hh:mm:ss A'),
             reservation_number: (props.service.reservation_details && props.service.reservation_details.indexOf(' | ') > -1) ? parseInt(props.service.reservation_details.split(' | ')[1]) : 1
         });
@@ -67,7 +67,9 @@ class ServiceInfo extends Component {
     };
 
     render() {
-        const popupHeight = this.props.service.is_reservation ? 440 : 310;
+        const { service } = this.props;
+        console.log('selected service---------', service);
+        const popupHeight = service && service.is_reservation ? 440 : 310;
         const popupTop = (deviceHeight - popupHeight) / 2;
         return (
             <View style={styles.overlay}>
@@ -94,7 +96,7 @@ class ServiceInfo extends Component {
                         />
                     </View>
                     {
-                        this.props.service.is_reservation ?
+                        
                         <View style={styles.item}>
                             <Text>Reservation</Text>
                             <View style={styles.reservationPanel}>
@@ -160,8 +162,6 @@ class ServiceInfo extends Component {
                                 </View>
                             </View>
                         </View>
-                        :
-                        false
                     }
                     <View style={styles.buttonPanel}>
                         <Button
@@ -188,7 +188,7 @@ class ServiceInfo extends Component {
 
 function mapStateToProps(state) {
   return {
-    service: state.rider.tripRequest.service
+    service: state.service
   };
 }
 
@@ -199,5 +199,5 @@ function bindActions(dispatch) {
 }
 
 export default connect(
-  mapStateToProps,
+  //mapStateToProps,
 )(ServiceInfo);

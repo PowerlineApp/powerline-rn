@@ -281,7 +281,7 @@ class Services extends Component {
         {
           this.state.selectedService &&
           <Modal visible={this.state.serviceOfferConfirmVisible} transparent>
-            <ServiceInfo onContinue={this.continueServiceProcess} editable={this.state.serviceInfoEditable}/>
+            <ServiceInfo onContinue={this.continueServiceProcess} editable={this.state.serviceInfoEditable} service={this.state.selectedService} />
           </Modal>
         }
         {
