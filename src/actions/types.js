@@ -16,6 +16,7 @@ export type Action =
   | { type: 'OPEN_DRAWER' }
   | { type: 'CLOSE_DRAWER' }
   | { type: 'LOADED_CONFERENCES' }
+  | { type: 'LOADED_CONCIERGE_SERVICES' }
   | { type: 'LOADED_GROUPS', data: { page: number; items: number; payload: Array<Object> } }
   | { type: 'CLEAR_CACHED_GROUPS' }
   | { type: 'LOADED_BOOKMARKS', data: { page: number; totalPages: number; totalItems: number; items: Array<Object> } }

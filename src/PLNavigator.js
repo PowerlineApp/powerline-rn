@@ -59,6 +59,7 @@ import UserAddCard from "./scenes/profile/userAddCard.js";
 import TermsList from "./scenes/dashboard/termsList";
 import ConferenceAttendees from "./scenes/dashboard/ConferenceAttendees/ConferenceAttendees";
 import ConferenceEvents from "./scenes/dashboard/ConferenceEvents/ConferenceEvents";
+import Services from "./scenes/services";
 
 import Share from "./PLShare";
 import { Actions } from "react-native-router-flux";
@@ -130,6 +131,8 @@ class PLNavigator extends React.Component {
         return <ConferenceAttendees />;
       case "conferenceEvents":
         return <ConferenceEvents />;
+      case "services":
+        return <Services />;
       default:
         return <Home />;
     }
@@ -259,6 +262,7 @@ class MyRouter extends Component {
           <Scene key="userAddCardScene" component={UserAddCard} />
           <Scene key="share" component={Share} />
           <Scene key="terms" component={TermsList} />
+          <Scene key="services" component={Services} />
         </Scene>
       </RouterWithRedux>
     );

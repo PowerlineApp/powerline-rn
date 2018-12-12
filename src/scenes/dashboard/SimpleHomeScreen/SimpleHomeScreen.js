@@ -16,7 +16,8 @@ import { Actions } from 'react-native-router-flux'
 import Ionicon from 'react-native-vector-icons/Ionicons'
 
 import {
-  fetchConferences
+  fetchConferences,
+  listServices,
 } from "PLActions";
 
 import styles from './styles'
@@ -58,7 +59,9 @@ class SimpleHomeScreen extends React.Component {
               icon: 'md-book',
               onPress: this.gotoRepresentatives
           }
-        ]
+        ],
+        conferences: [],
+        conciergeServices: [],
       };
     }
 
@@ -66,38 +69,44 @@ class SimpleHomeScreen extends React.Component {
       const { token } = this.props;
       this.props.fetchConferences(token).then(data => {
       });
+      this.props.listServices(token).then(data => {
+      });
     }
 
     componentWillReceiveProps(nextProps) {
-      console.log("componentWillReceiveProps at custom home screen", nextProps);
-      if (nextProps.conferences && nextProps.confenrences !== this.state.conferences) {
-        this.setState({ conferences: nextProps.conferences });
-        conference = conferences[0];
-        if(conference) {
+      
+      if (nextProps.conferences && this.state.conferences.length === 0) {
+        console.log("componentWillReceiveProps at custom home screen", nextProps);
+        if (Object.values(nextProps.conferences.data).length > 0) {
+          this.setState({ conferences: nextProps.conferences.data });
+          const conference = nextProps.conferences.data[0];
           this.setState({ conference });
-        }
-        if (conference && conference.links) {
-            conference.links.forEach(link => {
-                console.warn('LINK:', link)
-                this.state.items.push({
-                    label: link.label,
-                    onPress: () =>
-                        Linking.openURL(
-                            Platform.OS === 'android' ? link.androidUrl : link.iosUrl
-                        ),
-                    icon: 'ios-link'
-                })
-            })
+          if (conference && conference.links) {
+              conference.links.forEach(link => {
+                  console.warn('LINK:', link)
+                  this.state.items.push({
+                      label: link.label,
+                      onPress: () =>
+                          Linking.openURL(
+                              Platform.OS === 'android' ? link.androidUrl : link.iosUrl
+                          ),
+                      icon: 'ios-link'
+                  })
+              })
+          }
         }
       }
-      if (nextProps.conciergeServices && nextProps.conciergeServices !== this.state.conciergeServices) {
-        console.warn('Services:', props.conciergeServices)
-        if (props.conciergeServices && Object.values(props.conciergeServices).length > 0) {
+
+      if (nextProps.conciergeServices && this.state.conciergeServices.length === 0) {
+
+        if (Object.values(nextProps.conciergeServices.data).length > 0) {
+          this.setState({ conciergeServices: nextProps.conciergeServices.data });
+          console.log('Services:', nextProps.conciergeServices)
           this.state.items.push({
               label: 'Services',
               icon: 'ios-link',
-              onPress: () => this.requestServices()
-          })
+              onPress: () => this.gotoServices()
+           })
         }
       }
     }
@@ -177,6 +186,13 @@ class SimpleHomeScreen extends React.Component {
       })
     }
 
+    gotoServices = () => {
+      homeNavigator.instance.goTo('services', {
+        title: 'Services',
+        back: true
+      })
+    }
+
     gotoCreatePost = () => {
         // this.gotoFeed(false)
         setTimeout(() => {
@@ -198,6 +214,7 @@ class SimpleHomeScreen extends React.Component {
     }
 
     requestServices = () => {
+      if(this.props.conciergeServices) {
         let services = Object.values(this.props.conciergeServices)
         if (services.length === 0) {
             return Alert.alert(
@@ -248,6 +265,7 @@ class SimpleHomeScreen extends React.Component {
                 }
             }
         })
+      } 
     }
 
     render() {
@@ -294,6 +312,7 @@ function bindAction(dispatch) {
     dispatch: a => dispatch(a),
     setGroup: (data, token, id) => dispatch(setGroup(data, token, id)),
     fetchConferences: token => dispatch(fetchConferences(token)),
+    listServices: token => dispatch(listServices(token)),
   };
 }
 

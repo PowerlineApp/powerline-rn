@@ -26,6 +26,7 @@ const pollActions = require('./poll');
 const announcementActions = require('./announcements');
 const attendeesActions = require('./attendees');
 const eventsActions = require('./events');
+const servicesActions = require('./services');
 
 module.exports = {
     ...loginActions,
@@ -48,5 +49,6 @@ module.exports = {
     ...pollActions,
     ...announcementActions,
     ...attendeesActions,
-    ...eventsActions
+    ...eventsActions,
+    ...servicesActions,
 };

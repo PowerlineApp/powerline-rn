@@ -19,7 +19,7 @@ class ConferenceEvents extends React.Component {
 
     componentDidMount() {
       const { token, conferences } = this.props;
-      console.log('event props navigation', conferences);
+
       if(conferences && conferences.length > 0) {
           this.props.fetchEvents(token, conferences[0].id).then(data => {
             console.log('data-----', data);
