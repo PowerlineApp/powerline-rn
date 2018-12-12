@@ -87,7 +87,6 @@ class Services extends Component {
         }
       });
     }
-    console.log(sections);
     return sections;
   }
   onSelectItem = (item) => {
@@ -212,7 +211,7 @@ class Services extends Component {
   };
 
   continueServiceProcess = () => {
-    this.setState({serviceInfoVisible: false});
+    this.setState({serviceOfferConfirmVisible: false});
     if (this.state.selectedService.third_party_name != null) {
       this.setState({thirdPartyAlertVisible: true});
     }

@@ -5,7 +5,8 @@ import {
   Platform,
   Dimensions,
   TouchableOpacity,
-  BackHandler
+  BackHandler,
+  Alert,
 } from "react-native";
 import _ from "lodash";
 import PropTypes from "prop-types";
@@ -59,13 +60,19 @@ class ServiceInfo extends Component {
     }
 
     onContinue = () => {
-        let newService = this.props.service;
-        if (newService) {
-            newService.price = this.state.price;
-            newService.memo = this.state.memo;
-            newService.reservation_details = `${moment(this.state.reservation_date).format('YYYY-MM-DD HH:mm:ss.SSS')} | ${this.state.reservation_number}`;
-            this.props.setService(newService);
+        const newService = {
+            price: this.state.price,
+            memo: this.state.memo,
+            reservation_details: `${moment(this.state.reservation_date).format('YYYY-MM-DD HH:mm:ss.SSS')} | ${this.state.reservation_number}`
         }
+        this.props.setService(this.props.userDetails.token, this.props.service.id, newService)
+        .then((res) => {
+            if(res.data.status === 200) {
+                 Alert.alert('Success', 'The request was successful.');
+            } else {
+                Alert.alert('Failed', 'The request failed.');
+            }
+        })
         this.props.onContinue();
     }
 
@@ -79,9 +86,16 @@ class ServiceInfo extends Component {
         this._hideDateTimePicker();
     };
 
+    changeMemo = (memo) => {
+        this.setState({ memo });
+    }
+
+    changePrice = (price) => {
+        this.setState({ price });
+    }
+
     render() {
         const { service } = this.props;
-        console.log('service-----', service);
         const popupHeight = 440;
         const popupTop = (deviceHeight - popupHeight) / 2;
         return (
@@ -98,6 +112,7 @@ class ServiceInfo extends Component {
                                 value={this.state.price}
                                 editable={this.props.editable}
                                 selectTextOnFocus={this.props.editable}
+                                onChangeText={(text) => this.changePrice(text)}
                             />) : (<Text>Price: {this.props.service.price}</Text>)
                         }
                     </View>
@@ -114,6 +129,7 @@ class ServiceInfo extends Component {
                             value={this.state.memo}
                             editable={this.props.editable}
                             selectTextOnFocus={this.props.editable}
+                            onChangeText={(text) => this.changeMemo(text)}
                         />
                     </View>
                     {
@@ -209,12 +225,13 @@ class ServiceInfo extends Component {
 
 function mapStateToProps(state) {
   return {
+    userDetails: state.user,
   };
 }
 
 function bindActions(dispatch) {
   return {
-    setService: service => dispatch(setService(service))
+    setService: (token, serviceId, service) => dispatch(setService(token, serviceId, service))
   };
 }
 

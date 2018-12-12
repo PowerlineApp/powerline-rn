@@ -24,11 +24,29 @@ async function listServices(token): Promise<Action> {
     }
  };
 
-function setService(service) {
-  return {
-    type: 'SET_SERVICE',
-    payload: service
-  };
+async function setService(token: string, serviceId: string, service: object): Promise<Action>  {
+    try {
+        console.log('service----------', service);
+        let response = await fetch(`${API_URL}/v2.2/user/concierge-services/${serviceId}`, {
+            method: 'PUT',
+            headers: {
+                 'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                memo: service.memo
+            })
+        });
+        console.log('response from API', response);
+        const action = {
+            type: 'SET_STATUS',
+            data: response,
+        };
+        return Promise.resolve(action);
+    } catch (error) {
+        console.log('real error =x=x=> ', error);
+        return Promise.reject(error);
+    }
 }
 
  module.exports = {
