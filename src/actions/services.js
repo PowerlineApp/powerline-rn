@@ -24,6 +24,14 @@ async function listServices(token): Promise<Action> {
     }
  };
 
+function setService(service) {
+  return {
+    type: 'SET_SERVICE',
+    payload: service
+  };
+}
+
  module.exports = {
-     listServices
+     listServices,
+     setService,
  }; 

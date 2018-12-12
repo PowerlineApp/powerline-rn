@@ -22,6 +22,7 @@ import {
 import { Actions } from "react-native-router-flux";
 import ServiceInfo from "./serviceInfo";
 import styles from "./styles";
+import { setService } from "../../actions/services";
 import { listServices, offerService, removeService } from "../../actions/services";
 import commonColor from "../../configs/commonColor";
 
@@ -46,10 +47,8 @@ class Services extends Component {
     this.loadServices();
   }
   loadServices = () => {
-    //console.log('service props----', this.props);
     listServices(this.props.userDetails.token)
     .then(r => {
-      console.log('service props-------------', r);
       this.setState({
         services: r.data,
         isFetching: false
@@ -220,7 +219,6 @@ class Services extends Component {
   }
 
   render() {
-    console.log(this.props.userDetails);
     return (
       <Container style={{ backgroundColor: "#fff" }}>
         <Header
@@ -373,13 +371,14 @@ class Services extends Component {
   }
 }
 
-// function bindActions(dispatch) {
-//   return {
-//     // updateUserProfileAsync: userDetails =>
-//     //   dispatch(updateUserProfileAsync(userDetails, null, false))
-//     listServices: token => dispatch(listServices(token)),
-//   };
-// }
+function bindActions(dispatch) {
+  return {
+    // updateUserProfileAsync: userDetails =>
+    //   dispatch(updateUserProfileAsync(userDetails, null, false))
+    //listServices: token => dispatch(listServices(token)),
+    //setService: service => dispatch(setService(service)),
+  };
+}
 
 function mapStateToProps(state) {
   return {

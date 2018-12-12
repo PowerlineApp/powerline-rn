@@ -19,7 +19,7 @@ import {
 import { Actions } from "react-native-router-flux";
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import moment from 'moment';
-//import { setService } from "../../../actions/rider/home";
+import { setService } from "../../../actions/services";
 import styles from "./styles";
 import commonColor from "../../../../native-base-theme/variables/commonColor";
 
@@ -29,29 +29,42 @@ class ServiceInfo extends Component {
     constructor(props) {
         super(props);
         this.state = {
-          memo: props.service.memo_placeholder,
+          memo: '',
           reservation_date: moment().format('YYYY-MM-DD hh:mm:ss A'),
           reservation_number: 1,
           editable: props.editable,
-          isDateTimePickerVisible: false
+          isDateTimePickerVisible: false,
+          price: 0,
         };
     }
 
     componentDidMount() {
         let props = this.props;
+        console.log('props------', props);
         this.setState({
+            price: props.service.price,
             memo: props.service.memo,
             reservation_date: (props.service.reservation_details && props.service.reservation_details.indexOf(' | ') > -1) ? moment(props.service.reservation_details.split(' | ')[0]).format('YYYY-MM-DD hh:mm:ss A') : moment().format('YYYY-MM-DD hh:mm:ss A'),
             reservation_number: (props.service.reservation_details && props.service.reservation_details.indexOf(' | ') > -1) ? parseInt(props.service.reservation_details.split(' | ')[1]) : 1
         });
     }
 
+     componentWillReceiveProps(nextProps) {
+      console.log("componentWillReceiveProps at serviceInfo", nextProps);
+      if (nextProps.service && nextProps.service !== this.state.service) {
+        this.setState({
+            service: nextProps.service
+        });
+      }
+    }
+
     onContinue = () => {
         let newService = this.props.service;
         if (newService) {
+            newService.price = this.state.price;
             newService.memo = this.state.memo;
             newService.reservation_details = `${moment(this.state.reservation_date).format('YYYY-MM-DD HH:mm:ss.SSS')} | ${this.state.reservation_number}`;
-            //this.props.setService(newService);
+            this.props.setService(newService);
         }
         this.props.onContinue();
     }
@@ -68,17 +81,25 @@ class ServiceInfo extends Component {
 
     render() {
         const { service } = this.props;
-        console.log('selected service---------', service);
+        console.log('service-----', service);
         const popupHeight = 440;
         const popupTop = (deviceHeight - popupHeight) / 2;
         return (
             <View style={styles.overlay}>
                 <View style={[styles.infoView, {height: popupHeight, top: popupTop}]}>
                     <View style={styles.titleItem}>
-                        <Text style={{fontSize: 18, fontWeight: '500'}}>{this.props.service.title}</Text>
+                        <Text style={{fontSize: 18, fontWeight: '500'}}>{service.title}</Text>
                     </View>
                     <View style={styles.item}>
-                        <Text>Price: {this.props.service.price}</Text>
+                        {
+                            service.is_ride ? (<Textarea
+                                style={styles.memoArea}
+                                placeholder={this.props.service.memo_placeholder}
+                                value={this.state.price}
+                                editable={this.props.editable}
+                                selectTextOnFocus={this.props.editable}
+                            />) : (<Text>Price: {this.props.service.price}</Text>)
+                        }
                     </View>
                     <View style={styles.item}>
                         <Text>Surcharge: {this.props.service.surcharge}</Text>
@@ -168,7 +189,7 @@ class ServiceInfo extends Component {
                             full
                             onPress={this.onContinue}
                         >
-                            <Text>Continue</Text>
+                            <Text>Request</Text>
                         </Button>
                     </View>
                 </View>
@@ -188,7 +209,6 @@ class ServiceInfo extends Component {
 
 function mapStateToProps(state) {
   return {
-    service: state.service
   };
 }
 
@@ -199,5 +219,6 @@ function bindActions(dispatch) {
 }
 
 export default connect(
-  //mapStateToProps,
+  mapStateToProps,
+  bindActions,
 )(ServiceInfo);
