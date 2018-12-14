@@ -175,7 +175,7 @@ class PLNavigator extends React.Component {
           }}
           negotiatePan
         >
-          <MyRouter />
+          <MyRouter isCustom={this.props.isCustom} />
         </Drawer>
       </StyleProvider>
     );
@@ -195,6 +195,7 @@ class MyRouter extends Component {
     return true;
   }
   render() {
+    const { isCustom } = this.props;
     return (
       <RouterWithRedux onBackPress={this.onBackPress} key="router">
         <Scene key="root" hideNavBar>
@@ -208,8 +209,9 @@ class MyRouter extends Component {
           />
           <Scene key="notificationSettings" component={NotificationSettings} />
           <Scene key="analyticsView" component={AnalyticsView} hideNavBar />
-          <Scene key="home" component={Home} initial hideNavBar />
-          <Scene key="customHome" component={SimpleHomeScreen} hideNavBar  />
+
+          <Scene key="home" component={Home} initial={!isCustom} hideNavBar />
+          <Scene key="customHome" component={SimpleHomeScreen} initial={isCustom} hideNavBar  />
           <Scene key="conferenceAttendees" component={ConferenceAttendees} hideNavBar  />
           <Scene key="conferenceEvents" component={ConferenceEvents} hideNavBar  />
           <Scene key="groupSelector" component={GroupSelector} />

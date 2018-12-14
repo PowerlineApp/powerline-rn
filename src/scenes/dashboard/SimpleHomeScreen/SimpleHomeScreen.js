@@ -77,6 +77,17 @@ class SimpleHomeScreen extends React.Component {
       
       if (nextProps.conferences && this.state.conferences.length === 0) {
         console.log("componentWillReceiveProps at custom home screen", nextProps);
+        if (nextProps.conciergeServices && this.state.conciergeServices.length === 0) {
+          if (Object.values(nextProps.conciergeServices.data).length > 0) {
+            this.setState({ conciergeServices: nextProps.conciergeServices.data });
+
+            this.state.items.push({
+                label: 'Services',
+                icon: 'ios-link',
+                onPress: () => this.gotoServices()
+             })
+          }
+        }
         if (Object.values(nextProps.conferences.data).length > 0) {
           this.setState({ conferences: nextProps.conferences.data });
           const conference = nextProps.conferences.data[0];
@@ -97,18 +108,7 @@ class SimpleHomeScreen extends React.Component {
         }
       }
 
-      if (nextProps.conciergeServices && this.state.conciergeServices.length === 0) {
-
-        if (Object.values(nextProps.conciergeServices.data).length > 0) {
-          this.setState({ conciergeServices: nextProps.conciergeServices.data });
-          console.log('Services:', nextProps.conciergeServices)
-          this.state.items.push({
-              label: 'Services',
-              icon: 'ios-link',
-              onPress: () => this.gotoServices()
-           })
-        }
-      }
+    
     }
 
     gotoSchedule = () => {
