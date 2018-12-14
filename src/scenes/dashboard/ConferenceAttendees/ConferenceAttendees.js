@@ -14,7 +14,6 @@ class ConferenceAttendees extends React.Component {
       const { token, conferences } = this.props;
       if(conferences && conferences.length > 0) {
         this.props.fetchAttendees(token, conferences[0].id).then(data => {
-          console.log('data-----', data);
         });
       }
     }
@@ -33,18 +32,18 @@ class ConferenceAttendees extends React.Component {
     }
 
     render() {
-        return (
-            <View style={styles.container}>
-                <UserList
-                    renderAvatars={false}
-                    renderActions={false}
-                    users={this.props.attendees}
-                    renderEmail={true}
-                    subTextKey={['title', 'organization']}
-                    subTextKeySeperator="at "
-                />
-            </View>
-        )
+      return (
+        <View style={styles.container}>
+          <UserList
+            renderAvatars={false}
+            renderActions={false}
+            users={this.props.attendees}
+            renderEmail={true}
+            subTextKey={['title', 'organization']}
+            subTextKeySeperator="at "
+          />
+        </View>
+      )
     }
 }
 
