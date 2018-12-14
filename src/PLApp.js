@@ -27,6 +27,10 @@ import TourScene from './scenes/auth/TourScene';
 import {Root} from 'native-base';
 import { RNSKBucket } from 'react-native-swiss-knife';
 import {CachedImage} from "react-native-img-cache";
+import {
+  fetchConferences,
+  listServices,
+} from "PLActions";
 
 // console.log = () => {};
 // console.warn = () => {};
@@ -60,6 +64,8 @@ class PLApp extends Component {
             } else {
                 this.setState({splash: false});
             }
+            this.props.fetchConferences(this.props.token).then(data => {
+            });
         } else {
             this.setState({splash: false});
         }
@@ -86,11 +92,10 @@ class PLApp extends Component {
     }
 
     render () {
-        console.log(this.state.splash);
+        const { conferences } = this.props;
         if (this.state.splash === null) return null;
         if (this.state.splash){
             SplashScreen.hide();
-            console.log('splash ===>', this.state.splash);
             return <View style={{flex: 1, backgroundColor: '#fff'}}>
                 {/* <Text>This is my fake SplashScreen</Text> */}
                 <CachedImage style={{flex: 1}} source={{ uri: this.state.splash }} />
@@ -101,7 +106,7 @@ class PLApp extends Component {
         return <Root>
             {
                 this.props.isLoggedIn
-                ? <PLNavigator />
+                ? <PLNavigator isCustom={conferences && conferences.data} />
                 : <LoginStack />
             }
         </Root>;
@@ -136,7 +141,14 @@ TermsPolicyScene.navigationOptions = props => {
 
 const mapStateToProps = state => ({
     isLoggedIn: state.user.isLoggedIn,
-    token: state.user.token
+    token: state.user.token,
+    conferences: state.conferences,
 });
 
-module.exports = connect(mapStateToProps)(PLApp);
+function bindAction(dispatch) {
+  return {
+    fetchConferences: token => dispatch(fetchConferences(token)),
+  };
+}
+
+module.exports = connect(mapStateToProps, bindAction)(PLApp);
