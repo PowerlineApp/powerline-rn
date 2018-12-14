@@ -211,7 +211,7 @@ class MyRouter extends Component {
           <Scene key="analyticsView" component={AnalyticsView} hideNavBar />
 
           <Scene key="home" component={Home} initial={!isCustom} hideNavBar />
-          <Scene key="customHome" component={SimpleHomeScreen} initial={!!isCustom} hideNavBar  />
+          <Scene key="customHome" component={SimpleHomeScreen} initial={isCustom} hideNavBar  />
           <Scene key="conferenceAttendees" component={ConferenceAttendees} hideNavBar  />
           <Scene key="conferenceEvents" component={ConferenceEvents} hideNavBar  />
           <Scene key="groupSelector" component={GroupSelector} />

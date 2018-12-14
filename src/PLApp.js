@@ -106,7 +106,7 @@ class PLApp extends Component {
         return <Root>
             {
                 this.props.isLoggedIn
-                ? <PLNavigator isCustom={conferences && conferences.data} />
+                ? <PLNavigator isCustom={conferences.data && conferences.data.length > 0} />
                 : <LoginStack />
             }
         </Root>;
