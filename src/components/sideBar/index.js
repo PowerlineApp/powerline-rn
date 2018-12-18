@@ -14,7 +14,7 @@ import {
 import { Actions } from "react-native-router-flux";
 
 import { closeDrawer } from "../../actions/drawer";
-import { logOut, logOutWithPrompt, setGroup } from "PLActions";
+import { logOut, logOutWithPrompt, setGroup, fetchConferences } from "PLActions";
 
 import styles from "./style";
 import OneSignal from "react-native-onesignal";
@@ -24,7 +24,7 @@ import { Mixpanel } from "PLEnv";
 let datas = [
   {
     name: "Home",
-    route: "customHome",
+    route: "home",
     icon: "home",
     bg: "#C5F442",
     option: { type: "reset" }
@@ -159,12 +159,17 @@ class SideBar extends Component {
     console.log("onSelectItem", route);
     if (route === "home") {
       let data = { id: "all", group: "all", header: "all" };
+      this.props.fetchConferences(this.props.token).then(data => {
+        if(data && data.data && data.data.length > 0) {
+          Actions["simpleHome"]();
+        }
+      });
       setTimeout(() => {
         this.props.setGroup(data, this.props.token, "all");
       }, 1000);
     }
 
-    if (route == "logout") {
+    else if (route == "logout") {
       let { token } = this.props;
       this.props.logOut(token);
       Mixpanel.track("Logout via Menu");
@@ -289,14 +294,16 @@ function bindAction(dispatch) {
   return {
     closeDrawer: () => dispatch(closeDrawer()),
     logOut: token => dispatch(logOutWithPrompt(token)),
-    setGroup: (data, token, group) => dispatch(setGroup(data, token, group))
+    setGroup: (data, token, group) => dispatch(setGroup(data, token, group)),
+    fetchConferences: token => dispatch(fetchConferences(token))
   };
 }
 
 const mapStateToProps = state => ({
   token: state.user.token,
   is_verified: state.user.profile && state.user.profile.is_verified,
-  pushId: state.user.pushId
+  pushId: state.user.pushId,
+  conferences: state.conferences,
 });
 
 export default connect(mapStateToProps, bindAction)(SideBar);
