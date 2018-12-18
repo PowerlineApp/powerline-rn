@@ -52,7 +52,7 @@ class PLApp extends Component {
     constructor(){
         super();
         this.state = {
-            splash: null
+            splash: null,
         };
     }
     // displayName: 'PLApp',
@@ -82,6 +82,12 @@ class PLApp extends Component {
         AppState.addEventListener('change', this.handleAppStateChange);
     }
 
+    componentWillReceiveProps(nextProps) {
+      if (nextProps.conferences && this.state.conferences !== nextProps.conferences) {
+        this.setState({ conferences: nextProps.conferences });
+        console.log('componentWillReceiveProps at PLAPP');
+      }
+    }
     componentWillUnmount () {
         AppState.removeEventListener('change', this.handleAppStateChange);
     }
@@ -92,7 +98,8 @@ class PLApp extends Component {
     }
 
     render () {
-        const { conferences } = this.props;
+        const { conferences } = this.state;
+        console.log('conferences-----', conferences);
         if (this.state.splash === null) return null;
         if (this.state.splash){
             SplashScreen.hide();
@@ -103,11 +110,16 @@ class PLApp extends Component {
                 {/* <Image source={{uri: this.state.splash}} onError={() => this.setState({splash: false})} /> */}
             </View>;
         }
+
         return <Root>
             {
-                this.props.isLoggedIn
-                ? <PLNavigator isCustom={conferences.data && conferences.data.length > 0} />
-                : <LoginStack />
+                this.props.isLoggedIn && conferences && <PLNavigator isCustom={conferences.data.length > 0} />
+            }
+            {
+                this.props.isLoggedIn && !conferences && <View />
+            }
+            {
+                !this.props.isLoggedIn && <LoginStack />
             }
         </Root>;
     }

@@ -210,8 +210,13 @@ class MyRouter extends Component {
           <Scene key="notificationSettings" component={NotificationSettings} />
           <Scene key="analyticsView" component={AnalyticsView} hideNavBar />
 
-          <Scene key="home" component={Home} initial={!isCustom} hideNavBar />
-          <Scene key="customHome" component={SimpleHomeScreen} initial={isCustom} hideNavBar  />
+          {
+            !isCustom && <Scene key="home" component={Home} initial hideNavBar />
+          }
+          {
+            isCustom && <Scene key="home" component={SimpleHomeScreen} initial hideNavBar  />
+          }
+          
           <Scene key="conferenceAttendees" component={ConferenceAttendees} hideNavBar  />
           <Scene key="conferenceEvents" component={ConferenceEvents} hideNavBar  />
           <Scene key="groupSelector" component={GroupSelector} />

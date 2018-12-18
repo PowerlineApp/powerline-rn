@@ -24,7 +24,7 @@ import { Mixpanel } from "PLEnv";
 let datas = [
   {
     name: "Home",
-    route: "customHome",
+    route: "home",
     icon: "home",
     bg: "#C5F442",
     option: { type: "reset" }
