@@ -99,7 +99,7 @@ class PLApp extends Component {
 
     render () {
         const { conferences } = this.state;
-        console.log('conferences-----', conferences);
+        
         if (this.state.splash === null) return null;
         if (this.state.splash){
             SplashScreen.hide();
