@@ -186,7 +186,7 @@ class GroupSearch extends Component{
                                 <Text style={styles.itemHeaderText}>Results</Text>
                             </ListItem> : null}
                         {
-                            this.state.searchResults.length > 0 ?
+                            this.state.searchResults && this.state.searchResults.length > 0 ?
                                 <View>
                                     {
                                     this.state.searchResults.map((group, index) => {
