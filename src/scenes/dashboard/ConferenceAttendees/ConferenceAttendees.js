@@ -14,14 +14,15 @@ class ConferenceAttendees extends React.Component {
       const { token, conferences } = this.props;
       if(conferences && conferences.length > 0) {
         this.props.fetchAttendees(token, conferences[0].id).then(data => {
+          console.log('fetched attendees---', data);
         });
       }
     }
 
     componentWillReceiveProps(nextProps) {
       console.log("componentWillReceiveProps at conferenceevents", nextProps);
-      if (nextProps.conferences && nextProps.schedule !== this.state.schedule) {
-        const key = Object.keys(nextProps.schedule)[0]
+      if (nextProps.conferences) {
+        const key = Object.keys(nextProps.schedule)[0];
 
         this.setState({
 
@@ -32,16 +33,20 @@ class ConferenceAttendees extends React.Component {
     }
 
     render() {
+      const { attendees } = this.props.conferences;
+      console.log('attendees--', attendees);
       return (
         <View style={styles.container}>
-          <UserList
+        {
+          attendees && <UserList
             renderAvatars={false}
             renderActions={false}
-            users={this.props.attendees}
+            users={attendees}
             renderEmail={true}
             subTextKey={['title', 'organization']}
             subTextKeySeperator="at "
           />
+        }
         </View>
       )
     }
