@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { View } from 'react-native'
-import UserList from '../../../components/UserList'
+import UserList from '../../../components/UserList/UserList'
 
 import {
   fetchAttendees
@@ -33,20 +33,17 @@ class ConferenceAttendees extends React.Component {
     }
 
     render() {
-      const { attendees } = this.props.conferences;
+      const { attendees } = this.props.conferences || [];
       console.log('attendees--', attendees);
       return (
         <View style={styles.container}>
-        {
-          attendees && <UserList
+          <UserList
             renderAvatars={false}
             renderActions={false}
             users={attendees}
             renderEmail={true}
             subTextKey={['title', 'organization']}
-            subTextKeySeperator="at "
-          />
-        }
+            subTextKeySeperator="at "/>
         </View>
       )
     }

@@ -51,11 +51,11 @@ export default class UserList extends React.Component {
         return (
             <View style={styles.container}>
                 {
-                    users && (<FlatList
+                    <FlatList
                     style={{ flex: 1 }}
                     data={users}
                     renderItem={this.renderItem}
-                    />)
+                    />
                 }
             </View>
         )
