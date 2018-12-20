@@ -76,7 +76,6 @@ class SimpleHomeScreen extends React.Component {
     componentWillReceiveProps(nextProps) {
       
       if (nextProps.conferences && this.state.conferences.length === 0) {
-        console.log("componentWillReceiveProps at custom home screen", nextProps);
         if (nextProps.conciergeServices && this.state.conciergeServices.length === 0) {
           if (Object.values(nextProps.conciergeServices.data).length > 0) {
             this.setState({ conciergeServices: nextProps.conciergeServices.data });
@@ -94,15 +93,21 @@ class SimpleHomeScreen extends React.Component {
           this.setState({ conference });
           if (conference && conference.links) {
               conference.links.forEach(link => {
-                  console.warn('LINK:', link)
+                const url = Platform.OS === 'android' ? link.androidUrl : link.iosUrl;
+
                   this.state.items.push({
                       label: link.label,
-                      onPress: () =>
-                          Linking.openURL(
-                              Platform.OS === 'android' ? link.androidUrl : link.iosUrl
-                          ),
+                      onPress: () => {
+                        if(url) {
+                          Linking.openURL(url);
+                        } else {
+                          Alert.alert("Error", "The url is invalid");
+                        }
+                      },  
                       icon: 'ios-link'
                   })
+                
+                  
               })
           }
         }
