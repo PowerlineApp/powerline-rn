@@ -209,7 +209,10 @@ class Services extends Component {
       </ListItem>
     );
   };
+  closeModal = () => {
+    this.setState({ serviceOfferConfirmVisible: false });
 
+  }
   continueServiceProcess = () => {
     this.setState({serviceOfferConfirmVisible: false});
     if (this.state.selectedService.third_party_name != null) {
@@ -268,7 +271,7 @@ class Services extends Component {
         {
           this.state.selectedService &&
           <Modal visible={this.state.serviceOfferConfirmVisible} transparent>
-            <ServiceInfo onContinue={this.continueServiceProcess} editable={this.state.serviceInfoEditable} service={this.state.selectedService} />
+            <ServiceInfo onContinue={this.continueServiceProcess} editable={this.state.serviceInfoEditable} service={this.state.selectedService} onClose={this.closeModal} />
           </Modal>
         }
         {

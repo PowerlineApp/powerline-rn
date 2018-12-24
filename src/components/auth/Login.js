@@ -116,6 +116,7 @@ class Login extends React.Component {
       </View>
     );
   };
+  
   renderFBLoginForm = () => {
     return (
       <View style={styles.fbLoginContainer}>

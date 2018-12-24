@@ -41,7 +41,6 @@ class ServiceInfo extends Component {
 
     componentDidMount() {
         let props = this.props;
-        console.log('props------', props);
         this.setState({
             price: props.service.price,
             memo: props.service.memo,
@@ -75,7 +74,9 @@ class ServiceInfo extends Component {
         })
         this.props.onContinue();
     }
-
+    onClose = () => {
+        this.props.onClose();
+    }
     _showDateTimePicker = () => this.setState({ isDateTimePickerVisible: true });
     
     _hideDateTimePicker = () => this.setState({ isDateTimePickerVisible: false });
@@ -96,7 +97,7 @@ class ServiceInfo extends Component {
 
     render() {
         const { service } = this.props;
-        const popupHeight = 440;
+        const popupHeight = 480;
         const popupTop = (deviceHeight - popupHeight) / 2;
         return (
             <View style={styles.overlay}>
@@ -207,6 +208,12 @@ class ServiceInfo extends Component {
                         >
                             <Text>Request</Text>
                         </Button>
+                        <TouchableOpacity
+                            style={{ marginTop: 10 }}
+                            onPress={this.onClose}
+                        >
+                            <Text style={{ color: 'red' }}>Close</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
                 <DateTimePicker
