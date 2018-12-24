@@ -57,16 +57,29 @@ class PLApp extends Component {
         };
     }
     // displayName: 'PLApp',
+    componentWillMount() {
+        if (this.props.token) {
+            new Promise((resolve, reject) => {
+                this.props.fetchConferences(this.props.token);
+            }).catch(e => {
+                console.log(e);
+            });
+            
+        }
+    }
     async componentDidMount () {
         if (this.props.token){
+            new Promise((resolve, reject) => {
+                this.props.fetchConferences(this.props.token);
+            }).catch(e => {
+                console.log(e);
+            });
             let splash = await AsyncStorage.getItem('splashScreen');
             if (splash){
                 this.setState({splash}, () => setTimeout(() => this.setState({splash: false}), 1500) );
             } else {
                 this.setState({splash: false});
             }
-            this.props.fetchConferences(this.props.token).then(data => {
-            });
         } else {
             this.setState({splash: false});
         }
@@ -84,7 +97,7 @@ class PLApp extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-      if (nextProps.conferences && this.state.conferences !== nextProps.conferences && nextProps.conferences.data.length > 0) {
+      if (nextProps.conferences) {
         this.setState({ conferences: nextProps.conferences });
         console.log('componentWillReceiveProps at PLAPP');
       }
@@ -114,7 +127,7 @@ class PLApp extends Component {
         console.log('conferences--------', conferences);
         return <Root>
             {
-                this.props.isLoggedIn && conferences && <PLNavigator isCustom={conferences.data.length > 0} />
+                this.props.isLoggedIn && conferences && conferences.data ? <PLNavigator isCustom={conferences.data.length > 0} />
             }
             {
                 this.props.isLoggedIn && !conferences && <View />
