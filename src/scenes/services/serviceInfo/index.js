@@ -41,7 +41,6 @@ class ServiceInfo extends Component {
 
     componentDidMount() {
         let props = this.props;
-        console.log('props------', props);
         this.setState({
             price: props.service.price,
             memo: props.service.memo,

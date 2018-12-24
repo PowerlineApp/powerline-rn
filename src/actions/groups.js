@@ -54,7 +54,7 @@ function clearGroupsInCache(): ThunkAction {
 
 //User can create a new group. He is owner of group by default.
 function createGroup(token, groupData){
-    console.log(API_URL + '/v2/user/groups', token, groupData);
+    //console.log(API_URL + '/v2/user/groups', token, groupData);
     return new Promise((resolve, reject) => {
         var payload = JSON.stringify(groupData);
         console.log(payload);

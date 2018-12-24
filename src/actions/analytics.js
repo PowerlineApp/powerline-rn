@@ -3,7 +3,7 @@ var { API_URL, PER_PAGE } = require('../PLEnv');
 
 export const fetchAnalytics = (postID) => (dispatch, getState) => {
     const url = `${API_URL}/v2/posts/${postID}/analytics`;
-    console.log(url);
+    //console.log(url);
     const token = getState().user.token;
     dispatch({type: ActionTypes.FETCH_ANALYTICS_CLEAR});
     dispatch({type: ActionTypes.FETCH_ANALYTICS_LOADING, payload: true});

@@ -49,7 +49,7 @@ async function loadActivities(token: string, page: ?number = 0, perPage: ?number
     return getActivities2(token, group, user, followed, null);
 
     
-    console.log(`${API_URL}/v2/activities?_format=json&user=${user}&group=${group}&page=${page + 1}&per_page=${perPage}&followed=${followed}`);
+    //console.log(`${API_URL}/v2/activities?_format=json&user=${user}&group=${group}&page=${page + 1}&per_page=${perPage}&followed=${followed}`);
     try {
         var response = await fetch(`${API_URL}/v2/activities?_format=json&user=${user}&group=${group}&followed=${followed}&page=${page + 1}&per_page=${perPage}`, {
             method: 'GET',
@@ -85,15 +85,15 @@ async function loadActivities(token: string, page: ?number = 0, perPage: ?number
 }
 
 const markAsRead = (token, id, type) => (dispatch, state) => {
-    console.log('marking as read', `${API_URL}/v2.2/feed`,
-    {
-      method: 'PATCH',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify([{id: id, type, is_read: "true"}])
-    });
+    // console.log('marking as read', `${API_URL}/v2.2/feed`,
+    // {
+    //   method: 'PATCH',
+    //   headers: {
+    //     'Authorization': `Bearer ${token}`,
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify([{id: id, type, is_read: "true"}])
+    // });
         fetch(`${API_URL}/v2.2/feed`,
         {
           method: 'PATCH',
@@ -191,7 +191,7 @@ function loadActivitiesByUserId(token, page = 0, per_page = 20, group = 'all', u
 
 //Should be for loading public groups (Town/state/country) or by public groups (e.g. Save the Whales)
 function loadActivityByEntityId(token, entityType, entityId) {
-    console.log('about to fetch => ' + `/v2.2/${entityType + 's'}/${entityId}?_format=json&&page=1&per_page=1`);
+    //console.log('about to fetch => ' + `/v2.2/${entityType + 's'}/${entityId}?_format=json&&page=1&per_page=1`);
     // /api/v2/activities?petition_id=349&page=1&per_page=20
     return new Promise((resolve, reject) => {
         fetch(API_URL + `/v2.2/${entityType + 's'}/${entityId}?_format=json&&page=1&per_page=1`, {
@@ -288,7 +288,7 @@ function boostPost(type: string, postId: number, groupId: number, activityId: nu
 const unsubscribeNotification = (token: string, id: number, activityId: number, type: string) => async (dispatch) => {
     LOG('Unsubscribe to notification API', id, type, token);
     const response = await api.delete(token, `/v2/user/${type}s/${id}`);
-    console.log('response', response)
+    //console.log('response', response)
     if (response.status === 204) {
         showToast('Notifications Muted');
         dispatch({
@@ -304,7 +304,7 @@ const unsubscribeNotification = (token: string, id: number, activityId: number, 
 async function markAsSpam(token: string, id: number, type: string): Promise<Action> {
     LOG('Mark as spam API', id);
     const response = await api.post(token, `/v2/${type}s/${id}/spam`);
-    console.log(response);
+    //console.log(response);
     if (response.ok){
         showToast(`The ${type} was reported.`)
     } else {
@@ -313,7 +313,7 @@ async function markAsSpam(token: string, id: number, type: string): Promise<Acti
 }
 
 const saveOffSet = (pos) => (dispatch) => {
-    console.log('===>', pos)
+    //console.log('===>', pos)
     dispatch({type: 'SAVE_OFFSET', payload: pos})
 }
 

@@ -12,7 +12,6 @@ async function fetchAttendees (token: string, id: string): Promise<Action> {
         });
 
         var json = await response.json();
-        console.log('fetchAttendees', json);
         const action = {
             type: 'LOADED_ATTENDEES',
             data: json,
