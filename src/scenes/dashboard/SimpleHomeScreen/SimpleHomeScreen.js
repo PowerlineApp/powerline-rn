@@ -164,7 +164,7 @@ class SimpleHomeScreen extends React.Component {
         })
       }
 
-      homeNavigator.instance.goTo('search', {
+      homeNavigator.instance.goTo('originalHome', {
           content: (
               <TextInput
                   style={{ flex: 1, color: 'white' }}

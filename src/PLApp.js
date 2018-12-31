@@ -127,7 +127,7 @@ class PLApp extends Component {
         console.log('conferences--------', conferences);
         return <Root>
             {
-                this.props.isLoggedIn && conferences && conferences.data ? <PLNavigator isCustom={conferences.data.length > 0} />
+                this.props.isLoggedIn && conferences && conferences.data && <PLNavigator isCustom={conferences.data.length > 0} />
             }
             {
                 this.props.isLoggedIn && !conferences && <View />

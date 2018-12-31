@@ -216,6 +216,7 @@ class MyRouter extends Component {
           {
             isCustom && <Scene key="home" component={SimpleHomeScreen} initial hideNavBar  />
           }
+          <Scene key="originalHome" component={Home} hideNavBar />
           <Scene key="simpleHome" component={SimpleHomeScreen} hideNavBar  />
           <Scene key="conferenceAttendees" component={ConferenceAttendees} hideNavBar  />
           <Scene key="conferenceEvents" component={ConferenceEvents} hideNavBar  />
