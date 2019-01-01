@@ -54,26 +54,13 @@ class PLApp extends Component {
         this.state = {
             splash: null,
             conferences: null,
+            reloaded: false,
         };
     }
-    // displayName: 'PLApp',
-    componentWillMount() {
-        if (this.props.token) {
-            new Promise((resolve, reject) => {
-                this.props.fetchConferences(this.props.token);
-            }).catch(e => {
-                console.log(e);
-            });
-            
-        }
-    }
+    
     async componentDidMount () {
         if (this.props.token){
-            new Promise((resolve, reject) => {
-                this.props.fetchConferences(this.props.token);
-            }).catch(e => {
-                console.log(e);
-            });
+            this.props.fetchConferences(this.props.token);
             let splash = await AsyncStorage.getItem('splashScreen');
             if (splash){
                 this.setState({splash}, () => setTimeout(() => this.setState({splash: false}), 1500) );
@@ -98,8 +85,14 @@ class PLApp extends Component {
 
     componentWillReceiveProps(nextProps) {
       if (nextProps.conferences) {
-        this.setState({ conferences: nextProps.conferences });
-        console.log('componentWillReceiveProps at PLAPP');
+        console.log('componentWillReceiveProps at PLAPP', nextProps.conferences);
+        if(nextProps.conferences.data)
+            this.setState({ conferences: nextProps.conferences, reloaded: true });
+        else if (!this.state.reloaded) {
+            this.setState({ reloaded: true }, () => {
+                this.props.fetchConferences(this.props.token);
+            });
+        }
       }
     }
     componentWillUnmount () {
@@ -127,7 +120,7 @@ class PLApp extends Component {
         console.log('conferences--------', conferences);
         return <Root>
             {
-                this.props.isLoggedIn && conferences && conferences.data ? <PLNavigator isCustom={conferences.data.length > 0} />
+                this.props.isLoggedIn && conferences && conferences.data && <PLNavigator isCustom={conferences.data.length > 0} />
             }
             {
                 this.props.isLoggedIn && !conferences && <View />
