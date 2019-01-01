@@ -192,23 +192,23 @@ class SimpleHomeScreen extends React.Component {
     }
 
     gotoCreatePost = () => {
-        // this.gotoFeed(false)
-        setTimeout(() => {
-            homeNavigator.instance.goTo(
-                'newpost',
-                {
-                    title: `New post`,
-                    back: true
-                },
-                {
-                    _selectedGroup: this.state.conference.groupId,
-                    scope: {
-                        group: true,
-                        type: 'post'
-                    }
-                }
-            )
-        }, 1000)
+      // this.gotoFeed(false)
+      setTimeout(() => {
+          homeNavigator.instance.goTo(
+              'newpost',
+              {
+                  title: `New post`,
+                  back: true
+              },
+              {
+                  _selectedGroup: this.state.conference.groupId,
+                  scope: {
+                      group: true,
+                      type: 'post'
+                  }
+              }
+          )
+      }, 1000)
     }
 
     requestServices = () => {
@@ -267,36 +267,36 @@ class SimpleHomeScreen extends React.Component {
     }
 
     render() {
-        return (
-            <ScrollView style={styles.container}>
-                {this.state.conference && this.state.conference.image && (
-                    <CachedImage
-                        source={{ uri: this.state.conference.image }}
-                        style={styles.header}
-                    />
-                )}
+      return (
+        <ScrollView style={styles.container}>
+          {this.state.conference && this.state.conference.image && (
+              <CachedImage
+                  source={{ uri: this.state.conference.image }}
+                  style={styles.header}
+              />
+          )}
 
-                <View style={styles.wrapper}>
-                    {this.state.items.map((item, index) => {
-                        return (
-                            <TouchableOpacity
-                                style={styles.item}
-                                index={item.label}
-                                onPress={item.onPress}>
-                                <View style={styles.iconContainer}>
-                                    <Ionicon
-                                        name={item.icon}
-                                        size={32}
-                                        color="white"
-                                    />
-                                </View>
-                                <Text style={styles.label}>{item.label}</Text>
-                            </TouchableOpacity>
-                        )
-                    })}
-                </View>
-            </ScrollView>
-        )
+          <View style={styles.wrapper}>
+            {this.state.items.map((item, index) => {
+                return (
+                    <TouchableOpacity
+                        style={styles.item}
+                        index={item.label}
+                        onPress={item.onPress}>
+                        <View style={styles.iconContainer}>
+                            <Ionicon
+                                name={item.icon}
+                                size={32}
+                                color="white"
+                            />
+                        </View>
+                        <Text style={styles.label}>{item.label}</Text>
+                    </TouchableOpacity>
+                )
+            })}
+          </View>
+        </ScrollView>
+      )
     }
 }
 
