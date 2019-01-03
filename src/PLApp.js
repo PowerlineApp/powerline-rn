@@ -86,12 +86,14 @@ class PLApp extends Component {
     componentWillReceiveProps(nextProps) {
       if (nextProps.conferences) {
         console.log('componentWillReceiveProps at PLAPP', nextProps.conferences);
-        if(nextProps.conferences.data)
-            this.setState({ conferences: nextProps.conferences, reloaded: true });
-        else if (!this.state.reloaded) {
+
+        if (!this.state.reloaded) {
+            console.log('reload------');
             this.setState({ reloaded: true }, () => {
                 this.props.fetchConferences(this.props.token);
             });
+        } else {
+            this.setState({ conferences: nextProps.conferences, reloaded: true });
         }
       }
     }
@@ -130,7 +132,6 @@ class PLApp extends Component {
             }
         </Root>;
     }
-
 };
 
 var styles = StyleSheet.create({
