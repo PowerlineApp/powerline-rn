@@ -162,6 +162,8 @@ class SideBar extends Component {
       this.props.fetchConferences(this.props.token).then(data => {
         if(data && data.data && data.data.length > 0) {
           Actions["simpleHome"]();
+        } else {
+          Actions["home"]();
         }
       });
       setTimeout(() => {
