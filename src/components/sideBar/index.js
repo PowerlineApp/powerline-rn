@@ -163,7 +163,7 @@ class SideBar extends Component {
         if(data && data.data && data.data.length > 0) {
           Actions["simpleHome"]();
         } else {
-          Actions["home"]();
+          Actions["originalHome"]();
         }
       });
       setTimeout(() => {
