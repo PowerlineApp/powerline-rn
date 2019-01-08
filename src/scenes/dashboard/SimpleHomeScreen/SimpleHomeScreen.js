@@ -58,6 +58,11 @@ class SimpleHomeScreen extends React.Component {
               label: 'My Reps',
               icon: 'md-book',
               onPress: this.gotoRepresentatives
+          },
+          {
+              label: 'Services',
+              icon: 'ios-link',
+              onPress: () => this.gotoServices()
           }
         ],
         conferences: [],
@@ -77,17 +82,17 @@ class SimpleHomeScreen extends React.Component {
       console.log('conferences---', this.state.conferences);
       console.log('nextConferences----', nextProps);
       if (nextProps.conferences && this.state.conferences.length === 0) {
-        if (nextProps.conciergeServices && this.state.conciergeServices.length === 0) {
-          if (Object.values(nextProps.conciergeServices.data).length > 0) {
-            this.state.items.push({
-                label: 'Services',
-                icon: 'ios-link',
-                onPress: () => this.gotoServices()
-             })
+        if (nextProps.conciergeServices) {
+          //if (Object.values(nextProps.conciergeServices.data).length > 0) {
+            // this.state.items.push({
+            //     label: 'Services',
+            //     icon: 'ios-link',
+            //     onPress: () => this.gotoServices()
+            //  })
             this.setState({ conciergeServices: nextProps.conciergeServices.data });
 
             
-          }
+          //}
         }
         if (Object.values(nextProps.conferences.data).length > 0) {
           this.setState({ conferences: nextProps.conferences.data });
@@ -182,10 +187,16 @@ class SimpleHomeScreen extends React.Component {
     }
 
     gotoServices = () => {
-      homeNavigator.instance.goTo('services', {
-        title: 'Services',
-        back: true
-      })
+      const { conciergeServices } = this.state;
+      if(conciergeServices && conciergeServices.length > 0) {
+        homeNavigator.instance.goTo('services', {
+          title: 'Services',
+          back: true
+        })
+      } else {
+        Alert.alert('Error', 'The service is not available. Please try again later');
+      }
+
     }
 
     gotoCreatePost = () => {
