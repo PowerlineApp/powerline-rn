@@ -74,17 +74,19 @@ class SimpleHomeScreen extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-      
+      console.log('conferences---', this.state.conferences);
+      console.log('nextConferences----', nextProps);
       if (nextProps.conferences && this.state.conferences.length === 0) {
         if (nextProps.conciergeServices && this.state.conciergeServices.length === 0) {
           if (Object.values(nextProps.conciergeServices.data).length > 0) {
-            this.setState({ conciergeServices: nextProps.conciergeServices.data });
-
             this.state.items.push({
                 label: 'Services',
                 icon: 'ios-link',
                 onPress: () => this.gotoServices()
              })
+            this.setState({ conciergeServices: nextProps.conciergeServices.data });
+
+            
           }
         }
         if (Object.values(nextProps.conferences.data).length > 0) {
@@ -94,26 +96,21 @@ class SimpleHomeScreen extends React.Component {
           if (conference && conference.links) {
               conference.links.forEach(link => {
                 const url = Platform.OS === 'android' ? link.androidUrl : link.iosUrl;
-
-                  this.state.items.push({
-                      label: link.label,
-                      onPress: () => {
-                        if(url) {
-                          Linking.openURL(url);
-                        } else {
-                          Alert.alert("Error", "The url is invalid");
-                        }
-                      },  
-                      icon: 'ios-link'
-                  })
-                
-                  
+                this.state.items.push({
+                  label: link.label,
+                  onPress: () => {
+                    if(url) {
+                      Linking.openURL(url);
+                    } else {
+                      Alert.alert("Error", "The url is invalid");
+                    }
+                  },  
+                  icon: 'ios-link'
+                })
               })
           }
         }
       }
-
-    
     }
 
     gotoSchedule = () => {

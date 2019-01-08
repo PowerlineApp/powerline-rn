@@ -101,7 +101,7 @@ class PLNavigator extends React.Component {
     switch (props.scene.route.key) {
       case "home":
         return <Home />;
-      case "customHome":
+      case "simpleHome":
         return <SimpleHomeScreen />;
       case "takeTour":
         return <TourScene />;
