@@ -70,7 +70,7 @@ class SimpleHomeScreen extends React.Component {
       };
     }
 
-    componentDidMount() {
+    componentWillMount() {
       const { token } = this.props;
       this.props.fetchConferences(token).then(data => {
       });
@@ -82,18 +82,7 @@ class SimpleHomeScreen extends React.Component {
       console.log('conferences---', this.state.conferences);
       console.log('nextConferences----', nextProps);
       if (nextProps.conferences && this.state.conferences.length === 0) {
-        if (nextProps.conciergeServices) {
-          //if (Object.values(nextProps.conciergeServices.data).length > 0) {
-            // this.state.items.push({
-            //     label: 'Services',
-            //     icon: 'ios-link',
-            //     onPress: () => this.gotoServices()
-            //  })
-            this.setState({ conciergeServices: nextProps.conciergeServices.data });
 
-            
-          //}
-        }
         if (Object.values(nextProps.conferences.data).length > 0) {
           this.setState({ conferences: nextProps.conferences.data });
           const conference = nextProps.conferences.data[0];
@@ -114,6 +103,9 @@ class SimpleHomeScreen extends React.Component {
                 })
               })
           }
+        }
+        if (nextProps.conciergeServices) {
+            this.setState({ conciergeServices: nextProps.conciergeServices.data });
         }
       }
     }
