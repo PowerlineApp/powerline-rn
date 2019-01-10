@@ -8,13 +8,13 @@ import { showToast } from 'PLToast';
 async function getActivities2(token, groupId, user, followed, cursor, type, id) {
     let params = `?&user=${user || ''}&group=${groupId || ''}&followed=${followed || ''}`
     let url = cursor || `${API_URL}/v2.2/feed` + params;
-    console.log(url, {
+    /*console.log(url, {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
         }
-    })
+    })*/
     let res = await fetch(url, {
         method: 'GET',
         headers: {
@@ -28,7 +28,7 @@ async function getActivities2(token, groupId, user, followed, cursor, type, id) 
     }
     let nextCursor = headers.get('X-Cursor-Next');
     let json = await res.json();
-    console.log('\nresponse => ', res, '\njson => ', json,'\nheaders => ', headers)
+    //console.log('\nresponse => ', res, '\njson => ', json,'\nheaders => ', headers)
     let action = {
         type: 'LOADED_ACTIVITIES',
         data: {

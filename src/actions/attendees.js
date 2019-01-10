@@ -19,7 +19,7 @@ async function fetchAttendees (token: string, id: string): Promise<Action> {
         return Promise.resolve(action);
        
     } catch (error) {
-        console.log('error-----------', error);
+        //console.log('error-----------', error);
         return Promise.reject(error);
     }
 }
