@@ -220,6 +220,11 @@ class Services extends Component {
     }
   }
 
+  onBack = () => {
+    this.props.navigation.goBack();
+  };
+
+
   render() {
     return (
       <Container style={{ backgroundColor: "#fff" }}>
@@ -228,7 +233,15 @@ class Services extends Component {
           iosBarStyle="dark-content"
           style={Platform.OS === "ios" ? styles.iosHeader : styles.aHeader}
         >
-          <Left />
+          <Left>
+            <Button
+              transparent
+              onPress={() => this.onBack()}
+              style={{ width: 200, height: 50 }}
+            >
+              <Icon active name="arrow-back" style={{ color: "#6A6AD5" }} />
+            </Button>
+          </Left>
           <Body>
             <Title
               style={
