@@ -462,6 +462,7 @@ class Register extends React.Component {
                 value={first_name}
                 onChangeText={this.onChangeFirstName}
                 underlineColorAndroid={"transparent"}
+                returnKeyType={'next'}
               />
             </View>
             <View style={styles.fieldContainer}>
@@ -473,6 +474,7 @@ class Register extends React.Component {
                 value={last_name}
                 onChangeText={this.onChangeLastName}
                 underlineColorAndroid={"transparent"}
+                returnKeyType={'next'}
               />
             </View>
             <View style={styles.fieldContainer}>
@@ -483,6 +485,7 @@ class Register extends React.Component {
                 value={username}
                 onChangeText={this.onChangeUserName}
                 underlineColorAndroid={"transparent"}
+                returnKeyType={'next'}
               />
               <View style={styles.iconContainer}>
                 <Image source={require("img/user.png")} style={styles.icon} />
@@ -499,6 +502,7 @@ class Register extends React.Component {
                 onChangeText={this.onChangeEmail}
                 onEndEditing={this.onConfirmEmail}
                 underlineColorAndroid={"transparent"}
+                returnKeyType={'next'}
               />
               <View style={styles.iconContainer}>
                 <Image
@@ -519,6 +523,7 @@ class Register extends React.Component {
                 value={agency}
                 onChangeText={this.onChangeAgency}
                 underlineColorAndroid={"transparent"}
+                returnKeyType={'go'}
               />
             </View>
             <View style={styles.markContainer}>
