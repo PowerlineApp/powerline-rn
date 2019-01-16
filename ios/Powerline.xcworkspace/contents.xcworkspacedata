@@ -2,12 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:Powerline.xcodeproj">
+      location = "group:powerline.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Pods/Pods.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:powerline.xcodeproj">
    </FileRef>
 </Workspace>
