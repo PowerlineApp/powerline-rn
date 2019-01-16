@@ -108,11 +108,11 @@ class MyInfo extends Component {
                         </View>
                         <Fields value={this.state.address1} label='Street Address:' onSave={(value) =>  this.updateProperty('address1', value)} />
                         <Fields value={this.state.address2} label='Apt / Suite:' onSave={(value) =>  this.updateProperty('address2', value)} />
-                        <Fields value={this.state.zip} label='Zip Code:' onSave={(value) =>  this.updateProperty('zip', value)} />
+                        <Fields numeric value={this.state.zip} label='Zip Code:' onSave={(value) =>  this.updateProperty('zip', value)} />
                         <Fields value={this.state.city} label='City:' onSave={(value) =>  this.updateProperty('city', value)} />
                         <Fields value={this.state.state} label='State:' onSave={(value) =>  this.updateProperty('state', value)} />
                         <Fields value={this.state.country} label='Country:' onSave={(value) =>  this.updateProperty('country', value)} />
-                        <Fields value={this.state.email} label='Email:' onSave={(value) =>  this.updateProperty('email', value)} />
+                        <Fields email value={this.state.email} label='Email:' onSave={(value) =>  this.updateProperty('email', value)} />
                         {/* <Fields value={this.state.phone} label='Phone:' onSave={(value) =>  this.updateProperty('phone', value)} /> */}
                         <ListItem>
                             <View style={{paddingHorizontal: 10, flexDirection: 'row'}}>

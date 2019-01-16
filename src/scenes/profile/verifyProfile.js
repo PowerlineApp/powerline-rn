@@ -278,7 +278,7 @@ class VerifyProfile extends Component {
                     onChangeText={(value) => {this.onChange(value, 'phone')}}
                     placeholder={'Phone Number'}
                     value={this.state.phone}
-                    keyboardType={'numeric'}
+                    keyboardType={'phone-pad'}
                     style={styles.phonetextInput}
                     returnKeyType='go'
                     placeholderTextColor={brandColor}
@@ -410,6 +410,7 @@ class VerifyProfile extends Component {
                                 style={styles.textInput}
                                 autoCorrect={false}
                                 value={email}
+                                keyboardType={'email-address'}
                                 onChangeText={(v) => this.onChange(v, 'email')}
                                 underlineColorAndroid={'transparent'}
                             />

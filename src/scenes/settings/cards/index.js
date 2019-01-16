@@ -20,7 +20,6 @@ import {
   Button,
   Icon,
   Item,
-  Input
 } from "native-base";
 
 import {

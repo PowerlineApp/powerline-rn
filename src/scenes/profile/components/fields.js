@@ -16,6 +16,13 @@ class Fields extends Component {
     }
 
     renderFields() {
+        let keyboardType = 'default';
+        if(this.props.email) {
+            keyboardType = 'email-address';
+        }
+        else if(this.props.numeric) {
+            keyboardType = 'numeric';
+        }
         if(this.state.editMode) {
             if(this.props.date) {
                 return (
@@ -41,7 +48,7 @@ class Fields extends Component {
                 )
             } else {
                 return (
-                    <Input style={{borderBottomWidth: 1, borderBottomColor: 'grey'}} onChangeText={text => this.setState({value: text})}/>
+                    <Input keyboardType={keyboardType} style={{borderBottomWidth: 1, borderBottomColor: 'grey'}} onChangeText={text => this.setState({value: text})}/>
                 )
             }
         } else {

@@ -490,6 +490,7 @@ class Register extends React.Component {
             </View>
             <View style={styles.fieldContainer}>
               <TextInput
+                keyboardType='email-address'
                 placeholder="Email"
                 style={styles.textInput}
                 autoCorrect={false}

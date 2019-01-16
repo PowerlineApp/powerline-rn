@@ -178,13 +178,13 @@ class PLAddCard extends Component {
                     <View style={{marginVertical: 5}}>
                         <Text style={styles.labelStyle}>Phone</Text> 
                         <Item rounded>
-                            <Input placeholderTextColor={'#ccc'} placeholder='5555551234' value={this.state.phone} onChangeText={text => this.inputChanged('phone', text)} />
+                            <Input placeholderTextColor={'#ccc'} placeholder='5555551234' value={this.state.phone} onChangeText={text => this.inputChanged('phone', text)} keyboardType='phone-pad' />
                         </Item>
                     </View>
                     <View style={{marginVertical: 5}}>
                         <Text style={styles.labelStyle}>Postal Code</Text> 
                         <Item rounded>
-                            <Input placeholderTextColor={'#ccc'} placeholder='90210' value={this.state.addressZip} onChangeText={text => this.inputChanged('addressZip', text)} />
+                            <Input placeholderTextColor={'#ccc'} placeholder='90210' value={this.state.addressZip} onChangeText={text => this.inputChanged('addressZip', text)} keyboardType='numeric' />
                         </Item>
                     </View>
                     <Agreement />
