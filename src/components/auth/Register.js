@@ -888,11 +888,15 @@ class Register extends React.Component {
     console.log("isLoading", this.state.isLoading);
     var { position, isLoading } = this.state;
     return (
-      <View style={styles.container}>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior="padding"
+        enabled
+      >
         {this.renderForm(position)}
         {this.renderBottom()}
         <PLOverlayLoader visible={isLoading} logo />
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 }
@@ -900,7 +904,7 @@ class Register extends React.Component {
 var styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white"
+    backgroundColor: "white",
   },
   titleText: {
     marginTop: 50,
@@ -958,7 +962,8 @@ var styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
     width: width,
-    height: 40
+    height: 40,
+    alignSelf: 'flex-end', 
   },
   button: {
     backgroundColor: "#6A6AD5",
