@@ -30,7 +30,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>2</string>
 	<key>Fabric</key>
 	<dict>
 		<key>APIKey</key>
@@ -49,6 +49,8 @@
 	<string>244141112405524</string>
 	<key>FacebookDisplayName</key>
 	<string>Powerline</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>fbapi</string>
@@ -80,9 +82,9 @@
 		<key>NSExtensionActivationRule</key>
 		<dict>
 			<key>????????????????????????????</key>
-			<string/>
+			<string></string>
 			<key>???????New item - 7</key>
-			<string/>
+			<string></string>
 			<key>NSExtensionActivationSupportsImageWithMaxCount</key>
 			<integer>1</integer>
 			<key>NSExtensionActivationSupportsText</key>
@@ -90,17 +92,17 @@
 			<key>NSExtensionActivationSupportsWebURLWithMaxCount</key>
 			<integer>1</integer>
 			<key>New item</key>
-			<string/>
+			<string></string>
 			<key>New item - 2</key>
-			<string/>
+			<string></string>
 			<key>New item - 3</key>
-			<string/>
+			<string></string>
 			<key>New item - 4</key>
-			<string/>
+			<string></string>
 			<key>New item - 5</key>
-			<string/>
+			<string></string>
 			<key>New item - 6</key>
-			<string/>
+			<string></string>
 		</dict>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
@@ -162,8 +164,6 @@
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
-	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 </dict>
 </plist>
