@@ -67,6 +67,10 @@ import { Actions } from "react-native-router-flux";
 var RouterWithRedux = connect()(Router);
 
 class PLNavigator extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { isCustom: false };
+  }
   static propTypes = {
     drawerState: React.PropTypes.string,
     closeDrawer: React.PropTypes.func
@@ -95,6 +99,11 @@ class PLNavigator extends React.Component {
   //     this.props.closeDrawer();
   //   // }
   // }
+  componentWillReceiveProps(nextProps) {
+      if (nextProps.isCustom !== this.state.isCustom) {
+          this.setState({ isCustom: nextProps.isCustom });
+      }
+  }
 
   _renderScene(props) {
     // eslint-disable-line class-methods-use-this
@@ -175,7 +184,7 @@ class PLNavigator extends React.Component {
           }}
           negotiatePan
         >
-          <MyRouter isCustom={this.props.isCustom} />
+          <MyRouter isCustom={this.state.isCustom} />
         </Drawer>
       </StyleProvider>
     );
@@ -183,6 +192,10 @@ class PLNavigator extends React.Component {
 }
 
 class MyRouter extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { isCustom: false };
+  }
   shouldComponentUpdate() {
     // so we keep our state when opening the drawer!!!
     return false;
@@ -194,8 +207,14 @@ class MyRouter extends Component {
     Actions.pop();
     return true;
   }
+  componentWillReceiveProps(nextProps) {
+      if (nextProps.isCustom !== this.state.isCustom) {
+          this.setState({ isCustom: nextProps.isCustom });
+      }
+  }
+
   render() {
-    const { isCustom } = this.props;
+    const { isCustom } = this.state;
     return (
       <RouterWithRedux onBackPress={this.onBackPress} key="router">
         <Scene key="root" hideNavBar>

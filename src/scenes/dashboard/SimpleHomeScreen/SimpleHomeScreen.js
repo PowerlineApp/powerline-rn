@@ -151,24 +151,24 @@ class SimpleHomeScreen extends React.Component {
             payload: { activeGroup: this.state.conference.groupId }
           })
         }
+        homeNavigator.instance.goTo('originalHome', {
+            content: (
+                <TextInput
+                    style={{ flex: 1, color: 'white' }}
+                    onChangeText={this.onSearchQueryChanged}
+                    placeholder="Search groups, people, topics"
+                    placeholderTextColor="rgba(255, 255, 255, 0.6)"
+                />
+            ),
+            back: true
+        });
       } else {
         this.props.dispatch({
             type: 'NEWSFEED_STATE',
             payload: { activeGroup: 'all' }
         })
+        homeNavigator.instance.pop();
       }
-
-      homeNavigator.instance.goTo('originalHome', {
-          content: (
-              <TextInput
-                  style={{ flex: 1, color: 'white' }}
-                  onChangeText={this.onSearchQueryChanged}
-                  placeholder="Search groups, people, topics"
-                  placeholderTextColor="rgba(255, 255, 255, 0.6)"
-              />
-          ),
-          back: true
-      });
     }
 
     gotoRepresentatives = () => {
