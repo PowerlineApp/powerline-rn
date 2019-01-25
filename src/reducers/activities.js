@@ -65,7 +65,7 @@ function activities(state: State = initialState, action: Action): State {
     }
     
     case 'LOADED_ACTIVITIES': {
-        console.log('LOADED ACTIVITIES', action.data)
+        //console.log('LOADED ACTIVITIES', action.data)
         payloadStack = payloadStack.concat(action.data.payload);
         return {
             ...state,

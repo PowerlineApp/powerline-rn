@@ -71,7 +71,7 @@ async function loadActivities(token: string, page: ?number = 0, perPage: ?number
                     // newsfeedUnreadCount: priority_item_count,
                 },
             };
-            console.log('load activities', json)
+            //console.log('load activities', json)
             return Promise.resolve(action);
         }
         else {

@@ -66,7 +66,8 @@ import {
   getComments,
   loadUserGroups,
   getGroups,
-  signLeaderPetition
+  signLeaderPetition,
+  fetchConferences,
 } from "PLActions";
 import { ImageCache } from "react-native-img-cache";
 import PLOverlayLoader from "PLOverlayLoader";
@@ -171,7 +172,8 @@ class Home extends Component {
         tab3: false,
         tab4: false,
         group: "all",
-        search: ""
+        search: "",
+        isSet: null,
       };
     }
 
@@ -183,12 +185,22 @@ class Home extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.warn("componentWillReceiveProps at dashboard");
+    console.log("componentWillReceiveProps at dashboard---", nextProps);
     if (nextProps.shouldResetHome) {
       this.props.dispatch({ type: "HOME_WAS_RESET" });
       const data = { id: "all", group: "all", header: "all" };
       this.props.setGroup(data, this.props.token, "all");
       this.setState({ tab1: true, tab2: false, tab3: false, tab4: false });
+    } 
+    if(this.state.isSet === null) {
+      if (nextProps.conferences && nextProps.conferences.data && nextProps.conferences.data.length > 0) {
+        this.setState({ isSet: true }, () => {
+          Actions["simpleHome"]();
+        });
+      }
+      else {
+        this.setState({ isSet: false });
+      }
     }
   }
 
@@ -209,7 +221,7 @@ class Home extends Component {
 
     OneSignal.addEventListener("received", this.onReceived);
     OneSignal.addEventListener("registered", this.onRegistered);
-
+    this.props.fetchConferences(this.props.token);
     if (!profile) {
       this.loadCurrentUserProfile();
     }
@@ -875,6 +887,9 @@ class Home extends Component {
 
   render() {
     // console.warn('render at dashboard')
+    if(this.state.isSet === null) {
+      return <View/>;
+    }
     let isLeader = false;
     for (let group of this.props.groupList) {
       if (group.user_role === "owner" || group.user_role === "manager") {
@@ -1139,7 +1154,8 @@ function bindAction(dispatch) {
     },
     loadUserGroups: token => dispatch(loadUserGroups(token)),
     dispatch: a => dispatch(a),
-    setGroup: (data, token, id) => dispatch(setGroup(data, token, id))
+    setGroup: (data, token, id) => dispatch(setGroup(data, token, id)),
+    fetchConferences: token => dispatch(fetchConferences(token))
   };
 }
 
@@ -1163,7 +1179,8 @@ const mapStateToProps = state => ({
   // selectedGroup: {},
   selectedGroup: state.activities.selectedGroup,
   shouldResetHome: state.drawer.shouldResetHome,
-  loadingActions: state.activities.loading
+  loadingActions: state.activities.loading,
+  conferences: state.conferences,
 });
 
 export default connect(mapStateToProps, bindAction)(Home);

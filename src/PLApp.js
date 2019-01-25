@@ -54,7 +54,6 @@ class PLApp extends Component {
         this.state = {
             splash: null,
             conferences: null,
-            reloaded: false,
         };
     }
     
@@ -79,23 +78,16 @@ class PLApp extends Component {
         const myGroup = 'group.ne.powerline.share';
         RNSKBucket.set('token', this.props.token, myGroup);
 
-
+        this.props.fetchConferences(this.props.token);
         AppState.addEventListener('change', this.handleAppStateChange);
     }
 
     componentWillReceiveProps(nextProps) {
-      if (nextProps.conferences) {
-        console.log('componentWillReceiveProps at PLAPP', nextProps.conferences);
-
-        if (!this.state.reloaded) {
-            console.log('reload------');
-            this.setState({ reloaded: true }, () => {
-                this.props.fetchConferences(this.props.token);
-            });
-        } else {
-            this.setState({ conferences: nextProps.conferences, reloaded: true });
+        if (nextProps.conferences !== this.state.conferences) {
+            console.log('componentWillReceiveProps at PLAPP', nextProps.conferences);
+            this.setState({ conferences: nextProps.conferences });
         }
-      }
+      
     }
     componentWillUnmount () {
         AppState.removeEventListener('change', this.handleAppStateChange);
@@ -119,7 +111,6 @@ class PLApp extends Component {
                 {/* <Image source={{uri: this.state.splash}} onError={() => this.setState({splash: false})} /> */}
             </View>;
         }
-        console.log('conferences--------', conferences);
         return <Root>
             {
                 this.props.isLoggedIn && conferences && conferences.data && <PLNavigator isCustom={conferences.data.length > 0} />
