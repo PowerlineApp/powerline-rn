@@ -72,8 +72,7 @@ class SimpleHomeScreen extends React.Component {
 
     componentWillMount() {
       const { token } = this.props;
-      this.props.fetchConferences(token).then(data => {
-      });
+      this.props.fetchConferences(token);
       this.props.listServices(token).then(data => {
       });
     }
@@ -81,7 +80,9 @@ class SimpleHomeScreen extends React.Component {
     componentWillReceiveProps(nextProps) {
       console.log('conferences---', this.state.conferences);
       console.log('nextConferences----', nextProps);
-      if (nextProps.conferences && this.state.conferences.length === 0) {
+
+      const { conciergeServices, conferences } = this.state;
+      if (nextProps.conferences && conferences.length === 0) {
 
         if (Object.values(nextProps.conferences.data).length > 0) {
           this.setState({ conferences: nextProps.conferences.data });
@@ -104,9 +105,9 @@ class SimpleHomeScreen extends React.Component {
               })
           }
         }
-        if (nextProps.conciergeServices) {
-            this.setState({ conciergeServices: nextProps.conciergeServices.data });
-        }
+      }
+      if (nextProps.conciergeServices && conciergeServices !== nextProps.conciergeServices.data) {
+          this.setState({ conciergeServices: nextProps.conciergeServices.data });
       }
     }
 
