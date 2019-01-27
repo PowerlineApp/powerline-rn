@@ -889,13 +889,14 @@ class Register extends React.Component {
     var { position, isLoading } = this.state;
     return (
       <KeyboardAvoidingView
-        style={styles.container}
-        behavior="padding"
         enabled
+        style={styles.container}
       >
-        {this.renderForm(position)}
-        {this.renderBottom()}
-        <PLOverlayLoader visible={isLoading} logo />
+        <View style={styles.container}>
+          {this.renderForm(position)}
+          {this.renderBottom()}
+          <PLOverlayLoader visible={isLoading} logo />
+        </View>
       </KeyboardAvoidingView>
     );
   }
