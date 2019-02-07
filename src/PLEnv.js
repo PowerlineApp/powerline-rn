@@ -13,9 +13,9 @@ try {
 
 const stripeTest = "pk_test_QUgSE3ZhORW9yoDuCkMjnaA2";
 const stripeProd = "pk_live_hRBIgf1WvZ1qyhDpP3KQHEyE";
-const stagingURL = "https://api-staging.powerli.ne/api";
-const prodURL = "https://api.powerli.ne/api";
-const devURL = "https://api-dev.powerli.ne/api";
+const stagingURL = "https://api-staging.powerline.app/api";
+const prodURL = "https://api.powerline.app/api";
+const devURL = "https://api-dev.powerline.app/api";
 const staging = false;
 const forceDev = true;
 
