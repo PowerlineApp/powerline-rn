@@ -920,6 +920,7 @@ class Home extends Component {
                 placeholder="Search groups, people, topics"
                 autoCorrect={false}
                 spellCheck={false}
+                selectTextOnFocus={true}
                 /*onEndEditing={() => this.onSearch()}*/ onChangeText={text =>
                   this.onChangeText(text)
                 }
