@@ -890,7 +890,7 @@ class Register extends React.Component {
     return (
       <KeyboardAvoidingView
         style={styles.container}
-        behavior="padding"
+        behavior={Platform.OS === "ios" ? 'padding' : ''}
         enabled
       >
         {this.renderForm(position)}
