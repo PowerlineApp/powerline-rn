@@ -888,16 +888,16 @@ class ItemDetail extends Component {
                                     </MenuTrigger>
                                     <MenuOptions customStyles={optionsStyles}>
                                         <MenuOption onSelect={() => this.editComment(comment)}>
-                                            <Button iconLeft transparent dark onPress={() => this.editComment(comment)}>
+                                            <View style={{flexDirection: 'row', alignItems: 'center' }} >
                                                 <Icon name="md-create" style={styles.menuIcon} />
                                                 <Text style={styles.menuText}>Edit comment</Text>
-                                            </Button>
+                                            </View>
                                         </MenuOption>
                                         <MenuOption onSelect={() => this.deleteComment(comment)}>
-                                            <Button iconLeft transparent dark onPress={() => this.deleteComment(comment)}>
+                                            <View style={{flexDirection: 'row', alignItems: 'center' }} >
                                                 <Icon name="md-trash" style={styles.menuIcon} />
                                                 <Text style={styles.menuText}>Delete comment</Text>
-                                            </Button>
+                                            </View>
                                         </MenuOption>
                                     </MenuOptions>
                                 </Menu>
