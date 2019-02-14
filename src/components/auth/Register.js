@@ -621,6 +621,7 @@ class Register extends React.Component {
                   style={styles.textInput}
                   autoCorrect={false}
                   value={country}
+                  editable={false}
                   onChangeText={this.onChangeCountry}
                   underlineColorAndroid={"transparent"}
                 />
