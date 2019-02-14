@@ -500,7 +500,6 @@ class Register extends React.Component {
                 autoCapitalize={false}
                 value={email}
                 onChangeText={this.onChangeEmail}
-                onEndEditing={this.onConfirmEmail}
                 underlineColorAndroid={"transparent"}
                 returnKeyType={'next'}
               />
