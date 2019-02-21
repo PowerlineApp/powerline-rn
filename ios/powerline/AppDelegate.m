@@ -45,7 +45,8 @@
   self.oneSignal = [[RCTOneSignal alloc] initWithLaunchOptions:launchOptions
                                                          appId:@"6728c7ff-e832-4472-9fef-84dcf2af5328"
                                                       settings:@{kOSSettingsKeyAutoPrompt: @false}];
-  
+  [[FBSDKApplicationDelegate sharedInstance] application:application
+                           didFinishLaunchingWithOptions:launchOptions];
   return YES;
 }
 
@@ -53,14 +54,25 @@
   [FBSDKAppEvents activateApp];
 }
 
+//- (BOOL)application:(UIApplication *)application
+//            openURL:(NSURL *)url
+//  sourceApplication:(NSString *)sourceApplication
+//         annotation:(id)annotation {
+//  return [[FBSDKApplicationDelegate sharedInstance] application:application
+//                                                        openURL:url
+//                                              sourceApplication:sourceApplication
+//                                                     annotation:annotation];
+//}
+
 - (BOOL)application:(UIApplication *)application
             openURL:(NSURL *)url
-  sourceApplication:(NSString *)sourceApplication
-         annotation:(id)annotation {
-  return [[FBSDKApplicationDelegate sharedInstance] application:application
-                                                        openURL:url
-                                              sourceApplication:sourceApplication
-                                                     annotation:annotation];
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+  
+  BOOL handled = [[FBSDKApplicationDelegate sharedInstance] application:application
+                                                                openURL:url
+                                                      sourceApplication:options[UIApplicationOpenURLOptionsSourceApplicationKey]
+                                                             annotation:options[UIApplicationOpenURLOptionsAnnotationKey]
+                  ];
+  return handled;
 }
-
 @end
