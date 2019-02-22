@@ -3,13 +3,15 @@
  * @providesModule FacebookSDK
  */
 'use strict';
-
+import { Platform } from 'react-native';
 var {
   LoginManager,
   AccessToken,
   GraphRequest,
   GraphRequestManager,
 } = require('react-native-fbsdk');
+
+var {FBLoginManager} = require('react-native-facebook-login');
 
 const emptyFunction = () => { };
 const mapObject = require('fbjs/lib/mapObject');
@@ -27,23 +29,32 @@ let _authResponse: ?AuthResponse = null;
 async function loginWithFacebookSDK(options: LoginOptions): Promise<AuthResponse> {
   const scope = options.scope || 'public_profile';
   const permissions = scope.split(',');
-
-  const loginResult = await LoginManager.logInWithReadPermissions(permissions);
-  if (loginResult.isCancelled) {
-    throw new Error('Canceled by user');
+  if(Platform.OS == 'ios') {
+    console.log('opening in system mode');
+    FBLoginManager.setLoginBehavior(FBLoginManager.LoginBehaviors.Web);
   }
+  
+  FBLoginManager.loginWithPermissions(permissions, function(error, data){
+    if (!error) {
+      console.log("Login data: ", data);
+      // const accessToken = AccessToken.getCurrentAccessToken();
+      // if (!accessToken) {
+      //   throw new Error('No access token');
+      // }
 
-  const accessToken = await AccessToken.getCurrentAccessToken();
-  if (!accessToken) {
-    throw new Error('No access token');
-  }
+      _authResponse = {
+        userID: data.credentials.userId, // FIXME: RNFBSDK bug: userId -> userID
+        accessToken: data.credentials.token,
+        expiresIn: Math.round((data.credentials.tokenExpirationDate - Date.now()) / 1000),
+      };
+      return _authResponse;
+    } else {
+      console.log("Error: ", error);
+    }
 
-  _authResponse = {
-    userID: accessToken.userID, // FIXME: RNFBSDK bug: userId -> userID
-    accessToken: accessToken.accessToken,
-    expiresIn: Math.round((accessToken.expirationTime - Date.now()) / 1000),
-  };
-  return _authResponse;
+  })
+  return null;
+  
 }
 
 var FacebookSDK = {

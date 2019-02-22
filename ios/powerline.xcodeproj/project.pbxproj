@@ -33,6 +33,7 @@
 		4443CD8237234A7389445760 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FEC7B92AC1D049F5AB40358B /* MaterialCommunityIcons.ttf */; };
 		4CF6A7B951FF4820A249CE12 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 80DC8FF2956E46839F01F1AF /* MaterialCommunityIcons.ttf */; };
 		5D554B9900CB49369419E1BD /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5EC6326360E34991AF6958BF /* Entypo.ttf */; };
+		5E1A5B1B21574F38AEA5B065 /* libRCTFBLogin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DE3FA0DDFA1B471987F0BB52 /* libRCTFBLogin.a */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		666BB909D45048F680D43150 /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 080DF54BF6044349805964C6 /* libRNVectorIcons.a */; };
 		6F87DA65200746B500A3B788 /* libRNFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F87DA612007424600A3B788 /* libRNFS.a */; };
@@ -513,6 +514,13 @@
 			remoteGlobalIDString = F12AFB9A1ADAF8F800E0535D;
 			remoteInfo = RNFS;
 		};
+		D0B559C0221FFB8B004EBDDD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DD27B844E47A4201830BAF06 /* RCTFBLogin.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4F3A6B5B1ACFBCC500CA65F7;
+			remoteInfo = RCTFBLogin;
+		};
 		EB519C0D1EC94E3E001C8D63 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = EB519C091EC94E3E001C8D63 /* BVLinearGradient.xcodeproj */;
@@ -712,6 +720,8 @@
 		D97D483CE05B4B53A123C419 /* Rubik-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-Bold.ttf"; path = "../node_modules/native-base/Fonts/Rubik-Bold.ttf"; sourceTree = "<group>"; };
 		DA1906AE3CF3497DB219B86D /* Times New Roman.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Times New Roman.ttf"; path = "../node_modules/native-base/Fonts/Times New Roman.ttf"; sourceTree = "<group>"; };
 		DAC497E208BE43CD90C3FE00 /* Rubik-Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-Black.ttf"; path = "../node_modules/native-base/Fonts/Rubik-Black.ttf"; sourceTree = "<group>"; };
+		DD27B844E47A4201830BAF06 /* RCTFBLogin.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTFBLogin.xcodeproj; path = "../node_modules/react-native-facebook-login/RCTFBLogin.xcodeproj"; sourceTree = "<group>"; };
+		DE3FA0DDFA1B471987F0BB52 /* libRCTFBLogin.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTFBLogin.a; sourceTree = "<group>"; };
 		E7E0F15DE5634FBB954F3EB1 /* libRCTYouTube.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTYouTube.a; sourceTree = "<group>"; };
 		E8ED18D5D89F482F8C318646 /* rubicon-icon-font.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "rubicon-icon-font.ttf"; path = "../node_modules/native-base/Fonts/rubicon-icon-font.ttf"; sourceTree = "<group>"; };
 		E9DADAA96C454C02906B1A1A /* Courier New.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Courier New.ttf"; path = "../node_modules/native-base/Fonts/Courier New.ttf"; sourceTree = "<group>"; };
@@ -774,6 +784,7 @@
 				D18DDB46738B456DB393DD89 /* libRCTOneSignal.a in Frameworks */,
 				B0D74C3461744C5CB5BB10A5 /* libRNSKBucket.a in Frameworks */,
 				F5DA2EB9C0EE600D144F6B8D /* libPods-Powerline.a in Frameworks */,
+				5E1A5B1B21574F38AEA5B065 /* libRCTFBLogin.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1102,6 +1113,7 @@
 				D8A3F2920A9749B3B242EBBB /* libTPSStripe.a */,
 				1EDD888396B44AE18E0253ED /* libRCTOneSignal.a */,
 				3B021A9CF3094B0BA84B7302 /* libRNSKBucket.a */,
+				DE3FA0DDFA1B471987F0BB52 /* libRCTFBLogin.a */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -1189,6 +1201,7 @@
 				AD6BB6EE9431427690F9EF82 /* TPSStripe.xcodeproj */,
 				D75AC5C8E8DD48E88B5B8F97 /* RCTOneSignal.xcodeproj */,
 				15FB0C58EC334762B0043C06 /* RNSKBucket.xcodeproj */,
+				DD27B844E47A4201830BAF06 /* RCTFBLogin.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1311,6 +1324,14 @@
 			isa = PBXGroup;
 			children = (
 				C8BC8EAF1F910AB3000589B6 /* libRNDeviceInfo.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D0B559B4221FFB8B004EBDDD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D0B559C1221FFB8B004EBDDD /* libRCTFBLogin.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1471,6 +1492,10 @@
 				{
 					ProductGroup = 5E91572E1DD0AC6500FF2AA8 /* Products */;
 					ProjectRef = 5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */;
+				},
+				{
+					ProductGroup = D0B559B4221FFB8B004EBDDD /* Products */;
+					ProjectRef = DD27B844E47A4201830BAF06 /* RCTFBLogin.xcodeproj */;
 				},
 				{
 					ProductGroup = C820D6A51F86441D00F68FFA /* Products */;
@@ -1960,6 +1985,13 @@
 			remoteRef = C8BC8EAE1F910AB3000589B6 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		D0B559C1221FFB8B004EBDDD /* libRCTFBLogin.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRCTFBLogin.a;
+			remoteRef = D0B559C0221FFB8B004EBDDD /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		EB519C0E1EC94E3E001C8D63 /* libBVLinearGradient.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -2280,6 +2312,7 @@
 					"$(inherited)",
 					"-lc++",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2312,12 +2345,14 @@
 					"$(SRCROOT)/../node_modules/tipsi-stripe/ios/TPSStripe",
 					"$(SRCROOT)/../node_modules/react-native-onesignal/ios/RCTOneSignal/**",
 					"$(SRCROOT)/../node_modules/react-native-swiss-knife/ios/RNSKText",
+					"$(SRCROOT)/../node_modules/react-native-facebook-login/RCTFBLogin/**",
 				);
 				INFOPLIST_FILE = PowerlineTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
@@ -2366,6 +2401,7 @@
 					"$(SRCROOT)/../node_modules/tipsi-stripe/ios/TPSStripe",
 					"$(SRCROOT)/../node_modules/react-native-onesignal/ios/RCTOneSignal/**",
 					"$(SRCROOT)/../node_modules/react-native-swiss-knife/ios/RNSKText",
+					"$(SRCROOT)/../node_modules/react-native-facebook-login/RCTFBLogin/**",
 				);
 				INFOPLIST_FILE = Powerline/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
@@ -2423,6 +2459,7 @@
 					"$(SRCROOT)/../node_modules/tipsi-stripe/ios/TPSStripe",
 					"$(SRCROOT)/../node_modules/react-native-onesignal/ios/RCTOneSignal/**",
 					"$(SRCROOT)/../node_modules/react-native-swiss-knife/ios/RNSKText",
+					"$(SRCROOT)/../node_modules/react-native-facebook-login/RCTFBLogin/**",
 				);
 				INFOPLIST_FILE = Powerline/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
@@ -2465,6 +2502,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "gl.ne.powerli.Powerline-tvOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2494,6 +2532,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "gl.ne.powerli.Powerline-tvOS";
