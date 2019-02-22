@@ -108,8 +108,8 @@ class SearchGroups extends Component{
                                         <Right style={{flex: 1}}>
                                             <Button transparent onPress={() => group.joined ? this.unjoin(group) : this.join(group)}>
                                                 {   group.joined 
-                                                    ? <Icon active name='add-circle' style={{color: '#802000'}} onPress={() => this.unjoin(group)} />
-                                                    : <Icon active name='add-circle' style={{color: '#11c1f3'}} onPress={() => this.join(group)} />
+                                                    ? <Icon active name='arrow-round-forward' style={{color: '#802000'}} onPress={() => this.unjoin(group)} />
+                                                    : <Icon active name='arrow-round-forward' style={{color: '#11c1f3'}} onPress={() => this.join(group)} />
                                                 }
                                             </Button>
                                         </Right>

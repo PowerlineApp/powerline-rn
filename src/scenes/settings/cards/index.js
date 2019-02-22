@@ -143,8 +143,8 @@ class UserCards extends React.Component {
                           const { id, cards } = data;
                           this.setState({ cards }, () => {
                             Alert.alert(
-                              "Saved!",
-                              "You've successfully added a new card"
+                              "Confirmed!",
+                              "Your payment card has been saved."
                             );
                           });
                         }

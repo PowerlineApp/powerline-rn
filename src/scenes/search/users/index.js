@@ -44,12 +44,18 @@ class SearchUsers extends Component{
     }
 
     render(){
+        let { users } = this.props;
+        if(!Array.isArray(users))
+        {
+            users = [];
+        }
         return (
             <Container style={styles.container}>
             <Content>
                 <List>
                     {
-                        (this.props.users || []).map((user, index) => {
+                        
+                        users.map((user, index) => {
                             return (
                                 <ListItem avatar key={index} onPress={() => this.goToProfile(user.id)}>
                                     <Left>
@@ -73,6 +79,7 @@ class SearchUsers extends Component{
                                 </ListItem>
                             );
                         })
+                        
                     }
                 </List>
             </Content>

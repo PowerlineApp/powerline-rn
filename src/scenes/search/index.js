@@ -13,7 +13,6 @@ import {
     Icon,
     Button,
     List,
-    ListItem,
     Text,
     Content,
     Thumbnail,
@@ -124,7 +123,7 @@ class Search extends Component {
                             </Button>
                         </Left>
                         <Item style={styles.searchBar}>
-                            <Input style={styles.searchInput} autoFocus placeholder="Search groups, people, topics" value={this.state.search} onChangeText={(text) => this.onChangeText(text)}/>
+                            <Input style={styles.searchInput} autoFocus placeholder="Search groups, people, topics" value={this.state.search} onChangeText={(text) => this.onChangeText(text)} selectTextOnFocus={true} />
                             <Icon active name="search"/>
                         </Item>
                     </Header>

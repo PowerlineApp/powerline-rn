@@ -500,7 +500,6 @@ class Register extends React.Component {
                 autoCapitalize={false}
                 value={email}
                 onChangeText={this.onChangeEmail}
-                onEndEditing={this.onConfirmEmail}
                 underlineColorAndroid={"transparent"}
                 returnKeyType={'next'}
               />
@@ -621,6 +620,7 @@ class Register extends React.Component {
                   style={styles.textInput}
                   autoCorrect={false}
                   value={country}
+                  editable={false}
                   onChangeText={this.onChangeCountry}
                   underlineColorAndroid={"transparent"}
                 />
@@ -889,14 +889,13 @@ class Register extends React.Component {
     var { position, isLoading } = this.state;
     return (
       <KeyboardAvoidingView
-        enabled
         style={styles.container}
+        behavior={Platform.OS === "ios" ? 'padding' : ''}
+        enabled
       >
-        <View style={styles.container}>
-          {this.renderForm(position)}
-          {this.renderBottom()}
-          <PLOverlayLoader visible={isLoading} logo />
-        </View>
+        {this.renderForm(position)}
+        {this.renderBottom()}
+        <PLOverlayLoader visible={isLoading} logo />
       </KeyboardAvoidingView>
     );
   }
