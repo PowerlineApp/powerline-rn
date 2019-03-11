@@ -8,7 +8,7 @@ import com.crashlytics.android.Crashlytics;
 import com.facebook.react.ReactApplication;
 import com.rnfs.RNFSPackage;
 import com.github.alinz.rnsk.RNSKPackage;
-import com.centaurwarchief.smslistener.SmsListenerPackage;
+
 import com.kevinejohn.RNMixpanel.RNMixpanel;
 import com.vonovak.AddCalendarEventPackage;
 import com.gettipsi.stripe.StripeReactPackage;
@@ -56,7 +56,7 @@ public class MainApplication extends Application implements ReactApplication {
         new MainReactPackage(),
             new RNFSPackage(),
             new RNSKPackage(),
-            new SmsListenerPackage(),
+
         new RNMixpanel(),
         new AddCalendarEventPackage(),
         new StripeReactPackage(),
