@@ -18,7 +18,7 @@ import {Button, Icon} from 'native-base';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Form from 'react-native-form';
 import CountryPicker from 'react-native-country-picker-modal';
-import SmsListener from 'react-native-android-sms-listener';
+//import SmsListener from 'react-native-android-sms-listener';
 
 const MAX_LENGTH_CODE = 6;
 const MAX_LENGTH_NUMBER = 20;

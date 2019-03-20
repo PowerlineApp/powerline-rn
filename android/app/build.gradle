@@ -112,9 +112,9 @@ android {
     }
     defaultConfig {
         applicationId "ne.powerli"
-        minSdkVersion 16
-        targetSdkVersion 22
-        versionCode 20111
+        minSdkVersion 22
+        targetSdkVersion 26
+        versionCode 20120
         versionName "1.0"
         ndk {
             abiFilters "armeabi-v7a", "x86"
@@ -203,9 +203,7 @@ dependencies {
     compile project(':react-native-fs')
     compile project(':react-native-fetch-blob')
     compile project(':react-native-fbsdk')
-    compile project(':react-native-facebook-login')
     compile project(':react-native-device-info')
-    compile project(':react-native-android-sms-listener')
     compile project(':react-native-add-calendar-event')
     compile project(':tipsi-stripe')
     compile project(':react-native-youtube')
@@ -222,7 +220,7 @@ dependencies {
     compile project(':react-native-fetch-blob')
     compile project(':react-native-fbsdk')
     compile project(':react-native-device-info')
-    compile project(':react-native-android-sms-listener')
+
     compile project(':react-native-add-calendar-event')
     compile project(':tipsi-stripe')
     compile project(':react-native-youtube')
@@ -239,7 +237,7 @@ dependencies {
     compile project(':react-native-fetch-blob')
     compile project(':react-native-fbsdk')
     compile project(':react-native-device-info')
-    compile project(':react-native-android-sms-listener')
+
     compile project(':react-native-add-calendar-event')
     compile project(':tipsi-stripe')
     compile project(':react-native-youtube')
@@ -256,28 +254,11 @@ dependencies {
     compile project(':react-native-fetch-blob')
     compile project(':react-native-fbsdk')
     compile project(':react-native-device-info')
-    compile project(':react-native-android-sms-listener')
-    compile project(':react-native-add-calendar-event')
-    compile project(':tipsi-stripe')
-    compile project(':react-native-youtube')
-    compile project(':react-native-vector-icons')
-    compile project(':react-native-swiss-knife')
-    compile project(':react-native-splash-screen')
-    compile project(':react-native-share-extension')
-    compile project(':react-native-share')
-    compile project(':react-native-onesignal')
-    compile project(':react-native-mixpanel')
-    compile project(':react-native-linear-gradient')
-    compile project(':react-native-image-crop-picker')
-    compile project(':react-native-fs')
-    compile project(':react-native-fetch-blob')
-    compile project(':react-native-fbsdk')
-    compile project(':react-native-device-info')
-    compile project(':react-native-android-sms-listener')
+
     compile project(':react-native-add-calendar-event')
     compile project(':react-native-fs')
     compile project(':react-native-swiss-knife')
-    compile project(':react-native-android-sms-listener')
+
     compile('com.stripe:stripe-android:6.0.0'){
         force = true
     }
