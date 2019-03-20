@@ -114,7 +114,7 @@ android {
         applicationId "ne.powerli"
         minSdkVersion 22
         targetSdkVersion 26
-        versionCode 20119
+        versionCode 20120
         versionName "1.0"
         ndk {
             abiFilters "armeabi-v7a", "x86"
