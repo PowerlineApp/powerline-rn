@@ -216,7 +216,9 @@ class MyRouter extends Component {
   render() {
     const { isCustom } = this.state;
     return (
-      <RouterWithRedux onBackPress={this.onBackPress} key="router">
+      // <RouterWithRedux onBackPress={this.onBackPress} key="router">
+      <Router>
+
         <Scene key="root" hideNavBar>
           <Scene key="settings" component={Settings} />
           <Scene key="privacySettings" component={PrivacySettings} />
@@ -229,12 +231,7 @@ class MyRouter extends Component {
           <Scene key="notificationSettings" component={NotificationSettings} />
           <Scene key="analyticsView" component={AnalyticsView} hideNavBar />
 
-          {
-            !isCustom && <Scene key="home" component={Home} initial hideNavBar />
-          }
-          {
-            isCustom && <Scene key="home" component={SimpleHomeScreen} initial hideNavBar  />
-          }
+          <Scene key="home" component={isCustom ? SimpleHomeScreen : Home} initial hideNavBar />
           <Scene key="originalHome" component={Home} hideNavBar />
           <Scene key="simpleHome" component={SimpleHomeScreen} hideNavBar  />
           <Scene key="conferenceAttendees" component={ConferenceAttendees} hideNavBar  />
@@ -291,7 +288,9 @@ class MyRouter extends Component {
           <Scene key="terms" component={TermsList} />
           <Scene key="services" component={Services} />
         </Scene>
-      </RouterWithRedux>
+      </Router>
+
+      // </RouterWithRedux>
     );
   }
 }
