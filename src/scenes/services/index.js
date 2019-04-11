@@ -177,11 +177,9 @@ class Services extends Component {
     this.setState({signupCode: ''});
   }
   renderIcon = (serviceId) => {
-    iconName = "chevron-right"
     return (
       <Icon
-        type="MaterialIcons"
-        name={iconName}
+        name={'ios-arrow-forward'}
         style={{
           ...styles.textColor,
           color: "#1b557a",
