@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import {
   View,
+  ScrollView,
   Platform,
   Dimensions,
   TouchableOpacity,
@@ -14,6 +15,7 @@ import {
   Text,
   Button,
   Input,
+  Icon,
   Textarea,
   DatePicker
 } from "native-base";
@@ -23,8 +25,11 @@ import moment from 'moment';
 import { setService } from "../../../actions/services";
 import styles from "./styles";
 import commonColor from "../../../../native-base-theme/variables/commonColor";
+import {loadUserCards} from 'PLActions';
 
 const deviceHeight = Dimensions.get("window").height;
+
+// const maskMoney = 
 
 class ServiceInfo extends Component {
     constructor(props) {
@@ -58,7 +63,73 @@ class ServiceInfo extends Component {
       }
     }
 
-    onContinue = () => {
+    choosePaymentType = () => {
+        return new Promise((resolve, reject) => {
+            Alert.alert('Choose payment form', 'This service accepts payments in cash or credit card', [
+                {text: 'Cash', onPress: () => resolve('cash')},
+                {text: 'Credit Card', onPress: () => resolve('cc')}
+            ], {cancelable: false})
+        })
+    }
+
+    certifyUserHasCreditCard = () => {
+        return new Promise(async (resolve, reject) => {
+            const cards = await loadUserCards(this.props.userDetails.token)
+            if (!cards.length) {
+                Actions.userAddCardScene({
+                    onSuccess: () => {
+                        Actions.pop(); Alert.alert('Saved!', 'Your default payment method is now setup. Please try again.');
+                        resolve()
+                    },
+                    onFail: () => {
+                        Actions.pop(); Alert.alert('Something went wrong', 'Something went wrong while updating your payment method. Please try again.');
+                        this.certifyUserHasCreditCard()
+                    }
+                });
+            }
+        })
+    }
+
+    onContinue = async () => {
+        const {service} = this.props
+        if (service.type === 'simple') {
+            // simply continue
+            console.log('simple type. continue')
+        } else {
+            if (service.type === 'payment') {
+                let paymentType = 'none'
+                if (service.payment_type === 'both') {
+                    // ask if money of cc
+                    paymentType = await this.choosePaymentType()
+                } else {
+                    paymentType = service.payment_type
+                }
+
+                if (paymentType === 'cc') {
+                    // check if user has a cc setup
+                    await this.certifyUserHasCreditCard()
+                    
+                }
+
+                // continue
+
+            } else if (service.type === 'butler') {
+                // will not be handled yet
+            }
+        }
+        console.log(this.props)
+
+
+        return
+        // check if is payment
+            // if true, check if its CC or Cash
+                // if both, ask user to choose
+                // if cash, confirm and continue
+                // if CC, check if user has stripe card setup
+                    // if true, confirm and continue
+                    // if false, setup stripe card and continue
+            // if false, continue
+
         const newService = {
             price: this.state.price,
             memo: this.state.memo,
@@ -82,7 +153,6 @@ class ServiceInfo extends Component {
     _hideDateTimePicker = () => this.setState({ isDateTimePickerVisible: false });
 
     _handleDatePicked = (date) => {
-        console.log('A date has been picked: ', date);
         this.setState({reservation_date: moment(date).format('YYYY-MM-DD hh:mm:ss A')});
         this._hideDateTimePicker();
     };
@@ -95,137 +165,150 @@ class ServiceInfo extends Component {
         this.setState({ price });
     }
 
+    addReserVationNumber = () => {
+        this.setState(p => ({reservation_number: p.reservation_number >= 10 ? p.reservation_number : (p.reservation_number + 1)}))
+    }
+    subReserVationNumber = () => {
+        this.setState(p => ({reservation_number: p.reservation_number <= 1 ? p.reservation_number : (p.reservation_number - 1)}))
+    }
+    reservationButton = ({type}) => {
+        const name = type === 'add' ? 'ios-add' : 'ios-remove'
+        const action = type === 'add' ? this.addReserVationNumber : this.subReserVationNumber
+        return (
+            <TouchableOpacity onPress={action}>
+                <View style={styles.reservationIconContainer}>
+                    <Icon
+                        name={name}
+                        style={styles.reservationIcon}
+                        />
+                </View>
+            </TouchableOpacity>
+        )
+    }
+    renderReservationItem = () => {
+        return (
+            <View style={styles.numberOfPeopleContainer}>
+                <View>
+                    <Text style={styles.reservationLabel}>
+                        Reservation Number
+                    </Text>
+                </View>
+                <View style={styles.reservationInputContainer}>
+                    <this.reservationButton type='subtract' />
+                    <Text>{this.state.reservation_number.toString()}</Text>
+                    <this.reservationButton type='add' />
+                </View>
+            </View>
+        )
+    }
+
+    renderLabel = ({label, value, type }) => {
+        return (
+            <View style={styles.labelContainer}>
+                <Text style={styles.labelText}>
+                    {label}
+                </Text>
+                <Text style={type === 'money' ? styles.priceText : styles.labelValue}> 
+                    {value}
+                </Text>
+            </View>
+        )
+    }
+
     render() {
         const { service } = this.props;
-        const popupHeight = 480;
-        const popupTop = (deviceHeight - popupHeight) / 2;
+        const { price, surcharge, third_party_name } = this.props.service
+        let {reservation_date} = this.state
         return (
-            <View style={styles.overlay}>
-                <View style={[styles.infoView, {height: popupHeight, top: popupTop}]}>
-                    <View style={styles.titleItem}>
-                        <Text style={{fontSize: 18, fontWeight: '500'}}>{service.title}</Text>
-                    </View>
-                    <View style={styles.item}>
-                        {
-                            service.is_ride ? (<Textarea
+            <ScrollView>
+                <View style={styles.overlay}>
+                    <View style={styles.infoView}>
+                        <View style={styles.titleItem}>
+                            <Text style={styles.serviceTitle}>{service.title}</Text>
+                        </View>
+                        <View style={styles.item}>
+                            {
+                                service.is_ride ? (<Textarea
+                                    style={styles.memoArea}
+                                    placeholder={this.props.service.memo_placeholder}
+                                    value={this.state.price}
+                                    editable={this.props.editable}
+                                    selectTextOnFocus={this.props.editable}
+                                    onChangeText={(text) => this.changePrice(text)}
+                                />) : <this.renderLabel label='Price' type='money' value={`$${price}`} />
+                            }
+                        </View>
+                        <View style={styles.item}>
+                            <this.renderLabel label='Surcharge' type='money' value={`$${surcharge}`} />
+                        </View>
+                        {third_party_name ? <View style={styles.item}>
+                            <this.renderLabel label='By' value={this.props.service.third_party_name} />
+                        </View> : null}
+                        <View style={styles.textAreaItem}>
+                            <Text style={[styles.labelText, {marginTop: 4}]}>
+                                Leave a note
+                            </Text>
+                            <Textarea
                                 style={styles.memoArea}
                                 placeholder={this.props.service.memo_placeholder}
-                                value={this.state.price}
+                                value={this.state.memo}
                                 editable={this.props.editable}
                                 selectTextOnFocus={this.props.editable}
-                                onChangeText={(text) => this.changePrice(text)}
-                            />) : (<Text>Price: {this.props.service.price}</Text>)
-                        }
-                    </View>
-                    <View style={styles.item}>
-                        <Text>Surcharge: {this.props.service.surcharge}</Text>
-                    </View>
-                    <View style={styles.item}>
-                        <Text>By: {this.props.service.third_party_name === null ? '' : this.props.service.third_party_name}</Text>
-                    </View>
-                    <View style={styles.textAreaItem}>
-                        <Textarea
-                            style={styles.memoArea}
-                            placeholder={this.props.service.memo_placeholder}
-                            value={this.state.memo}
-                            editable={this.props.editable}
-                            selectTextOnFocus={this.props.editable}
-                            onChangeText={(text) => this.changeMemo(text)}
-                        />
-                    </View>
-                    {
-                        
-                        <View style={styles.item}>
-                            <Text>Reservation</Text>
-                            <View style={styles.reservationPanel}>
-                                <View style={styles.reservationItem}>
-                                    <Text>
-                                        Date/Time:
-                                    </Text>
-                                    <Button
-                                        transparent
-                                        onPress={this.props.editable ? this._showDateTimePicker : () => {}}
-                                        style={styles.dateButton}
-                                    >
-                                        <Text style={styles.dateText}>
-                                            {this.state.reservation_date.toString()}
-                                        </Text>
-                                    </Button>
-                                </View>
-                                <View style={styles.reservationItem}>
-                                    <Text>
-                                        Number of people:
-                                    </Text>
-                                    <View style={styles.numberSpinner}>
-                                        {
-                                            this.props.editable ?
-                                            <Button
-                                                iconLeft
-                                                transparent
-                                                style={styles.numberSpinnerButton}
-                                                onPress={() => {
-                                                    if (this.state.reservation_number > 1) {
-                                                        this.setState({reservation_number: this.state.reservation_number - 1});
-                                                    }
-                                                }}
-                                            >
-                                                <Text>-</Text>
-                                            </Button>
-                                            :
-                                            false
-                                        }
-                                        <Input
-                                            textAlign={'center'}
-                                            value={this.state.reservation_number.toString()}
-                                            style={styles.numberSpinnerInput}
-                                        />
-                                        {
-                                            this.props.editable ?
-                                            <Button
-                                                iconLeft
-                                                transparent
-                                                style={styles.numberSpinnerButton}
-                                                onPress={()=>{
-                                                    if (this.state.reservation_number < 10) {
-                                                        this.setState({reservation_number: this.state.reservation_number + 1});
-                                                    }
-                                                }}
-                                            >
-                                                <Text>+</Text>
-                                            </Button>
-                                            :
-                                            false
-                                        }
+                                onChangeText={(text) => this.changeMemo(text)}
+                            />
+                        </View>
+                        {
+                            
+                            <View style={styles.item}>
+                                <Text style={[styles.labelText, {marginTop: 4, marginBottom: 4}]}>
+                                    Reservation
+                                </Text>
+                                <View style={styles.reservationPanel}>
+                                    <View style={styles.reservationItem}>
+                                        <View style={{flex: 1}}>
+                                            <Text style={styles.reservationLabel}>
+                                                Date/Time
+                                            </Text>
+                                        </View>
+                                        <Button
+                                            transparent
+                                            onPress={this.props.editable ? this._showDateTimePicker : () => {}}
+                                            style={styles.dateButton}>
+                                            <Text style={styles.dateText}>
+                                                {moment(reservation_date).format('MMMM Do, hh:mm:ss')}
+                                            </Text>
+                                        </Button>
                                     </View>
+                                    {this.renderReservationItem()}
                                 </View>
                             </View>
+                        }
+                        <View style={styles.buttonPanel}>
+                            <Button
+                                full
+                                onPress={this.onContinue}
+                            >
+                                <Text>Request</Text>
+                            </Button>
+                            <TouchableOpacity
+                                style={{ marginTop: 10 }}
+                                onPress={this.onClose}
+                            >
+                                <Text style={{ color: 'red' }}>Close</Text>
+                            </TouchableOpacity>
                         </View>
-                    }
-                    <View style={styles.buttonPanel}>
-                        <Button
-                            full
-                            onPress={this.onContinue}
-                        >
-                            <Text>Request</Text>
-                        </Button>
-                        <TouchableOpacity
-                            style={{ marginTop: 10 }}
-                            onPress={this.onClose}
-                        >
-                            <Text style={{ color: 'red' }}>Close</Text>
-                        </TouchableOpacity>
                     </View>
+                    <DateTimePicker
+                        isVisible={this.state.isDateTimePickerVisible}
+                        onConfirm={this._handleDatePicked}
+                        onCancel={this._hideDateTimePicker}
+                        mode='datetime'
+                        date={new Date(this.state.reservation_date)}
+                        minimumDate={new Date()}
+                        maximumDate={new Date(new Date().getFullYear + 1, new Date().getMonth, new Date().getDate)}
+                    />
                 </View>
-                <DateTimePicker
-                    isVisible={this.state.isDateTimePickerVisible}
-                    onConfirm={this._handleDatePicked}
-                    onCancel={this._hideDateTimePicker}
-                    mode='datetime'
-                    date={new Date(this.state.reservation_date)}
-                    minimumDate={new Date()}
-                    maximumDate={new Date(new Date().getFullYear + 1, new Date().getMonth, new Date().getDate)}
-                />
-            </View>
+            </ScrollView>
         );
     }
 }

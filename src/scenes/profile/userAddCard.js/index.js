@@ -41,6 +41,7 @@ class UserAddCards extends Component {
         }
       })
       .catch(err => {
+        this.props.onFail && this.props.onFail()
         Alert.alert(
           "Oops",
           "There was an error adding your card, please try again."

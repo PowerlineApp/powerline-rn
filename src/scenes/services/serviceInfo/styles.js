@@ -1,5 +1,5 @@
 import commonColor from "../../../../native-base-theme/variables/commonColor";
-
+import PLColors from 'PLColors'
 const React = require("react-native");
 
 const { Dimensions, Platform } = React;
@@ -11,18 +11,36 @@ const popupWidth = 300;
 export default {
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: PLColors.darkBackground + 'AA',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   infoView: {
     flex: 1,
     backgroundColor: 'white',
-    position: 'absolute',
-    left: (deviceWidth - popupWidth) / 2,
-    width: 300,
-    padding: 10
+    minWidth: 300,
+    width: '80%',
+    margin: 80,
+    borderRadius: 10,
+    padding: 16,
+    paddingTop: 22,
+    // ios
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    shadowOffset: {
+        height: 0,
+        width: 0
+    },
+    // android
+    elevation: 3
   },
   titleItem: {
     marginBottom: 10
+  },
+  serviceTitle: {
+    fontSize: 19,
+    fontWeight: 'bold',
+    color: PLColors.darkGreyText
   },
   textAreaItem: {
     marginBottom: 10
@@ -32,41 +50,40 @@ export default {
   },
   memoArea: {
     height: 120,
-    borderColor: '#7f7f7f',
-    borderWidth: 0.8
+    marginTop: 8,
+    borderColor: 'rgba(0, 0, 0, 0.2)',
+    borderWidth: 1
   },
   reservationPanel: {
-    borderColor: '#7f7f7f',
-    borderWidth: 0.5,
-    marginTop: 8,
-    paddingHorizontal: 8,
-    paddingTop: 8,
-    paddingBottom: 6
+    borderColor: 'rgba(0, 0, 0, 0.2)',
+    borderWidth: 1,
+    padding: 8
   },
   reservationItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 2,
+    justifyContent: 'space-between',
+    marginBottom: 2
   },
   dateButton: {
     height: 30,
-    width: 240,
-    paddingLeft: 8
+    flex: 2,
+    // width: 240,
+    // paddingLeft: 8,
+    flexDirection: 'row',
+    justifyContent: 'flex-end'
   },
   dateText: {
-    fontSize: 15
+    fontSize: 13
   },
   numberSpinner: {
     flexDirection: 'row',
-    alignItems: 'center',
-    height: 30,
-    width: 116,
-    paddingLeft: 8
+    // alignItems: 'space-between'
   },
   numberSpinnerInput: {
-    borderColor: '#7f7f7f',
-    borderWidth: 0.5,
-    height: 30,
+    // borderColor: '#7f7f7f',
+    // borderWidth: 0.5,
+    // height: 30,
   },
   numberSpinnerButton: {
     height: 30
@@ -76,5 +93,64 @@ export default {
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 30,
+  },
+  labelContainer: {
+    marginTop: 4,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingBottom: 7,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0, 0, 0, 0.2)'
+  },
+  labelText: {
+    color: PLColors.lightText,
+    fontWeight: '350'
+  },
+  priceText: {
+    color: PLColors.greenMoney,
+    fontWeight: 'bold'
+  },
+  labelValue: {
+    color: PLColors.darkGreyText,
+    fontWeight: 'bold'
+  },
+  reservationIconContainer: {
+    margin: 4,
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: '#f9f9f9',
+    justifyContent: 'center',
+    alignItems: 'center',
+      // ios
+      shadowOpacity: 0.3,
+      shadowRadius: 1,
+      shadowOffset: {
+          height: 0,
+          width: 0
+      },
+      // android
+      elevation: 2
+  },
+  reservationIcon: {
+    fontSize: 34,
+    color: PLColors.actionText
+  },
+  reservationInputContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    maxWidth: 120,
+    alignItems: 'center'
+  },
+  numberOfPeopleContainer: {
+    flexDirection: 'row',
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  },
+  reservationLabel: {
+    fontSize: 14,
+    color: PLColors.darkText
   }
 };
