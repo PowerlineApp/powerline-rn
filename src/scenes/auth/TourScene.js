@@ -4,10 +4,8 @@
 var React = require('react');
 var {
     Component,
-    PropTypes
 } = require('react');
 var {
-    StyleSheet,
     View,
     Image,
     Dimensions,
@@ -18,11 +16,9 @@ var {
 var { connect } = require('react-redux');
 var {width, height} = Dimensions.get('window');
 var PLColors = require('PLColors');
-import {
-    NavigationActions
-} from 'react-navigation';
 import {Actions} from 'react-native-router-flux'
 import {CachedImage} from "react-native-img-cache";
+import GestureRecognizer from '../../components/GestureRecognizer';
 
 var styles = {
     container: {
@@ -83,8 +79,6 @@ var styles = {
         alignItems: 'center',
     },
     goTxt: {
-        // lineHeight: 32,
-        // textAlign: 'center',
         color: '#006',
         textAlignVertical: 'top',
         fontSize: 20,
@@ -143,22 +137,28 @@ class TourScene extends Component{
                 pos: pos + 1
             });
         }
-    }
+    };
+
+    onPrev = () => {
+        var {pos} = this.state;
+        if(pos > 0){
+            this.setState({
+                pos: pos - 1
+            });
+        }
+    };
 
     onSkip = () =>{
         console.log('=>', this.props);
-        // console.log('==>', this.state);
-        // this.props.dispatch(NavigationActions.reset())
-        // var { navigation } = this.props;        
         if(this.props.navigation && this.props.navigation.state && this.props.navigation.state.params && this.props.navigation.state.params.callback){
-            let { state, dispatch } = this.props.navigation;
+            let { state } = this.props.navigation;
             let { params } = state;
             params.callback();
         }else{
                 this.props.navigation.state.params.onBackPress();
            Actions.home();
         }      
-    }
+    };
 
     render(){
         if (!this.state.ready){
@@ -184,7 +184,11 @@ class TourScene extends Component{
         }
 
         return (
-            <View style={styles.container}>     
+            <GestureRecognizer
+              style={styles.container}
+              onSwipeLeft={this.onNext}
+              onSwipeRight={this.onPrev}
+            >
                 {imgs[pos]}
                 <View style={styles.bottomContainer}>
                     {
@@ -204,7 +208,7 @@ class TourScene extends Component{
                     </View>: null
                     }
                     {
-                    pos == this.state.maxPos?
+                    pos === this.state.maxPos ?
                     <View style={styles.goBtnContainer}>
                         <TouchableOpacity style={styles.goBtn} onPress={this.onSkip}>
                             <Text style={styles.goTxt}>Let's Go</Text>
@@ -212,7 +216,7 @@ class TourScene extends Component{
                     </View>: null
                     }
                 </View>
-            </View>
+            </GestureRecognizer>
         )
     }
 }
