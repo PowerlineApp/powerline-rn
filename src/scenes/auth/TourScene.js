@@ -53,12 +53,24 @@ var styles = {
     nextBtn: {
         color: 'white',
         backgroundColor: 'transparent',
-        marginRight: 10
+        fontSize: 30,
+        height: 150,
+        width: 150,
+        paddingBottom: 15,
+        paddingRight: 20,
+        textAlign: 'right',
+        textAlignVertical: 'bottom'
     },
     skitBtn: {
         color: 'white',
         backgroundColor: 'transparent',
-        marginLeft: 10
+        fontSize: 30,
+        height: 150,
+        width: 150,
+        paddingBottom: 15,
+        paddingLeft: 20,
+        textAlign: 'left',
+        textAlignVertical: 'bottom'
     },
 
     goBtnContainer: {
