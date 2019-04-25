@@ -84,6 +84,7 @@ const { SlideInMenu } = renderers;
 import ShareExtension from "react-native-share-extension";
 import OneSignal from "react-native-onesignal";
 var DeviceInfo = require("react-native-device-info");
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { Mixpanel } from "../../PLEnv";
 // import { get } from 'http';
 
@@ -1102,7 +1103,7 @@ class Home extends Component {
                 ref={this.onRef}
               >
                 <MenuTrigger ref={"menuTrigger"}>
-                  <Icon name="ios-add-circle" style={styles.iconPlus} />
+                  <FontAwesome name="pencil" style={styles.iconCreate} size={16} />
                 </MenuTrigger>
                 <MenuOptions
                   ref={r => (this.menuOptions = r)}

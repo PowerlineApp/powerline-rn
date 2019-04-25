@@ -108,11 +108,11 @@ export default {
         fontSize: wp(2.3),
         fontWeight: '500'
     },
-    iconPlus: {
-        color: '#030366',
+    iconCreate: {
+        color: 'white',
         ...Platform.select({
-            android: { paddingBottom: 4, fontSize: wp(21) },
-            ios: { paddingBottom: 8, fontSize: wp(20) },
+            android: { paddingBottom: 4, fontSize: wp(12) },
+            ios: { paddingBottom: 8, fontSize: wp(11) },
         })
     },
     containerTabButton: {
@@ -132,10 +132,10 @@ export default {
     },
     fillCircle: {
         position: 'absolute',
-        bottom: 0,
-        left: wp(9), // TODO: fix if need landscape mode
+        bottom: 4,
         top: 5,
-        width: wp(2),
-        backgroundColor: 'white',
+        width: 66,
+        backgroundColor: '#030366',
+        borderRadius: 33,
     }
 };
