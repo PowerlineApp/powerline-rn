@@ -342,7 +342,7 @@ class FeedFooter extends Component {
                 <View style={{flex: 6, flexDirection: 'row'}}>
                     <AnimatedButton onPress={() => {this.sign(item, isSigned); Mixpanel.track("Signed Petition");}}
                         icon={<Thumbnail source={require('../../../assets/petition-icon.png')} style={{height: 25, width: 25, tintColor: isSigned ? '#53a8cd' : '#8694ab'}} square />}
-                        label={isSigned ? ' Signed' : ('  ' + (item.responses_count || 0) + ' Signatures')}
+                        label={isSigned ? ' Remove my Signature' : (` Add Signature #${parseInt(item.responses_count || 0, 10) + 1}`)}
                         labelStyle={isSigned ? styles.footerTextBlue : styles.footerText}
                         animateEffect={'tada'}
                         />
@@ -369,7 +369,7 @@ class FeedFooter extends Component {
                 <View style={{flex: 6, flexDirection: 'row'}}>
                     <AnimatedButton onPress={() => {this.signLeaderPetition(item, isSigned, signOption.id, unsignOption.id); Mixpanel.track("Signed Petition");}}
                         icon={<Thumbnail source={require('../../../assets/petition-icon.png')} style={{height: 25, width: 25, tintColor: isSigned ? '#53a8cd' : '#8694ab'}} square />}
-                        label={isSigned ? ' Signed' : ('  ' + (item.answer_count || 0) + ' Signatures')}
+                        label={isSigned ? ' Remove my Signature' : (` Add Signature ${parseInt(item.answer_count || 0, 10) + 1}`)}
                         labelStyle={isSigned ? styles.footerTextBlue : styles.footerText}
                         animateEffect={'tada'}
                             />
@@ -451,7 +451,7 @@ class FeedFooter extends Component {
             break;
         case 'crowdfunding-payment-request':
         case 'payment-request':
-            footer = this._renderPollFooter(item, 'ios-cash', 'Donate', false, true);
+            footer = this._renderPollFooter(item, 'ios-cash', 'Donate Now', false, true);
             break;
         case 'leader-event':
             footer =  this._renderPollFooter(item, 'ios-calendar', 'RSVP', false, true);
