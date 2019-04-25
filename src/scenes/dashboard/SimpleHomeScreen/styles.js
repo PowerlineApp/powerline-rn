@@ -3,7 +3,7 @@ import ScaleSheet from 'react-native-scalesheet'
 export default ScaleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#E2E7EA',
+        backgroundColor: 'white',
         marginBottom: 0
     },
     header: {
@@ -27,10 +27,13 @@ export default ScaleSheet.create({
     iconContainer: {
         width: '7.5vh',
         height: '7.5vh',
-        borderRadius: '3.75vh',
-        backgroundColor: '#61C1FF',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+    },
+    icon: {
+        width: '7.5vh',
+        height: '7.5vh',
+        resizeMode: 'cover',
     },
     label: {
         textAlign: 'center',
