@@ -276,7 +276,10 @@ class GroupJoin extends Component {
                         <Title style={{color: 'white'}}>Group Join</Title>
                     </Body>
                     <Right>
-                        <Button transparent onPress={() => {
+                        <Button
+                          transparent
+                          disabled={!this.validateFields() || !this.state.passcode}
+                          onPress={() => {
                             this.setState({showConfirmationModal: true});
                         }}>
                             <Label style={{color: 'white'}}>Next</Label>
@@ -291,7 +294,7 @@ class GroupJoin extends Component {
                                 <View style={styles.avatar} />
                             }
                             <Body>
-                                <Text style={{color: PLColors.main}}>{this.props.data.official_name}</Text>                             
+                                <Text style={{color: PLColors.main}}>{this.props.data.official_name}</Text>
                             </Body>
                         </ListItem>
 
