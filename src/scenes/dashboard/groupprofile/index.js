@@ -276,11 +276,14 @@ class GroupProfile extends Component{
                     <Body>
                         <Title style={{color: '#fff'}}>Group Profile</Title>
                     </Body>
-                    <Right>
-                        <Button transparent onPress={() => this.invite()}>
-                            <Label style={{color: 'white'}}>Invite</Label>
-                        </Button>
-                    </Right>
+                    {this.state.data && this.state.data.joined ?
+                        <Right>
+                            <Button transparent onPress={() => this.invite()}>
+                                <Label style={{color: 'white'}}>Invite</Label>
+                            </Button>
+                        </Right>
+                        : null
+                    }
                 </Header>
                 <Content 
                     padder
