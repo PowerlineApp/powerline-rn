@@ -78,7 +78,7 @@ class Followers extends Component {
     unFollowers(index) {
         var { token } = this.props;
 
-        Alert.alert("Confirm", "Do you want to unapprove " + this.state.followers[index].username + " from following you ?", [
+        Alert.alert("Confirm", "Do you want to remove this follower?", [
             {
                 text: 'Cancel'
             },
