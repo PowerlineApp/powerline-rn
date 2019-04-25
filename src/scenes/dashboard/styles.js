@@ -137,5 +137,9 @@ export default {
         top: 5,
         width: wp(2),
         backgroundColor: 'white',
+    },
+    serviceRequestIcon: {
+        width: 24,
+        height: 24,
     }
 };
