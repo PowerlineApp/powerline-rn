@@ -114,39 +114,32 @@ class Search extends Component {
 
     render() {
         return (
-            <MenuContext customStyles={menuContextStyles}>
-                <Container style={styles.container}>
-                    <Header searchBar rounded style={styles.header}>
-                        <Left style={{flex: 0.1}}>
-                            <Button style={{width: '100%'}}  transparent onPress={this.props.openDrawer}>
-                                <Icon active name="menu" style={{color: 'white'}}/>
-                            </Button>
-                        </Left>
-                        <Item style={styles.searchBar}>
-                            <Input style={styles.searchInput} autoFocus placeholder="Search groups, people, topics" value={this.state.search} onChangeText={(text) => this.onChangeText(text)} selectTextOnFocus={true} />
-                            <Icon active name="search"/>
-                        </Item>
-                    </Header>
-                    <Tabs initialPage={this.props.initialPage} locked={true}>
-                        <Tab heading="Groups" tabStyle={styles.tabStyle} activeTabStyle={styles.tabStyle}>
-                            <SearchGroups groups={this.state.groups}/>
-                        </Tab>
-                        <Tab heading="People" tabStyle={styles.tabStyle} activeTabStyle={styles.tabStyle}>
-                            <SearchUsers users={this.state.users} onRemove={(index) => this.onRemoveUser(index)}/>
-                        </Tab>
-                        <Tab heading="Hashtags" tabStyle={styles.tabStyle} activeTabStyle={styles.tabStyle}>
-                            <SearchHashtags posts={this.state.posts} />
-                        </Tab>
-                    </Tabs>
-                </Container>
-            </MenuContext>
+            <Container style={styles.container}>
+                <Header searchBar rounded style={styles.header}>
+                    <Left style={{flex: 0.1}}>
+                        <Button transparent onPress={() => Actions.reset('home')} style={{width: 50, height: 50 }}  >
+                            <Icon active name="arrow-back" style={{ color: 'white' }} />
+                        </Button>
+                    </Left>
+                    <Item style={styles.searchBar}>
+                        <Input style={styles.searchInput} autoFocus placeholder="Search groups, people, topics" value={this.state.search} onChangeText={(text) => this.onChangeText(text)} selectTextOnFocus={true} />
+                        <Icon active name="search"/>
+                    </Item>
+                </Header>
+                <Tabs initialPage={this.props.initialPage} locked={true}>
+                    <Tab heading="Groups" tabStyle={styles.tabStyle} activeTabStyle={styles.tabStyle}>
+                        <SearchGroups groups={this.state.groups}/>
+                    </Tab>
+                    <Tab heading="People" tabStyle={styles.tabStyle} activeTabStyle={styles.tabStyle}>
+                        <SearchUsers users={this.state.users} onRemove={(index) => this.onRemoveUser(index)}/>
+                    </Tab>
+                    <Tab heading="Hashtags" tabStyle={styles.tabStyle} activeTabStyle={styles.tabStyle}>
+                        <SearchHashtags posts={this.state.posts} />
+                    </Tab>
+                </Tabs>
+            </Container>
         );
     }
-}
-
-const menuContextStyles = {
-    menuContextWrapper: styles.container,
-    backdrop: styles.backdrop
 }
 
 const mapStateToProps = state => ({
