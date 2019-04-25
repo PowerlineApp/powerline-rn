@@ -50,32 +50,32 @@ export default {
     // this is the author name
     title: {
         color: '#21354a',
-        fontSize: 16,
+        fontSize: 19,
         fontWeight: 'bold'
     },
 
     commentTitle: {
         color: '#21354a',
-        fontSize: 14,
+        fontSize: 15,
         fontWeight: 'bold'
     },
     commentPreviewText: {
         color: '#21354a',
-        fontSize: 14
+        fontSize: 15
     },
     subtitle: {
         color: '#8694ab',
-        fontSize: 12,
+        fontSize: 14,
     },
     // this is the main content of post/petition/etc
     description: {
         color: '#21354a',
-        fontSize: 16
+        fontSize: 19
     },
     // this is the title of post/peititon/etc
     descriptionTitle: {
         color: '#21354a',
-        fontSize: 16,
+        fontSize: 19,
         fontWeight: '500'        
     },
     dropDownIcon: {
@@ -119,13 +119,13 @@ export default {
         margin: 0
     },
     commentText: {
-        fontSize: 14,
+        fontSize: 15,
         color: '#8694ab',
         alignSelf: 'flex-end',
         fontWeight: '500'
     },
     footerTextBlue: {
-        fontSize: 13,
+        fontSize: 15,
         color: '#53a8cd',
         fontWeight: '500'
     },
