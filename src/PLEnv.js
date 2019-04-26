@@ -16,6 +16,15 @@ const stripeProd = "pk_live_hRBIgf1WvZ1qyhDpP3KQHEyE";
 const stagingURL = "https://api-staging.powerline.app/api";
 const prodURL = "https://api.powerline.app/api";
 const devURL = "https://api-dev.powerline.app/api";
+const stagingOAuthURL = "https://api-staging.powerline.app/oauth";
+const prodOAuthURL = "https://api.powerline.app/oauth";
+const devOAuthURL = "https://api-dev.powerline.app/oauth";
+const devClientId = '1_47dfulz64yg4cc8w8cggwc08cggw4w00g48440sk4gko08wc0s';
+const stagingClientId = '1_47dfulz64yg4cc8w8cggwc08cggw4w00g48440sk4gko08wc0s';
+const prodClientId = '1_2xz6n9chzlgkwogc8gw00skckw0s4008cws088coc8c00cok0g';
+const devClientSecret = '3nxvsvki5a2owcgk4g840ws84sgkgk8ok04cokscwcwsssww48';
+const stagingClientSecret = '3nxvsvki5a2owcgk4g840ws84sgkgk8ok04cokscwcwsssww48';
+const prodClientSecret = 'y17a6zwynk0wc04kksowowsw4o8oosowcsgcwccos08w80gss';
 const staging = false;
 const forceDev = false;
 
@@ -31,6 +40,9 @@ if (!dev || staging) {
 let env = {
   testMenuEnabled: true,
   API_URL: dev && !staging ? devURL : staging ? stagingURL : prodURL,
+  OAUTH_URL: dev && !staging ? devOAuthURL : staging ? stagingOAuthURL : prodOAuthURL,
+  clientId: dev && !staging ? devClientId : staging ? stagingClientId : prodClientId,
+  clientSecret: dev && !staging ? devClientSecret : staging ? stagingClientSecret : prodClientSecret,
   version: 301,
   fontFamily: undefined,
   PER_PAGE: 20,
