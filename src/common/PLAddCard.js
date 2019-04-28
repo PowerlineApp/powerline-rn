@@ -22,7 +22,7 @@ import {
     Icon,
     Form,
     Text,
-    Picker,
+    Picker
 } from 'native-base';
 import { showToast } from 'PLToast';
 import PLColors from 'PLColors';
@@ -115,10 +115,30 @@ class PLAddCard extends Component {
         return (
             <Card style={{padding: 10}}>
                 <View style={{width: '100%', flexDirection: 'column'}}>
+                <View style={{marginVertical: 10, paddingLeft: 10}}>
+                        <View>
+                            <Text>Payment details</Text>
+                        </View>
+                    </View>
                     <View style={{marginVertical: 5}}>
                         <Text style={styles.labelStyle}>Credit Card</Text> 
                         <View style={{borderColor: 'grey', borderWidth: StyleSheet.hairlineWidth,  borderRadius: 25}}>
                             <PaymentCardTextField style={{borderColor: 'black'}} onParamsChange={(valid, params) => this.handleFieldParamsChange(valid, params)} />
+                        </View>
+                    </View>
+                    <View style={{marginVertical: 5}}>
+                        <Text style={styles.labelStyle}>Full Name</Text> 
+                        <Item rounded>
+                            <Input placeholderTextColor={'#ccc'} placeholder='Name' value={this.state.name} onChangeText={text => this.inputChanged('name', text)} />
+                        </Item>
+                    </View>
+                    <View style={{marginVertical: 10}}>
+                        <View style={styles.divider} />
+                        <View style={{padding: 10}}>
+                            <Text>Your billing address</Text>
+                            <Text style={{fontSize: 12, color: 'grey'}}>
+                                Your billing address must match the address to which your card card is registered
+                            </Text>
                         </View>
                     </View>
                     <View style={{marginVertical: 5}}>
@@ -144,13 +164,7 @@ class PLAddCard extends Component {
                         }
                         </View>
                     </View>
-                    <View style={{marginVertical: 5}}>
-                        <Text style={styles.labelStyle}>Full Name</Text> 
-                        <Item rounded>
-                            <Input placeholderTextColor={'#ccc'} placeholder='Name' value={this.state.name} onChangeText={text => this.inputChanged('name', text)} />
-                        </Item>
-                    </View>
-
+                    
                     <View style={{marginVertical: 5}}>
                         <Text style={styles.labelStyle}>Address Line 1</Text> 
                         <Item rounded>
@@ -199,6 +213,10 @@ class PLAddCard extends Component {
     }
 }
 const styles = {
+    divider: {
+        borderBottomColor: 'black',
+        borderBottomWidth: StyleSheet.hairlineWidth
+    },
     submitButtonContainer: {
         backgroundColor: PLColors.main,
         marginTop: 20,
