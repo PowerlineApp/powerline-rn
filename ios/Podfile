@@ -40,5 +40,8 @@ post_install do |installer|
               config.build_settings['GCC_WARN_64_TO_32_BIT_CONVERSION'] = 'NO'
           end
       end
+      if target.name == "React"
+        target.remove_from_project
+      end
   end
 end

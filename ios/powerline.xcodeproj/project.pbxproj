@@ -1413,7 +1413,7 @@
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = 4875SW8HHW;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.ApplePay = {
 								enabled = 0;
@@ -2328,18 +2328,20 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = Powerline/Powerline.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: American Civix Technologies, L3C (4875SW8HHW)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: American Civix Technologies, L3C (4875SW8HHW)";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Felipe Piubello (BY9B84B6SD)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = 4875SW8HHW;
 				ENABLE_BITCODE = NO;
+				ENABLE_TESTABILITY = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/Frameworks/",
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
+				GCC_NO_COMMON_BLOCKS = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2374,8 +2376,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = ne.powerli;
 				PRODUCT_NAME = Powerline;
-				PROVISIONING_PROFILE = "9d0f20bd-5f68-4838-b3ed-ac6d448a4df1";
-				PROVISIONING_PROFILE_SPECIFIER = "Nurbo's Adhoc";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -2388,17 +2390,19 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = Powerline/Powerline.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: American Civix Technologies, L3C (4875SW8HHW)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: American Civix Technologies, L3C (4875SW8HHW)";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Felipe Piubello (BY9B84B6SD)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 4875SW8HHW;
 				ENABLE_BITCODE = NO;
+				ENABLE_TESTABILITY = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/Frameworks/",
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
+				GCC_NO_COMMON_BLOCKS = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2433,8 +2437,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = ne.powerli;
 				PRODUCT_NAME = Powerline;
-				PROVISIONING_PROFILE = "9d0f20bd-5f68-4838-b3ed-ac6d448a4df1";
-				PROVISIONING_PROFILE_SPECIFIER = "Nurbo's Adhoc";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
