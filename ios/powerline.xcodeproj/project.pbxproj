@@ -31,6 +31,7 @@
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		666BB909D45048F680D43150 /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 080DF54BF6044349805964C6 /* libRNVectorIcons.a */; };
 		6F7736142275D24A004D61D4 /* libFBSDKCoreKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F7736132275D24A004D61D4 /* libFBSDKCoreKit.a */; };
+		6F77368E2275D5E5004D61D4 /* libTPSStripe.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FBE2BEE1FD8B478008F6F44 /* libTPSStripe.a */; };
 		6F87DA65200746B500A3B788 /* libRNFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F87DA612007424600A3B788 /* libRNFS.a */; };
 		6FBE2A351FD8AF2F008F6F44 /* TPSStripe in Resources */ = {isa = PBXBuildFile; fileRef = 6FBE2A0A1FD8AF2F008F6F44 /* TPSStripe */; };
 		6FC665EC1FACFF5800F9CD94 /* PowerlineShare.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F338D121FACB70300010FBC /* PowerlineShare.m */; };
@@ -41,7 +42,6 @@
 		77F87CA900094F68B746B824 /* libRNShare.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 14BD01AC7C4D4ADEAF743355 /* libRNShare.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		834508072A9F440AB0037229 /* libRNDeviceInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D0EDD794C4584D59A6D2796F /* libRNDeviceInfo.a */; };
-		94714AA809F14E9A8D788CDF /* libTPSStripe.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D8A3F2920A9749B3B242EBBB /* libTPSStripe.a */; };
 		9F15D24EE347462CBA13C51A /* libSplashScreen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 71629848DDD64885A3F61DB8 /* libSplashScreen.a */; };
 		9F4682D01FA8589E00E4F9E9 /* QBImagePicker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F4682CE1FA8589D00E4F9E9 /* QBImagePicker.framework */; };
 		9F4682D51FA858A900E4F9E9 /* RSKImageCropper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F4682CF1FA8589D00E4F9E9 /* RSKImageCropper.framework */; };
@@ -730,9 +730,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6F77368E2275D5E5004D61D4 /* libTPSStripe.a in Frameworks */,
 				6F7736142275D24A004D61D4 /* libFBSDKCoreKit.a in Frameworks */,
 				6F87DA65200746B500A3B788 /* libRNFS.a in Frameworks */,
-				94714AA809F14E9A8D788CDF /* libTPSStripe.a in Frameworks */,
 				6FC76C451FE3E83A00AEA858 /* RSKImageCropper.framework in Frameworks */,
 				2F4EE3991FADCFC200C15D72 /* libART.a in Frameworks */,
 				C820D6AA1F86442B00F68FFA /* libRCTFBSDK.a in Frameworks */,
@@ -2340,6 +2340,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-fbsdk/ios/RCTFBSDK/**",
@@ -2398,6 +2399,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-fbsdk/ios/RCTFBSDK/**",
