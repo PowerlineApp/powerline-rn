@@ -57,7 +57,6 @@ class Options extends Component {
     verifyCardAndSendAnswer(){
         let {token, item} = this.props;
         loadUserCards(this.props.token).then(r => {
-            console.log('CARDS => ', r);
             let shouldAddCard =  !r.length >= 1 && Number(this.state.amount) !== 0;
             if (!shouldAddCard){
                 this.sendAnswer(token, item.id , this.state.options[this.state.checked].id, this.state.options[this.state.checked].is_user_amount ? this.state.amount : null ).then(r => {
@@ -185,7 +184,6 @@ class Options extends Component {
     render(){
         let {item} = this.props;
         let {options} = this.state;
-        console.log(options);
         return (
             <View style={styles.optionsContainer}>
                 {

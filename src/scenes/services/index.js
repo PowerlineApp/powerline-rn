@@ -25,6 +25,7 @@ import styles from "./styles";
 import { setService } from "../../actions/services";
 import { listServices, offerService, removeService } from "../../actions/services";
 import commonColor from "../../configs/commonColor";
+import {loadUserCards} from 'PLActions';
 
 class Services extends Component {
   constructor() {
@@ -211,11 +212,78 @@ class Services extends Component {
     this.setState({ serviceOfferConfirmVisible: false });
 
   }
-  continueServiceProcess = () => {
-    this.setState({serviceOfferConfirmVisible: false});
-    if (this.state.selectedService.third_party_name != null) {
-      this.setState({thirdPartyAlertVisible: true});
+
+
+  choosePaymentType = () => {
+    return new Promise((resolve, reject) => {
+        Alert.alert('Choose payment form', 'This service accepts payments in cash or credit card', [
+            {text: 'Cash', onPress: () => resolve('cash')},
+            {text: 'Credit Card', onPress: () => resolve('cc')}
+        ], {cancelable: false})
+    })
+  }
+
+  showConfirmation = (service, serviceInfo, paymentType, cards) => {
+    let text = ''
+      text = `You'll be charged $${service.price} for this service.
+            \n Payment type: ${paymentType === 'cc' ? `Credit Card, ${cards[0].brand} - ${cards[0].last4}` : 'Cash'}
+            \n Reservation: ${serviceInfo.reservation_details}
+            `
+    return new Promise((resolve, reject) => {
+      Alert.alert(service.title, text, [
+        {text: 'Confirm', onPress: () => this.finishRequest(service, serviceInfo, paymentType)},
+        {text: 'Cancel', onPress: () => {}}
+    ], {cancelable: false})
+    })
+  }
+
+  certifyUserHasCreditCard = () => {
+      return new Promise(async (resolve, reject) => {
+          const cards = await loadUserCards(this.props.userDetails.token)
+          if (!cards.length) {
+              await this.setState({showLoadingModal: false})
+              Actions.userAddCardScene({
+                  onSuccess: () => {
+                      Actions.pop(); Alert.alert('Saved!', 'Your default payment method is now setup. Please try again.');
+                      resolve(this.certifyUserHasCreditCard())
+                  },
+                  onFail: () => {
+                      Actions.pop(); Alert.alert('Something went wrong', 'Something went wrong while updating your payment method. Please try again.');
+                      reject()
+                  }
+              });
+          } else {
+            resolve(cards)
+          }
+      })
+  }
+
+  onContinue = async (serviceInfo) => {
+    // const finalJson =
+    const service = this.state.selectedService
+    await this.setState({serviceOfferConfirmVisible: false, showLoadingModal: true})
+    let paymentType
+    let cards
+    if (service.type === 'simple') { // simple type... just continue
+    } else {
+        if (service.type === 'payment') {
+            paymentType = 'none'
+            if (service.payment_type === 'both') { // ask if money or cc
+                paymentType = await this.choosePaymentType()
+            } else {
+                paymentType = service.payment_type
+            }
+            if (paymentType === 'cc') {  // check if user has a cc setup
+              try {
+                cards = await this.certifyUserHasCreditCard()
+              } catch (error) { // something went wrong certifying user card... abort
+                return 
+              }
+            }
+        } else if (service.type === 'butler') { // will not handle yet
+        }
     }
+    this.showConfirmation(service, serviceInfo, paymentType, cards)
   }
 
   onBack = () => {
@@ -282,7 +350,11 @@ class Services extends Component {
         {
           this.state.selectedService &&
           <Modal visible={this.state.serviceOfferConfirmVisible} transparent>
-            <ServiceInfo onContinue={this.continueServiceProcess} editable={this.state.serviceInfoEditable} service={this.state.selectedService} onClose={this.closeModal} />
+            <ServiceInfo
+              onContinue={this.onContinue}
+              editable={this.state.serviceInfoEditable}
+              service={this.state.selectedService}
+              onClose={this.closeModal} />
           </Modal>
         }
         {

@@ -25,11 +25,8 @@ import moment from 'moment';
 import { setService } from "../../../actions/services";
 import styles from "./styles";
 import commonColor from "../../../../native-base-theme/variables/commonColor";
-import {loadUserCards} from 'PLActions';
 
 const deviceHeight = Dimensions.get("window").height;
-
-// const maskMoney = 
 
 class ServiceInfo extends Component {
     constructor(props) {
@@ -63,87 +60,25 @@ class ServiceInfo extends Component {
       }
     }
 
-    choosePaymentType = () => {
-        return new Promise((resolve, reject) => {
-            Alert.alert('Choose payment form', 'This service accepts payments in cash or credit card', [
-                {text: 'Cash', onPress: () => resolve('cash')},
-                {text: 'Credit Card', onPress: () => resolve('cc')}
-            ], {cancelable: false})
-        })
-    }
-
-    certifyUserHasCreditCard = () => {
-        return new Promise(async (resolve, reject) => {
-            const cards = await loadUserCards(this.props.userDetails.token)
-            if (!cards.length) {
-                Actions.userAddCardScene({
-                    onSuccess: () => {
-                        Actions.pop(); Alert.alert('Saved!', 'Your default payment method is now setup. Please try again.');
-                        resolve()
-                    },
-                    onFail: () => {
-                        Actions.pop(); Alert.alert('Something went wrong', 'Something went wrong while updating your payment method. Please try again.');
-                        this.certifyUserHasCreditCard()
-                    }
-                });
-            }
-        })
-    }
+    
 
     onContinue = async () => {
-        const {service} = this.props
-        if (service.type === 'simple') {
-            // simply continue
-            console.log('simple type. continue')
-        } else {
-            if (service.type === 'payment') {
-                let paymentType = 'none'
-                if (service.payment_type === 'both') {
-                    // ask if money of cc
-                    paymentType = await this.choosePaymentType()
-                } else {
-                    paymentType = service.payment_type
-                }
-
-                if (paymentType === 'cc') {
-                    // check if user has a cc setup
-                    await this.certifyUserHasCreditCard()
-                    
-                }
-
-                // continue
-
-            } else if (service.type === 'butler') {
-                // will not be handled yet
-            }
-        }
-        console.log(this.props)
-
-
-        return
-        // check if is payment
-            // if true, check if its CC or Cash
-                // if both, ask user to choose
-                // if cash, confirm and continue
-                // if CC, check if user has stripe card setup
-                    // if true, confirm and continue
-                    // if false, setup stripe card and continue
-            // if false, continue
-
         const newService = {
             price: this.state.price,
             memo: this.state.memo,
             reservation_details: `${moment(this.state.reservation_date).format('YYYY-MM-DD HH:mm:ss.SSS')} | ${this.state.reservation_number}`
         }
-        this.props.setService(this.props.userDetails.token, this.props.service.id, newService)
-        .then((res) => {
-            if(res.data.status === 200) {
-                 Alert.alert('Success', 'The request was successful.');
-            } else {
-                Alert.alert('Failed', 'The request failed.');
-            }
-        })
-        this.props.onContinue();
+        this.props.onContinue(newService)
+
+        // this.props.setService(this.props.userDetails.token, this.props.service.id, newService)
+        // .then((res) => {
+        //     if(res.data.status === 200) {
+        //          Alert.alert('Success', 'The request was successful.');
+        //     } else {
+        //         Alert.alert('Failed', 'The request failed.');
+        //     }
+        // })
+        // this.props.onContinue();
     }
     onClose = () => {
         this.props.onClose();

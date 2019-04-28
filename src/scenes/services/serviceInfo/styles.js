@@ -51,11 +51,11 @@ export default {
   memoArea: {
     height: 120,
     marginTop: 8,
-    borderColor: 'rgba(0, 0, 0, 0.2)',
+    borderColor: 'rgba(0, 0, 0, 0.1)',
     borderWidth: 1
   },
   reservationPanel: {
-    borderColor: 'rgba(0, 0, 0, 0.2)',
+    borderColor: 'rgba(0, 0, 0, 0.1)',
     borderWidth: 1,
     padding: 8
   },
