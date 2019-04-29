@@ -8,7 +8,8 @@ import TimeAgo from 'react-native-timeago';
 import Menu, {
     MenuTrigger,
     MenuOptions,
-    MenuOption
+    MenuOption,
+    MenuProvider
 } from 'react-native-popup-menu';
 import { showAlertOkCancel, showAlertYesNo } from 'PLAlert';
 import { showToast } from 'PLToast';
@@ -299,128 +300,130 @@ class FeedHeader extends Component {
                         </Text>
                     </Body>
                     <Right style={{ flex: 0.15, backgroundColor: '#fff', paddingVertical: 4, height: '100%', margin: 0, padding: 0}}>
-                        <Menu style={{ width: '100%'}} ref={(ref) => { this.menu = ref; }}>
-                            <MenuTrigger style={{alignItems: 'center', justifyContent: 'center'}}>
-                                <Icon name='md-more' style={styles.dropDownIcon} />
-                            </MenuTrigger>
-                            <MenuOptions customStyles={optionsStyles}>
-                                {
-                                    canSubscribe && (
-                                    !this.props.item.is_subscribed
-                                    ?
-                                        <MenuOption onSelect={() => this.subscribe(item)}>
-                                            <Button iconLeft transparent dark onPress={() => this.subscribe(item)}>
-                                                <Icon name='md-notifications' style={styles.menuIcon} />
-                                                <Text style={styles.menuText}>Subscribe to Notifications</Text>
+                        <MenuProvider>
+                            <Menu style={{ width: '100%'}} ref={(ref) => { this.menu = ref; }}>
+                                <MenuTrigger style={{alignItems: 'center', justifyContent: 'center'}}>
+                                    <Icon name='md-more' style={styles.dropDownIcon} />
+                                </MenuTrigger>
+                                <MenuOptions customStyles={optionsStyles}>
+                                    {
+                                        canSubscribe && (
+                                        !this.props.item.is_subscribed
+                                        ?
+                                            <MenuOption onSelect={() => this.subscribe(item)}>
+                                                <Button iconLeft transparent dark onPress={() => this.subscribe(item)}>
+                                                    <Icon name='md-notifications' style={styles.menuIcon} />
+                                                    <Text style={styles.menuText}>Subscribe to Notifications</Text>
+                                                </Button>
+                                            </MenuOption>
+                                        :
+                                            <MenuOption onSelect={() => this.unsubscribe(item, this.props.token)}>
+                                                <Button iconLeft transparent dark onPress={() => this.unsubscribe(item, this.props.token)}>
+                                                    <Icon name='md-notifications-off' style={styles.menuIcon} />
+                                                    <Text style={styles.menuText}>Unsubscribe to Notifications</Text>
+                                                </Button>
+                                            </MenuOption>
+                                        )
+
+                                    }
+                                    {
+                                        !isAuthor && canUnfollow &&
+                                        <MenuOption onSelect={() => this.mute(item)}>
+                                            <Button iconLeft transparent dark onPress={() => this.mute(item)}>
+                                                <Icon name='md-volume-off' style={styles.menuIcon} />
+                                                <Text style={styles.menuText}>Mute Notifications from this User</Text>
                                             </Button>
                                         </MenuOption>
-                                    :
-                                        <MenuOption onSelect={() => this.unsubscribe(item, this.props.token)}>
-                                            <Button iconLeft transparent dark onPress={() => this.unsubscribe(item, this.props.token)}>
-                                                <Icon name='md-notifications-off' style={styles.menuIcon} />
-                                                <Text style={styles.menuText}>Unsubscribe to Notifications</Text>
+                                    }
+                                    {
+                                        (item.type === 'post' || item.type === 'user-petition') && <MenuOption onSelect={() => this.notify(item)}>
+                                            <Button iconLeft transparent dark onPress={() => this.notify(item)}>
+                                                <Icon name='md-share' style={styles.menuIcon} />
+                                                <Text style={styles.menuText}>Share this post directly to followers</Text>
                                             </Button>
                                         </MenuOption>
-                                    )
-                                        
-                                }
-                                {
-                                    !isAuthor && canUnfollow &&
-                                    <MenuOption onSelect={() => this.mute(item)}>
-                                        <Button iconLeft transparent dark onPress={() => this.mute(item)}>
-                                            <Icon name='md-volume-off' style={styles.menuIcon} />
-                                            <Text style={styles.menuText}>Mute Notifications from this User</Text>
-                                        </Button>
-                                    </MenuOption>
-                                }
-                                {
-                                    (item.type === 'post' || item.type === 'user-petition') && <MenuOption onSelect={() => this.notify(item)}>
-                                        <Button iconLeft transparent dark onPress={() => this.notify(item)}>
-                                            <Icon name='md-share' style={styles.menuIcon} />
-                                            <Text style={styles.menuText}>Share this post directly to followers</Text>
-                                        </Button>
-                                    </MenuOption>
-                                }
-                                {
-                                    canInviteUpvoters &&
-                                    <MenuOption onSelect={() => this.inviteUpvoters(item)}>
-                                        <Button iconLeft transparent dark onPress={() => this.inviteUpvoters(item)}>
-                                            <Image source={require("img/invite_upvoters.png")} style={[styles.upvotersIcon]} />
-                                            <Text style={styles.menuText}>Invite Upvoters to a Group</Text>
-                                        </Button>
-                                    </MenuOption>
-                                }
-                                {
-                                    !isAuthor && canFollow &&
-                                    <MenuOption onSelect={() => this.followAuthor(this.props.item)}>
-                                        <Button iconLeft transparent dark onPress={() => this.followAuthor(this.props.item)}>
-                                            <View style={styles.buttonContainer}>
-                                                <Icon name='ios-person' style={styles.activeIconLarge} />
-                                                <Icon name='ios-add-circle-outline' style={styles.activeIconSmall} />
-                                            </View>
-                                            <Text style={styles.menuText}>Follow this person</Text>
-                                        </Button>
-                                    </MenuOption>
-                                }
-                                {
-                                    canUnfollow &&
-                                    <MenuOption onSelect={() => this.unfollowAuthor(this.props.item)}>
-                                        <Button iconLeft transparent dark onPress={() => this.unfollowAuthor(this.props.item)}>
-                                            <View style={styles.buttonContainer}>
-                                                <Icon name='ios-person' style={styles.activeIconLarge} />
-                                                <Icon name='ios-remove-circle-outline' style={styles.activeIconSmall} />
-                                            </View>
-                                            <Text style={styles.menuText}>Unfollow this person</Text>
-                                        </Button>
-                                    </MenuOption>
-                                }
-                                {
-                                    this.isGroupOwnerOrManager(item) && !isBoosted &&
-                                    <MenuOption onSelect={() => this.boost(item)}>
-                                        <Button iconLeft transparent dark onPress={() => this.boost(item)}>
-                                            <Icon name='md-flash' style={styles.menuIcon} />
-                                            <Text style={styles.menuText}>Boost Post</Text>
-                                        </Button>
-                                    </MenuOption>
-                                }
-                                {
-                                    isAuthor && !isBoosted &&
-                                    <MenuOption onSelect={() => this.edit(item)}>
-                                        <Button iconLeft transparent dark onPress={() => this.edit(item)}>
-                                            <Icon name='md-create' style={styles.menuIcon} />
-                                            <Text style={styles.menuText}>Edit Post</Text>
-                                        </Button>
-                                    </MenuOption>
-                                }
-                                {
-                                    isAuthor && !isBoosted &&
-                                    <MenuOption onSelect={() => this.delete(item)}>
-                                        <Button iconLeft transparent dark onPress={() => this.delete(item)}>
-                                            <Icon name='md-trash' style={styles.menuIcon} />
-                                            <Text style={styles.menuText}>Delete Post</Text>
-                                        </Button>
-                                    </MenuOption>
-                                }
-                                {
-                                    canSpam &&
-                                    <MenuOption onSelect={() => this.spam(item)}>
-                                        <Button iconLeft transparent dark onPress={() => this.spam(item)}>
-                                            <Image source={require("img/spam.png")} style={styles.upvotersIcon} />
-                                            <Text style={styles.menuText}>Report As Spam</Text>
-                                        </Button>
-                                    </MenuOption>
-                                }
-                                {
-                                    !isAuthor && <MenuOption onSelect={() => this.block(item)}>
-                                        <Button iconLeft transparent dark onPress={() => this.block(item)}>
-                                            <Icon name='ios-close-circle-outline' style={styles.menuIcon} />
-                                            {/* <Image source={require("img/spam.png")} style={styles.upvotersIcon} /> */}
-                                            <Text style={styles.menuText}>Block User</Text>
-                                        </Button>
-                                    </MenuOption>
-                                }
-                            </MenuOptions>
-                        </Menu>
+                                    }
+                                    {
+                                        canInviteUpvoters &&
+                                        <MenuOption onSelect={() => this.inviteUpvoters(item)}>
+                                            <Button iconLeft transparent dark onPress={() => this.inviteUpvoters(item)}>
+                                                <Image source={require("img/invite_upvoters.png")} style={[styles.upvotersIcon]} />
+                                                <Text style={styles.menuText}>Invite Upvoters to a Group</Text>
+                                            </Button>
+                                        </MenuOption>
+                                    }
+                                    {
+                                        !isAuthor && canFollow &&
+                                        <MenuOption onSelect={() => this.followAuthor(this.props.item)}>
+                                            <Button iconLeft transparent dark onPress={() => this.followAuthor(this.props.item)}>
+                                                <View style={styles.buttonContainer}>
+                                                    <Icon name='ios-person' style={styles.activeIconLarge} />
+                                                    <Icon name='ios-add-circle-outline' style={styles.activeIconSmall} />
+                                                </View>
+                                                <Text style={styles.menuText}>Follow this person</Text>
+                                            </Button>
+                                        </MenuOption>
+                                    }
+                                    {
+                                        canUnfollow &&
+                                        <MenuOption onSelect={() => this.unfollowAuthor(this.props.item)}>
+                                            <Button iconLeft transparent dark onPress={() => this.unfollowAuthor(this.props.item)}>
+                                                <View style={styles.buttonContainer}>
+                                                    <Icon name='ios-person' style={styles.activeIconLarge} />
+                                                    <Icon name='ios-remove-circle-outline' style={styles.activeIconSmall} />
+                                                </View>
+                                                <Text style={styles.menuText}>Unfollow this person</Text>
+                                            </Button>
+                                        </MenuOption>
+                                    }
+                                    {
+                                        this.isGroupOwnerOrManager(item) && !isBoosted &&
+                                        <MenuOption onSelect={() => this.boost(item)}>
+                                            <Button iconLeft transparent dark onPress={() => this.boost(item)}>
+                                                <Icon name='md-flash' style={styles.menuIcon} />
+                                                <Text style={styles.menuText}>Boost Post</Text>
+                                            </Button>
+                                        </MenuOption>
+                                    }
+                                    {
+                                        isAuthor && !isBoosted &&
+                                        <MenuOption onSelect={() => this.edit(item)}>
+                                            <Button iconLeft transparent dark onPress={() => this.edit(item)}>
+                                                <Icon name='md-create' style={styles.menuIcon} />
+                                                <Text style={styles.menuText}>Edit Post</Text>
+                                            </Button>
+                                        </MenuOption>
+                                    }
+                                    {
+                                        isAuthor && !isBoosted &&
+                                        <MenuOption onSelect={() => this.delete(item)}>
+                                            <Button iconLeft transparent dark onPress={() => this.delete(item)}>
+                                                <Icon name='md-trash' style={styles.menuIcon} />
+                                                <Text style={styles.menuText}>Delete Post</Text>
+                                            </Button>
+                                        </MenuOption>
+                                    }
+                                    {
+                                        canSpam &&
+                                        <MenuOption onSelect={() => this.spam(item)}>
+                                            <Button iconLeft transparent dark onPress={() => this.spam(item)}>
+                                                <Image source={require("img/spam.png")} style={styles.upvotersIcon} />
+                                                <Text style={styles.menuText}>Report As Spam</Text>
+                                            </Button>
+                                        </MenuOption>
+                                    }
+                                    {
+                                        !isAuthor && <MenuOption onSelect={() => this.block(item)}>
+                                            <Button iconLeft transparent dark onPress={() => this.block(item)}>
+                                                <Icon name='ios-close-circle-outline' style={styles.menuIcon} />
+                                                {/* <Image source={require("img/spam.png")} style={styles.upvotersIcon} /> */}
+                                                <Text style={styles.menuText}>Block User</Text>
+                                            </Button>
+                                        </MenuOption>
+                                    }
+                                </MenuOptions>
+                            </Menu>
+                        </MenuProvider>
                     </Right>
                 </Left>
             </View>
