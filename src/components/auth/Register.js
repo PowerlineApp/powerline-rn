@@ -554,7 +554,7 @@ class Register extends React.Component {
       <Content keyboardShouldPersistTaps="handled">
         <Container keyboardShouldPersistTaps="handled" style={styles.container}>
           <ScrollView keyboardShouldPersistTaps="handled">
-            <Text style={styles.titleText}>Enter your contact details.</Text>
+            <Text style={styles.titleText}>Enter your contact details. ⃰</Text>
             <Text style={styles.descriptionText}>You're almost done!</Text>
             <View style={styles.formContainer}>
               <Text style={[styles.requireText, { textAlign: "left" }]}>
