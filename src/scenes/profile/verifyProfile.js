@@ -29,6 +29,7 @@ import DatePicker from 'react-native-datepicker';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Form from 'react-native-form';
 import CountryPicker from 'react-native-country-picker-modal';
+import CountrySelect from '../../components/CountrySelect';
 
 import PhoneVerification from '../../components/auth/PhoneVerification';
 const googlePlacesKey = 'AIzaSyBQOJDsIGt-XxuSNI7Joe1KRpAOJwDAEQE';
@@ -397,14 +398,16 @@ class VerifyProfile extends Component {
                                 onChangeText={(v) => this.onChange(v, 'state')}
                                 underlineColorAndroid={'transparent'}
                         />
-                            <TextInput
-                                placeholder='Country'
-                                style={styles.textInput}
-                                autoCorrect={false}
-                                value={country}
-                                onChangeText={(v) => this.onChange(v, 'country')}
-                                underlineColorAndroid={'transparent'}
-                        />
+                            <View style={[styles.textInput, styles.pickerContainer]}>
+                                <CountrySelect
+                                    value={country}
+                                    styles={styles.picker}
+                                    onChange={value => {
+                                        this.onChange(value, 'country');
+                                    }}
+                                    header={'Country'}
+                                />
+                            </View>
                             <TextInput
                                 placeholder='Email'
                                 style={styles.textInput}
@@ -663,7 +666,16 @@ const styles = {
         fontFamily: 'Helvetica',
         fontWeight: 'bold',
         paddingRight: 10
-    }
+    },
+    pickerContainer: {
+        paddingHorizontal: 2,
+    },
+    picker: {
+        height: '100%',
+        width: '100%',
+        fontSize: 14,
+        color: PLColors.lightText,
+    },
 };
 
 const mapState = (state) => ({
