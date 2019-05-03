@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, TextInput, TouchableOpacity, Alert, ScrollView, BackHandler, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, TextInput, TouchableOpacity, Alert, ScrollView, BackHandler, ActivityIndicator } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import { connect } from 'react-redux';
 import {
@@ -29,6 +29,7 @@ import DatePicker from 'react-native-datepicker';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Form from 'react-native-form';
 import CountryPicker from 'react-native-country-picker-modal';
+import { MenuContext } from "react-native-popup-menu";
 
 import PhoneVerification from '../../components/auth/PhoneVerification';
 const googlePlacesKey = 'AIzaSyBQOJDsIGt-XxuSNI7Joe1KRpAOJwDAEQE';
@@ -79,14 +80,26 @@ class VerifyProfile extends Component {
         return false;
     }
 
-    updateUser() {
+    updateUser = () => {
         let {zip, address1, address2, city, state, email, country, phone, birth, user: {avatar_file_name}, countryInfo: {callingCode}} = this.state;
         this.setState({loading: true})
-        console.log('updating => ', {zip, address1, address2, city, state, email, country, phone: '+' + callingCode + phone, birth, avatar_file_name});
-        updateUserProfile(this.props.token, {zip, address1, address2, city, state, email, country, phone: '+' + callingCode + phone, birth, avatar_file_name})
+        const json = {
+            zip,
+            address1,
+            address2,
+            city,
+            state,
+            email,
+            country,
+            phone: phone.indexOf('+') > -1 ? phone : ('+' + callingCode + phone),
+            birth,
+            avatar_file_name
+        }
+        console.log('updating > ', json)
+        updateUserProfile(this.props.token, json)
         .then(response => {
             this.setState({loading: false})
-            console.log('response from updating user profile', response)
+            console.log('updating > res', response)
             Actions.pop();
             Actions.profile();
         })
@@ -95,11 +108,13 @@ class VerifyProfile extends Component {
             console.log('err', err)});
     }
 
-    updateUserAvatar(image) {
-        this.setState(state => {
-            state.user.avatar_file_name = image.path
-            return state
-        })
+    updateUserAvatar = (image) => {
+        this.setState(state => ({
+            user: {
+                ...state.user,
+                avatar_file_name: image.path
+            }
+        }))
         // updateUserProfile(this.props.token, {avatar_file_name: image.data})
     }
 
@@ -299,170 +314,182 @@ class VerifyProfile extends Component {
         if (this.state.showPhoneScreen){
             return this.renderPhoneScreen();
         }
-
         let {zip, address1, address2, city, state, email, country, phone, facebook_id, birth} = this.state
-        console.log({zip, address1, address2, city, state, email, country, phone, birth})
-            return (
-            <Content contentContainerStyle={{alignItems: 'center', marginTop: 20}}>
-                <View style={{flexDirection: 'row', justifyContent: 'space-around', justifyContent: 'center'}}>
-                    <View style={{flex: 2}}>
-                        <Button transparent onPress={() => Actions.pop()} style={{ width: 60, height: 50 }}  >
-                            <Icon active name='arrow-back' style={{ color: '#6A6AD5' }} />
+        return (
+            <View style={{flex: 1}}>
+                <Header searchBar rounded style={styles.header}>
+                    <Left style={{
+                            flex: 1,
+                            paddingLeft: 10,
+                            width: 50,
+                            alignItems: "center",
+                            justifyContent: "center"
+                        }} >
+                        <Button style={{ width: "100%" }} transparent onPress={Actions.pop}>
+                        <Icon active name="arrow-back" style={{ color: "white" }} />
                         </Button>
-                    </View>
-                    <View style={{flex: 10, alignItems: 'center', justifyContent: 'center'}}>
-                        <Thumbnail source={{uri: this.state.user.avatar_file_name}} />
-                        <View style={{position: 'absolute', alignItems: 'center', alignSelf:'center', width: 25, height: 25, borderRadius: 30, flex: 1, zIndex: 3, marginTop: 16, backgroundColor: '#eeeeee70'}}>
-                            <ImageSelector onConfirm={(i) => this.updateUserAvatar(i)} iconSize={20} iconColor='#000' onError={err => console.log(err)}/>
-                        </View> 
-                    </View>
-                    <View style={{flex: 2}} />
-                </View>
-                <Card style={{alignItems: 'center', marginBottom: 40}}>
-                    <ScrollView keyboardShouldPersistTaps="always" contentContainerStyle={{alignItems: 'center', paddingBottom: 20}}>
-                    <View style={{padding: 20}}>
-                        <Label>Verify or Complete your data</Label>
-                    </View>
-
-                    <GooglePlacesAutocomplete
-                        placeholder='Zipcode'
-                        minLength={2}
-                        autoFocus={false}
-                        getDefaultValue={() => ''}
-                        placeholder={this.state.zip}
-                        textInputProps={{
-                            onChangeText: (text) => {this.onChangeZip(text); this.setState({listViewDisplayed: true})},
-                            onBlur: (a) => {this.setState({listViewDisplayed: false})},
-                            autoFocus: false
-                        }}
-                        returnKeyType={'done'}
-                        listViewDisplayed={this.state.listViewDisplayed}
-                        fetchDetails={true}
-                        renderDescription={(row) =>{console.log('row', row); return row.description}}
-                        onPress={(data, details, any) => {console.log(any); this.onAutoComplete(data, details); }}                      
-                        query={{
-                            key: googlePlacesKey,
-                            language: 'en',
-                            components: this.state.country ? `country:${this.state.country}` : '',
-                            types: '(regions)'
-                        }}
-                        ref={(zipobj) => {
-                            this.state.autoZip = zipobj;
-                        }}
-                        styles={{
-                            container: styles.autoContainer,
-                            textInputContainer: styles.autoTextInputContainer,
-                            textInput: styles.autoTextInput,
-                            description: styles.autoDescription,
-                            predefinedPlacesDescription: styles.autoPredefinedPlacesDescription,
-                            listView: {
-                                height: 200,
-                                width: '100%'
-                            }
-                        }}
-                        currentLocation={false}                        
-                        nearbyPlacesAPI='GoogleReverseGeocoding'
-                        filterReverseGeocodingByTypes={['postal_code']}
-                        debounce={200}
-                    />
-                            <TextInput
-                                placeholder='Address 1'
-                                autoCorrect={false}
-                                style={styles.textInput}
-                                value={address1}
-                                onChangeText={(v) => this.onChange(v, 'address1')}
-                                underlineColorAndroid={'transparent'}
-                            />
-                            <TextInput
-                                placeholder='Address 2'
-                                style={styles.textInput}
-                                autoCorrect={false}
-                                value={address2}
-                                onChangeText={(v) => this.onChange(v, 'address2')}
-                                underlineColorAndroid={'transparent'}
-                            />
-                            <TextInput
-                                placeholder='City'
-                                style={styles.textInput}
-                                autoCorrect={false}
-                                value={city}
-                                onChangeText={(v) => this.onChange(v, 'city')}
-                                underlineColorAndroid={'transparent'}
-                        />
-                            <TextInput
-                                placeholder='State'
-                                style={styles.textInput}
-                                autoCorrect={false}
-                                value={state}
-                                onChangeText={(v) => this.onChange(v, 'state')}
-                                underlineColorAndroid={'transparent'}
-                        />
-                            <TextInput
-                                placeholder='Country'
-                                style={styles.textInput}
-                                autoCorrect={false}
-                                value={country}
-                                onChangeText={(v) => this.onChange(v, 'country')}
-                                underlineColorAndroid={'transparent'}
-                        />
-                            <TextInput
-                                placeholder='Email'
-                                style={styles.textInput}
-                                autoCorrect={false}
-                                value={email}
-                                keyboardType={'email-address'}
-                                onChangeText={(v) => this.onChange(v, 'email')}
-                                underlineColorAndroid={'transparent'}
-                            />
-                            <View style={styles.fieldContainer}>
+                    </Left>
+                    <Body style={{ alignItems: "center", flex: 5 }}>
+                        <Title style={{ color: 'white' }}>Verify your profile</Title>
+                    </Body>
+                    <Right style={{flex: 1}} />
+                </Header>
+                <ScrollView keyboardShouldPersistTaps="always" contentContainerStyle={{alignItems: 'center', paddingHorizontal: 8}}>
+                    <Card style={{alignItems: 'flex-start', marginVertical: 8, marginHorizontal: 12, padding: 6, padding: 20}}>
+                        <View style={{flexDirection: 'row', justifyContent: 'space-around', justifyContent: 'center'}}>
+                            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                                <Thumbnail source={{uri: this.state.user.avatar_file_name}} />
+                                <View style={{position: 'absolute',
+                                            backgroundColor: '#999999DD',
+                                            alignItems: 'center',
+                                            alignSelf:'center',
+                                            width: 30,
+                                            height: 30,
+                                            top: '60%',
+                                            right: '40%',
+                                            borderRadius: 30,
+                                            zIndex: 3}}>
+                                    <ImageSelector icon='md-create' onConfirm={this.updateUserAvatar} iconSize={20} iconColor={PLColors.main} onError={err => console.log(err)}/>
+                                </View> 
+                            </View>
+                        </View>
+                        <View style={{padding: 20}}>
+                            <Label>Complete your data to verify your profile</Label>
+                        </View>
+                        <Label style={{textAlign: 'left', fontSize: 14}}>Zip code</Label>
+                        <GooglePlacesAutocomplete
+                            placeholder='Zipcode'
+                            minLength={2}
+                            autoFocus={false}
+                            getDefaultValue={() => ''}
+                            placeholder={this.state.zip}
+                            textInputProps={{
+                                onChangeText: (text) => {this.onChangeZip(text); this.setState({listViewDisplayed: true})},
+                                onBlur: (a) => {this.setState({listViewDisplayed: false})},
+                                autoFocus: false
+                            }}
+                            returnKeyType={'done'}
+                            listViewDisplayed={this.state.listViewDisplayed}
+                            fetchDetails={true}
+                            renderDescription={(row) => row.description}
+                            onPress={(data, details, any) => {this.onAutoComplete(data, details); }}                      
+                            query={{
+                                key: googlePlacesKey,
+                                language: 'en',
+                                components: this.state.country ? `country:${this.state.country}` : '',
+                                types: '(regions)'
+                            }}
+                            ref={(zipobj) => {
+                                this.state.autoZip = zipobj;
+                            }}
+                            styles={{
+                                container: styles.autoContainer,
+                                textInputContainer: styles.autoTextInputContainer,
+                                textInput: styles.autoTextInput,
+                                description: {position: 'relative', flex: 1, color: PLColors.main, height: 50, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: '#000'},
+                                predefinedPlacesDescription: styles.autoPredefinedPlacesDescription,
+                                listView: {
+                                    height: 180,
+                                    marginTop: 45,
+                                    position: 'absolute',
+                                    backgroundColor: '#ffffffEE',
+                                    zIndex: 5,
+                                    width: '100%'
+                                }
+                            }}
+                            currentLocation={false}                        
+                            nearbyPlacesAPI='GoogleReverseGeocoding'
+                            filterReverseGeocodingByTypes={['postal_code']}
+                            debounce={200} />
+                        <Label style={{textAlign: 'left', fontSize: 14, marginTop: 8}}>Address</Label>
+                        <TextInput
+                            placeholder='Address line 1'
+                            autoCorrect={false}
+                            style={styles.textInput}
+                            value={address1}
+                            onChangeText={(v) => this.onChange(v, 'address1')}
+                            underlineColorAndroid={'transparent'} />
+                        <TextInput
+                            placeholder='Address line 2'
+                            style={styles.textInput}
+                            autoCorrect={false}
+                            value={address2}
+                            onChangeText={(v) => this.onChange(v, 'address2')}
+                            underlineColorAndroid={'transparent'} />
+                        <Label style={{textAlign: 'left', fontSize: 14, marginTop: 8}}>City</Label>
+                        <TextInput
+                            placeholder='City'
+                            style={styles.textInput}
+                            autoCorrect={false}
+                            value={city}
+                            onChangeText={(v) => this.onChange(v, 'city')}
+                            underlineColorAndroid={'transparent'} />
+                        <Label style={{textAlign: 'left', fontSize: 14, marginTop: 8}}>State</Label>
+                        <TextInput
+                            placeholder='State'
+                            style={styles.textInput}
+                            autoCorrect={false}
+                            value={state}
+                            onChangeText={(v) => this.onChange(v, 'state')}
+                            underlineColorAndroid={'transparent'} />
+                        <Label style={{textAlign: 'left', fontSize: 14, marginTop: 8}}>Country</Label>                        
+                        <TextInput
+                            placeholder='Country'
+                            style={styles.textInput}
+                            autoCorrect={false}
+                            value={country}
+                            onChangeText={(v) => this.onChange(v, 'country')}
+                            underlineColorAndroid={'transparent'} />
+                        <Label style={{textAlign: 'left', fontSize: 14, marginTop: 8}}>Email</Label>                        
+                        <TextInput
+                            placeholder='Email'
+                            style={styles.textInput}
+                            autoCorrect={false}
+                            value={email}
+                            keyboardType={'email-address'}
+                            onChangeText={(v) => this.onChange(v, 'email')}
+                            underlineColorAndroid={'transparent'} />
+                        <Label style={{textAlign: 'left', fontSize: 14, marginTop: 8}}>Date of birth</Label>
+                        <View style={styles.fieldContainer}>
                             <DatePicker 
                                 showIcon={false}
                                 mode='date'
                                 format='YYYY-MM-DD'
-                                style={{flex: 1}}
+                                style={{flex: 1, minWidth: '100%', margin: 0}}
                                 customStyles={{
                                     dateInput: {
-                                        width: '100%', flex: 1,textAlign: 'center', padding: 0, borderWidth: 0, color: PLColors.lightText
+                                        minWidth: '100%', flex: 1, paddingLeft: 14, borderWidth: 0, color: PLColors.lightText, alignItems: 'flex-start'
                                     },
                                     placeholderText: {
-                                        color: PLColors.lightText, fontSize: 17, marginLeft: 20
+                                        color: PLColors.lightText, fontSize: 17
                                     },
                                     dateText: {
-                                        fontSize: 14, fontWeight: '400', color: PLColors.lightText, marginLeft: 20
+                                        fontSize: 14, fontWeight: '400', color: PLColors.lightText, textAlign: 'left'
                                     }}}
                                 onDateChange={date => this.setState({date, birth: new Date(date).toISOString()})}
                                 date={this.state.date}
                                 confirmBtnText='Confirm'
-                                cancelBtnText='Cancel'
-                            />
-                            </View>
+                                cancelBtnText='Cancel' />
+                        </View>
                         {
                             !this.props.profile.phone && this._renderPhonePicker()
-                            // <TextInput
-                            //     placeholder='Phone Number'
-                            //     style={styles.textInput}
-                            //     autoCorrect={false}
-                            //     value={this.state.phone}
-                            //     onChangeText={(v) => this.onChange(v, 'phone')}
-                            //     underlineColorAndroid={'transparent'}
-                            // />
                         }
-                        <View style={{padding: 20}}>
-                            <Text style={{fontSize: 10, color: 'grey'}}>We may occasionally contact you via e-mail, but we will never sell your information.</Text>
+                        <View style={{alignSelf: 'center'}}>
+                            <View style={{padding: 20}}>
+                                <Text style={{fontSize: 10, color: 'grey'}}>We may occasionally contact you via e-mail, but we will never sell your information.</Text>
+                            </View>
+                            {
+                                this.state.loading
+                                ? <ActivityIndicator color={'#020860'} animating={this.state.sending} />
+                                : 
+                                <PLButton
+                                caption={'Update profile'}
+                                onPress={this.updateUser} />
+                            }
                         </View>
-                    {
-                        this.state.loading
-                        ? <ActivityIndicator color={'#020860'} animating={this.state.sending} />
-                        : 
-                        <PLButton
-                        caption={'Update profile'}
-                        onPress={() => this.updateUser()}
-                        />
-                    }
-                    </ScrollView>
-                    
-                </Card>
-            </Content>
+                    </Card>
+                </ScrollView>
+            </View>
         );
     }
 }
@@ -498,11 +525,11 @@ const styles = {
         color: '#ff0000'
     },
     textInput: {
-        marginTop: 5,
+        marginTop: 8,
         borderRadius: 5,
         borderWidth: 0.5,
-        width: '80%',
-        minWidth: 300,
+        flex: 1,
+        minWidth: '100%',
         borderColor: PLColors.textInputBorder,
         paddingHorizontal: 10,
         backgroundColor: PLColors.textInputBackground,
@@ -514,15 +541,16 @@ const styles = {
         // backgroundColor: 'transparent'
     },
     fieldContainer: {
-        marginTop: 5,
+        marginTop: 8,
         height: 44,
         borderRadius: 5,
         borderWidth: 0.5,
-        width: '80%',
-        minWidth: 300,
+        // paddingHorizontal: 10,
+        // width: '80%',
+        // minWidth: 300,
         borderColor: PLColors.textInputBorder,
         justifyContent: "center",
-        paddingHorizontal: 10,
+        // paddingHorizontal: 12,
         backgroundColor: PLColors.textInputBackground,
         flexDirection: 'row'
     },
@@ -586,8 +614,7 @@ const styles = {
     },
     autoContainer: {
         marginTop: 5,
-        width: '83%',
-        minWidth: 300,
+        width: '100%',
     },
     autoTextInputContainer: {
         borderRadius: 5,
@@ -616,11 +643,7 @@ const styles = {
         flex: 1
     },
     header: {
-        textAlign: 'center',
-        marginTop: 60,
-        fontSize: 22,
-        margin: 20,
-        color: '#4A4A4A',
+        backgroundColor: PLColors.main
     },
     form: {
         margin: 20

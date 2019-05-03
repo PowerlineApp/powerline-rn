@@ -41,14 +41,13 @@ class PLImageSelector extends Component {
     }
 
     render() {
-        console.log('=>', this.state);
         return (
             <TouchableOpacity transparent onPress={this.selectImage}>
                 {/* <Icon name='camera'  /> */}
                 <View style={styles.imageContainer}>
                     <Thumbnail source={{uri: this.props.image}} square />
                     <View style={styles.iconContainer}>
-                        <Icon name='camera' style={{
+                        <Icon name={this.props.icon || 'camera'} style={{
                             color: this.props.iconColor,
                             backgroundColor: 'rgba(0,0,0,0)',
                             fontSize: this.props.iconSize
