@@ -23,7 +23,7 @@ import {
     Tabs,
     Tab
 } from 'native-base';
-
+import { TouchableOpacity } from 'react-native';
 import {
     MenuContext
 } from 'react-native-popup-menu';
@@ -35,6 +35,12 @@ import SearchUsers from './users';
 import SearchHashtags from './hashtags';
 import {Mixpanel} from 'PLEnv';
 
+const initialState = {
+    search: '',
+    groups: [],
+    users: [],
+    posts: [],
+};
 
 class Search extends Component {
     static defaultProps = {
@@ -45,11 +51,9 @@ class Search extends Component {
         super(props);
 
         this.state = {
-            search: props.search?props.search: '',
-            groups: [],
-            users: [],
-            posts: [],
-        }
+            ...initialState,
+            search: props.search ? props.search: '',
+        };
 
         this.onQuery(props.search?props.search: '');
         this.onRemoveUser = this.onRemoveUser.bind();
@@ -113,6 +117,10 @@ class Search extends Component {
         });
     }
 
+    onClear = () => {
+        this.setState({ ...initialState });
+    };
+
     render() {
         return (
             <Container style={styles.container}>
@@ -124,7 +132,13 @@ class Search extends Component {
                     </Left>
                     <Item style={styles.searchBar}>
                         <Input style={styles.searchInput} autoFocus placeholder="Search groups, people, topics" value={this.state.search} onChangeText={(text) => this.onChangeText(text)} selectTextOnFocus={true} />
-                        <Icon active name="search"/>
+                        {this.state.search ?
+                          <TouchableOpacity onPress={this.onClear}>
+                            <Icon active ios="ios-close" android="md-close" />
+                          </TouchableOpacity>
+                          :
+                          <Icon active name="search" />
+                        }
                     </Item>
                 </Header>
                 <Tabs initialPage={this.props.initialPage} locked={true}>
