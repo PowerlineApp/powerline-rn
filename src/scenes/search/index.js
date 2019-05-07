@@ -28,7 +28,7 @@ import {
     MenuContext
 } from 'react-native-popup-menu';
 import styles from './styles';
-import { openDrawer, searchGroup, searchForUsersFollowableByCurrentUser, searchPostsByHashtab } from 'PLActions';
+import { openDrawer, searchGroup, searchForUsersFollowableByCurrentUser, searchPostsByHashtag } from 'PLActions';
 
 import SearchGroups from './groups';
 import SearchUsers from './users';
@@ -66,15 +66,16 @@ class Search extends Component {
 
     //There are three different types of searches. Search by Groups (default view), search for people, and search for posts/hashtags.
     //At the time of this comment, search for posts is not yet developed.
-    async onQuery(text){
-        if(text != ''){
+    async onQuery(text) {
+        if(text != '') {
             //search query
             this.setState({
                 groups: [],
-                users: []
+                users: [],
+                posts: [],
             });
 
-            var { token } = this.props;
+            const { token } = this.props;
             searchForUsersFollowableByCurrentUser(token, text, 1, 20)
             .then(data => {
                 this.setState({
@@ -97,9 +98,9 @@ class Search extends Component {
 
             });
 
-            const postsResult = await searchPostsByHashtab(token, text);
-            if (postsResult.status === 200 & postsResult.ok) {
-                const { payload: posts } = await postsResult.json();
+            const postsResult = await searchPostsByHashtag(token, text);
+            if (postsResult.status === 200 && postsResult.ok) {
+                const posts = await postsResult.json();
                 this.setState({ posts });
             }
         }
