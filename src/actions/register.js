@@ -1,5 +1,6 @@
-var { API_URL } = require('../PLEnv');
-var { Action, ThunkAction } = require('./types');
+import axios from 'axios';
+import { API_URL, OAUTH_URL, clientId, clientSecret } from '../PLEnv';
+import { loadUserProfile } from './users';
 
 //For checking if username taken
 function findByUsernameEmailOrPhone({username, email, phone}){
@@ -240,6 +241,40 @@ function verifyNumber (phone) {
 
 }
 
+const oauthLogin = (username, code) => dispatch => {
+    const params = {
+        url: OAUTH_URL + '/v2/token',
+        method: 'POST',
+        data: {
+            "grant_type": "urn:ietf:params:oauth:grant-type:phone_code",
+            "client_id": clientId,
+            "client_secret": clientSecret,
+            username,
+            code
+        },
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+    };
+    console.log(params);
+    return axios(params)
+      .then(response => {
+          console.log('oauth login response', response);
+          if (response.status === 200) {
+              dispatch({
+                  type: 'GET_OAUTH_TOKEN_SUCCESS',
+                  payload: response.data,
+              });
+              loadUserProfile(response.data.access_token).then(dispatch);
+          } else {
+              dispatch({
+                  type: 'GET_OAUTH_TOKEN_SUCCESS',
+              });
+          }
+      });
+};
+
 module.exports = {
     findByUsernameEmailOrPhone,
     register,
@@ -249,5 +284,6 @@ module.exports = {
     verifyCode,
     sendCode: verifyCode,
     login2,
-    getZipCode
+    getZipCode,
+    oauthLogin,
 };
