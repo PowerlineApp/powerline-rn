@@ -26,6 +26,7 @@ import {
   } from 'native-base';
 
 import Option from './option';
+import PaymentButton from './PaymentButton';
 
 const fundraiserThanksMessage = (amount, date) => (`Thank you! Your $${amount} payment was successful. A receipt has been sent to your e-mail address.`);
 const crowdfundingThanksMessage = (amount, deadline, goal) => (`Thanks for your pledge. You will be charged $${amount} on ${deadline} if  this campaign reaches ${goal} in pledges and a receipt will be e-mailed at that time.`);
@@ -134,19 +135,19 @@ class Options extends Component {
         // return answerPoll(token, id , answerId, answerAmount).then(r );
     }
 
-    sendPayment(){
+    sendPayment = () => {
         this.setState({voting: true});
         this.verifyCardAndSendAnswer();
-    }
+    };
 
-    renderPaymentButton(){
+    renderPaymentButton() {
         return this.state.amount ?
             this.state.voting 
             ? <Spinner color='blue' />
-            : <Button block style={styles.submitButtonContainer} onPress={() => this.sendPayment()} >
-                <Label style={{color: 'white'}}>{`Pay $${this.state.amount} now `}</Label>
-            </Button>
-            
+            : <PaymentButton
+                content={`Swipe to Pay $${this.state.amount} now`}
+                onEndReached={this.sendPayment}
+              />
         : null;
     }
 
