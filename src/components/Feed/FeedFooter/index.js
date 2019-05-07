@@ -150,7 +150,7 @@ class FeedFooter extends Component {
             } else {
                 response = await votePost(this.props.token, item.id, option);
                 console.log('response', response);
-                if (response.status === 200) {
+                if (response.status.toString()[0] === '2') {
                     console.log('dispatching...', this.props);
                     // this.props.dispatch({type: 'UPDATE_ACTIVITY', payload: newItem})
                     this.updateActivity(newItem);
