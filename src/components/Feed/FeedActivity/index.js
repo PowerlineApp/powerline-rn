@@ -4,7 +4,6 @@ import { Card } from 'native-base';
 
 import { showToast } from 'PLToast';
 
-import GestureCard, { directions } from '../../GestureCard';
 import FeedDescription from '../FeedDescription';
 import FeedHeader from '../FeedHeader';
 import FeedMetaData from '../FeedMetaData';
@@ -58,7 +57,6 @@ class FeedActivity extends Component {
         </Card>,
             <FeedCommentPreview key='commentPreview' item={item} />
         ]
-            // </GestureCard>
         );
     }
 
