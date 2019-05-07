@@ -85,11 +85,12 @@ import ShareExtension from "react-native-share-extension";
 import OneSignal from "react-native-onesignal";
 var DeviceInfo = require("react-native-device-info");
 import { Mixpanel } from "../../PLEnv";
+import {listServices} from "../../actions";
 // import { get } from 'http';
 
 const isIOS = Platform.OS === "ios";
 
-const FooterTabButton = ({ badge = 0, active, onPress, name, title }) => {
+const FooterTabButton = ({ badge = 0, active, onPress, icon, title }) => {
   const buttonProps = {
     style: styles.containerTabButton,
     active,
@@ -105,6 +106,8 @@ const FooterTabButton = ({ badge = 0, active, onPress, name, title }) => {
     <Button {...buttonProps}>{children}</Button>
   );
 
+  const iconElement = typeof icon === 'string' ? <Icon active={active} name={icon}/> : icon;
+
   let content = null;
   if (badge > 0) {
     content = (
@@ -112,7 +115,7 @@ const FooterTabButton = ({ badge = 0, active, onPress, name, title }) => {
         <Badge>
           <Text>{badge}</Text>
         </Badge>
-        <Icon active={active} name={name} />
+        {iconElement}
         <Text numberOfLines={1} style={styles.tabText}>
           {title}
         </Text>
@@ -121,7 +124,7 @@ const FooterTabButton = ({ badge = 0, active, onPress, name, title }) => {
   } else {
     content = (
       <NormalButton>
-        <Icon active={active} name={name} />
+        {iconElement}
         <Text numberOfLines={1} style={styles.tabText}>
           {title}
         </Text>
@@ -163,7 +166,8 @@ class Home extends Component {
         tab3: false,
         tab4: true,
         group: "all",
-        search: ""
+        search: "",
+        conciergeServices: [],
       };
     } else {
       this.state = {
@@ -174,6 +178,7 @@ class Home extends Component {
         group: "all",
         search: "",
         isSet: null,
+        conciergeServices: [],
       };
     }
 
@@ -202,6 +207,9 @@ class Home extends Component {
         this.setState({ isSet: false });
       }
     }
+    if (nextProps.conciergeServices && this.state.conciergeServices !== nextProps.conciergeServices.data) {
+      this.setState({ conciergeServices: nextProps.conciergeServices.data });
+    }
   }
 
   componentWillMount() {
@@ -222,6 +230,7 @@ class Home extends Component {
     OneSignal.addEventListener("received", this.onReceived);
     OneSignal.addEventListener("registered", this.onRegistered);
     this.props.fetchConferences(this.props.token);
+    this.props.listServices(this.props.token);
     if (!profile) {
       this.loadCurrentUserProfile();
     }
@@ -616,15 +625,18 @@ class Home extends Component {
     Mixpanel.track("Friends Feed tab selected");
   }
 
-  // Messages Tab
+  // Services Tab
   toggleTab3() {
-    this.setState({
-      tab1: false,
-      tab2: false,
-      tab3: true,
-      tab4: false
-    });
-    Mixpanel.track("Messages tab selected");
+    const { conciergeServices } = this.state;
+    if(conciergeServices && conciergeServices.length > 0) {
+      Actions.push('services', {
+        title: 'Services',
+        back: true
+      });
+    } else {
+      Alert.alert('Error', 'The service is not available. Please try again later');
+    }
+    Mixpanel.track("Services tab selected");
   }
 
   // Notifications Feed Tab
@@ -1082,13 +1094,13 @@ class Home extends Component {
                 Keyboard.dismiss();
                 this.toggleTab1();
               }}
-              name="ios-flash"
+              icon="ios-flash"
               title="NEWSFEED"
             />
             <FooterTabButton
               active={this.state.tab2}
               onPress={() => this.toggleTab2()}
-              name="md-people"
+              icon="md-people"
               title="FRIENDS"
             />
             {/* This is the New Item Menu GH8. Only New Post and New Petition are expected to work at this time */}
@@ -1113,18 +1125,17 @@ class Home extends Component {
                 </MenuOptions>
               </Menu>
             </Button>
-            {/* This is the Messages/Announcements tab. It is not working yet */}
+            {/* This is the Services tab. It works */}
             <FooterTabButton
-              active={this.state.tab3}
               onPress={() => this.toggleTab3()}
-              name="md-mail"
-              title="MESSAGES"
+              icon={<Image source={require("img/service-request.png")} style={[styles.serviceRequestIcon]}/>}
+              title="SERVICES"
             />
             {/* This is the Notifications Feed tab. It should be working. */}
             <FooterTabButton
               active={this.state.tab4}
               onPress={() => this.toggleTab4()}
-              name="md-notifications"
+              icon="md-notifications"
               title="NOTIFICATIONS"
             />
           </FooterTab>
@@ -1156,7 +1167,8 @@ function bindAction(dispatch) {
     loadUserGroups: token => dispatch(loadUserGroups(token)),
     dispatch: a => dispatch(a),
     setGroup: (data, token, id) => dispatch(setGroup(data, token, id)),
-    fetchConferences: token => dispatch(fetchConferences(token))
+    fetchConferences: token => dispatch(fetchConferences(token)),
+    listServices: token => dispatch(listServices(token)),
   };
 }
 
@@ -1182,6 +1194,7 @@ const mapStateToProps = state => ({
   shouldResetHome: state.drawer.shouldResetHome,
   loadingActions: state.activities.loading,
   conferences: state.conferences,
+  conciergeServices: state.conciergeServices,
 });
 
 export default connect(mapStateToProps, bindAction)(Home);

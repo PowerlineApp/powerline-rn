@@ -276,10 +276,13 @@ class GroupJoin extends Component {
                         <Title style={{color: 'white'}}>Group Join</Title>
                     </Body>
                     <Right>
-                        <Button transparent onPress={() => {
+                        <Button
+                          transparent
+                          disabled={!this.validateFields() || !this.state.passcode}
+                          onPress={() => {
                             this.setState({showConfirmationModal: true});
                         }}>
-                            <Label style={{color: 'white'}}>Join</Label>
+                            <Label style={{color: 'white'}}>Next</Label>
                         </Button>
                     </Right>
                 </Header>
@@ -291,8 +294,18 @@ class GroupJoin extends Component {
                                 <View style={styles.avatar} />
                             }
                             <Body>
-                                <Text style={{color: PLColors.main}}>{this.props.data.official_name}</Text>                             
+                                <Text style={{color: PLColors.main}}>{this.props.data.official_name}</Text>
                             </Body>
+                        </ListItem>
+
+                        <ListItem style={styles.listItem}>
+                            <View>
+                                <View style={{ flex: 1, minWidth: '100%' }}>
+                                    <Text style={{ alignSelf: 'flex-start', fontSize: 16 }}>
+                                        The following information is required in order to join this group.
+                                    </Text>
+                                </View>
+                            </View>
                         </ListItem>
                         
                         {this.renderPasscodeInput()}

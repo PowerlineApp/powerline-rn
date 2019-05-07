@@ -10,7 +10,8 @@ import {
     View,
     Text,
     TouchableOpacity,
-    TextInput
+    TextInput,
+    Image
 } from 'react-native'
 import { Actions } from 'react-native-router-flux'
 import Ionicon from 'react-native-vector-icons/Ionicons'
@@ -31,37 +32,37 @@ class SimpleHomeScreen extends React.Component {
         items: [
           {
               label: 'Home',
-              icon: 'md-home',
+              icon: <Image source={require('img/home_icon.png')} style={styles.icon} />,
               onPress: this.gotoFeed
           },
           {
               label: 'Schedule',
-              icon: 'md-calendar',
+              icon: <Image source={require('img/schedule_icon.png')} style={styles.icon} />,
               onPress: this.gotoSchedule
           },
           {
               label: 'Attendees',
-              icon: 'md-contacts',
+              icon: <Image source={require('img/attendees_icon.png')} style={styles.icon} />,
               onPress: this.gotoAttendees
           },
           {
               label: 'Feed',
-              icon: 'md-star',
+              icon: <Image source={require('img/feed_icon.png')} style={styles.icon} />,
               onPress: () => this.gotoFeed(false)
           },
           {
               label: 'New Post',
-              icon: 'md-add',
+              icon: <Image source={require('img/new_post_icon.png')} style={styles.icon} />,
               onPress: this.gotoCreatePost
           },
           {
               label: 'My Reps',
-              icon: 'md-book',
+              icon: <Image source={require('img/my_reps_icon.png')} style={styles.icon} />,
               onPress: this.gotoRepresentatives
           },
           {
               label: 'Services',
-              icon: 'ios-link',
+              icon: <Image source={require('img/link_icon.png')} style={styles.icon} />,
               onPress: () => this.gotoServices()
           }
         ],
@@ -100,7 +101,7 @@ class SimpleHomeScreen extends React.Component {
                       Alert.alert("Error", "The url is invalid");
                     }
                   },  
-                  icon: 'ios-link'
+                  icon: <Image source={require('img/link_icon.png')} style={styles.icon} />
                 })
               })
           }
@@ -281,15 +282,12 @@ class SimpleHomeScreen extends React.Component {
             {this.state.items.map((item, index) => {
                 return (
                     <TouchableOpacity
+                        key={index}
                         style={styles.item}
                         index={item.label}
                         onPress={item.onPress}>
                         <View style={styles.iconContainer}>
-                            <Ionicon
-                                name={item.icon}
-                                size={32}
-                                color="white"
-                            />
+                          {item.icon}
                         </View>
                         <Text style={styles.label}>{item.label}</Text>
                     </TouchableOpacity>
