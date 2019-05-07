@@ -39,23 +39,36 @@ var styles = {
         resizeMode: 'cover'
     }),
     bottomContainer: {
+        justifyContent: 'flex-end',
         marginBottom: 5,
         flexDirection: 'row'
     },
     skipContainer: {
         flex: 1,
-        alignItems: 'flex-start'
+        textAlignVertical: 'bottom',
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     nextContainer: {
         flex: 1,
+        alignItems: 'center'
+    },
+    btnLeft: {
+        height: 150,
+        width: 150,
+        justifyContent: 'flex-end',
+        alignItems: 'flex-start'
+    },
+    btnRight: {
+        height: 150,
+        width: 150,
+        justifyContent: 'flex-end',
         alignItems: 'flex-end'
     },
     nextBtn: {
         color: 'white',
         backgroundColor: 'transparent',
         fontSize: 30,
-        height: 150,
-        width: 150,
         paddingBottom: 15,
         paddingRight: 20,
         textAlign: 'right',
@@ -64,9 +77,8 @@ var styles = {
     skitBtn: {
         color: 'white',
         backgroundColor: 'transparent',
+        justifyContent: 'center',
         fontSize: 30,
-        height: 150,
-        width: 150,
         paddingBottom: 15,
         paddingLeft: 20,
         textAlign: 'left',
@@ -206,7 +218,7 @@ class TourScene extends Component{
                     {
                     pos < this.state.maxPos? 
                     <View style={styles.skipContainer}>
-                        <TouchableOpacity onPress={this.onSkip}>
+                        <TouchableOpacity style={styles.btnLeft} onPress={this.onSkip}>
                             <Text style={styles.skitBtn}>Skip</Text> 
                         </TouchableOpacity> 
                     </View>: null
@@ -214,7 +226,7 @@ class TourScene extends Component{
                     {
                     pos < this.state.maxPos?
                     <View style={styles.nextContainer}>
-                        <TouchableOpacity onPress={this.onNext}>
+                        <TouchableOpacity style={styles.btnRight} onPress={this.onNext}>
                             <Text style={styles.nextBtn}>Next</Text> 
                         </TouchableOpacity>        
                     </View>: null
