@@ -1,248 +1,167 @@
-//This is the tour that the user is brought to immediately after registration. It can also be accessed via burger menu
-//GH65
-
-var React = require('react');
-var {
-    Component,
-} = require('react');
-var {
+import React from 'react';
+import {
+    StyleSheet,
     View,
-    Image,
     Dimensions,
-    TouchableOpacity,
     AsyncStorage,
-    Text
-} = require('react-native');
-var { connect } = require('react-redux');
-var {width, height} = Dimensions.get('window');
-var PLColors = require('PLColors');
-import {Actions} from 'react-native-router-flux'
-import {CachedImage} from "react-native-img-cache";
-import GestureRecognizer from '../../components/GestureRecognizer';
+    Platform,
+    Image,
+} from 'react-native';
+import { Actions } from 'react-native-router-flux'
+import { CachedImage } from 'react-native-img-cache';
+import AppIntroSlider from 'react-native-app-intro-slider';
 
-var styles = {
+const { width, height } = Dimensions.get('window');
+const isIphoneX = Platform.OS === 'ios'
+  && !Platform.isPad
+  && !Platform.isTVOS
+  && (height === 812 || width === 812);
+
+const styles = StyleSheet.create({
     container: {
         backgroundColor: '#55C5FF',
         flex: 1,
         position: 'relative',
         justifyContent: 'flex-end'
     },
-    img: (visible) =>  ({
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        top: 0,
-        bottom: 0,
-        opacity: visible ? 1 : 0,
-        width: width,
-        height: height,
-        resizeMode: 'cover'
-    }),
+    image: {
+        width,
+        height,
+    },
     bottomContainer: {
-        justifyContent: 'flex-end',
         marginBottom: 5,
         flexDirection: 'row'
     },
     skipContainer: {
         flex: 1,
-        textAlignVertical: 'bottom',
-        justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'flex-start'
     },
     nextContainer: {
         flex: 1,
-        alignItems: 'center'
-    },
-    btnLeft: {
-        height: 150,
-        width: 150,
-        justifyContent: 'flex-end',
-        alignItems: 'flex-start'
-    },
-    btnRight: {
-        height: 150,
-        width: 150,
-        justifyContent: 'flex-end',
         alignItems: 'flex-end'
     },
     nextBtn: {
         color: 'white',
         backgroundColor: 'transparent',
-        fontSize: 30,
-        paddingBottom: 15,
-        paddingRight: 20,
-        textAlign: 'right',
-        textAlignVertical: 'bottom'
+        marginRight: 10
     },
     skitBtn: {
         color: 'white',
         backgroundColor: 'transparent',
-        justifyContent: 'center',
-        fontSize: 30,
-        paddingBottom: 15,
-        paddingLeft: 20,
-        textAlign: 'left',
-        textAlignVertical: 'bottom'
+        marginLeft: 10
     },
-
-    goBtnContainer: {
-        marginBottom: (height / 5),        
+    buttonStyle: {
+        height: width / 4,
+        width: width / 3.5,
         alignItems: 'center',
-        justifyContent: 'center',
-        width: width,
-        height: 45,
+        justifyContent: 'flex-end',
     },
-    goBtn: {
-        borderWidth: 2,
-        borderColor: PLColors.activeText,
-        borderRadius: 10,
-        width: 140,
-        height: 45,
-        backgroundColor: 'white',
-        justifyContent: 'center',
-        alignItems: 'center',
+    paginationStyle: {
+        height: width / 4,
+        position: 'absolute',
+        bottom: (isIphoneX ? 34 : 0),
+        left: 0,
+        right: 0,
+        justifyContent: 'flex-end',
     },
-    goTxt: {
-        color: '#006',
-        textAlignVertical: 'top',
-        fontSize: 20,
-    }
-};
+    buttonTextStyle: {
+        fontSize: 22,
+    },
+});
 
-class TourScene extends Component{
-    static navigationOptions = {
-        title: 'Tour',
-        header: null
-    }
+type Screen = {
+    id: number,
+    position: number,
+    source: { uri: string },
+}
 
-    constructor(props){
-        super(props);
-        this.state = {
-            pos: 0,
-            screens: props.screens,
-            maxPos: props.screens ? props.screens.length - 1 : 5
-        };
-    }
+type Props = {
+    screens?: Array<Screen>,
+}
 
-    componentDidMount(){
-        if (this.props.screens){
-            this.setState({maxPos: this.props.screens.length, pos: 0, ready: true})
-        } else {
-            AsyncStorage.getItem('onboarding').then(r => {
-                if (r) {
-                    r = JSON.parse(r);
-                    this.setState({
-                        pos: 0,
-                        maxPos: r.length - 1,
-                        screens: r,
-                        ready: true
-                    });
-                } else {
-                    this.setState({
-                        pos: 0,
-                        maxPos: 5,
-                        ready: true
-                    });
-                }
-            }).catch(e => {
-                this.setState({
-                    pos: 0,
-                    maxPos: 5,
-                    ready: true
-                });
-            })
+type State = {
+    screens: Array<Screen>,
+    maxPos: number,
+    ready: boolean,
+}
+
+class TourScene extends React.Component<Props, State> {
+    static defaultProps = {
+        screens: []
+    };
+
+    state = {
+        screens: this.props.screens,
+        maxPos: this.props.screens.length - 1,
+        ready: this.props.screens.length > 0,
+    };
+
+    componentDidMount() {
+        if (!this.state.ready) {
+            AsyncStorage.getItem('onboarding')
+              .then(res => {
+                  if (res) {
+                      return JSON.parse(res)
+                        .map(screen => {
+                            return { ...screen, source: { uri: screen.image }};
+                        });
+                  } else {
+                      throw new Error('Onboarding screens are not found.');
+                  }
+              })
+              .catch(() => {
+                  return [
+                      { id: 1, position: 1, source: require('../../assets/1.png')},
+                      { id: 2, position: 2, source: require('../../assets/2.png')},
+                      { id: 3, position: 3, source: require('../../assets/3.png')},
+                      { id: 4, position: 4, source: require('../../assets/4.png')},
+                      { id: 5, position: 5, source: require('../../assets/5.png')},
+                      { id: 6, position: 6, source: require('../../assets/6.png')},
+                  ];
+              })
+              .then(screens => {
+                  this.setState({
+                      screens,
+                      maxPos: screens.length - 1,
+                      ready: true,
+                  });
+              })
         }
     }
 
-    onNext = () => {
-        var {pos, maxPos} = this.state;
-        if(pos < maxPos){
-            this.setState({
-                pos: pos + 1
-            });
-        }
+    onSkip = () => {
+        Actions.reset('home');
     };
 
-    onPrev = () => {
-        var {pos} = this.state;
-        if(pos > 0){
-            this.setState({
-                pos: pos - 1
-            });
-        }
+    renderItem = (item) => {
+        return (
+          <CachedImage
+            source={item.source}
+            resizeMode={Image.resizeMode.contain}
+            style={styles.image}
+          />
+        );
     };
 
-    onSkip = () =>{
-        console.log('=>', this.props);
-        if(this.props.navigation && this.props.navigation.state && this.props.navigation.state.params && this.props.navigation.state.params.callback){
-            let { state } = this.props.navigation;
-            let { params } = state;
-            params.callback();
-        }else{
-                this.props.navigation.state.params.onBackPress();
-           Actions.home();
-        }      
-    };
-
-    render(){
+    render() {
         if (!this.state.ready){
-            return <View style={styles.container} />     
-        }
-
-        console.log(this.props);
-        let {pos} = this.state;
-        let imgs = [];
-        if (this.state.screens && this.state.screens.length > 0){
-            imgs = this.state.screens.map((s, i) => {
-                return <CachedImage source={{uri: s.image}} style={styles.img(pos === i)} />
-            })
-        } else {
-            imgs = [
-                <Image source={require('../../assets/1.png')} style={styles.img(pos === 0)}/>,
-                <Image source={require('../../assets/2.png')} style={styles.img(pos === 1)}/>,
-                <Image source={require('../../assets/3.png')} style={styles.img(pos === 2)}/>,
-                <Image source={require('../../assets/4.png')} style={styles.img(pos === 3)}/>,
-                <Image source={require('../../assets/5.png')} style={styles.img(pos === 4)}/>,
-                <Image source={require('../../assets/6.png')} style={styles.img(pos === 5)}/>
-            ];
+            return <View style={styles.container} />
         }
 
         return (
-            <GestureRecognizer
-              style={styles.container}
-              onSwipeLeft={this.onNext}
-              onSwipeRight={this.onPrev}
-            >
-                {imgs[pos]}
-                <View style={styles.bottomContainer}>
-                    {
-                    pos < this.state.maxPos? 
-                    <View style={styles.skipContainer}>
-                        <TouchableOpacity style={styles.btnLeft} onPress={this.onSkip}>
-                            <Text style={styles.skitBtn}>Skip</Text> 
-                        </TouchableOpacity> 
-                    </View>: null
-                    }
-                    {
-                    pos < this.state.maxPos?
-                    <View style={styles.nextContainer}>
-                        <TouchableOpacity style={styles.btnRight} onPress={this.onNext}>
-                            <Text style={styles.nextBtn}>Next</Text> 
-                        </TouchableOpacity>        
-                    </View>: null
-                    }
-                    {
-                    pos === this.state.maxPos ?
-                    <View style={styles.goBtnContainer}>
-                        <TouchableOpacity style={styles.goBtn} onPress={this.onSkip}>
-                            <Text style={styles.goTxt}>Let's Go</Text>
-                        </TouchableOpacity>
-                    </View>: null
-                    }
-                </View>
-            </GestureRecognizer>
-        )
+          <AppIntroSlider
+            renderItem={this.renderItem}
+            doneLabel="Let's Go"
+            onDone={this.onSkip}
+            onSkip={this.onSkip}
+            showSkipButton
+            slides={this.state.screens}
+            buttonStyle={styles.buttonStyle}
+            paginationStyle={styles.paginationStyle}
+            buttonTextStyle={styles.buttonTextStyle}
+          />
+        );
     }
 }
 
-module.exports = connect()(TourScene);
+export default TourScene;
