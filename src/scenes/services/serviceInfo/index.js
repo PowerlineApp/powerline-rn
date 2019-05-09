@@ -63,22 +63,15 @@ class ServiceInfo extends Component {
     
 
     onContinue = async () => {
+        const {memo, reservation_date, reservation_number: persons} = this.state
+        const date = moment(reservation_date).format('YYYY-MM-DD HH:mm:ss')
         const newService = {
-            price: this.state.price,
-            memo: this.state.memo,
-            reservation_details: `${moment(this.state.reservation_date).format('YYYY-MM-DD HH:mm:ss.SSS')} | ${this.state.reservation_number}`
+            memo,
+            reservation: {
+                date, persons
+            }
         }
         this.props.onContinue(newService)
-
-        // this.props.setService(this.props.userDetails.token, this.props.service.id, newService)
-        // .then((res) => {
-        //     if(res.data.status === 200) {
-        //          Alert.alert('Success', 'The request was successful.');
-        //     } else {
-        //         Alert.alert('Failed', 'The request failed.');
-        //     }
-        // })
-        // this.props.onContinue();
     }
     onClose = () => {
         this.props.onClose();
@@ -125,7 +118,7 @@ class ServiceInfo extends Component {
             <View style={styles.numberOfPeopleContainer}>
                 <View>
                     <Text style={styles.reservationLabel}>
-                        Reservation Number
+                        People
                     </Text>
                 </View>
                 <View style={styles.reservationInputContainer}>
@@ -164,7 +157,7 @@ class ServiceInfo extends Component {
                         <View style={styles.item}>
                             {
                                 service.is_ride ? (<Textarea
-                                    style={styles.memoArea}
+                                    style={{height: 0}}
                                     placeholder={this.props.service.memo_placeholder}
                                     value={this.state.price}
                                     editable={this.props.editable}
@@ -210,7 +203,7 @@ class ServiceInfo extends Component {
                                             onPress={this.props.editable ? this._showDateTimePicker : () => {}}
                                             style={styles.dateButton}>
                                             <Text style={styles.dateText}>
-                                                {moment(reservation_date).format('MMMM Do, hh:mm:ss')}
+                                                {moment(reservation_date).format('MMMM Do, hh:mm')}
                                             </Text>
                                         </Button>
                                     </View>

@@ -23,6 +23,7 @@ async function listServices(token): Promise<Action> {
  };
 
 async function setService(token: string, serviceId: string, service: object): Promise<Action>  {
+    console.log(token, serviceId, service)
     try {
         let response = await fetch(`${API_URL}/v2.2/user/concierge-services/${serviceId}`, {
             method: 'PUT',
@@ -30,9 +31,7 @@ async function setService(token: string, serviceId: string, service: object): Pr
                  'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                memo: service.memo
-            })
+            body: JSON.stringify(service)
         });
 
         const action = {

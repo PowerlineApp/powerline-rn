@@ -198,7 +198,7 @@ class Services extends Component {
       >
         <View style={styles.listContainer}>
           <View style={styles.lextText}>
-            <Text style={styles.textColor}>{item.title}</Text>
+            <Text style={styles.textColor}>{item && item.title}</Text>
           </View>
 
           <View style={styles.rightText}>
@@ -216,23 +216,42 @@ class Services extends Component {
 
   choosePaymentType = () => {
     return new Promise((resolve, reject) => {
+      try {
         Alert.alert('Choose payment form', 'This service accepts payments in cash or credit card', [
-            {text: 'Cash', onPress: () => resolve('cash')},
-            {text: 'Credit Card', onPress: () => resolve('cc')}
-        ], {cancelable: false})
+          {text: 'Cash', onPress: () => resolve('cash')},
+          {text: 'Credit Card', onPress: () => resolve('cc')}
+        ], {cancelable: false, onDismiss: e => { console.log('dismissed', e); resolve('ayoo')}})
+      } catch (error) {
+        console.log('lol')
+      }
     })
+  }
+
+  finishRequest = async (service, serviceInfo, paymentType) => {
+    const {token} = this.props.userDetails
+    try {
+      const response = await setService(token, service.id, serviceInfo)
+      console.log(response.data.headers.status[0].toString())
+      if (response.data.headers.status[0].toString() === '4' || response.data.headers.status[0].toString() === '5'){
+        throw new Error('Failed to fetch')
+      }
+      Alert.alert('The service was requested successfully')
+    } catch (error) {
+      console.log('error while updatng service with params, id: ', service.id, 'body: ', serviceInfo)
+      Alert.alert('Failed to request service.')
+    }
   }
 
   showConfirmation = (service, serviceInfo, paymentType, cards) => {
     let text = ''
-      text = `You'll be charged $${service.price} for this service.
+      text = ` \nYou'll be charged $${service && service.price} for this service.
             \n Payment type: ${paymentType === 'cc' ? `Credit Card, ${cards[0].brand} - ${cards[0].last4}` : 'Cash'}
-            \n Reservation: ${serviceInfo.reservation_details}
+            \n Reservation: ${serviceInfo.reservation.date}
             `
     return new Promise((resolve, reject) => {
       Alert.alert(service.title, text, [
-        {text: 'Confirm', onPress: () => this.finishRequest(service, serviceInfo, paymentType)},
-        {text: 'Cancel', onPress: () => {}}
+        {text: 'Cancel', onPress: () => {}},
+        {text: 'Confirm', onPress: () => this.finishRequest(service, serviceInfo, paymentType)}
     ], {cancelable: false})
     })
   }
@@ -259,31 +278,37 @@ class Services extends Component {
   }
 
   onContinue = async (serviceInfo) => {
-    // const finalJson =
     const service = this.state.selectedService
+    this.setState({serviceOfferConfirmVisible: false})
+    if (service.type === 'bluter') return
+
     await this.setState({serviceOfferConfirmVisible: false, showLoadingModal: true})
-    let paymentType
-    let cards
-    if (service.type === 'simple') { // simple type... just continue
-    } else {
-        if (service.type === 'payment') {
-            paymentType = 'none'
-            if (service.payment_type === 'both') { // ask if money or cc
-                paymentType = await this.choosePaymentType()
-            } else {
-                paymentType = service.payment_type
+
+    setTimeout(async () => {
+        let paymentType
+        let cards
+        if (service.type === 'simple') { // simple type... just continue
+        } else if (service.type === 'payment') {
+          paymentType = 'none'
+          if (service.payment_type === 'both') { // ask if money or cc
+              paymentType = await this.choosePaymentType()
+          } else {
+              paymentType = service.payment_type
+          }
+          if (paymentType === 'cc') {  // check if user has a cc setup
+            try {
+              cards = await this.certifyUserHasCreditCard()
+            } catch (error) { // something went wrong certifying user card... abort
+              console.log('error', error)
+              return 
             }
-            if (paymentType === 'cc') {  // check if user has a cc setup
-              try {
-                cards = await this.certifyUserHasCreditCard()
-              } catch (error) { // something went wrong certifying user card... abort
-                return 
-              }
-            }
-        } else if (service.type === 'butler') { // will not handle yet
-        }
-    }
-    this.showConfirmation(service, serviceInfo, paymentType, cards)
+          }
+          setTimeout(async () => {
+            await this.showConfirmation(service, serviceInfo, paymentType, cards)
+          }, 200)
+      } else if (service.type === 'butler') { // will not handle yet
+
+      }}, 200)
   }
 
   onBack = () => {
@@ -348,18 +373,16 @@ class Services extends Component {
         </Content>
 
         {
-          this.state.selectedService &&
-          <Modal visible={this.state.serviceOfferConfirmVisible} transparent>
+          <Modal animationType='fade' visible={!!this.state.selectedService && this.state.serviceOfferConfirmVisible} transparent>
             <ServiceInfo
               onContinue={this.onContinue}
               editable={this.state.serviceInfoEditable}
-              service={this.state.selectedService}
+              service={this.state.selectedService || {}}
               onClose={this.closeModal} />
           </Modal>
         }
         {
-          this.state.selectedService &&
-          <Modal visible={this.state.serviceOfferTryAgainVisible} transparent>
+          <Modal animationType='fade' visible={!!this.state.selectedService && this.state.serviceOfferTryAgainVisible} transparent>
             <View style={styles.overlay}>
               <TouchableOpacity
                 onPress={() => {
@@ -377,7 +400,7 @@ class Services extends Component {
                     Your code was not correct. Try again.
                   </Text>
                   <Text style={styles.serviceOfferTryAgainTitle}>
-                    {this.state.selectedService.title}
+                    {this.state.selectedService && this.state.selectedService.title}
                   </Text>
                   <Input value={this.state.signupCode} onChangeText={(text) => {this.setState({signupCode: text})}} placeholder='Enter your signup code here' style={styles.serviceConfirmInput}/>
                 </View>
@@ -387,8 +410,7 @@ class Services extends Component {
           </Modal>
         }
         {
-          this.state.selectedService &&
-          <Modal visible={this.state.serviceRemoveConfirmVisible} transparent>
+          <Modal animationType='fade' visible={!!this.state.selectedService && this.state.serviceRemoveConfirmVisible} transparent>
             <View style={styles.overlay}>
               <TouchableOpacity
                 onPress={() => {
@@ -403,7 +425,7 @@ class Services extends Component {
                     No longer offer the following service?
                   </Text>
                   <Text style={styles.serviceConfirmTitle}>
-                    {this.state.selectedService.title}
+                    {this.state.selectedService && this.state.selectedService.title}
                   </Text>
                 </View>
                 <View style={styles.buttonPanel}>
@@ -423,7 +445,7 @@ class Services extends Component {
             </View>
           </Modal>
         }
-        <Modal visible={this.state.errorAlertVisible} transparent>
+        <Modal animationType='fade' visible={this.state.errorAlertVisible} transparent>
           <View style={styles.overlay}>
             <View style={styles.errorAlert}>
               <Text style={styles.errorAlertText}>
@@ -444,7 +466,7 @@ class Services extends Component {
             </View>
           </View>
         </Modal>
-        <Modal visible={this.state.isFetching} transparent>
+        <Modal animationType='fade' visible={this.state.isFetching} transparent>
           <View style={styles.overlay}>
             <View style={styles.spinnerContainer}>
               <Spinner/>
@@ -461,7 +483,7 @@ function bindActions(dispatch) {
     // updateUserProfileAsync: userDetails =>
     //   dispatch(updateUserProfileAsync(userDetails, null, false))
     //listServices: token => dispatch(listServices(token)),
-    //setService: service => dispatch(setService(service)),
+    // setService: (token, serviceId, service) => dispatch(setService(token, serviceId, service))
   };
 }
 

@@ -11,6 +11,7 @@ const popupWidth = 300;
 export default {
   overlay: {
     flex: 1,
+    height: '100%',
     backgroundColor: PLColors.darkBackground + 'AA',
     justifyContent: 'center',
     alignItems: 'center'
@@ -19,7 +20,7 @@ export default {
     flex: 1,
     backgroundColor: 'white',
     minWidth: 300,
-    width: '80%',
+    width: '90%',
     margin: 80,
     borderRadius: 10,
     padding: 16,
@@ -104,7 +105,7 @@ export default {
   },
   labelText: {
     color: PLColors.lightText,
-    fontWeight: '350'
+    fontWeight: '300'
   },
   priceText: {
     color: PLColors.greenMoney,
