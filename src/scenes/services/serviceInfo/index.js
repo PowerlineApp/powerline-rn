@@ -59,11 +59,10 @@ class ServiceInfo extends Component {
     }
 
     onContinue = () => {
-        const newService = {
-            price: this.state.price,
-            memo: this.state.memo,
-            reservation_details: `${moment(this.state.reservation_date).format('YYYY-MM-DD HH:mm:ss.SSS')} | ${this.state.reservation_number}`
-        }
+        const { memo, reservation_date, reservation_number: persons } = this.state
+        const date = moment(reservation_date).format('YYYY-MM-DD HH:mm:ss')
+        const newService = {memo, reservation: {date, persons}}
+            // price: this.state.price,
         this.props.setService(this.props.userDetails.token, this.props.service.id, newService)
         .then((res) => {
             if(res.data.status === 200) {
