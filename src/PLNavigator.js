@@ -76,6 +76,9 @@ class PLNavigator extends React.Component {
     closeDrawer: React.PropTypes.func
   };
 
+  shouldComponentUpdate () {
+    return false
+  }
   // componentDidMount(){
   //   Actions.share();
   // }
@@ -99,11 +102,11 @@ class PLNavigator extends React.Component {
   //     this.props.closeDrawer();
   //   // }
   // }
-  componentWillReceiveProps(nextProps) {
-      if (nextProps.isCustom !== this.state.isCustom) {
-          this.setState({ isCustom: nextProps.isCustom });
-      }
-  }
+  // componentWillReceiveProps(nextProps) {
+  //     if (nextProps.isCustom !== this.state.isCustom) {
+  //         this.setState({ isCustom: nextProps.isCustom });
+  //     }
+  // }
 
   _renderScene(props) {
     // eslint-disable-line class-methods-use-this
@@ -184,7 +187,7 @@ class PLNavigator extends React.Component {
           }}
           negotiatePan
         >
-          <MyRouter isCustom={this.state.isCustom} />
+          <MyRouter isCustom={this.props.isCustom} />
         </Drawer>
       </StyleProvider>
     );
@@ -208,13 +211,10 @@ class MyRouter extends Component {
     return true;
   }
   componentWillReceiveProps(nextProps) {
-      if (nextProps.isCustom !== this.state.isCustom) {
-          this.setState({ isCustom: nextProps.isCustom });
-      }
   }
 
   render() {
-    const { isCustom } = this.state;
+    const { isCustom } = this.props;
     return (
       // <RouterWithRedux onBackPress={this.onBackPress} key="router">
       <Router>

@@ -32,28 +32,13 @@ import {
   listServices,
 } from "PLActions";
 
-// console.log = () => {};
-// console.warn = () => {};
-
-// import OneSignal from 'react-native-onesignal';
-// console.log = (a1, a2, a3) => {
-//     let str = a1 ? typeof a1 === 'object' ? JSON.stringify(a1, null, '    ') : a1 || '' : ``;
-//     let str2 = a2 ? typeof a2 === 'object' ? JSON.stringify(a2, null, '    ') : a2 || '' : ``;
-//     let str3 = a3 ? typeof a3 === 'object' ? JSON.stringify(a3, null, '    ') : a3 || '' : ``;
-//     str.split('\n').map(s => console.warn('powerline', s));
-//     str2.split('\n').map(s => console.warn('powerline', s));
-//     str3.split('\n').map(s => console.warn('powerline', s));
-// };
-    // console.warn('powerline-log', a1 ? typeof a1 === 'object' ? JSON.stringify(a1, null, '\t') : a1 || '' : ``, a2 ? typeof a2 === 'object' ? JSON.stringify(a2, null, '\t') : a2 || '' : ``, a3 ? typeof a3 === 'object' ? JSON.stringify(a3, null, '\t') : a3 || '' : ``, a4 ? typeof a4 === 'object' ? JSON.stringify(a4, null, '\t') : a4 || '' : ``, a5 ? typeof a5 === 'object' ? JSON.stringify(a5, null, '\t') : a5 || '' : ``, a6 ? typeof a6 === 'object' ? JSON.stringify(a6, null, '\t') : a6 || '' : ``, a7 ? typeof a7 === 'object' ? JSON.stringify(a7, null, '\t') : a7 || '' : ``, a8 ? typeof a8 === 'object' ? JSON.stringify(a8, null, '\t') : a8 || '' : ``, a9 ? typeof a9 === 'object' ? JSON.stringify(a9, null, '\t') : a9 || '' : ``);};
-// console.warn = (a1, a2, a3, a4, a5, a6, a7, a8, a9) => {console.warn('powerline-log', a1, a2, a3, a4, a5, a6, a7, a8, a9);};
-// console.warn = () => {};
-
 class PLApp extends Component {
     constructor(){
         super();
         this.state = {
             splash: null,
             conferences: null,
+            isCustom: null
         };
     }
     
@@ -78,17 +63,35 @@ class PLApp extends Component {
         const myGroup = 'group.ne.powerline.share';
         RNSKBucket.set('token', this.props.token, myGroup);
 
-        this.props.fetchConferences(this.props.token);
+        // this.props.fetchConferences(this.props.token);
         AppState.addEventListener('change', this.handleAppStateChange);
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.conferences !== this.state.conferences) {
-            console.log('componentWillReceiveProps at PLAPP', nextProps.conferences);
-            this.setState({ conferences: nextProps.conferences });
+
+    shouldComponentUpdate (nextProps, nextState) {
+        const currentData = (this.props.conferences || {data: []}).data.length
+        const incomingData = (nextProps.conferences || {data: []}).data.length
+
+        
+        // console.log(incomingData , this.state.conferences , incomingData, currentData, (incomingData && !this.state.conferences ), (incomingData !== currentData), (incomingData && !this.state.conferences ) || (incomingData !== currentData))
+        // if ((incomingData && !this.state.conferences ) || (incomingData !== currentData)) {
+        //     console.log('yesss')
+        //     this.setState({conferences: nextProps.conferences})
+        //     return true
+        // }
+        // if ((nextState.conferences || {data: []}).data.length !== (this.state.conferences || {data: []}).data.length) {
+        //     console.log('hm hmm')
+        //     return true
+        // }
+        console.log('shouldComponentUpdate', incomingData !== currentData)
+        if (incomingData !== currentData) {
+            return false
         }
-      
+        return true
     }
+
+
+
     componentWillUnmount () {
         AppState.removeEventListener('change', this.handleAppStateChange);
     }
@@ -99,8 +102,10 @@ class PLApp extends Component {
     }
 
     render () {
-        const { conferences } = this.state;
-        
+        // const { conferences } = this.state;
+        const {conferences} = (this.props)
+        console.log(this, this.props)
+
         if (this.state.splash === null) return null;
         if (this.state.splash){
             SplashScreen.hide();
@@ -111,17 +116,21 @@ class PLApp extends Component {
                 {/* <Image source={{uri: this.state.splash}} onError={() => this.setState({splash: false})} /> */}
             </View>;
         }
-        return <Root>
-            {
-                this.props.isLoggedIn && conferences && conferences.data && <PLNavigator isCustom={conferences.data.length > 0} />
-            }
-            {
-                this.props.isLoggedIn && !conferences && <View />
-            }
-            {
-                !this.props.isLoggedIn && <LoginStack />
-            }
-        </Root>;
+
+        if (!this.props.isLoggedIn) {
+            return <Root>
+                <LoginStack />
+            </Root>
+        }
+
+        console.log('render', conferences && conferences.data)
+        if (conferences && conferences.data) {
+            return (<Root>
+                {[<PLNavigator id={conferences.data.length} key={conferences.data.length} isCustom={conferences.data.length > 0} />]}
+            </Root>)
+        }
+
+        return <Root><View /></Root>
     }
 };
 

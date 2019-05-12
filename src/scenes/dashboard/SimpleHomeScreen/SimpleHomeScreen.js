@@ -72,7 +72,7 @@ class SimpleHomeScreen extends React.Component {
 
     componentWillMount() {
       const { token } = this.props;
-      this.props.fetchConferences(token);
+      // this.props.fetchConferences(token);
       this.props.listServices(token).then(data => {
       });
     }
@@ -164,11 +164,22 @@ class SimpleHomeScreen extends React.Component {
             back: true
         });
       } else {
-        this.props.dispatch({
-            type: 'NEWSFEED_STATE',
-            payload: { activeGroup: 'all' }
-        })
-        homeNavigator.instance.pop();
+        // this.props.dispatch({
+        //     type: 'NEWSFEED_STATE',
+        //     payload: { activeGroup: 'all' }
+        // })
+        // homeNavigator.instance.pop();
+        homeNavigator.instance.goTo('originalHome', {
+            content: (
+                <TextInput
+                    style={{ flex: 1, color: 'white' }}
+                    onChangeText={this.onSearchQueryChanged}
+                    placeholder="Search groups, people, topics"
+                    placeholderTextColor="rgba(255, 255, 255, 0.6)"
+                />
+            ),
+            back: true
+        });
       }
     }
 
