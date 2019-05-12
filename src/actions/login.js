@@ -16,59 +16,6 @@ import Mixpanel from 'react-native-mixpanel'
 
 import OneSignal from 'react-native-onesignal';
 
-// deprecated. check method "verifyCode" at ./register! - Felipe
-async function logIn(username: string, password: string): Promise<Action> {
-  try {
-    var response = await fetch(`${API_URL}/secure/login`, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        username: username,
-        password: password,
-      })
-    });
-    var user = await response.json();
-    console.log('USER FROM API - LOGING IN MANUALLY', user);
-    if (user.token) {
-      const action = {
-        type: 'LOGGED_IN',
-        data: {
-          id: user.id,
-          username: user.username,
-          token: user.token,
-          is_registration_complete: user.is_registration_complete,
-        },
-      };
-      return Promise.resolve(action);
-    }
-    else {
-      return Promise.reject(user);
-    }
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-function logInManually(username: string, password: string): ThunkAction {
-  return (dispatch) => {
-    var login = logIn(username, password);
-    login.then(
-      (result) => {
-        console.log('RESULT FROM LOGIN MANUALLY', result)
-        dispatch(result);
-        dispatch(loadUserProfile(result.data.token));
-      }
-    );
-    Mixpanel.identify(username);
-    Mixpanel.track("Manual Login3");
-        
-    return login;
-  }
-}
-
 async function queryFacebookAPI(path, ...args): Promise {
   return new Promise((resolve, reject) => {
     FacebookSDK.api(path, ...args, (response) => {
@@ -284,7 +231,6 @@ function logOutWithPrompt(token): ThunkAction {
 Mixpanel.sharedInstanceWithToken(MixpanelToken);
 
 module.exports = { 
-  logInManually,
   logInWithFacebook,
   forgotPassword,
   logOut,

@@ -60,8 +60,6 @@ class ServiceInfo extends Component {
       }
     }
 
-    
-
     onContinue = async () => {
         const {memo, reservation_date, reservation_number: persons} = this.state
         const date = moment(reservation_date).format('YYYY-MM-DD HH:mm:ss')

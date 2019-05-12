@@ -23,18 +23,24 @@ import {
     Tabs,
     Tab
 } from 'native-base';
-
+import { TouchableOpacity } from 'react-native';
 import {
     MenuContext
 } from 'react-native-popup-menu';
 import styles from './styles';
-import { openDrawer, searchGroup, searchForUsersFollowableByCurrentUser, searchPostsByHashtab } from 'PLActions';
+import { openDrawer, searchGroup, searchForUsersFollowableByCurrentUser, searchPostsByHashtag } from 'PLActions';
 
 import SearchGroups from './groups';
 import SearchUsers from './users';
 import SearchHashtags from './hashtags';
 import {Mixpanel} from 'PLEnv';
 
+const initialState = {
+    search: '',
+    groups: [],
+    users: [],
+    posts: [],
+};
 
 class Search extends Component {
     static defaultProps = {
@@ -45,11 +51,9 @@ class Search extends Component {
         super(props);
 
         this.state = {
-            search: props.search?props.search: '',
-            groups: [],
-            users: [],
-            posts: [],
-        }
+            ...initialState,
+            search: props.search ? props.search: '',
+        };
 
         this.onQuery(props.search?props.search: '');
         this.onRemoveUser = this.onRemoveUser.bind();
@@ -66,15 +70,16 @@ class Search extends Component {
 
     //There are three different types of searches. Search by Groups (default view), search for people, and search for posts/hashtags.
     //At the time of this comment, search for posts is not yet developed.
-    async onQuery(text){
-        if(text != ''){
+    async onQuery(text) {
+        if(text != '') {
             //search query
             this.setState({
                 groups: [],
-                users: []
+                users: [],
+                posts: [],
             });
 
-            var { token } = this.props;
+            const { token } = this.props;
             searchForUsersFollowableByCurrentUser(token, text, 1, 20)
             .then(data => {
                 this.setState({
@@ -97,9 +102,9 @@ class Search extends Component {
 
             });
 
-            const postsResult = await searchPostsByHashtab(token, text);
-            if (postsResult.status === 200 & postsResult.ok) {
-                const { payload: posts } = await postsResult.json();
+            const postsResult = await searchPostsByHashtag(token, text);
+            if (postsResult.status === 200 && postsResult.ok) {
+                const posts = await postsResult.json();
                 this.setState({ posts });
             }
         }
@@ -112,41 +117,44 @@ class Search extends Component {
         });
     }
 
+    onClear = () => {
+        this.setState({ ...initialState });
+    };
+
     render() {
         return (
-            <MenuContext customStyles={menuContextStyles}>
-                <Container style={styles.container}>
-                    <Header searchBar rounded style={styles.header}>
-                        <Left style={{flex: 0.1}}>
-                            <Button style={{width: '100%'}}  transparent onPress={this.props.openDrawer}>
-                                <Icon active name="menu" style={{color: 'white'}}/>
-                            </Button>
-                        </Left>
-                        <Item style={styles.searchBar}>
-                            <Input style={styles.searchInput} autoFocus placeholder="Search groups, people, topics" value={this.state.search} onChangeText={(text) => this.onChangeText(text)} selectTextOnFocus={true} />
-                            <Icon active name="search"/>
-                        </Item>
-                    </Header>
-                    <Tabs initialPage={this.props.initialPage} locked={true}>
-                        <Tab heading="Groups" tabStyle={styles.tabStyle} activeTabStyle={styles.tabStyle}>
-                            <SearchGroups groups={this.state.groups}/>
-                        </Tab>
-                        <Tab heading="People" tabStyle={styles.tabStyle} activeTabStyle={styles.tabStyle}>
-                            <SearchUsers users={this.state.users} onRemove={(index) => this.onRemoveUser(index)}/>
-                        </Tab>
-                        <Tab heading="Hashtags" tabStyle={styles.tabStyle} activeTabStyle={styles.tabStyle}>
-                            <SearchHashtags posts={this.state.posts} />
-                        </Tab>
-                    </Tabs>
-                </Container>
-            </MenuContext>
+            <Container style={styles.container}>
+                <Header searchBar rounded style={styles.header}>
+                    <Left style={{flex: 0.1}}>
+                        <Button transparent onPress={() => Actions.reset('home')} style={{width: 50, height: 50 }}  >
+                            <Icon active name="arrow-back" style={{ color: 'white' }} />
+                        </Button>
+                    </Left>
+                    <Item style={styles.searchBar}>
+                        <Input style={styles.searchInput} autoFocus placeholder="Search groups, people, topics" value={this.state.search} onChangeText={(text) => this.onChangeText(text)} selectTextOnFocus={true} />
+                        {this.state.search ?
+                          <TouchableOpacity onPress={this.onClear}>
+                            <Icon active ios="ios-close" android="md-close" />
+                          </TouchableOpacity>
+                          :
+                          <Icon active name="search" />
+                        }
+                    </Item>
+                </Header>
+                <Tabs initialPage={this.props.initialPage} locked={true}>
+                    <Tab heading="Groups" tabStyle={styles.tabStyle} activeTabStyle={styles.tabStyle}>
+                        <SearchGroups groups={this.state.groups}/>
+                    </Tab>
+                    <Tab heading="People" tabStyle={styles.tabStyle} activeTabStyle={styles.tabStyle}>
+                        <SearchUsers users={this.state.users} onRemove={(index) => this.onRemoveUser(index)}/>
+                    </Tab>
+                    <Tab heading="Hashtags" tabStyle={styles.tabStyle} activeTabStyle={styles.tabStyle}>
+                        <SearchHashtags posts={this.state.posts} />
+                    </Tab>
+                </Tabs>
+            </Container>
         );
     }
-}
-
-const menuContextStyles = {
-    menuContextWrapper: styles.container,
-    backdrop: styles.backdrop
 }
 
 const mapStateToProps = state => ({

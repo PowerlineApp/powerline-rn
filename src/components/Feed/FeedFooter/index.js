@@ -150,7 +150,7 @@ class FeedFooter extends Component {
             } else {
                 response = await votePost(this.props.token, item.id, option);
                 console.log('response', response);
-                if (response.status === 200) {
+                if (response.status.toString()[0] === '2') {
                     console.log('dispatching...', this.props);
                     // this.props.dispatch({type: 'UPDATE_ACTIVITY', payload: newItem})
                     this.updateActivity(newItem);
@@ -268,55 +268,45 @@ class FeedFooter extends Component {
     // on this one we need this to control upvote / downvote before a response comes from the API
     _renderPostFooter (item, showAnalytics) {
         // console.log(item);
-        if (item.zone === 'expired') {
-            return (
-                <View footer style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', flex: 1, height: 35 }}>
-                    <View style={{flex: 6}} />
-                    {this.renderPulseIcon(item, 2, true)}
-                    {this.renderCommentIcon(item, 2)}
-                </View>
-            );
-        } else {
-            let isVotedDown = false;
-            let isVotedUp = false;
-            if (
-                item &&
-                item.vote
-            ) {
-                let vote = item.vote.option;
-                isVotedUp = vote === 'upvote';
-                isVotedDown = vote === 'downvote';
-            }
-            // console.log(item.body, isVotedUp)
-            return (
-                // <CardItem footer style={{ height: 35, padding: 0, backgroundColor: '#f0f' }}>
-                <View footer style={{flexDirection: 'row', paddingLeft: 4, justifyContent: 'space-between', alignItems: 'center', flex: 1, height: 35 }}>
-                    <View style={{flex: 6, flexDirection: 'row'}}>
-                        <View style={{flex: 3}}>
-                            <AnimatedButton onPress={() => { this.vote(item, 'upvote'); Mixpanel.track("Upvoted post"); }} 
-                                iconName={'md-arrow-dropup'} 
-                                label={'Upvote ' + (item.upvotes_count || 0)}
-                                labelStyle={isVotedUp ? styles.footerTextBlue : styles.footerText}
-                                animateEffect={'tada'}
-                            />
-                        </View>
-
-                        <View style={{flex: 3}}>
-                            <AnimatedButton onPress={() => { this.vote(item, 'downvote'); Mixpanel.track("Downvoted post"); }} 
-                                iconName={'md-arrow-dropdown'} 
-                                label={'Downvote ' + (item.downvotes_count || 0)}
-                                labelStyle={isVotedDown ? styles.footerTextBlue : styles.footerText}
-                                animateEffect={'shake'}
-                            />
-                       
-                        </View>
-                    </View>
-                    {this.renderPulseIcon(item, 2, true)}
-                    {this.renderCommentIcon(item, 2)}
-                </View>
-                // </CardItem>
-            );
+        let isVotedDown = false;
+        let isVotedUp = false;
+        if (
+            item &&
+            item.vote
+        ) {
+            let vote = item.vote.option;
+            isVotedUp = vote === 'upvote';
+            isVotedDown = vote === 'downvote';
         }
+        // console.log(item.body, isVotedUp)
+        return (
+            // <CardItem footer style={{ height: 35, padding: 0, backgroundColor: '#f0f' }}>
+            <View footer style={{flexDirection: 'row', paddingLeft: 4, justifyContent: 'space-between', alignItems: 'center', flex: 1, height: 35 }}>
+                <View style={{flex: 6, flexDirection: 'row'}}>
+                    <View style={{flex: 3}}>
+                        <AnimatedButton onPress={() => { this.vote(item, 'upvote'); Mixpanel.track("Upvoted post"); }}
+                            iconName={'md-arrow-dropup'}
+                            label={'Upvote ' + (item.upvotes_count || 0)}
+                            labelStyle={isVotedUp ? styles.footerTextBlue : styles.footerText}
+                            animateEffect={'tada'}
+                        />
+                    </View>
+
+                    <View style={{flex: 3}}>
+                        <AnimatedButton onPress={() => { this.vote(item, 'downvote'); Mixpanel.track("Downvoted post"); }}
+                            iconName={'md-arrow-dropdown'}
+                            label={'Downvote ' + (item.downvotes_count || 0)}
+                            labelStyle={isVotedDown ? styles.footerTextBlue : styles.footerText}
+                            animateEffect={'shake'}
+                        />
+
+                    </View>
+                </View>
+                {this.renderPulseIcon(item, 2, true)}
+                {this.renderCommentIcon(item, 2)}
+            </View>
+            // </CardItem>
+        );
     }
 
     _renderUserPetitionFooter (item, showAnalytics) {
@@ -342,7 +332,7 @@ class FeedFooter extends Component {
                 <View style={{flex: 6, flexDirection: 'row'}}>
                     <AnimatedButton onPress={() => {this.sign(item, isSigned); Mixpanel.track("Signed Petition");}}
                         icon={<Thumbnail source={require('../../../assets/petition-icon.png')} style={{height: 25, width: 25, tintColor: isSigned ? '#53a8cd' : '#8694ab'}} square />}
-                        label={isSigned ? ' Signed' : ('  ' + (item.responses_count || 0) + ' Signatures')}
+                        label={isSigned ? ' Remove my Signature' : (` Add Signature #${parseInt(item.responses_count || 0, 10) + 1}`)}
                         labelStyle={isSigned ? styles.footerTextBlue : styles.footerText}
                         animateEffect={'tada'}
                         />
@@ -369,7 +359,7 @@ class FeedFooter extends Component {
                 <View style={{flex: 6, flexDirection: 'row'}}>
                     <AnimatedButton onPress={() => {this.signLeaderPetition(item, isSigned, signOption.id, unsignOption.id); Mixpanel.track("Signed Petition");}}
                         icon={<Thumbnail source={require('../../../assets/petition-icon.png')} style={{height: 25, width: 25, tintColor: isSigned ? '#53a8cd' : '#8694ab'}} square />}
-                        label={isSigned ? ' Signed' : ('  ' + (item.answer_count || 0) + ' Signatures')}
+                        label={isSigned ? ' Remove my Signature' : (` Add Signature ${parseInt(item.answer_count || 0, 10) + 1}`)}
                         labelStyle={isSigned ? styles.footerTextBlue : styles.footerText}
                         animateEffect={'tada'}
                             />
@@ -451,7 +441,7 @@ class FeedFooter extends Component {
             break;
         case 'crowdfunding-payment-request':
         case 'payment-request':
-            footer = this._renderPollFooter(item, 'ios-cash', 'Donate', false, true);
+            footer = this._renderPollFooter(item, 'ios-cash', 'Donate Now', false, true);
             break;
         case 'leader-event':
             footer =  this._renderPollFooter(item, 'ios-calendar', 'RSVP', false, true);

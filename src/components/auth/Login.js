@@ -8,7 +8,7 @@ import LinearGradient from "react-native-linear-gradient";
 import PLButton from 'PLButton';
 import PLColors from 'PLColors';
 import PLConstants, { WINDOW_WIDTH } from 'PLConstants';
-import { logInManually, logInWithFacebook, verifyCode, sendCode, sendRecoveryEmail, finishRecovery, login2 }  from 'PLActions';
+import { logInWithFacebook, sendCode, sendRecoveryEmail, finishRecovery, login2, oauthLogin }  from 'PLActions';
 import PLOverlayLoader from 'PLOverlayLoader';
 import PhoneVerification from './PhoneVerification';
 import logo from '../../assets/logo.png';
@@ -162,21 +162,15 @@ class Login extends React.Component {
         )
     })
   }
-  verifyCode(){
-    let { dispatch } = this.props;
-    
+  verifyCode = () => {
     this.setState({isLoading: true});
-    let {phone, code, countryCode, username, password} = this.state;
-    countryCode = countryCode || '+1';    
-    this.setState({code: ''})
-    verifyCode({code, username}).then(r => r.json()).then(r => {
-        console.log('verify code res', r);
-        this.setState({isLoading: false}, () => {
-          if (r.token){
-            dispatch({ type: 'LOGGED_IN', data: r });
-          }
-        })
-    }).catch(e => {
+    let { username, code } = this.state;
+    this.setState({code: ''});
+    this.props.oauthLogin(username, code)
+      .then(() => {
+        this.setState({isLoading: false})
+      })
+      .catch(e => {
         console.log('\n------------------------------', e);
         Alert.alert('Invalid data',
         'Validation failed.',
@@ -187,8 +181,8 @@ class Login extends React.Component {
         ],
         {cancelable: false}
         )
-    })
-}
+      })
+  };
 
   onChangeNewDeviceInfo(key, value){
     let state = this.state;
@@ -384,7 +378,7 @@ class Login extends React.Component {
               onBack={() => this.setState({displayManualLogin: false, displayPhoneVerification: false})}
               type='login'
               onSendCode={() => this.sendCode()}   
-              onVerifycode={() => this.verifyCode()}
+              onVerifycode={this.verifyCode}
               onChangeCode={(value) => {this.setState({code: value}, value.length === 4 ? () => this.verifyCode() : () => {});}}
               code={this.state.code}
               phone={this.state.phone}
@@ -569,4 +563,4 @@ var styles = StyleSheet.create({
   }
 });
 
-module.exports = connect()(Login);
+module.exports = connect(null, { oauthLogin })(Login);

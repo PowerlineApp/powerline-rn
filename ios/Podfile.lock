@@ -37,50 +37,50 @@ PODS:
   - GLog (0.3.4)
   - Mixpanel (3.3.3)
   - QBImagePickerController (3.4.0)
-  - React (0.52.3):
-    - React/Core (= 0.52.3)
-  - React/Core (0.52.3):
-    - yoga (= 0.52.3.React)
-  - React/CxxBridge (0.52.3):
+  - React (0.52.1):
+    - React/Core (= 0.52.1)
+  - React/Core (0.52.1):
+    - yoga (= 0.52.1.React)
+  - React/CxxBridge (0.52.1):
     - Folly (= 2016.09.26.00)
     - React/Core
     - React/cxxreact
-  - React/cxxreact (0.52.3):
+  - React/cxxreact (0.52.1):
     - boost
     - Folly (= 2016.09.26.00)
     - React/jschelpers
     - React/jsinspector
-  - React/DevSupport (0.52.3):
+  - React/DevSupport (0.52.1):
     - React/Core
     - React/RCTWebSocket
-  - React/fishhook (0.52.3)
-  - React/jschelpers (0.52.3):
+  - React/fishhook (0.52.1)
+  - React/jschelpers (0.52.1):
     - Folly (= 2016.09.26.00)
     - React/PrivateDatabase
-  - React/jsinspector (0.52.3)
-  - React/PrivateDatabase (0.52.3)
-  - React/RCTActionSheet (0.52.3):
+  - React/jsinspector (0.52.1)
+  - React/PrivateDatabase (0.52.1)
+  - React/RCTActionSheet (0.52.1):
     - React/Core
-  - React/RCTAnimation (0.52.3):
+  - React/RCTAnimation (0.52.1):
     - React/Core
-  - React/RCTBlob (0.52.3):
+  - React/RCTBlob (0.52.1):
     - React/Core
-  - React/RCTImage (0.52.3):
+  - React/RCTImage (0.52.1):
     - React/Core
     - React/RCTNetwork
-  - React/RCTNetwork (0.52.3):
+  - React/RCTNetwork (0.52.1):
     - React/Core
-  - React/RCTText (0.52.3):
+  - React/RCTText (0.52.1):
     - React/Core
-  - React/RCTWebSocket (0.52.3):
+  - React/RCTWebSocket (0.52.1):
     - React/Core
     - React/fishhook
     - React/RCTBlob
-  - RNFS (2.11.17):
+  - RNFS (2.9.7):
     - React
   - RSKImageCropper (2.2.1)
   - Stripe (11.2.0)
-  - yoga (0.52.3.React)
+  - yoga (0.52.1.React)
 
 DEPENDENCIES:
   - Crashlytics
@@ -110,7 +110,7 @@ DEPENDENCIES:
   - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
-  https://github.com/CocoaPods/Specs.git:
+  https://github.com/cocoapods/specs.git:
     - Bolts
     - boost
     - Crashlytics
@@ -150,12 +150,12 @@ SPEC CHECKSUMS:
   GLog: 3e4e4ae9746ce6bf6e9420c7fc1e08ad59c8ba1a
   Mixpanel: 3c3925c27f7a321d5978319a72f53f8f0885afc5
   QBImagePickerController: d54cf93db6decf26baf6ed3472f336ef35cae022
-  React: 43e97926f429d846050880666de1809e22dd5cc5
-  RNFS: bbb1a64eb245763daf34aea86f97c97c4e85f74c
+  React: b0beafe77b61535ee9dfc86f9a96c6f2b6904443
+  RNFS: c44a045cb06c6a496a27f37bd1b50f2c36422cf3
   RSKImageCropper: 98296ad26b41753f796b6898d015509598f13d97
   Stripe: 898f83a95d72180c6eb4acd65b2ae6158fc6a8bd
-  yoga: 55da126afc384965b96bff46652464373b330add
+  yoga: 25daf05f1bbaa33452c4c12640fb0d7bb6f99454
 
-PODFILE CHECKSUM: 25187564238fca808c26c791e8e1249c1185e98c
+PODFILE CHECKSUM: 0223ff673044090796e476109741b8f9a806fe0c
 
-COCOAPODS: 1.5.0
+COCOAPODS: 1.7.0.beta.2

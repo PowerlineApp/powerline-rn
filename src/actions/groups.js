@@ -155,11 +155,11 @@ function searchGroup(token, query){
     });
 }
 
-async function searchPostsByHashtab(token: string, tag: string): Promise<Action> {
+async function searchPostsByHashtag(token: string, tag: string): Promise<Action> {
     console.log("search Hashtag API", tag);
     return await api.get(
         token,
-        `/v2/activities?hash_tag=${tag}`
+        `/v2.2/posts?hashtag=${tag}`
     );
 }
 
@@ -978,7 +978,7 @@ module.exports = {
     getGroupMembers,
     inviteAllFollowers,
     followAllMembers,
-    searchPostsByHashtab,
+    searchPostsByHashtag,
     unJoinGroup,
     joinGroup,
     loadFieldsToFillOnJoin,

@@ -245,6 +245,23 @@ class Profile extends Component{
         this.setState({image_data: image.data, mime: image.mime})
         updateUserProfile(this.props.token, {avatar_file_name: image.data})
     }
+
+    karmaAlert = () => {
+        Alert.alert(
+          'Karma',
+          'Earn karma for being an active on Powerline!\n' +
+          'View My Reps - 25 points\n' +
+          'Follow another user - 10 points\n' +
+          'Approve a follower - 10 points\n' +
+          'Join a group - 10 points\n' +
+          'Create a post - 10 points\n' +
+          'Answer a poll - 2 points\n' +
+          'Earn an upvote on a post - 2 points each\n' +
+          'Earn an upvote on a comment - 2 points each\n' +
+          'View a new announcement - 2 points'
+        );
+    };
+
     // It would appear that the below is the User Profile Screen GH44
     render(){
         console.log('USER', this.state, this.props.profile)
@@ -312,10 +329,13 @@ class Profile extends Component{
                         {/*This should not have the state hard-coded in here*/}
                             <Text style={{color: 'white', fontSize: 14,  marginBottom: 5}}>{this.state.user.state} {this.state.user.country}</Text>
                         </View>
-                        <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                            <Text style={{color: 'white', fontSize: 14,  marginBottom: 5}}>Karma: {this.state.user.karma}</Text>
+                        <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'baseline'}}>
+                            <Text style={{color: 'white', fontSize: 14,  marginBottom: 5, marginRight: 5 }}>Karma: {this.state.user.karma}</Text>
+                            <TouchableOpacity onPress={this.karmaAlert}>
+                                <Icon style={{ color: "#fff", fontSize: 18 }} ios="ios-help-circle" android="md-help-circle" />
+                            </TouchableOpacity>
                         </View>
-                        <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                             <Text style={{color: 'white', fontSize: 12,  marginBottom: 5}}>{this.state.user.bio}</Text>
                         </View>
                     </View>: null}

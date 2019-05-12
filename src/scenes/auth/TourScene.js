@@ -4,10 +4,8 @@
 var React = require('react');
 var {
     Component,
-    PropTypes
 } = require('react');
 var {
-    StyleSheet,
     View,
     Image,
     Dimensions,
@@ -18,11 +16,9 @@ var {
 var { connect } = require('react-redux');
 var {width, height} = Dimensions.get('window');
 var PLColors = require('PLColors');
-import {
-    NavigationActions
-} from 'react-navigation';
 import {Actions} from 'react-native-router-flux'
 import {CachedImage} from "react-native-img-cache";
+import GestureRecognizer from '../../components/GestureRecognizer';
 
 var styles = {
     container: {
@@ -43,26 +39,50 @@ var styles = {
         resizeMode: 'cover'
     }),
     bottomContainer: {
+        justifyContent: 'flex-end',
         marginBottom: 5,
         flexDirection: 'row'
     },
     skipContainer: {
         flex: 1,
-        alignItems: 'flex-start'
+        textAlignVertical: 'bottom',
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     nextContainer: {
         flex: 1,
+        alignItems: 'center'
+    },
+    btnLeft: {
+        height: 150,
+        width: 150,
+        justifyContent: 'flex-end',
+        alignItems: 'flex-start'
+    },
+    btnRight: {
+        height: 150,
+        width: 150,
+        justifyContent: 'flex-end',
         alignItems: 'flex-end'
     },
     nextBtn: {
         color: 'white',
         backgroundColor: 'transparent',
-        marginRight: 10
+        fontSize: 30,
+        paddingBottom: 15,
+        paddingRight: 20,
+        textAlign: 'right',
+        textAlignVertical: 'bottom'
     },
     skitBtn: {
         color: 'white',
         backgroundColor: 'transparent',
-        marginLeft: 10
+        justifyContent: 'center',
+        fontSize: 30,
+        paddingBottom: 15,
+        paddingLeft: 20,
+        textAlign: 'left',
+        textAlignVertical: 'bottom'
     },
 
     goBtnContainer: {
@@ -83,8 +103,6 @@ var styles = {
         alignItems: 'center',
     },
     goTxt: {
-        // lineHeight: 32,
-        // textAlign: 'center',
         color: '#006',
         textAlignVertical: 'top',
         fontSize: 20,
@@ -143,22 +161,28 @@ class TourScene extends Component{
                 pos: pos + 1
             });
         }
-    }
+    };
+
+    onPrev = () => {
+        var {pos} = this.state;
+        if(pos > 0){
+            this.setState({
+                pos: pos - 1
+            });
+        }
+    };
 
     onSkip = () =>{
         console.log('=>', this.props);
-        // console.log('==>', this.state);
-        // this.props.dispatch(NavigationActions.reset())
-        // var { navigation } = this.props;        
         if(this.props.navigation && this.props.navigation.state && this.props.navigation.state.params && this.props.navigation.state.params.callback){
-            let { state, dispatch } = this.props.navigation;
+            let { state } = this.props.navigation;
             let { params } = state;
             params.callback();
         }else{
                 this.props.navigation.state.params.onBackPress();
            Actions.home();
         }      
-    }
+    };
 
     render(){
         if (!this.state.ready){
@@ -184,13 +208,17 @@ class TourScene extends Component{
         }
 
         return (
-            <View style={styles.container}>     
+            <GestureRecognizer
+              style={styles.container}
+              onSwipeLeft={this.onNext}
+              onSwipeRight={this.onPrev}
+            >
                 {imgs[pos]}
                 <View style={styles.bottomContainer}>
                     {
                     pos < this.state.maxPos? 
                     <View style={styles.skipContainer}>
-                        <TouchableOpacity onPress={this.onSkip}>
+                        <TouchableOpacity style={styles.btnLeft} onPress={this.onSkip}>
                             <Text style={styles.skitBtn}>Skip</Text> 
                         </TouchableOpacity> 
                     </View>: null
@@ -198,13 +226,13 @@ class TourScene extends Component{
                     {
                     pos < this.state.maxPos?
                     <View style={styles.nextContainer}>
-                        <TouchableOpacity onPress={this.onNext}>
+                        <TouchableOpacity style={styles.btnRight} onPress={this.onNext}>
                             <Text style={styles.nextBtn}>Next</Text> 
                         </TouchableOpacity>        
                     </View>: null
                     }
                     {
-                    pos == this.state.maxPos?
+                    pos === this.state.maxPos ?
                     <View style={styles.goBtnContainer}>
                         <TouchableOpacity style={styles.goBtn} onPress={this.onSkip}>
                             <Text style={styles.goTxt}>Let's Go</Text>
@@ -212,7 +240,7 @@ class TourScene extends Component{
                     </View>: null
                     }
                 </View>
-            </View>
+            </GestureRecognizer>
         )
     }
 }

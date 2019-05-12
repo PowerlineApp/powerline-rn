@@ -88,7 +88,7 @@ class VerifyProfile extends Component {
             this.setState({loading: false})
             console.log('response from updating user profile', response)
             Actions.pop();
-            Actions.profile();
+            Actions.reset('home');
         })
         .catch(err => {
             this.setState({loading: false})

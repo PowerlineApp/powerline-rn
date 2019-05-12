@@ -115,6 +115,16 @@ class PLAddCard extends Component {
         return (
             <Card style={{padding: 10}}>
                 <View style={{width: '100%', flexDirection: 'column'}}>
+                    <TouchableOpacity
+                      style={{flexDirection: 'row'}}
+                      onPress={() => Linking.openURL('https://stripe.com/us/connect-account/legal')}
+                    >
+                        <Image
+                          source={require('../assets/powered_by_stripe.png')}
+                          resizeMode='contain'
+                          style={{height: 50, flex: 1, borderRadius: 25}}
+                        />
+                    </TouchableOpacity>
                     <View style={{marginVertical: 5}}>
                         <Text style={styles.labelStyle}>Credit Card</Text> 
                         <View style={{borderColor: 'grey', borderWidth: StyleSheet.hairlineWidth,  borderRadius: 25}}>
@@ -240,9 +250,14 @@ const Agreement = () => (
                 .
             </Text>
         </View>
-        <TouchableOpacity style={{flexDirection: 'row'}} onPress={() => Linking.openURL('https://stripe.com/us/connect-account/legal')}>
-            <Image source={require('../assets/powered_by_stripe.png')} resizeMode='contain' style={{height: 50, flex: 1, borderRadius: 25}} />
-            <Image source={require('../assets/comodo_logo.jpg')} resizeMode='contain' style={{height: 50, flex: 1,  borderRadius: 25}} />
+        <TouchableOpacity
+          style={{flexDirection: 'row'}}
+          onPress={() => Linking.openURL('https://comodosslstore.com/')}
+        >
+            <Image
+              source={require('../assets/comodo_logo.jpg')}
+              resizeMode='contain' style={{height: 50, flex: 1,  borderRadius: 25}}
+            />
         </TouchableOpacity>
     </View>
 );

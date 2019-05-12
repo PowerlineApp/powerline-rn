@@ -74,7 +74,7 @@ export default {
     },
     backdrop: {
         backgroundColor: 'black',
-        opacity: 0.5,
+        opacity: 0.7,
     },
     menuIcon: {
         color: '#000066',
@@ -137,5 +137,9 @@ export default {
         top: 5,
         width: wp(2),
         backgroundColor: 'white',
+    },
+    serviceRequestIcon: {
+        width: 24,
+        height: 24,
     }
 };
