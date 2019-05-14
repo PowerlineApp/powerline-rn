@@ -143,15 +143,16 @@ class ServiceInfo extends Component {
 
     render() {
         const { service } = this.props;
-        const { price, surcharge, third_party_name } = this.props.service
+        const { type, price, surcharge, third_party_name } = this.props.service
         let {reservation_date} = this.state
         return (
-            <ScrollView>
+            <ScrollView style={styles.overlayContainer}>
                 <View style={styles.overlay}>
                     <View style={styles.infoView}>
                         <View style={styles.titleItem}>
                             <Text style={styles.serviceTitle}>{service.title}</Text>
                         </View>
+                        {type !== 'simple' ?
                         <View style={styles.item}>
                             {
                                 service.is_ride ? (<Textarea
@@ -163,10 +164,11 @@ class ServiceInfo extends Component {
                                     onChangeText={(text) => this.changePrice(text)}
                                 />) : <this.renderLabel label='Price' type='money' value={`$${price}`} />
                             }
-                        </View>
+                        </View> : null}
+                        {type !== 'simple' ?
                         <View style={styles.item}>
                             <this.renderLabel label='Surcharge' type='money' value={`$${surcharge}`} />
-                        </View>
+                        </View> : null}
                         {third_party_name ? <View style={styles.item}>
                             <this.renderLabel label='By' value={this.props.service.third_party_name} />
                         </View> : null}

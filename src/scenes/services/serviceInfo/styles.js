@@ -9,10 +9,12 @@ const deviceWidth = Dimensions.get("window").width;
 const popupWidth = 300;
 
 export default {
+  overlayContainer: {
+    backgroundColor: PLColors.darkBackground + 'AA'
+  },
   overlay: {
     flex: 1,
     height: '100%',
-    backgroundColor: PLColors.darkBackground + 'AA',
     justifyContent: 'center',
     alignItems: 'center'
   },

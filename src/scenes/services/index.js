@@ -227,17 +227,16 @@ class Services extends Component {
     })
   }
 
-  finishRequest = async (service, serviceInfo, paymentType) => {
+  finishRequest = async (service, serviceInfo) => {
     const {token} = this.props.userDetails
     try {
       const response = await setService(token, service.id, serviceInfo)
-      console.log(response.data.headers.status[0].toString())
-      if (response.data.headers.status[0].toString() === '4' || response.data.headers.status[0].toString() === '5'){
+      if (response.data.status.toString()[0] === '4' || response.data.status.toString()[0] === '5') {
         throw new Error('Failed to fetch')
       }
       Alert.alert('The service was requested successfully')
     } catch (error) {
-      console.log('error while updatng service with params, id: ', service.id, 'body: ', serviceInfo)
+      console.log('error while updatng service with params, id: ', service.id, 'body: ', serviceInfo, 'error:', error)
       Alert.alert('Failed to request service.')
     }
   }
@@ -281,13 +280,14 @@ class Services extends Component {
     const service = this.state.selectedService
     this.setState({serviceOfferConfirmVisible: false})
     if (service.type === 'bluter') return
-
+    console.log(serviceInfo, service)
     await this.setState({serviceOfferConfirmVisible: false, showLoadingModal: true})
 
     setTimeout(async () => {
         let paymentType
         let cards
         if (service.type === 'simple') { // simple type... just continue
+            this.finishRequest(service, serviceInfo)
         } else if (service.type === 'payment') {
           paymentType = 'none'
           if (service.payment_type === 'both') { // ask if money or cc
@@ -304,6 +304,7 @@ class Services extends Component {
             }
           }
           setTimeout(async () => {
+            console.log('worked!')
             await this.showConfirmation(service, serviceInfo, paymentType, cards)
           }, 200)
       } else if (service.type === 'butler') { // will not handle yet
@@ -373,7 +374,7 @@ class Services extends Component {
         </Content>
 
         {
-          <Modal animationType='fade' visible={!!this.state.selectedService && this.state.serviceOfferConfirmVisible} transparent>
+          <Modal animationType='fade' transparent visible={!!this.state.selectedService && this.state.serviceOfferConfirmVisible}>
             <ServiceInfo
               onContinue={this.onContinue}
               editable={this.state.serviceInfoEditable}
