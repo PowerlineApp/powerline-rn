@@ -14,6 +14,7 @@ import { updateUserProfile } from "../../actions/users";
 
 import {
   getAgency,
+  fetchConferences
 } from "PLActions";
 import PLOverlayLoader from "PLOverlayLoader";
 
@@ -98,6 +99,8 @@ class Component extends React.Component {
 
   componentDidMount = () => {
     // console.error("Agency:", JSON.stringify(this.props.agency, null, 2));
+    // this.props.fetchConferences(this.props.token)
+    // console.log('fetch fui!')
   };
 
   render() {
@@ -197,6 +200,7 @@ class Component extends React.Component {
                                   {
                                       text: 'OK',
                                       onPress: () => {
+                                          this.props.fetchConferences(this.props.token)
                                           Actions.pop();
                                       }
                                   }
@@ -230,7 +234,13 @@ class Component extends React.Component {
 
 const mapStateToProps = ({ agency, user }) => ({
   agency,
-  user
+  user,
+  token: user.token
 });
 
-export default connect(mapStateToProps)(Component);
+const mapActionToProps = dispatch => ({
+  fetchConferences: token => dispatch(fetchConferences(token)),
+
+})
+
+export default connect(mapStateToProps, mapActionToProps)(Component);

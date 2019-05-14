@@ -197,19 +197,19 @@ class Home extends Component {
       this.props.setGroup(data, this.props.token, "all");
       this.setState({ tab1: true, tab2: false, tab3: false, tab4: false });
     } 
-    if(this.state.isSet === null) {
-      if (nextProps.conferences && nextProps.conferences.data && nextProps.conferences.data.length > 0) {
-        this.setState({ isSet: true }, () => {
-          Actions["simpleHome"]();
-        });
-      }
-      else {
-        this.setState({ isSet: false });
-      }
-    }
-    if (nextProps.conciergeServices && this.state.conciergeServices !== nextProps.conciergeServices.data) {
-      this.setState({ conciergeServices: nextProps.conciergeServices.data });
-    }
+    // if(this.state.isSet === null) {
+    //   if (nextProps.conferences && nextProps.conferences.data && nextProps.conferences.data.length > 0) {
+    //     this.setState({ isSet: true }, () => {
+    //       Actions["simpleHome"]();
+    //     });
+    //   }
+    //   else {
+    //     this.setState({ isSet: false });
+    //   }
+    // }
+    // if (nextProps.conciergeServices && this.state.conciergeServices !== nextProps.conciergeServices.data) {
+    //   this.setState({ conciergeServices: nextProps.conciergeServices.data });
+    // }
   }
 
   componentWillMount() {
@@ -899,9 +899,9 @@ class Home extends Component {
 
   render() {
     // console.warn('render at dashboard')
-    if(this.state.isSet === null) {
-      return <View/>;
-    }
+    // if(this.state.isSet === null) {
+    //   return <View/>;
+    // }
     let isLeader = false;
     for (let group of this.props.groupList) {
       if (group.user_role === "owner" || group.user_role === "manager") {

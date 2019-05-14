@@ -104,16 +104,12 @@ class PLApp extends Component {
     render () {
         // const { conferences } = this.state;
         const {conferences} = (this.props)
-        console.log(this, this.props)
 
         if (this.state.splash === null) return null;
         if (this.state.splash){
             SplashScreen.hide();
             return <View style={{flex: 1, backgroundColor: '#fff'}}>
-                {/* <Text>This is my fake SplashScreen</Text> */}
                 <CachedImage style={{flex: 1}} source={{ uri: this.state.splash }} />
-
-                {/* <Image source={{uri: this.state.splash}} onError={() => this.setState({splash: false})} /> */}
             </View>;
         }
 
@@ -123,12 +119,9 @@ class PLApp extends Component {
             </Root>
         }
 
-        console.log('render', conferences && conferences.data)
-        if (conferences && conferences.data) {
-            return (<Root>
-                {[<PLNavigator id={conferences.data.length} key={conferences.data.length} isCustom={conferences.data.length > 0} />]}
-            </Root>)
-        }
+        return (<Root>
+            <PLNavigator />
+        </Root>)
 
         return <Root><View /></Root>
     }

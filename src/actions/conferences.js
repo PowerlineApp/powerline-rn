@@ -1,11 +1,16 @@
 var { Action, ThunkAction } = require('./types');
 var { API_URL } = require('../PLEnv');
+import { Actions } from "react-native-router-flux";
 
-async function fetchConferences (token: string) => (dispatch, getState) => {
+const fetchConferences = (token: string) => async (dispatch, getState) => {
+    // dispatch(updateHomeScreen(false))
+    
+    const hasConference = getState().conferences.hasConference
+    
     console.log('\n\n==================== fetch conferences')
-    console.log('current state => ', getState())
+    console.log('hasConferences in current state ? => ', getState().conferences, hasConference)
     try {
-        var response = await fetch(`${API_URL}/v2.2/conferences`, {
+        const response = await fetch(`${API_URL}/v2.2/conferences`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -13,18 +18,33 @@ async function fetchConferences (token: string) => (dispatch, getState) => {
             }
         });
 
-        var json = await response.json();
-        console.log('fetchConferences result from api', json);
+        const json = await response.json();
         const action = {
             type: 'LOADED_CONFERENCES',
             data: json,
         };
-        return Promise.resolve(action);
-       
+        dispatch(action);
+        if (json.length >= 1) {
+            if (hasConference) return
+            dispatch(updateHomeScreen(true))
+        } else {
+            if (!hasConference) return
+            dispatch(updateHomeScreen(false))
+        }
     } catch (error) {
         console.log('error-----------', error);
         return Promise.reject(error);
     }
+}
+
+const updateHomeScreen = hasConference => dispatch => {
+    dispatch({
+        type: 'SET_HAS_CONFERENCE',
+        payload: hasConference
+    })
+    Actions.reset(hasConference ? 'simpleHome' : 'originalHome')
+
+    // navigateTo(hasConference ? 'simpleHome' : 'originalHome')
 }
 
 module.exports = {

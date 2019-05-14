@@ -76,38 +76,6 @@ class PLNavigator extends React.Component {
     closeDrawer: React.PropTypes.func
   };
 
-  shouldComponentUpdate () {
-    return false
-  }
-  // componentDidMount(){
-  //   Actions.share();
-  // }
-
-  // componentDidUpdate() {
-  //   if (this.props.drawerState === 'opened') {
-  //     this.openDrawer();
-  //   }
-
-  //   if (this.props.drawerState === 'closed') {
-  //     // this._drawer._root.close();
-  //   }
-  // }
-
-  // openDrawer() {
-  //   // this._drawer._root.open();
-  // }
-
-  // closeDrawer() {
-  //   // if (this.props.drawerState === 'opened') {
-  //     this.props.closeDrawer();
-  //   // }
-  // }
-  // componentWillReceiveProps(nextProps) {
-  //     if (nextProps.isCustom !== this.state.isCustom) {
-  //         this.setState({ isCustom: nextProps.isCustom });
-  //     }
-  // }
-
   _renderScene(props) {
     // eslint-disable-line class-methods-use-this
     switch (props.scene.route.key) {
@@ -187,7 +155,7 @@ class PLNavigator extends React.Component {
           }}
           negotiatePan
         >
-          <MyRouter isCustom={this.props.isCustom} />
+          <MyRouter hasConference={this.props.hasConference} />
         </Drawer>
       </StyleProvider>
     );
@@ -201,7 +169,7 @@ class MyRouter extends Component {
   }
   shouldComponentUpdate() {
     // so we keep our state when opening the drawer!!!
-    return false;
+    // return false;
   }
   onBackPress() {
     if (Actions.state.index === 0) {
@@ -214,7 +182,7 @@ class MyRouter extends Component {
   }
 
   render() {
-    const { isCustom } = this.props;
+    const { hasConference } = this.props;
     return (
       // <RouterWithRedux onBackPress={this.onBackPress} key="router">
       <Router>
@@ -231,9 +199,10 @@ class MyRouter extends Component {
           <Scene key="notificationSettings" component={NotificationSettings} />
           <Scene key="analyticsView" component={AnalyticsView} hideNavBar />
 
-          <Scene key="home" component={isCustom ? SimpleHomeScreen : Home} initial hideNavBar />
+          <Scene key="home" component={hasConference ? SimpleHomeScreen : Home} initial hideNavBar />
           <Scene key="originalHome" component={Home} hideNavBar />
           <Scene key="simpleHome" component={SimpleHomeScreen} hideNavBar  />
+
           <Scene key="conferenceAttendees" component={ConferenceAttendees} hideNavBar  />
           <Scene key="conferenceEvents" component={ConferenceEvents} hideNavBar  />
           <Scene key="groupSelector" component={GroupSelector} />
@@ -302,7 +271,8 @@ function bindAction(dispatch) {
 }
 
 const mapStateToProps = state => ({
-  drawerState: state.drawer.drawerState
+  drawerState: state.drawer.drawerState,
+  hasConference: state.conferences.hasConference
 });
 
 module.exports = connect(mapStateToProps, bindAction)(PLNavigator);
