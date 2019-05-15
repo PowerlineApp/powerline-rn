@@ -2,7 +2,7 @@ var { Action, ThunkAction } = require('./types');
 var { API_URL } = require('../PLEnv');
 import { Actions } from "react-native-router-flux";
 
-const fetchConferences = (token: string) => async (dispatch, getState) => {
+const fetchConferences = (token: string, forceRoute) => async (dispatch, getState) => {
     // dispatch(updateHomeScreen(false))
     
     const hasConference = getState().conferences.hasConference
@@ -21,15 +21,18 @@ const fetchConferences = (token: string) => async (dispatch, getState) => {
         const json = await response.json();
         const action = {
             type: 'LOADED_CONFERENCES',
-            data: json,
+            data: json
         };
         dispatch(action);
+        console.log('confs > ', json.length, hasConference, forceRoute)
         if (json.length >= 1) {
-            if (hasConference) return
-            dispatch(updateHomeScreen(true))
+            if (forceRoute || !hasConference){
+                dispatch(updateHomeScreen(true))
+            }
         } else {
-            if (!hasConference) return
-            dispatch(updateHomeScreen(false))
+            if (forceRoute || hasConference) {   
+                dispatch(updateHomeScreen(false))
+            }
         }
     } catch (error) {
         console.log('error-----------', error);
@@ -38,6 +41,7 @@ const fetchConferences = (token: string) => async (dispatch, getState) => {
 }
 
 const updateHomeScreen = hasConference => dispatch => {
+    console.log('updating home screen')
     dispatch({
         type: 'SET_HAS_CONFERENCE',
         payload: hasConference

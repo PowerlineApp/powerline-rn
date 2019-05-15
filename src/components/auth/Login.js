@@ -8,10 +8,11 @@ import LinearGradient from "react-native-linear-gradient";
 import PLButton from 'PLButton';
 import PLColors from 'PLColors';
 import PLConstants, { WINDOW_WIDTH } from 'PLConstants';
-import { logInWithFacebook, sendCode, sendRecoveryEmail, finishRecovery, login2, oauthLogin }  from 'PLActions';
+import { logInWithFacebook, sendCode, sendRecoveryEmail, finishRecovery, login2, oauthLogin, fetchConferences }  from 'PLActions';
 import PLOverlayLoader from 'PLOverlayLoader';
 import PhoneVerification from './PhoneVerification';
 import logo from '../../assets/logo.png';
+import { ConnectableObservable } from 'rx';
 class Login extends React.Component {
 
 
@@ -72,7 +73,7 @@ class Login extends React.Component {
     // onLoggedIn && onLoggedIn();
   }
 
-  async onLogInWithFacebook() {
+  onLogInWithFacebook = async () => {
     let { dispatch, register } = this.props;
     this.setState({ isLoading: true });
     logInWithFacebook()
@@ -82,6 +83,8 @@ class Login extends React.Component {
         if (data.token) {
           console.log('DATA BEING DISPATCHED FROM LOGIN WITH FACEBOOK', data)
           dispatch({ type: 'LOGGED_IN', data: data });
+          console.log('confs forcing...', data.token, true)
+          this.props.fetchConferences(data.token, true)
         } else {
           console.log('DATA BEING DISPATCHED FROM REGISTER WITH FACEBOOK', data)
           register && register(true, data);
@@ -198,6 +201,7 @@ class Login extends React.Component {
       console.log(r);
       if (r.token){
         dispatch({ type: 'LOGGED_IN', data: r });
+        this.props.fetchConferences(r.token, true)
       }
       this.setState({isLoading: false})
     }).catch(e => {
@@ -563,4 +567,9 @@ var styles = StyleSheet.create({
   }
 });
 
-module.exports = connect(null, { oauthLogin })(Login);
+module.exports = connect(null, dispatch => ({
+  oauthLogin: (u, c) => dispatch(oauthLogin(u, c)),
+    dispatch: a => dispatch(a),
+    fetchConferences: (token, force) => dispatch(fetchConferences(token, force))
+  })
+  )(Login);

@@ -68,27 +68,27 @@ class PLApp extends Component {
     }
 
 
-    shouldComponentUpdate (nextProps, nextState) {
-        const currentData = (this.props.conferences || {data: []}).data.length
-        const incomingData = (nextProps.conferences || {data: []}).data.length
+    // shouldComponentUpdate (nextProps, nextState) {
+    //     const currentData = (this.props.conferences || {data: []}).data.length
+    //     const incomingData = (nextProps.conferences || {data: []}).data.length
 
         
-        // console.log(incomingData , this.state.conferences , incomingData, currentData, (incomingData && !this.state.conferences ), (incomingData !== currentData), (incomingData && !this.state.conferences ) || (incomingData !== currentData))
-        // if ((incomingData && !this.state.conferences ) || (incomingData !== currentData)) {
-        //     console.log('yesss')
-        //     this.setState({conferences: nextProps.conferences})
-        //     return true
-        // }
-        // if ((nextState.conferences || {data: []}).data.length !== (this.state.conferences || {data: []}).data.length) {
-        //     console.log('hm hmm')
-        //     return true
-        // }
-        console.log('shouldComponentUpdate', incomingData !== currentData)
-        if (incomingData !== currentData) {
-            return false
-        }
-        return true
-    }
+    //     // console.log(incomingData , this.state.conferences , incomingData, currentData, (incomingData && !this.state.conferences ), (incomingData !== currentData), (incomingData && !this.state.conferences ) || (incomingData !== currentData))
+    //     // if ((incomingData && !this.state.conferences ) || (incomingData !== currentData)) {
+    //     //     console.log('yesss')
+    //     //     this.setState({conferences: nextProps.conferences})
+    //     //     return true
+    //     // }
+    //     // if ((nextState.conferences || {data: []}).data.length !== (this.state.conferences || {data: []}).data.length) {
+    //     //     console.log('hm hmm')
+    //     //     return true
+    //     // }
+    //     console.log('shouldComponentUpdate', incomingData !== currentData)
+    //     if (incomingData !== currentData) {
+    //         return false
+    //     }
+    //     return true
+    // }
 
 
 

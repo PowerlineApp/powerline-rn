@@ -167,10 +167,10 @@ class MyRouter extends Component {
     super(props);
     this.state = { isCustom: false };
   }
-  shouldComponentUpdate() {
-    // so we keep our state when opening the drawer!!!
-    // return false;
-  }
+  // shouldComponentUpdate() {
+  //   // so we keep our state when opening the drawer!!!
+  //   // return false;
+  // }
   onBackPress() {
     if (Actions.state.index === 0) {
       return false;

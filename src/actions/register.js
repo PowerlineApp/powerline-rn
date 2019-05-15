@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { API_URL, OAUTH_URL, clientId, clientSecret } from '../PLEnv';
 import { loadUserProfile } from './users';
+import {fetchConferences} from './conferences'
 
 //For checking if username taken
 function findByUsernameEmailOrPhone({username, email, phone}){
@@ -267,6 +268,8 @@ const oauthLogin = (username, code) => dispatch => {
                   payload: response.data,
               });
               loadUserProfile(response.data.access_token).then(dispatch);
+              dispatch(fetchConferences(response.data.access_token, true))
+
           } else {
               dispatch({
                   type: 'GET_OAUTH_TOKEN_SUCCESS',

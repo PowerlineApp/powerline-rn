@@ -27,8 +27,7 @@ class FeedFooter extends Component {
         this.props.updateActivity(item);
     }
 
-    redirect(item, options, scene = 'itemDetail') {
-        console.log(item, item.body);
+    redirect(item = {}, options, scene = 'itemDetail') {
         let type;
         if (item.poll) {
             type = 'poll';
@@ -40,7 +39,7 @@ class FeedFooter extends Component {
         Actions[scene]({ entityType: item.type, entityId: item.id, ...options, postId: item.id, text: scene === 'analyticsView' ? item.body : null });
     }
 
-    markAsRead(item){
+    markAsRead(item = {}){
         // poll/fundraiser/event is ANSWERED - marked as read
         if (item.read) return;
         if (item.zone === 'prioritized'){
@@ -58,7 +57,7 @@ class FeedFooter extends Component {
         let originalItem = _.cloneDeep(this.state.item);
         let newItem = _.cloneDeep(this.state.item);
 
-        const { profile, token } = this.props;
+        const { profile = {}, token } = this.props;
         console.log('\n before --- \n votes: ',newItem.votes && newItem.vote, '\n upvotes: ', newItem.upvotes_count, '\n downvotes: ' , newItem.downvotes_count, '----------');
         
         // user shouldn't vote his own post
@@ -312,7 +311,7 @@ class FeedFooter extends Component {
     _renderUserPetitionFooter (item, showAnalytics) {
         // let isSigned = false;
         const isSigned = item && item.signature && item.signature.id;
-        console.log('isSigned', this.props.isInDetail, isSigned, item.signature);
+        // console.log('isSigned', this.props.isInDetail, isSigned, item.signature);
         // if (
         //     item &&
         //     item.signature
@@ -350,7 +349,7 @@ class FeedFooter extends Component {
         let unsignOptionIndex = signOptionIndex === 0 ? 1 : 0;
         let signOption = item.options[signOptionIndex];
         let unsignOption = item.options[unsignOptionIndex];
-        if (item.answer && (item.options[signOptionIndex].id || {}) === item.answer.option){
+        if (item.answer && ((signOption || {}).id === item.answer.option)){
             isSigned = true;
         }
         return (

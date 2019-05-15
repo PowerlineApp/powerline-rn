@@ -381,6 +381,8 @@ class Register extends React.Component {
             setTimeout(() => {
               tour(() => {
                 onLoggedIn(ret);
+                this.props.fetchConferences(ret.token, true)
+
               });
             }, 500);
             // })
@@ -707,6 +709,7 @@ class Register extends React.Component {
           setTimeout(() => {
             tour(() => {
               onLoggedIn(r);
+              this.props.fetchConferences(r.token, true)
             });
           }, 500);
         }

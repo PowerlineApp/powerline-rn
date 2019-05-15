@@ -30,20 +30,21 @@
 		5E1A5B1B21574F38AEA5B065 /* libRCTFBLogin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DE3FA0DDFA1B471987F0BB52 /* libRCTFBLogin.a */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		666BB909D45048F680D43150 /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 080DF54BF6044349805964C6 /* libRNVectorIcons.a */; };
+		6F29F980228B1691008BDA2F /* RSKImageCropper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F29F97F228B1691008BDA2F /* RSKImageCropper.framework */; };
+		6F29F981228B1691008BDA2F /* RSKImageCropper.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6F29F97F228B1691008BDA2F /* RSKImageCropper.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6F29F9BC228B169F008BDA2F /* QBImagePicker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F29F9BB228B169F008BDA2F /* QBImagePicker.framework */; };
+		6F29F9BD228B169F008BDA2F /* QBImagePicker.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6F29F9BB228B169F008BDA2F /* QBImagePicker.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6F7736142275D24A004D61D4 /* libFBSDKCoreKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F7736132275D24A004D61D4 /* libFBSDKCoreKit.a */; };
 		6F77368E2275D5E5004D61D4 /* libTPSStripe.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FBE2BEE1FD8B478008F6F44 /* libTPSStripe.a */; };
 		6F87DA65200746B500A3B788 /* libRNFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F87DA612007424600A3B788 /* libRNFS.a */; };
+		6FA013B8228AD83B00EBFECD /* QBImagePicker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F4682CE1FA8589D00E4F9E9 /* QBImagePicker.framework */; };
 		6FBE2A351FD8AF2F008F6F44 /* TPSStripe in Resources */ = {isa = PBXBuildFile; fileRef = 6FBE2A0A1FD8AF2F008F6F44 /* TPSStripe */; };
 		6FC665EC1FACFF5800F9CD94 /* PowerlineShare.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F338D121FACB70300010FBC /* PowerlineShare.m */; };
-		6FC76C451FE3E83A00AEA858 /* RSKImageCropper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F9E04A81FB64780008A5BC8 /* RSKImageCropper.framework */; };
-		6FC76C461FE3E83A00AEA858 /* RSKImageCropper.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6F9E04A81FB64780008A5BC8 /* RSKImageCropper.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		6FDFBA6B1FB67FFC00B17E85 /* QBImagePicker.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6F9E04AA1FB647A4008A5BC8 /* QBImagePicker.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		73A59C0A33CD482D8617E106 /* libRCTYouTube.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E7E0F15DE5634FBB954F3EB1 /* libRCTYouTube.a */; };
 		77F87CA900094F68B746B824 /* libRNShare.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 14BD01AC7C4D4ADEAF743355 /* libRNShare.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		834508072A9F440AB0037229 /* libRNDeviceInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D0EDD794C4584D59A6D2796F /* libRNDeviceInfo.a */; };
 		9F15D24EE347462CBA13C51A /* libSplashScreen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 71629848DDD64885A3F61DB8 /* libSplashScreen.a */; };
-		9F4682D01FA8589E00E4F9E9 /* QBImagePicker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F4682CE1FA8589D00E4F9E9 /* QBImagePicker.framework */; };
 		9F4682D51FA858A900E4F9E9 /* RSKImageCropper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F4682CF1FA8589D00E4F9E9 /* RSKImageCropper.framework */; };
 		B0D74C3461744C5CB5BB10A5 /* libRNSKBucket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B021A9CF3094B0BA84B7302 /* libRNSKBucket.a */; };
 		C820D6811F86408600F68FFA /* Andale Mono.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C820D65E1F86408600F68FFA /* Andale Mono.ttf */; };
@@ -531,8 +532,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				6FDFBA6B1FB67FFC00B17E85 /* QBImagePicker.framework in Embed Frameworks */,
-				6FC76C461FE3E83A00AEA858 /* RSKImageCropper.framework in Embed Frameworks */,
+				6F29F981228B1691008BDA2F /* RSKImageCropper.framework in Embed Frameworks */,
+				6F29F9BD228B169F008BDA2F /* QBImagePicker.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -595,6 +596,8 @@
 		6F1F2E4A1FD899C700664DE6 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKLoginKit.framework; sourceTree = "<group>"; };
 		6F1F2E4B1FD899C700664DE6 /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKCoreKit.framework; sourceTree = "<group>"; };
 		6F1F2E4E1FD899D000664DE6 /* Bolts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Bolts.framework; sourceTree = "<group>"; };
+		6F29F97F228B1691008BDA2F /* RSKImageCropper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSKImageCropper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6F29F9BB228B169F008BDA2F /* QBImagePicker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = QBImagePicker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6F338CE41FACB6A700010FBC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		6F338CE61FACB6A700010FBC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6F338D121FACB70300010FBC /* PowerlineShare.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PowerlineShare.m; sourceTree = "<group>"; };
@@ -730,10 +733,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6F29F9BC228B169F008BDA2F /* QBImagePicker.framework in Frameworks */,
 				6F77368E2275D5E5004D61D4 /* libTPSStripe.a in Frameworks */,
 				6F7736142275D24A004D61D4 /* libFBSDKCoreKit.a in Frameworks */,
 				6F87DA65200746B500A3B788 /* libRNFS.a in Frameworks */,
-				6FC76C451FE3E83A00AEA858 /* RSKImageCropper.framework in Frameworks */,
 				2F4EE3991FADCFC200C15D72 /* libART.a in Frameworks */,
 				C820D6AA1F86442B00F68FFA /* libRCTFBSDK.a in Frameworks */,
 				EB519C281EC94E57001C8D63 /* libBVLinearGradient.a in Frameworks */,
@@ -750,8 +753,8 @@
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
 				9F15D24EE347462CBA13C51A /* libSplashScreen.a in Frameworks */,
+				6FA013B8228AD83B00EBFECD /* QBImagePicker.framework in Frameworks */,
 				73A59C0A33CD482D8617E106 /* libRCTYouTube.a in Frameworks */,
-				9F4682D01FA8589E00E4F9E9 /* QBImagePicker.framework in Frameworks */,
 				02A544914CB948DA8242D2AE /* libReactNativeShareExtension.a in Frameworks */,
 				834508072A9F440AB0037229 /* libRNDeviceInfo.a in Frameworks */,
 				F5EC7EDE52334D738A548402 /* libRNFetchBlob.a in Frameworks */,
@@ -760,6 +763,7 @@
 				EA7244BC19E241E5A25F6BCF /* libimageCropPicker.a in Frameworks */,
 				666BB909D45048F680D43150 /* libRNVectorIcons.a in Frameworks */,
 				CC43B73FB5684CBDAD74E797 /* libRNAddCalendarEvent.a in Frameworks */,
+				6F29F980228B1691008BDA2F /* RSKImageCropper.framework in Frameworks */,
 				D18DDB46738B456DB393DD89 /* libRCTOneSignal.a in Frameworks */,
 				B0D74C3461744C5CB5BB10A5 /* libRNSKBucket.a in Frameworks */,
 				F5DA2EB9C0EE600D144F6B8D /* libPods-Powerline.a in Frameworks */,
@@ -1198,6 +1202,8 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				6F29F9BB228B169F008BDA2F /* QBImagePicker.framework */,
+				6F29F97F228B1691008BDA2F /* RSKImageCropper.framework */,
 				6FDD06072004A2C600E1E6F2 /* Fonts */,
 				6FBE2A0A1FD8AF2F008F6F44 /* TPSStripe */,
 				13B07FAE1A68108700A75B9A /* Powerline */,
@@ -2363,7 +2369,7 @@
 					"$(SRCROOT)/../node_modules/react-native-facebook-login/RCTFBLogin/**",
 				);
 				INFOPLIST_FILE = Powerline/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2424,7 +2430,7 @@
 					"$(SRCROOT)/../node_modules/react-native-facebook-login/RCTFBLogin/**",
 				);
 				INFOPLIST_FILE = Powerline/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
