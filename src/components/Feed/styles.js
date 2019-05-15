@@ -65,7 +65,7 @@ export default {
     },
     subtitle: {
         color: '#8694ab',
-        fontSize: 14,
+        fontSize: 12,
     },
     // this is the main content of post/petition/etc
     description: {

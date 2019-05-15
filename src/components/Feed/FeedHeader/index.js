@@ -266,7 +266,6 @@ class FeedHeader extends Component {
                     <TouchableOpacity style={{backgroundColor: '#fff', overflow: 'visible',}} onPress={() => this.onPressThumbnail(item)} underlayColor={'#fff'}>
                         <View style={{overflow: 'visible',}}>
                             {
-                                // ?
                                 <View style={{overflow: 'visible',backgroundColor:'#fff', alignItems: 'center', overflow: 'visible', justifyContent: 'center', width: 50, height: 50, backgroundColor: '#fff'}}>
                                     {!is_verified && (item.type === 'post' || item.type === 'user-petition') &&
                                     <Image
@@ -280,20 +279,12 @@ class FeedHeader extends Component {
                                         source={thumbnail ? { uri: thumbnail + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")}
                                     />
                                 </View>
-                                // :
-                                //     <View style={{ flex: 1, }}>
-                                //         <Thumbnail small
-                                //             style={{borderStyle: 'dashed', borderWidth: 2, borderColor: 'silver'}}
-                                //             source={thumbnail ? { uri: thumbnail + '&w=150&h=150&auto=compress,format,q=95' } : require("img/blank_person.png")}
-                                //             defaultSource={require("img/blank_person.png")}
-                                //     />
-                                //     </View>
                                 }
                         </View>
                     </TouchableOpacity>
-                    <Body style={{alignItems: 'flex-start', marginLeft: 16}}>
+                    <Body style={{alignItems: 'flex-start', marginLeft: 12}}>
                         <Text style={styles.title} onPress={() => this.onPressAuthor(item)}>{title}</Text>
-                        <Text note style={styles.subtitle} onPress={() => this.onPressGroup(item)}>{item.group && item.group.official_name}{` • `}
+                        <Text adjustsFontSizeToFit numberOfLines={1} note style={styles.subtitle} onPress={() => this.onPressGroup(item)}>{item.group && item.group.official_name}{` • `}
                             {
                                 moment(item.created_at).fromNow().replace(' minutes', ' m').replace('a minute', '1 m').replace('a few seconds', '5 s').replace(' seconds', 's').replace(' ago', '')
                             }
