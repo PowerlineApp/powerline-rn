@@ -3,7 +3,7 @@ var { API_URL } = require('../PLEnv');
 async function fetchAttendees (token: string, id: string): Promise<Action> {
     try {
 
-        var response = await fetch(`${API_URL}/v2.2/${id}/attendees`, {
+        var response = await fetch(`${API_URL}/v2.2/conferences/${id}/attendees`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,

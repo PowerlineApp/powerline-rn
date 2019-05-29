@@ -1,10 +1,26 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { ScrollView, View, Text, TouchableOpacity } from 'react-native'
+import { ScrollView, View, TouchableOpacity, Platform } from 'react-native'
 import Ionicon from 'react-native-vector-icons/Ionicons'
 import {
   fetchEvents
 } from "PLActions";
+import {
+    Container,
+    Header,
+    Content,
+    Button,
+    Icon,
+    ListItem,
+    Text,
+    Title,
+    Left,
+    Right,
+    Body,
+    Input,
+    Spinner
+} from "native-base";
+import commonColor from "../../../configs/commonColor";
 
 import styles from './styles'
 
@@ -14,66 +30,50 @@ class ConferenceEvents extends React.Component {
         super(props);
         this.state = {
             selectedIndex: 0,
+            data: [],
+            loading: true
         }
     }
 
     componentDidMount() {
       const { token, conferences } = this.props;
 
-      if(conferences && conferences.length > 0) {
-          this.props.fetchEvents(token, conferences[0].id).then(data => {
+      if(conferences && conferences.data.length > 0) {
+          this.props.fetchEvents(token, conferences.data[0].id).then(({data}) => {
             console.log('data-----', data);
+            this.setState({data: Object.keys(data).map(key => ([...data[key]])), loading: false})
           });
       }
     }
 
     componentWillReceiveProps(nextProps) {
-      console.log("componentWillReceiveProps at conferenceevents", nextProps);
-      if (nextProps.conferences && nextProps.schedule !== this.state.schedule) {
-        const key = Object.keys(nextProps.schedule)[0]
+    //   console.log("componentWillReceiveProps at conferenceevents", nextProps);
+    //   if (nextProps.conferences && nextProps.schedule !== this.state.schedule) {
+    //     const key = Object.keys(nextProps.schedule)[0]
 
-        this.setState({
-
-            selected: key,
-            label: this.getDateFromKey(key)
-        });
-      }
+    //     this.setState({
+    //         selected: key,
+    //         label: this.getDateFromKey(key)
+    //     });
+    //   }
     }
 
+    onBack = () => {
+        this.props.navigation.goBack();
+      };
+
     next = () => {
-        const { selectedIndex } = this.state
-        const { schedule } = this.props
-        const keys = Object.keys(schedule)
-        const length = keys.length
-
-        var target = selectedIndex + 1
-        if (target >= length) {
-            target = 0
-        }
-
-        this.setState({
-            selectedIndex: target,
-            selected: keys[target],
-            label: this.getDateFromKey(keys[target])
-        })
+        const { selectedIndex, data, loading } = this.state
+        if (loading) return
+        if (selectedIndex === data.length - 1) return
+        this.setState(p => ({selectedIndex: (p.selectedIndex + 1) % data.length}))
     }
 
     previous = () => {
-        const { selectedIndex } = this.state
-        const { schedule } = this.props
-        const keys = Object.keys(schedule)
-        const length = keys.length
-
-        var target = selectedIndex - 1
-        if (target < 0) {
-            target = length - 1
-        }
-
-        this.setState({
-            selectedIndex: target,
-            selected: keys[target],
-            label: this.getDateFromKey(keys[target])
-        })
+        const { selectedIndex, data, loading } = this.state
+        if (loading) return
+        if (selectedIndex === 0) return
+        this.setState(p => ({selectedIndex: (p.selectedIndex - 1)}))
     }
 
     getDateFromKey(key) {
@@ -84,6 +84,7 @@ class ConferenceEvents extends React.Component {
     }
 
     getTimeFromDate(date) {
+        if (!date) return ''
         var time = date.substr(11)
         time = time.substr(0, 5)
         var parts = time.split(':')
@@ -103,8 +104,38 @@ class ConferenceEvents extends React.Component {
     }
 
     render() {
+        console.log(this.state, !this.state.loading && this.state.data && this.state.data[this.state.selectedIndex])
         return (
-            <View style={{ flex: 1 }}>
+            <Container style={{ backgroundColor: "#fff" }}>
+                <Header
+                    androidStatusBarColor={commonColor.statusBarLight}
+                    iosBarStyle="dark-content"
+                    style={Platform.OS === "ios" ? styles.iosHeader : styles.aHeader}
+                >
+                    <Left>
+                    <Button
+                        transparent
+                        onPress={() => this.onBack()}
+                        style={{ width: 200, height: 50 }}
+                    >
+                        <Icon active name="arrow-back" style={{ color: "#6A6AD5" }} />
+                    </Button>
+                    </Left>
+                    <Body>
+                    <Title
+                        style={
+                        Platform.OS === "ios"
+                            ? styles.iosHeaderTitle
+                            : styles.aHeaderTitle
+                        }
+                    >
+                        Events
+                    </Title>
+                    </Body>
+                    <Right>
+                    
+                    </Right>
+                </Header>
                 <View style={styles.header}>
                     <TouchableOpacity onPress={this.previous}>
                         <Text style={styles.btnLabel}>Previous</Text>
@@ -115,37 +146,33 @@ class ConferenceEvents extends React.Component {
                     </TouchableOpacity>
                 </View>
                 <ScrollView style={styles.container}>
-                    <Text>
-                        {this.props.schedule && this.props.schedule[this.state.selected].map(
-                            (item, index) => {
-                                return (
-                                    <View key={item.id} style={styles.item}>
-                                        <Text style={styles.title}>{item.name}</Text>
-                                        <Text style={styles.location}>
-                                            {item.location}
+                    {!this.state.loading && this.state.data && this.state.data[this.state.selectedIndex].map(
+                        (item, index) => {
+                            return (
+                                <View key={index} key={item.id} style={styles.item}>
+                                    <Text style={styles.title}>{item.name}</Text>
+                                    <Text style={styles.location}>
+                                        {item.location}
+                                    </Text>
+                                    <Text style={styles.label}>
+                                        {item.label}
+                                    </Text>
+                                    <View style={styles.times}>
+                                        <Text style={styles.startsAt}>
+                                            Starts:{' '}
+                                            {this.getTimeFromDate(item.start_date)}
                                         </Text>
-                                        <Text style={styles.label}>
-                                            {item.label}
+                                        <Text style={styles.endsAt}>
+                                            Ends:{' '}
+                                            {this.getTimeFromDate(item.end_date)}
                                         </Text>
-                                        <View style={styles.times}>
-                                            <Text style={styles.startsAt}>
-                                                Starts:{' '}
-                                                {this.getTimeFromDate(
-                                                    item.startDate
-                                                )}
-                                            </Text>
-                                            <Text style={styles.endsAt}>
-                                                Ends:{' '}
-                                                {this.getTimeFromDate(item.endDate)}
-                                            </Text>
-                                        </View>
                                     </View>
-                                )
-                            }
-                        )}
-                    </Text>
+                                </View>
+                            )
+                        }
+                    )}
                 </ScrollView>
-            </View>
+            </Container>
         )
     }
 }

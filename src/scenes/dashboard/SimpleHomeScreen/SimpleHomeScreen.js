@@ -19,6 +19,7 @@ import Ionicon from 'react-native-vector-icons/Ionicons'
 import {
   fetchConferences,
   listServices,
+  setGroup
 } from "PLActions";
 
 import styles from './styles'
@@ -79,7 +80,7 @@ class SimpleHomeScreen extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-      console.log('conferences---', this.state.conferences);
+      console.log('conferences---', this.state);
       console.log('nextConferences----', nextProps);
 
       const { conciergeServices, conferences } = this.state;
@@ -90,11 +91,12 @@ class SimpleHomeScreen extends React.Component {
           const conference = nextProps.conferences.data[0];
           this.setState({ conference });
           if (conference && conference.links) {
-              conference.links.forEach(link => {
-                const url = Platform.OS === 'android' ? link.androidUrl : link.iosUrl;
-                this.state.items.push({
+            const items = conference.links.map(link => (
+                {
                   label: link.label,
                   onPress: () => {
+                    const url = Platform.OS === 'android' ? link.android_url : link.ios_url
+                    console.log(link, url)
                     if(url) {
                       Linking.openURL(url);
                     } else {
@@ -102,9 +104,20 @@ class SimpleHomeScreen extends React.Component {
                     }
                   },  
                   icon: <Image source={require('img/link_icon.png')} style={styles.icon} />
-                })
-              })
+                }
+              ))
+              const newItems = [...this.state.items, ...items]
+              this.setState({items: newItems})
           }
+
+          
+
+          // if (conference && conference.links) {
+          //     conference.links.forEach(link => {
+          //       })
+          //       const url = ;
+                
+          // }
         }
       }
       if (nextProps.conciergeServices && conciergeServices !== nextProps.conciergeServices.data) {
@@ -146,12 +159,42 @@ class SimpleHomeScreen extends React.Component {
     }
 
     gotoFeed = (home = true) => {
+      const {token} = this.props
       if (!home) {
         if (this.state.conference) {
-          this.props.dispatch({
-            type: 'NEWSFEED_STATE',
-            payload: { activeGroup: this.state.conference.groupId }
-          })
+          const groupId = this.state.conference.group_id
+          const groupObj = this.props.groupList.find(group => group.id.toString() === groupId)
+          if (!groupObj) {
+            console.log(this.state.conference, groupId, this.props.groupList)
+            return
+          }
+          let {
+            id,
+            official_name,
+            avatar_file_path,
+            conversation_view_limit,
+            total_members,
+            user_role
+          } = groupObj;
+          let data = {
+            header: groupObj.acronym,
+            user_role,
+            id,
+            group: id,
+            groupName: official_name,
+            groupAvatar: avatar_file_path,
+            groupLimit: conversation_view_limit,
+            groupMembers: total_members,
+            conversationView: total_members < conversation_view_limit
+          };
+          this.props.setGroup(data, token, id);
+
+          // this.props.dispatch({
+          //   type: 'NEWSFEED_STATE',
+          //   payload: { activeGroup: this.state.conference.groupId }
+          // })
+        // this.props.setGroup(data, token, id);
+
         }
         homeNavigator.instance.goTo('originalHome', {
             content: (
@@ -280,6 +323,7 @@ class SimpleHomeScreen extends React.Component {
     }
 
     render() {
+      console.log('this.state', this.state)
       return (
         <ScrollView style={styles.container}>
           {this.state.conference && this.state.conference.image && (
@@ -327,7 +371,8 @@ function bindAction(dispatch) {
 const mapStateToProps = state => ({
     token: state.user.token,
     conferences: state.conferences,
-    conciergeServices: state.conciergeServices
+    conciergeServices: state.conciergeServices,
+    groupList: state.groups.payload
 });
 
 export default connect(mapStateToProps, bindAction)(SimpleHomeScreen)
