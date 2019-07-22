@@ -28,17 +28,13 @@ async function queryFacebookAPI(path, ...args): Promise {
   });
 }
 
-function logInWithFacebook() {
-  return new Promise((resolve, reject) => {
-    FacebookSDK.login((result) => {
-      if (result.error) {
-        console.log(result.error);
-        reject(result.error);
-      } else {
-        resolve(result.authResponse)      
-      }
-    }, {scope: 'public_profile,email,user_friends'});
-  });
+async function logInWithFacebook() {
+  try {
+      await FacebookSDK.logout()
+  } catch (error) {
+      console.log('logout error ', error)
+  }
+  return FacebookSDK.login({scope: 'public_profile,email,user_friends'})
 }
 
 async function forgotPassword(email: string) {

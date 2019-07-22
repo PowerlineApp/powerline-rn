@@ -43,28 +43,34 @@ class PLApp extends Component {
     }
     
     async componentDidMount () {
-        if (this.props.token){
-            this.props.fetchConferences(this.props.token);
-            let splash = await AsyncStorage.getItem('splashScreen');
-            if (splash){
-                this.setState({splash}, () => setTimeout(() => this.setState({splash: false}), 1500) );
+        try {
+            console.log('alowww')
+            
+            if (this.props.token){
+                this.props.fetchConferences(this.props.token);
+                let splash = await AsyncStorage.getItem('splashScreen');
+                if (splash){
+                    this.setState({splash}, () => setTimeout(() => this.setState({splash: false}), 1500) );
+                } else {
+                    this.setState({splash: false});
+                }
             } else {
                 this.setState({splash: false});
             }
-        } else {
-            this.setState({splash: false});
+            Stripe.init({
+                publishableKey: stripeAPIKey
+            });
+            // console.log('=>', SplashScreen);
+            // SplashScreen.hide();
+
+            const myGroup = 'group.ne.powerline.share';
+            RNSKBucket.set('token', this.props.token, myGroup);
+            
+            // this.props.fetchConferences(this.props.token);
+            AppState.addEventListener('change', this.handleAppStateChange);
+        } catch (error) {
+            console.log('error ', error)   
         }
-        Stripe.init({
-            publishableKey: stripeAPIKey
-        });
-        // console.log('=>', SplashScreen);
-        SplashScreen.hide();
-
-        const myGroup = 'group.ne.powerline.share';
-        RNSKBucket.set('token', this.props.token, myGroup);
-
-        // this.props.fetchConferences(this.props.token);
-        AppState.addEventListener('change', this.handleAppStateChange);
     }
 
 

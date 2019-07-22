@@ -3,20 +3,13 @@
  * @providesModule FacebookSDK
  */
 'use strict';
-import { Platform } from 'react-native';
-var {
-  LoginManager,
-  AccessToken,
-  GraphRequest,
-  GraphRequestManager,
-} = require('react-native-fbsdk');
+import { Platform, Alert } from 'react-native';
+import { AccessToken, LoginManager, GraphRequest, GraphRequestManager } from 'react-native-fbsdk';
 
-var {FBLoginManager} = require('react-native-facebook-login');
 
 const emptyFunction = () => { };
 const mapObject = require('fbjs/lib/mapObject');
-import { API_URL } from './PLEnv'
-
+import { API_URL, OAUTH_URL, clientId, clientSecret } from './PLEnv'
 
 type AuthResponse = {
   userID: string;
@@ -28,19 +21,35 @@ type LoginCallback = (result: { authResponse?: AuthResponse, error?: Error }) =>
 
 let _authResponse: ?AuthResponse = null;
 
+const alow = (msg) => {
+  return new Promise((f, r) => {
+    Alert.alert('alow',
+        JSON.stringify(msg),
+        [
+            {text: 'Ok', onPress: () => {
+                f()
+            }}
+        ],
+        {cancelable: false}
+        )
+  })
+}
+
 async function loginWithFacebookSDK(options: LoginOptions): Promise<AuthResponse> {
   return new Promise((fullfill, reject) => {
     const scope = options.scope || 'public_profile';
     const permissions = scope.split(',');
-    if(Platform.OS == 'ios') {
-      console.log('opening in system mode');
-      FBLoginManager.setLoginBehavior(FBLoginManager.LoginBehaviors.Web);
-    }
-    console.log('will login')
-    LoginManager.logInWithReadPermissions(["public_profile", "email", "user_friends"]).then(
+    // if(Platform.OS == 'ios') {
+    //   console.log('opening in system mode');
+    //   FBLoginManager.setLoginBehavior(FBLoginManager.LoginBehaviors.Web);
+    // }
+
+    LoginManager.logInWithPermissions(["public_profile"]).then(
       function(result) {
+        console.log('result', result)
         if (result.isCancelled) {
           console.log("Login cancelled");
+          reject(new Error('Login cancelled.'))
         } else {
           console.log(
             "Login success with result: ",
@@ -48,39 +57,46 @@ async function loginWithFacebookSDK(options: LoginOptions): Promise<AuthResponse
           );
           FacebookSDK.api("/me", "get", {fields: 'email,first_name,last_name,picture,gender,location,hometown,birthday,link'}, async function(data, err){
               if(err){
-                console.log(err);
                 reject(err);
               }
               try {
                 const fb_token = await AccessToken.getCurrentAccessToken()
                 const {accessToken} = JSON.parse(JSON.stringify(fb_token))
-                console.log(fb_token, accessToken)
-                const requestBody = JSON.stringify({
-                  facebook_id: data.id,
-                  facebook_token: accessToken
-                })
-                console.log('request body', requestBody)
-                const user = await fetch(API_URL + `/secure/facebook/login`, {
+
+
+                let access_token = null
+                let IsRegistrationComplete = null
+
+                try {
+                  const requestBody = JSON.stringify({
+                    facebook_id: data.id,
+                    facebook_token: accessToken,
+                    grant_type: "urn:ietf:params:oauth:grant-type:facebook",
+                    client_id: clientId,
+                    client_secret: clientSecret,
+                  })
+                  console.log('request body', requestBody)
+                  const user = await fetch(OAUTH_URL + '/v2/token', {
                     method: 'POST',
                     headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
+                      'Accept': 'application/json',
+                      'Content-Type': 'application/json',
                     },
                     body: requestBody
-                })
-
-                const userJson = await user.json()
-                console.log('request result', userJson)
-                if (userJson.token) {               
-                  var data = {
-                      id: userJson.id,
-                      username: userJson.username,
-                      token: userJson.token,
-                      is_registration_complete: userJson.is_registration_complete
-                  };
-                  fullfill(data);
-                } else { 
+                  })
+                  // const text = await user.text()
+                  const resJson = await user.json()
+                  console.log('response from api facebook login > ', resJson)
+                  access_token = resJson.access_token
+                  IsRegistrationComplete = resJson.is_registration_complete
+                } catch (error) {
+                  console.log('failed to get access_token from api', error)
+                }
+                if (access_token) {               
+                  fullfill({token: access_token});
+                } else {
                   let payloadData = {
+                    token: access_token, IsRegistrationComplete,
                     facebook_id: data.id,
                     facebook_token: accessToken,
                     email: data.email,
@@ -106,10 +122,11 @@ async function loginWithFacebookSDK(options: LoginOptions): Promise<AuthResponse
                   if(data.email){
                     payloadData.username = data.email.split("@")[0];
                   }
-    
+                  console.log('final user json before register')
                   fullfill(payloadData);
                 }
             } catch (error) {
+                console.error('error :', error)
                 reject(error) 
             }
           });
@@ -126,13 +143,7 @@ async function loginWithFacebookSDK(options: LoginOptions): Promise<AuthResponse
 
 var FacebookSDK = {
 
-  login(callback: LoginCallback, options: LoginOptions) {
-    loginWithFacebookSDK(options).then(authResponse =>
-      callback({ authResponse })
-    ).catch(error => {
-      callback({ error })
-    });
-  },
+  login : loginWithFacebookSDK,
 
   getAuthResponse(): ?AuthResponse {
     return _authResponse;
