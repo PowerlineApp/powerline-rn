@@ -104,8 +104,8 @@ def enableSeparateBuildPerCPUArchitecture = false
 def enableProguardInReleaseBuilds = false
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion '26.0.1'
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
     lintOptions {
         abortOnError false
         disable 'ValidFragment'
@@ -113,9 +113,9 @@ android {
     defaultConfig {
         applicationId "ne.powerli"
         minSdkVersion 22
-        targetSdkVersion 26
-        versionCode 20120
-        versionName "1.0"
+        targetSdkVersion 28
+        versionCode 20200
+        versionName "4.1.0"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
@@ -189,73 +189,8 @@ android {
 }
 
 dependencies {
-    compile project(':tipsi-stripe')
-    compile project(':react-native-youtube')
-    compile project(':react-native-vector-icons')
-    compile project(':react-native-swiss-knife')
-    compile project(':react-native-splash-screen')
-    compile project(':react-native-share-extension')
-    compile project(':react-native-share')
-    compile project(':react-native-onesignal')
-    compile project(':react-native-mixpanel')
-    compile project(':react-native-linear-gradient')
-    compile project(':react-native-image-crop-picker')
-    compile project(':react-native-fs')
-    compile project(':react-native-fetch-blob')
     compile project(':react-native-fbsdk')
-    compile project(':react-native-device-info')
-    compile project(':react-native-add-calendar-event')
-    compile project(':tipsi-stripe')
-    compile project(':react-native-youtube')
-    compile project(':react-native-vector-icons')
-    compile project(':react-native-swiss-knife')
-    compile project(':react-native-splash-screen')
-    compile project(':react-native-share-extension')
-    compile project(':react-native-share')
-    compile project(':react-native-onesignal')
-    compile project(':react-native-mixpanel')
-    compile project(':react-native-linear-gradient')
-    compile project(':react-native-image-crop-picker')
-    compile project(':react-native-fs')
-    compile project(':react-native-fetch-blob')
-    compile project(':react-native-fbsdk')
-    compile project(':react-native-device-info')
 
-    compile project(':react-native-add-calendar-event')
-    compile project(':tipsi-stripe')
-    compile project(':react-native-youtube')
-    compile project(':react-native-vector-icons')
-    compile project(':react-native-swiss-knife')
-    compile project(':react-native-splash-screen')
-    compile project(':react-native-share-extension')
-    compile project(':react-native-share')
-    compile project(':react-native-onesignal')
-    compile project(':react-native-mixpanel')
-    compile project(':react-native-linear-gradient')
-    compile project(':react-native-image-crop-picker')
-    compile project(':react-native-fs')
-    compile project(':react-native-fetch-blob')
-    compile project(':react-native-fbsdk')
-    compile project(':react-native-device-info')
-
-    compile project(':react-native-add-calendar-event')
-    compile project(':tipsi-stripe')
-    compile project(':react-native-youtube')
-    compile project(':react-native-vector-icons')
-    compile project(':react-native-swiss-knife')
-    compile project(':react-native-splash-screen')
-    compile project(':react-native-share-extension')
-    compile project(':react-native-share')
-    compile project(':react-native-onesignal')
-    compile project(':react-native-mixpanel')
-    compile project(':react-native-linear-gradient')
-    compile project(':react-native-image-crop-picker')
-    compile project(':react-native-fs')
-    compile project(':react-native-fetch-blob')
-    compile project(':react-native-fbsdk')
-    compile project(':react-native-device-info')
-
-    compile project(':react-native-add-calendar-event')
     compile project(':react-native-fs')
     compile project(':react-native-swiss-knife')
 
@@ -276,23 +211,38 @@ dependencies {
     compile project(':react-native-device-info')
     compile project(':react-native-onesignal')
     compile project(':react-native-youtube')
-    compile project(':react-native-fbsdk')
     compile fileTree(dir: "libs", include: ["*.jar"])
 
-    compile('com.facebook.android:facebook-android-sdk:4.22.1')
-
-    // compile "com.android.support:appcompat-v7:23.0.1"
+    // compile('com.facebook.android:facebook-android-sdk:4.22.1')
+        compile 'com.facebook.android:facebook-android-sdk:[4,5)' 
+    compile "com.android.support:appcompat-v7:23.0.1"
     compile('com.google.android.gms:play-services-wallet:+'){
         force = true
     }
 
 
-    compile ('com.google.android.gms:play-services-gcm:+') {
+    // compile ('com.google.android.gms:play-services-gcm:+') {
+    //     force = true
+    // }
+    compile "com.google.android.gms:play-services-base:15.0.1"
+    compile "com.google.android.gms:play-services-gcm:15.0.1"
+    compile ('androidx.legacy:legacy-support-v4:1.0.0-beta01') {
+        force = true
+    }
+    compile ('androidx.appcompat:appcompat:1.0.0-beta01') {
+        force = true
+    }
+    compile ('androidx.media:media:1.0.0-beta01') {
         force = true
     }
     // compile 'com.stripe:stripe-android:6.0.0'
 
 
+    implementation("com.squareup.okhttp3:okhttp:3.8.1")
+    implementation("com.google.zxing:core:3.3.3")
+    implementation("com.facebook.android:facebook-common:5.1.1")
+    implementation("com.facebook.android:facebook-share:5.1.1")
+    compile 'com.facebook.android:facebook-login:5.+'
 
     compile "com.facebook.react:react-native:+"  // From node_modules
     compile project(':react-native-splash-screen')
@@ -309,3 +259,24 @@ task copyDownloadableDepsToLibs(type: Copy) {
     from configurations.compile
     into 'libs'
 }
+
+
+// configurations.all {
+//     resolutionStrategy {
+//         force 'com.google.android.gms:play-services-gcm:16.1.0'
+//         force 'com.google.android.gms:play-services-base:16.1.0'
+//         force 'com.google.firebase:firebase-core:16.0.9'
+//         force 'com.google.firebase:firebase-messaging:18.0.0'
+// }}
+
+configurations.all {
+    resolutionStrategy {
+    force 'com.google.android.gms:play-services-gcm:16.1.0'
+    force 'com.google.android.gms:play-services-base:16.1.0'
+    force 'com.google.android.gms:play-services-wallet:17.0.0'
+    force 'com.android.support:support-v4:27.1.0'
+    force 'com.google.firebase:firebase-core:16.0.9'
+    force 'com.google.firebase:firebase-messaging:18.0.0'
+    force 'com.facebook.android:facebook-core:5.1.1'
+    force 'com.facebook.android:facebook-login:5.1.1'
+}}

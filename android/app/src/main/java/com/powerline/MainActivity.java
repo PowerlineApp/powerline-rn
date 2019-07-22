@@ -2,8 +2,9 @@ package ne.powerli;
 
 import android.os.Bundle;
 import com.facebook.react.ReactActivity;
-import org.devio.rn.splashscreen.SplashScreen; // here
+// import org.devio.rn.splashscreen.SplashScreen; // here
 import android.content.Intent;
+import com.facebook.react.ReactInstanceManager;
 
 public class MainActivity extends ReactActivity {
 
@@ -13,7 +14,7 @@ public class MainActivity extends ReactActivity {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-       SplashScreen.show(this);  // here
+    //    SplashScreen.show(this);  // here
        super.onCreate(savedInstanceState);
     }
 
@@ -22,9 +23,9 @@ public class MainActivity extends ReactActivity {
         return "Powerline";
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        MainApplication.getCallbackManager().onActivityResult(requestCode, resultCode, data);
-    }
+    // @Override
+    // public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    //     super.onActivityResult(requestCode, resultCode, data);
+    //     MainApplication.getCallbackManager().onActivityResult(requestCode, resultCode, data);
+    // }
 }

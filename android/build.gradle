@@ -6,7 +6,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.1'
+        classpath 'com.android.tools.build:gradle:3.2.0'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -14,26 +14,47 @@ buildscript {
 }
 
 allprojects {
+
     repositories {
-        // Add jitpack repository (added by tipsi-stripe)
-        maven { url "https://jitpack.io" }
-        maven { url "https://maven.google.com" }
         mavenLocal()
         jcenter()
         maven {
             // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
             url "$rootDir/../node_modules/react-native/android"
         }
+        maven { url "https://jitpack.io" }
+        maven {
+            url 'https://maven.google.com/'
+            name 'Google'
+        }
     }
 }
 
+def versionOverrides = [
+    "com.google.android.gms:play-services-gcm": "16.1.0"
+]
 subprojects {
+    
     afterEvaluate {project ->
         if (project.hasProperty("android")) {
             android {
-                compileSdkVersion 26
-                buildToolsVersion '26.0.1'
+                compileSdkVersion 28
+                buildToolsVersion '28.0.2'
             }
         }
     }
+    configurations.all {
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            def overrideVersion = versionOverrides[details.requested.group + ":" + details.requested.name]
+
+            if (overrideVersion != null && details.requested.version != overrideVersion) {
+                logger.info "Overriding dependency ${details.requested.group}:${details.requested.name} version ${details.requested.version} --> $overrideVersion"
+                details.useVersion overrideVersion
+            }
+        }
+    }
+}
+
+ext {
+    googlePlayServicesVersion = '16.+'
 }
