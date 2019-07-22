@@ -30,54 +30,55 @@ const forceDev = false;
 
 const dev = __DEV__ || forceDev;
 
-if (!dev || staging) {
-  console.log = () => {};
-  console.warn = () => {};
-}
-// console.log = () => {};
-// console.warn = () => {};
+// if (!dev || staging) {
+//   console.log = () => {};
+//   console.warn = () => {};
+// }
+console.log = () => {};
+console.error = () => {};
+console.warn = () => {};
 
 let env = {
   testMenuEnabled: true,
-  API_URL: devURL, //dev && !staging ? devURL : staging ? stagingURL : prodURL,
-  OAUTH_URL: dev && !staging ? devOAuthURL : staging ? stagingOAuthURL : prodOAuthURL,
-  clientId: dev && !staging ? devClientId : staging ? stagingClientId : prodClientId,
-  clientSecret: dev && !staging ? devClientSecret : staging ? stagingClientSecret : prodClientSecret,
+  API_URL: prodURL, //dev && !staging ? devURL : staging ? stagingURL : prodURL,
+  OAUTH_URL: prodOAuthURL, //dev && !staging ? devOAuthURL : staging ? stagingOAuthURL : prodOAuthURL,
+  clientId: prodClientId, // dev && !staging ? devClientId : staging ? stagingClientId : prodClientId,
+  clientSecret: prodClientSecret, // dev && !staging ? devClientSecret : staging ? stagingClientSecret : prodClientSecret,
   version: 301,
   fontFamily: undefined,
   PER_PAGE: 20,
   youTubeAPIKey: "AIzaSyC2911BA6uHZWYcB0154TC1KcYKc6d337s",
   MixpanelToken: "41d5e20219405736fed2c133437f2953",
   Mixpanel,
-  stripeAPIKey: dev ? stripeTest : stripeProd
+  stripeAPIKey: stripeTest // dev ? stripeTest : stripeProd
 };
 
 setEnv = (key, value) => {
-  if (dev || env.staging) {
-    env[key] = value;
-  }
+  // if (dev || env.staging) {
+  //   env[key] = value;
+  // }
 };
 
 setStaging = () => {
-  if (!dev || !env.staging) {
-    return;
-  }
-  env.API_URL = stagingURL;
-  env.stripeAPIKey = stripeProd;
-  env.staging = true;
-  console.error(
-    "WARNING!!! YOU'RE ABOUT TO SET STAGING URL FOR API AND PROD STRIPE API KEY! THIS IS ONLY" +
-      " AVAILABLE IN DEV MODE"
-  );
+  // if (!dev || !env.staging) {
+  //   return;
+  // }
+  // env.API_URL = stagingURL;
+  // env.stripeAPIKey = stripeProd;
+  // env.staging = true;
+  // console.error(
+  //   "WARNING!!! YOU'RE ABOUT TO SET STAGING URL FOR API AND PROD STRIPE API KEY! THIS IS ONLY" +
+  //     " AVAILABLE IN DEV MODE"
+  // );
 };
 
 setDev = () => {
-  if (!dev || !env.staging) {
-    return;
-  }
-  env.API_URL = devURL;
-  env.stripeAPIKey = stripeTest;
-  env.staging = false;
+  // if (!dev || !env.staging) {
+  //   return;
+  // }
+  // env.API_URL = devURL;
+  // env.stripeAPIKey = stripeTest;
+  // env.staging = false;
 };
 
 ("use strict");
