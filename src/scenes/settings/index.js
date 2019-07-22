@@ -172,6 +172,7 @@ class Component extends React.Component {
             this.setState({ isPromptOpen: false });
           }}
           onSubmit={value => {
+            value = value.toUpperCase()
             /* onSubmit */
             this.setState({ loading: true });
             updateUserProfile(this.props.user.token, { agency: value })
@@ -240,7 +241,7 @@ const mapStateToProps = ({ agency, user }) => ({
 
 const mapActionToProps = dispatch => ({
   fetchConferences: token => dispatch(fetchConferences(token)),
-
+  dispatch: action => dispatch(action)
 })
 
 export default connect(mapStateToProps, mapActionToProps)(Component);

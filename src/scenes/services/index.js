@@ -50,6 +50,7 @@ class Services extends Component {
   loadServices = () => {
     listServices(this.props.userDetails.token)
     .then(r => {
+      console.log(' r .data', r.data)
       this.setState({
         services: r.data,
         isFetching: false
@@ -227,17 +228,26 @@ class Services extends Component {
     })
   }
 
-  finishRequest = async (service, serviceInfo) => {
+  finishRequest = async (service, serviceInfo, payment_type) => {
     const {token} = this.props.userDetails
+    if (!service.is_reservation) {
+      delete serviceInfo.reservation
+    }
+    // serviceInfo.payment_type = payment_type
     try {
       const response = await setService(token, service.id, serviceInfo)
+      const responseJson = await response.data.json()
+      const errors = responseJson.errors
+      if (errors && errors.errors && errors.errors[0]) {
+        throw new Error(errors.errors[0])
+      }
       if (response.data.status.toString()[0] === '4' || response.data.status.toString()[0] === '5') {
         throw new Error('Failed to fetch')
       }
       Alert.alert('The service was requested successfully')
     } catch (error) {
       console.log('error while updatng service with params, id: ', service.id, 'body: ', serviceInfo, 'error:', error)
-      Alert.alert('Failed to request service.')
+      Alert.alert('Failed to request service.', error.message)
     }
   }
 
@@ -245,7 +255,7 @@ class Services extends Component {
     let text = ''
       text = ` \nYou'll be charged $${service && service.price} for this service.
             \n Payment type: ${paymentType === 'cc' ? `Credit Card, ${cards[0].brand} - ${cards[0].last4}` : 'Cash'}
-            \n Reservation: ${serviceInfo.reservation.date}
+            ${service.is_reservation ? `\n Reservation: ${serviceInfo.reservation.date}` : ''}
             `
     return new Promise((resolve, reject) => {
       Alert.alert(service.title, text, [
@@ -308,7 +318,7 @@ class Services extends Component {
             await this.showConfirmation(service, serviceInfo, paymentType, cards)
           }, 200)
       } else if (service.type === 'butler') { // will not handle yet
-
+          alert('Butler services not available for now.')
       }}, 200)
   }
 

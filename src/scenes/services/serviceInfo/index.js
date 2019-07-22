@@ -33,7 +33,7 @@ class ServiceInfo extends Component {
         super(props);
         this.state = {
           memo: '',
-          reservation_date: moment().format('YYYY-MM-DD hh:mm:ss A'),
+          reservation_date: new Date(),
           reservation_number: 1,
           editable: props.editable,
           isDateTimePickerVisible: false,
@@ -46,7 +46,7 @@ class ServiceInfo extends Component {
         this.setState({
             price: props.service.price,
             memo: props.service.memo,
-            reservation_date: (props.service.reservation_details && props.service.reservation_details.indexOf(' | ') > -1) ? moment(props.service.reservation_details.split(' | ')[0]).format('YYYY-MM-DD hh:mm:ss A') : moment().format('YYYY-MM-DD hh:mm:ss A'),
+            // reservation_date: (props.service.reservation_details && props.service.reservation_details.indexOf(' | ') > -1) ? moment(props.service.reservation_details.split(' | ')[0]).format('YYYY-MM-DD hh:mm:ss A') : moment().format('YYYY-MM-DD hh:mm:ss A'),
             reservation_number: (props.service.reservation_details && props.service.reservation_details.indexOf(' | ') > -1) ? parseInt(props.service.reservation_details.split(' | ')[1]) : 1
         });
     }
@@ -79,7 +79,7 @@ class ServiceInfo extends Component {
     _hideDateTimePicker = () => this.setState({ isDateTimePickerVisible: false });
 
     _handleDatePicked = (date) => {
-        this.setState({reservation_date: moment(date).format('YYYY-MM-DD hh:mm:ss A')});
+        this.setState({reservation_date: date});
         this._hideDateTimePicker();
     };
 
@@ -141,10 +141,21 @@ class ServiceInfo extends Component {
         )
     }
 
+    alertpls () {
+        // let {reservation_date} = this.state
+
+        // if (this.allerted) return
+        // this.allerted = true
+        // alert(`${reservation_date}, ${moment(reservation_date)}, ${moment(reservation_date).format('MMMM Do, hh:mm')}`)
+        // setTimeout(() => this.allerted = false, 2000)
+    }
+
     render() {
         const { service } = this.props;
-        const { type, price, surcharge, third_party_name } = this.props.service
+        const { type, price, surcharge, third_party_name, is_reservation } = this.props.service
         let {reservation_date} = this.state
+        // this.alertpls()
+        // console.log('service json', this.props.service)
         return (
             <ScrollView style={styles.overlayContainer}>
                 <View style={styles.overlay}>
@@ -154,16 +165,7 @@ class ServiceInfo extends Component {
                         </View>
                         {type !== 'simple' ?
                         <View style={styles.item}>
-                            {
-                                service.is_ride ? (<Textarea
-                                    style={{height: 0}}
-                                    placeholder={this.props.service.memo_placeholder}
-                                    value={this.state.price}
-                                    editable={this.props.editable}
-                                    selectTextOnFocus={this.props.editable}
-                                    onChangeText={(text) => this.changePrice(text)}
-                                />) : <this.renderLabel label='Price' type='money' value={`$${price}`} />
-                            }
+                            <this.renderLabel label='Price' type='money' value={`$${price}`} />
                         </View> : null}
                         {type !== 'simple' ?
                         <View style={styles.item}>
@@ -186,8 +188,8 @@ class ServiceInfo extends Component {
                             />
                         </View>
                         {
-                            
-                            <View style={styles.item}>
+                            is_reservation ?
+                            (<View style={styles.item}>
                                 <Text style={[styles.labelText, {marginTop: 4, marginBottom: 4}]}>
                                     Reservation
                                 </Text>
@@ -203,13 +205,14 @@ class ServiceInfo extends Component {
                                             onPress={this.props.editable ? this._showDateTimePicker : () => {}}
                                             style={styles.dateButton}>
                                             <Text style={styles.dateText}>
-                                                {moment(reservation_date).format('MMMM Do, hh:mm')}
+                                                {moment(reservation_date).format('MMMM Do, HH:mm')}
                                             </Text>
                                         </Button>
                                     </View>
                                     {this.renderReservationItem()}
                                 </View>
-                            </View>
+                            </View>)
+                            : null
                         }
                         <View style={styles.buttonPanel}>
                             <Button

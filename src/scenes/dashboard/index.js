@@ -213,6 +213,7 @@ class Home extends Component {
   }
 
   componentWillMount() {
+    console.log('dashboard componentDidMount')
     const { props: { profile, token, dispatch } } = this;
     this.preCacheAgencyImages();
 

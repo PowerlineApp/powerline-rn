@@ -161,11 +161,12 @@ class SideBar extends Component {
       let data = { id: "all", group: "all", header: "all" };
 
       // POW-151 * conferences are already fetched
-      if (this.props.conferences.data && this.props.conferences.data) {
-          Actions["simpleHome"]();
-      } else {
-          Actions["originalHome"]();
-      }
+      // if (this.props.conferences.data && this.props.conferences.data) {
+      //     Actions["simpleHome"]();
+      // } else {
+      //     Actions["originalHome"]();
+      // }
+      Actions.home()
 
       // this.props.fetchConferences(this.props.token).then(data => {
       //   if(data && data.data && data.data.length > 0) {

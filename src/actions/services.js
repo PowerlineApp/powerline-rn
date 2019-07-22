@@ -23,7 +23,7 @@ async function listServices(token): Promise<Action> {
  };
 
 async function setService(token: string, serviceId: string, service: object): Promise<Action>  {
-    console.log(token, serviceId, service)
+    console.log('setService', token, serviceId, service)
     try {
         let response = await fetch(`${API_URL}/v2.2/user/concierge-services/${serviceId}`, {
             method: 'PUT',
@@ -36,7 +36,7 @@ async function setService(token: string, serviceId: string, service: object): Pr
 
         const action = {
             type: 'SET_STATUS',
-            data: response,
+            data: response
         };
         return Promise.resolve(action);
     } catch (error) {

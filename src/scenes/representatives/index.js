@@ -201,7 +201,7 @@ const menuContextStyles = {
 
 const mapStateToProps = state => ({
   token: state.user.token,
-  is_registration_complete: state.user.profile.is_registration_complete
+  is_registration_complete: state.user && state.user.profile && state.user.profile.is_registration_complete
 });
 
 const mapDispatchToProps = dispatch => ({

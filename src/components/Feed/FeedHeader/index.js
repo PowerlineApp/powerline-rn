@@ -244,7 +244,7 @@ class FeedHeader extends Component {
         const user = item && item.user;
         const first_name = user && user.first_name;
         const last_name = user && user.last_name;
-        const is_verified = user && user.is_verified;
+        const is_verified = user && user.is_verified
 
         switch (item.type) {
         case 'post':
@@ -434,7 +434,7 @@ const mapStateToProps = (state) => ({
     blokedUsers: state.user.blockedList,
     userId: (state.user.profile || {id: null}).id,
     token: state.user.token,
-    is_verified: state.user.profile.is_verified
+    is_verified: state.user && state.user.profile && state.user.profile.is_verified
 });
 
 export default connect(mapStateToProps, {subscribeNotification, unsubscribeNotification, deletePost, deletePetition})(FeedHeader);

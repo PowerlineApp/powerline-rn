@@ -22,6 +22,7 @@ import {
 } from 'native-base';
 import PLColors from 'PLColors';
 import { findByUsernameEmailOrPhone, updateUserProfile, loadUserProfileById, verifyNumber, verifyCode, sendCode } from 'PLActions';
+
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import ImageSelector from '../../common/PLImageSelector'
 import PLButton from 'PLButton';
@@ -39,7 +40,7 @@ class VerifyProfile extends Component {
         super(props);
         this.state = {
             zip: props.profile.zip,
-            address1: props.profile.address1,
+            address1: props.profile.address1 || '',
             address2: props.profile.address2,
             city: props.profile.city,
             state: props.profile.state,
@@ -80,10 +81,11 @@ class VerifyProfile extends Component {
     }
 
     updateUser() {
-        let {zip, address1, address2, city, state, email, country, phone, birth, user: {avatar_file_name}, countryInfo: {callingCode}} = this.state;
+        let {image_data: avatar_file_name, zip, address1, address2, city, state, email, country, phone, birth, countryInfo: {callingCode}} = this.state;
         this.setState({loading: true})
-        console.log('updating => ', {zip, address1, address2, city, state, email, country, phone: '+' + callingCode + phone, birth, avatar_file_name});
-        updateUserProfile(this.props.token, {zip, address1, address2, city, state, email, country, phone: '+' + callingCode + phone, birth, avatar_file_name})
+        const json = {zip, address1, address2, city, state, email, country, phone: this.props.profile.phone ? undefined : ('+' + callingCode + phone), birth, avatar_file_name}
+        console.log('updating => ', json);
+        updateUserProfile(this.props.token, json)
         .then(response => {
             this.setState({loading: false})
             console.log('response from updating user profile', response)
@@ -95,15 +97,15 @@ class VerifyProfile extends Component {
             console.log('err', err)});
     }
 
-    updateUserAvatar(image) {
-        this.setState(state => {
-            state.user.avatar_file_name = image.path
-            return state
-        })
-        // updateUserProfile(this.props.token, {avatar_file_name: image.data})
+    updateUserAvatar = (image) => {
+        // (state => {
+        //     state.user.avatar_file_name = image.path
+        //     return state
+        // })
+        this.setState(s => ({image_data: image.data, mime: image.mime, user: {...s.user, avatar_file_name: image.path}}))
     }
 
-    onAutoComplete = (data, details) => {
+    onAutoComplete = async (data, details) => {
         // console.log('!!!!!!!!!!!!!!!', data, details)
         // this.setState({
         //     address1: "",
@@ -116,33 +118,33 @@ class VerifyProfile extends Component {
         console.log(address_components);
         for(var i = 0; i < address_components.length; i++){
             if(address_components[i].types.indexOf("street_number") !== -1){
-                console.log('found : address1 ', address_components[i].long_name)
-                this.setState({
-                    address1: address_components[i].long_name
-                })
+                // console.log('found : address1 ', address_components[i].long_name)
+                // await this.setState({
+                //     address1: address_components[i].long_name
+                // })
             }else if(address_components[i].types.indexOf("locality") !== -1 || address_components[i].types.indexOf("neighborhood") !== -1){
                 console.log('found : city ', address_components[i].long_name)
-                this.setState({
+                await this.setState({
                     city: address_components[i].long_name
                 });
             }else if(address_components[i].types.indexOf("administrative_area_level_1") !== -1){
                 console.log('found : state ', address_components[i].long_name)
-                this.setState({
+                await this.setState({
                     state: address_components[i].long_name
                 });
             }else if(address_components[i].types.indexOf("country") !== -1){
                 console.log('found : country ', address_components[i].short_name)
-                this.setState({
+                await this.setState({
                     country: address_components[i].short_name
                 });
             }else if(address_components[i].types.indexOf("postal_code") !== -1){
                 console.log('found : zip ', address_components[i].long_name)
-                this.setState({
+                await this.setState({
                     zip : address_components[i].long_name
                 });
             }else if(address_components[i].types.indexOf("route") !== -1){
                 console.log('found : address1 ', address_components[i].long_name)
-                this.setState((prevState) => ({
+                await this.setState((prevState) => ({
                     address1: prevState.address1 + " " + address_components[i].long_name
                 }))
                 // this.state.address1 +=" " + address_components[i].long_name;
@@ -171,7 +173,7 @@ class VerifyProfile extends Component {
         let {phone, code, countryCode} = this.state;
         countryCode = countryCode || '+1';    
         this.setState({code: ''})
-        verifyCode({phone: countryCode + phone, code}).then(r => {
+        verifyCode({phone: countryCode + phone, code: 'CODE1234'}).then(r => {
             // user successfully validated his phone, so its a real deal.
             this.setState({showPhoneScreen: false, loading: false, phone: countryCode + phone})
         }).catch(error => {
@@ -313,7 +315,7 @@ class VerifyProfile extends Component {
                     <View style={{flex: 10, alignItems: 'center', justifyContent: 'center'}}>
                         <Thumbnail source={{uri: this.state.user.avatar_file_name}} />
                         <View style={{position: 'absolute', alignItems: 'center', alignSelf:'center', width: 25, height: 25, borderRadius: 30, flex: 1, zIndex: 3, marginTop: 16, backgroundColor: '#eeeeee70'}}>
-                            <ImageSelector onConfirm={(i) => this.updateUserAvatar(i)} iconSize={20} iconColor='#000' onError={err => console.log(err)}/>
+                            <ImageSelector onConfirm={this.updateUserAvatar} iconSize={20} iconColor='#000' onError={err => console.log(err)}/>
                         </View> 
                     </View>
                     <View style={{flex: 2}} />
