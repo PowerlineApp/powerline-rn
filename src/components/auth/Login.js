@@ -4,18 +4,17 @@ import { connect } from 'react-redux';
 import { StyleSheet, Alert, View, Image, Text, Switch, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import {Button, Icon} from 'native-base';
 import LinearGradient from "react-native-linear-gradient";
+import { LoginButton, AccessToken, LoginManager } from 'react-native-fbsdk';
 
 import PLButton from 'PLButton';
 import PLColors from 'PLColors';
 import PLConstants, { WINDOW_WIDTH } from 'PLConstants';
-import { logInWithFacebook, sendCode, sendRecoveryEmail, finishRecovery, login2, oauthLogin, fetchConferences }  from 'PLActions';
+import { logInWithFacebook, sendCode, sendRecoveryEmail, finishRecovery, login2, oauthLogin, fetchConferences, loadUserProfile }  from 'PLActions';
 import PLOverlayLoader from 'PLOverlayLoader';
 import PhoneVerification from './PhoneVerification';
 import logo from '../../assets/logo.png';
 import { ConnectableObservable } from 'rx';
 class Login extends React.Component {
-
-
   constructor() {
     super();
     this.state = {
@@ -83,8 +82,11 @@ class Login extends React.Component {
         if (data.token) {
           console.log('DATA BEING DISPATCHED FROM LOGIN WITH FACEBOOK', data)
           dispatch({ type: 'LOGGED_IN', data: data });
-          console.log('confs forcing...', data.token, true)
+
+          dispatch(loadUserProfile(data.token))
+          dispatch(fetchConferences(data.token, true))
           this.props.fetchConferences(data.token, true)
+
         } else {
           console.log('DATA BEING DISPATCHED FROM REGISTER WITH FACEBOOK', data)
           register && register(true, data);
@@ -93,7 +95,7 @@ class Login extends React.Component {
       .catch((err) => {
         console.log('facebook error', err);
         this.setState({ isLoading: false });
-        alert("Facebook Login Error");
+        alert("Facebook Login Error " + err.message);
       });
   }
 
@@ -174,9 +176,9 @@ class Login extends React.Component {
         this.setState({isLoading: false})
       })
       .catch(e => {
-        console.log('\n------------------------------', e);
+        // console.log('\n------------------------------', e);
         Alert.alert('Invalid data',
-        'Validation failed.',
+        'Validation failed. ' + e.message,
         [
             {text: 'Ok', onPress: () => {
                 this.setState({isLoading: false})
@@ -424,7 +426,6 @@ class Login extends React.Component {
   render() {
     return (
       <View style={{flex: 1}}>
-
       <PLOverlayLoader marginTop={200} visible={ this.state.isLoading} logo />
       {this.renderLoginContent()}
       </View>
