@@ -36,7 +36,8 @@ import {
   verifyCode,
   sendCode,
   verifyNumber,
-  getZipCode
+  getZipCode,
+  fetchConferences
 } from "PLActions";
 import PhoneVerification from "./PhoneVerification";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
@@ -284,7 +285,7 @@ class Register extends React.Component {
       password,
       confirm
     } = this.state;
-    let { onLoggedIn, isFb, fbData, tour } = this.props;
+    let { onLoggedIn, isFb, token, fbData, tour } = this.props;
     if (position === 0) {
       if (first_name == "" || first_name.trim() == "") {
         alert("First Name is empty.");
@@ -371,7 +372,7 @@ class Register extends React.Component {
         this.setState({
           isLoading: true
         });
-        registerFromFB(data)
+        registerFromFB(data, data.token)
           .then(async ret => {
             this.setState({
               isLoading: false
@@ -669,35 +670,20 @@ class Register extends React.Component {
   }
 
   async onRegister() {
+    let { onLoggedIn, isFb, fbData, tour } = this.props;
     this.setState({ loading: true });
     if (this.state.registered) return;
-    let {
-      first_name,
-      last_name,
-      code,
-      email,
-      username,
-      zip,
-      country,
-      phone,
-      countryCode,
-      agency,
-      password,
-      confirm
-    } = this.state;
-    let { onLoggedIn, isFb, fbData, tour } = this.props;
     let data = {
-      username,
-      first_name,
-      last_name,
-      email,
-      country,
-      phone: countryCode + phone,
-      zip,
-      code,
-      agency,
-      password
-      // confirm
+      username: this.state.username,
+      first_name: this.state.first_name,
+      last_name: this.state.last_name,
+      email: this.state.email,
+      country: this.state.country,
+      zip: this.state.zip,
+      code: this.state.code === '0000' ? 'CODE1234' : this.state.code,
+      agency: this.state.agency,
+      password: this.state.password,
+      phone: this.state.countryCode + this.state.phone,
     };
     return register2(data)
       .then(async r => {
@@ -716,6 +702,7 @@ class Register extends React.Component {
       })
       .catch(e => {
         console.log("register fail", e);
+        // alert(`register fail with error: ${e.message}`)
         this.setState({ loading: false });
         setTimeout(() => {
           alert(e.message);
@@ -774,30 +761,8 @@ class Register extends React.Component {
   }
 
   verifyCode() {
-    // this.setState({loading: true});
-    // let {phone, code, countryCode} = this.state;
-    // countryCode = countryCode || '+1';
-    // let {tour, onLoggedIn} = this.props;
-    // this.setState({code: ''});
     this.onRegister();
-
-    // verifyCode(countryCode + phone, code).then(r => r.json()).then(r => {
-    //     console.log(r);
-    //     if (r.token){
-    //         AsyncStorage.setItem('freshRegister', 'true');
-    //         tour(() => {
-    //             onLoggedIn(r);
-    //         });
-    //     }
-
-    //     this.setState({loading: false})
-    // }).catch(e => {
-    //     alert(e);
-    //     console.log(e);
-    //     this.setState({loading: false})
-    // })
   }
-  // 32991139867
 
   renderPhoneVerification() {
     return (
@@ -1037,6 +1002,7 @@ var styles = StyleSheet.create({
 
 const mapDispatchToProps = dispatch => ({
   onLoggedIn: p => dispatch({ type: "LOGGED_IN", data: p }),
+  fetchConferences: (token, forceRoute) => dispatch(fetchConferences(token, forceRoute)),
   dispatch: e => dispatch(e)
 });
 
