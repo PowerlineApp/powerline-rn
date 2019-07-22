@@ -60,6 +60,7 @@ import TermsList from "./scenes/dashboard/termsList";
 import ConferenceAttendees from "./scenes/dashboard/ConferenceAttendees/ConferenceAttendees";
 import ConferenceEvents from "./scenes/dashboard/ConferenceEvents/ConferenceEvents";
 import Services from "./scenes/services";
+import CommunityReportForm from './scenes/communityReportForm';
 
 import Share from "./PLShare";
 import { Actions } from "react-native-router-flux";
@@ -167,10 +168,14 @@ class MyRouter extends Component {
     super(props);
     this.state = { isCustom: false };
   }
-  // shouldComponentUpdate() {
-  //   // so we keep our state when opening the drawer!!!
-  //   // return false;
-  // }
+  shouldComponentUpdate(nextProps) {
+    if (nextProps.hasConference !== this.props.hasConference) {
+      return true
+    }
+    return false
+    // so we keep our state when opening the drawer!!!
+    // return false;
+  }
   onBackPress() {
     if (Actions.state.index === 0) {
       return false;
@@ -183,11 +188,13 @@ class MyRouter extends Component {
 
   render() {
     const { hasConference } = this.props;
+    console.log('navigator hasConferences ?? ', hasConference)
+    return <CommunityReportForm />
     return (
       // <RouterWithRedux onBackPress={this.onBackPress} key="router">
       <Router>
-
-        <Scene key="root" hideNavBar>
+        {/* <Scene key='communityReportForm' initial component={CommunityReportForm} /> */}
+        {/* <Scene key="root" hideNavBar>
           <Scene key="settings" component={Settings} />
           <Scene key="privacySettings" component={PrivacySettings} />
           <Scene key="blockedUsers" component={BlockedUsers} />
@@ -256,7 +263,7 @@ class MyRouter extends Component {
           <Scene key="share" component={Share} />
           <Scene key="terms" component={TermsList} />
           <Scene key="services" component={Services} />
-        </Scene>
+        </Scene> */}
       </Router>
 
       // </RouterWithRedux>
