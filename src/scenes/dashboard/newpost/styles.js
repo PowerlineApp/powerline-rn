@@ -18,7 +18,6 @@ export default {
     header: {
         backgroundColor: PLColors.main
     },
-
     community_container:{
         borderBottomWidth: 0,
         paddingTop: 0,

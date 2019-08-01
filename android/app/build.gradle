@@ -189,6 +189,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-android-sms-listener')
     compile project(':react-native-fbsdk')
 
     compile project(':react-native-fs')
@@ -211,6 +212,18 @@ dependencies {
     compile project(':react-native-device-info')
     compile project(':react-native-onesignal')
     compile project(':react-native-youtube')
+
+
+    implementation(project(':react-native-maps')){
+       exclude group: 'com.google.android.gms', module: 'play-services-base'
+       exclude group: 'com.google.android.gms', module: 'play-services-maps'
+    }
+    // implementation 'com.google.android.gms:play-services-base:10.0.1'
+    implementation 'com.google.android.gms:play-services-maps:15.0.1'
+
+    compile "com.google.android.gms:play-services-base:15.0.1"
+    compile "com.google.android.gms:play-services-gcm:15.0.1"
+
     compile fileTree(dir: "libs", include: ["*.jar"])
 
     // compile('com.facebook.android:facebook-android-sdk:4.22.1')
@@ -224,11 +237,11 @@ dependencies {
     // compile ('com.google.android.gms:play-services-gcm:+') {
     //     force = true
     // }
-    compile "com.google.android.gms:play-services-base:15.0.1"
-    compile "com.google.android.gms:play-services-gcm:15.0.1"
+
     compile ('androidx.legacy:legacy-support-v4:1.0.0-beta01') {
         force = true
     }
+    //  compile 'com.android.support:support-v4:+'
     compile ('androidx.appcompat:appcompat:1.0.0-beta01') {
         force = true
     }
@@ -237,11 +250,10 @@ dependencies {
     }
     // compile 'com.stripe:stripe-android:6.0.0'
 
-
     implementation("com.squareup.okhttp3:okhttp:3.8.1")
     implementation("com.google.zxing:core:3.3.3")
-    implementation("com.facebook.android:facebook-common:5.1.1")
-    implementation("com.facebook.android:facebook-share:5.1.1")
+    implementation("com.facebook.android:facebook-common:5.2.0")
+    implementation("com.facebook.android:facebook-share:5.2.0")
     compile 'com.facebook.android:facebook-login:5.+'
 
     compile "com.facebook.react:react-native:+"  // From node_modules

@@ -83,7 +83,9 @@ import Notifications from "./notifications/";
 const { SlideInMenu } = renderers;
 import ShareExtension from "react-native-share-extension";
 import OneSignal from "react-native-onesignal";
-var DeviceInfo = require("react-native-device-info");
+// var DeviceInfo = require("react-native-device-info");
+import DeviceInfo from 'react-native-device-info';
+
 import { Mixpanel } from "../../PLEnv";
 import {listServices} from "../../actions";
 // import { get } from 'http';
@@ -704,6 +706,8 @@ class Home extends Component {
       Actions.newpost({ group: selectedGroup.group });
     } else if (value === "petition") {
       Actions.newpetition({ group: selectedGroup.group });
+    } else if (value === 'communityReport') {
+      Actions.newCommunityReport({group: selectedGroup.group})
     } else {
       Actions.newleadercontent({
         contentType: value,
@@ -813,7 +817,21 @@ class Home extends Component {
           <Icon name="ios-flag" style={styles.menuIcon} />
           <Text style={styles.menuText}>New Post</Text>
         </Button>
-      </MenuOption>
+      </MenuOption>,
+        <MenuOption key="communityReport" value={"communityReport"}>
+          <Button
+            iconLeft
+            transparent
+            dark
+            onPress={() => {
+              this.selectNewItem("communityReport");
+              Mixpanel.track("Opened New Community Report Form");
+            }}
+          >
+            <Icon name="ios-stats" style={styles.menuIcon} />
+            <Text style={styles.menuText}>New Community Report</Text>
+          </Button>
+        </MenuOption>
     ];
     if (isLeader)
       options.unshift(

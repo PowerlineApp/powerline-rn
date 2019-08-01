@@ -189,12 +189,10 @@ class MyRouter extends Component {
   render() {
     const { hasConference } = this.props;
     console.log('navigator hasConferences ?? ', hasConference)
-    return <CommunityReportForm />
     return (
-      // <RouterWithRedux onBackPress={this.onBackPress} key="router">
+      <RouterWithRedux onBackPress={this.onBackPress} key="router">
       <Router>
-        {/* <Scene key='communityReportForm' initial component={CommunityReportForm} /> */}
-        {/* <Scene key="root" hideNavBar>
+        <Scene key="root" hideNavBar>
           <Scene key="settings" component={Settings} />
           <Scene key="privacySettings" component={PrivacySettings} />
           <Scene key="blockedUsers" component={BlockedUsers} />
@@ -227,6 +225,7 @@ class MyRouter extends Component {
           <Scene key="myGroups" component={GroupList} />
           <Scene key="groupsearch" component={GroupSearch} />
           <Scene key="groupmembers" component={GroupMembers} />
+          <Scene key="newCommunityReport" component={CommunityReportForm} animation={"fade"} />
           <Scene key="newpost" component={NewPost} animation={"fade"} />
           <Scene key="newpetition" component={NewPetition} animation={"fade"} />
           <Scene
@@ -263,10 +262,9 @@ class MyRouter extends Component {
           <Scene key="share" component={Share} />
           <Scene key="terms" component={TermsList} />
           <Scene key="services" component={Services} />
-        </Scene> */}
+        </Scene>
       </Router>
-
-      // </RouterWithRedux>
+      </RouterWithRedux>
     );
   }
 }

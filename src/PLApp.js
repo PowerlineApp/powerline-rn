@@ -57,7 +57,7 @@ class PLApp extends Component {
             } else {
                 this.setState({splash: false});
             }
-            Stripe.init({
+            Stripe.setOptions({
                 publishableKey: stripeAPIKey
             });
             // console.log('=>', SplashScreen);

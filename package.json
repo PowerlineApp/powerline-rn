@@ -64,6 +64,7 @@
     "react-native-keyboard-spacer": "0.4.1",
     "react-native-linear-gradient": "2.4.0",
     "react-native-loading-spinner-overlay": "0.5.2",
+    "react-native-maps": "^0.25.0",
     "react-native-mixpanel": "0.0.16",
     "react-native-modal-datetime-picker": "4.13.0",
     "react-native-onesignal": "3.0.6",

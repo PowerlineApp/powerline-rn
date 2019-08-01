@@ -34,16 +34,16 @@ const dev = __DEV__ || forceDev;
 //   console.log = () => {};
 //   console.warn = () => {};
 // }
-console.log = () => {};
-console.error = () => {};
-console.warn = () => {};
+// console.log = () => {};
+// console.error = () => {};
+// console.warn = () => {};
 
 let env = {
   testMenuEnabled: true,
-  API_URL: prodURL, //dev && !staging ? devURL : staging ? stagingURL : prodURL,
-  OAUTH_URL: prodOAuthURL, //dev && !staging ? devOAuthURL : staging ? stagingOAuthURL : prodOAuthURL,
-  clientId: prodClientId, // dev && !staging ? devClientId : staging ? stagingClientId : prodClientId,
-  clientSecret: prodClientSecret, // dev && !staging ? devClientSecret : staging ? stagingClientSecret : prodClientSecret,
+  API_URL: dev && !staging ? devURL : staging ? stagingURL : prodURL,
+  OAUTH_URL: dev && !staging ? devOAuthURL : staging ? stagingOAuthURL : prodOAuthURL,
+  clientId: dev && !staging ? devClientId : staging ? stagingClientId : prodClientId,
+  clientSecret: dev && !staging ? devClientSecret : staging ? stagingClientSecret : prodClientSecret,
   version: 301,
   fontFamily: undefined,
   PER_PAGE: 20,

@@ -26,6 +26,7 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 import com.facebook.FacebookSdk;
+import com.airbnb.android.react.maps.MapsPackage;
 
 import io.fabric.sdk.android.Fabric;
 import java.util.Arrays;
@@ -62,7 +63,8 @@ public class MainApplication extends Application implements ReactApplication {
         new ReactNativeYouTube(),
         new FBSDKPackage(),
         // new SplashScreenReactPackage(),
-        new LinearGradientPackage()
+        new LinearGradientPackage(),
+        new MapsPackage()
       );
     }
   };

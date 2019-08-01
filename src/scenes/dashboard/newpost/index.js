@@ -87,20 +87,14 @@ class NewPost extends Component {
     }
 
     componentDidMount() {
-        // console.log('ONLOAD NEWPOST PROPS', this.props);
-        
         var { token, group } = this.props;
         loadUserData(token).then(data => {
             this.setState({
                 profile: data
             });
         }).catch(err => {
-            
         });
-        
-        // getGroups(token).then(ret => {
         const ret = this.props.grouplist;
-        console.log('~=> ', group);
         let showCommunity = true, selectedGroupIndex = -1;
         if (group && group !== 'all'){
             showCommunity = false;
@@ -111,37 +105,18 @@ class NewPost extends Component {
             showCommunity, selectedGroupIndex
         });
         if (selectedGroupIndex !== -1){
-
             getPetitionConfig(token, this.props.grouplist[selectedGroupIndex].id)
                 .then(data => {
-                    console.log('===========================');
-                    console.log('=>>>>>>>>>>>>', data);
-                    console.log('===========================');
                     this.setState({
                         posts_remaining: data.posts_remaining
                     });
                 })
                 .catch(err => {
-                    console.log('===========================');
-                    console.log('=>>>>>>>>>>>>', err);
-                    console.log('===========================');
                 });
         }
             
-
-        // }).catch(err => {
-            
-        // });
         this.loadSharedData(this.props.data);
-        // this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (e) => this._keyboardDidShow(e));
-        // this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', (e) => this._keyboardDidHide(e));
     }
-
-    componentWillUnmount () {
-        // this.keyboardDidShowListener.remove();
-        // this.keyboardDidHideListener.remove();
-    }
-
 
 
     async loadSharedData(data){
@@ -184,9 +159,6 @@ class NewPost extends Component {
 
         getPetitionConfig(token, this.props.grouplist[index].id)
             .then(data => {
-                console.log('===========================');
-                console.log('=>>>>>>>>>>>>', data);
-                console.log('===========================');
                 this.setState({
                     posts_remaining: data.posts_remaining
                 });
@@ -386,7 +358,6 @@ class NewPost extends Component {
     }
     
     render() {
-        console.log(this.state.displaySuggestionBox, this.state.suggestionList);
         return (
             <Animatable.View style={{flexDirection: 'row'}} animation={'fadeInUpBig'} duration={800} ref='animatedView'  >
                 <Container style={styles.container}>
@@ -436,7 +407,6 @@ class NewPost extends Component {
                         </ListItem>
                     </List>
                     <ScrollView onLayout={(e) => this.setState({contentHeight: e.nativeEvent.layout.height})} scrollEnabled={false} keyboardShouldPersistTaps={'handled'} style={styles.main_content} >
-                        {/* <S style={styles.main_content}> */}
                         <View style={{flex: 1, height: '100%', backgroundColor: '#fff'}}  >
                             <ScrollView style={{flex: 1, height: '100%'}}>
                                 <TextInput

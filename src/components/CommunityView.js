@@ -42,7 +42,6 @@ class CommunityView extends PureComponent {
             onCancel,
             isSharing
         } = this.props;
-        console.log(grouplist);
         return (
             <Modal transparent>
                 <View style={styles.community_list_container}>
