@@ -20,7 +20,7 @@ import {
   fetchConferences,
   listServices,
   setGroup
-} from "PLActions";
+} from "../../../actions";
 
 import styles from './styles'
 const  homeNavigator = require('./navigator');

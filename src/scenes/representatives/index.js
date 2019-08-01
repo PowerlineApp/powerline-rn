@@ -31,10 +31,10 @@ import {
 import { View, RefreshControl } from "react-native";
 import { Platform } from "react-native";
 
-const PLColors = require("PLColors");
+const PLColors = require("../../common/PLColors");
 import styles from "./styles";
-import { getRepresentatives, openDrawer } from "PLActions";
-import PLOverlayLoader from "PLOverlayLoader";
+import { getRepresentatives, openDrawer } from "../../actions";
+import PLOverlayLoader from "../../common/PLOverlayLoader";
 
 class Representatives extends Component {
   constructor(props) {

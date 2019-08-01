@@ -28,12 +28,12 @@ import {
     MenuContext
 } from 'react-native-popup-menu';
 import styles from './styles';
-import { openDrawer, searchGroup, searchForUsersFollowableByCurrentUser, searchPostsByHashtag } from 'PLActions';
+import { openDrawer, searchGroup, searchForUsersFollowableByCurrentUser, searchPostsByHashtag } from '../../actions';
 
 import SearchGroups from './groups';
 import SearchUsers from './users';
 import SearchHashtags from './hashtags';
-import {Mixpanel} from 'PLEnv';
+import {Mixpanel} from '../../PLEnv';
 
 const initialState = {
     search: '',

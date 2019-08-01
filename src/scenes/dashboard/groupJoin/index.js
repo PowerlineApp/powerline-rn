@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { View, Modal } from 'react-native';
 import { connect } from 'react-redux';
-const PLColors = require('PLColors');
+const PLColors = require('../../../common/PLColors');
 import {TextInput, Alert} from 'react-native';
 import styles  from './styles';
 import update from 'immutability-helper';
 import IconVI from 'react-native-vector-icons/dist/FontAwesome';
 
-import { getGroupRequiredFields, joinGroup, getGroupPermissions } from 'PLActions';
+import { getGroupRequiredFields, joinGroup, getGroupPermissions } from '../../../actions';
 import {
     Content,
     Container,

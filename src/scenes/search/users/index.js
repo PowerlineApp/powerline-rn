@@ -19,9 +19,9 @@ import {
     View
 } from 'native-base';
 import { Actions } from 'react-native-router-flux';
-const PLColors = require('PLColors');
+const PLColors = require('../../../common/PLColors');
 import styles from './styles';
-import { putFollowings } from 'PLActions';
+import { putFollowings } from '../../../actions';
 
 class SearchUsers extends Component{
     constructor(props){

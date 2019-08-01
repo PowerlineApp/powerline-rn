@@ -2,7 +2,7 @@ import React from 'react';
 import { Component, PropTypes } from 'react';
 import { StyleSheet, View, Text, ScrollView} from 'react-native';
 import {Button, Icon, Title} from 'native-base';
-import PLButton from 'PLButton';
+import PLButton from '../../../common/PLButton';
 import TermsList from '../../auth/TermsList';
 import {Actions} from 'react-native-router-flux';
 

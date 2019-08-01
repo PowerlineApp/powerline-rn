@@ -15,13 +15,13 @@ import Menu, {
     renderers
 } from 'react-native-popup-menu';
 
-const PLColors = require('PLColors');
-const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
+const PLColors = require('../../common/PLColors');
+const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('../../common/PLConstants');
 import styles from './styles';
-import { openDrawer } from 'PLActions';
+import { openDrawer } from '../../actions';
 import Followings from './followings';
 import Followers from './followers';
-import {Mixpanel} from 'PLEnv';
+import {Mixpanel} from '../../PLEnv';
 
 
 class Influences extends Component {

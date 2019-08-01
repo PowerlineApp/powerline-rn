@@ -1,6 +1,5 @@
 import React from "react";
 import Ionicon from "react-native-vector-icons/Ionicons";
-import Prompt from "react-native-prompt";
 import { connect } from "react-redux";
 import { Text, View, TouchableHighlight, Alert, AsyncStorage } from "react-native";
 import { Actions } from "react-native-router-flux";
@@ -8,6 +7,7 @@ import { MenuContext } from "react-native-popup-menu";
 import { Header, Left, Title, Body, Button, Icon, Item } from "native-base";
 import { ImageCache } from "react-native-img-cache";
 
+import Prompt from '../../components/prompt';
 import styles from "./styles";
 import { openDrawer } from "../../actions/drawer";
 import { updateUserProfile } from "../../actions/users";
@@ -15,11 +15,11 @@ import { updateUserProfile } from "../../actions/users";
 import {
   getAgency,
   fetchConferences
-} from "PLActions";
-import PLOverlayLoader from "PLOverlayLoader";
+} from "../../actions";
+import PLOverlayLoader from "../../common/PLOverlayLoader";
 
-var PLColors = require("PLColors");
-var { TERMS_OF_SERVICE, PRIVACY_POLICY } = require("PLConstants");
+var PLColors = require("../../common/PLColors");
+var { TERMS_OF_SERVICE, PRIVACY_POLICY } = require("../../common/PLConstants");
 
 const icons = [
   {

@@ -5,7 +5,7 @@ const { StyleSheet, Platform, Dimensions } = React;
 
 const deviceHeight = Dimensions.get('window').height;
 const deviceWidth = Dimensions.get('window').width;
-const PLColors = require('PLColors');
+const PLColors = require('../../common/PLColors');
 
 export default {
     sidebar: {

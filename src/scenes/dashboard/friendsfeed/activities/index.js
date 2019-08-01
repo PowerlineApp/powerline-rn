@@ -6,14 +6,15 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { ActionSheet, Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, ListItem, Thumbnail, List, Card, CardItem, Label } from 'native-base';
-import { ListView, View, RefreshControl, TouchableOpacity, Image, WebView, Platform, Share } from 'react-native';
+import { View, RefreshControl, TouchableOpacity, Image, WebView, Platform, Share } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
-import { loadActivities, resetActivities, editFollowers, loadActivityByEntityId, loadFriendsActivities } from 'PLActions';
+import { loadActivities, resetActivities, editFollowers, loadActivityByEntityId, loadFriendsActivities } from '../../../../actions';
 import styles, { sliderWidth, itemWidth } from './styles';
-import TimeAgo from 'react-native-timeago';
-import ImageLoad from 'react-native-image-placeholder';
+import TimeAgo from '../../../../components/TimeAgo';
+import ImageLoad from '../../../../components/imagePlaceholder';
 import YouTube from 'react-native-youtube';
-import PLOverlayLoader from 'PLOverlayLoader';
+import PLOverlayLoader from '../../../../common/PLOverlayLoader';
+import ListView from 'deprecated-react-native-listview'
 
 import Menu, {
     MenuContext,
@@ -27,16 +28,11 @@ import Menu, {
 import FeedActivity from '../../../../components/Feed/FeedActivity';
 import ContentPlaceholder from '../../../../components/ContentPlaceholder';
 
-const PLColors = require('PLColors');
-const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
-const { youTubeAPIKey } = require('PLEnv');
+const PLColors = require('../../../../common/PLColors');
+const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('../../../../common/PLConstants');
+const { youTubeAPIKey } = require('../../../../PLEnv');
 
 class FriendActivity extends Component {
-
-    static propTypes = {
-        token: React.PropTypes.string,
-    }
-
     constructor(props) {
         super(props);
         var ds = new ListView.DataSource({

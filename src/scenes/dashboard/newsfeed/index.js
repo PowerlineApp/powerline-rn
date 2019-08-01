@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { ActionSheet, Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, ListItem, Thumbnail, List, Card, CardItem, Label, Footer } from 'native-base';
 import { ScrollView, FlatList, View, RefreshControl, TouchableOpacity, Image, WebView, Platform, Share } from 'react-native';
-import { setGroup, loadActivities, getActivities2, resetActivities, votePost, editFollowers, loadActivityByEntityId, createPostToGroup, deletePost, deletePetition, getGroups, saveOffSet } from 'PLActions';
+import { setGroup, loadActivities, getActivities2, resetActivities, votePost, editFollowers, loadActivityByEntityId, createPostToGroup, deletePost, deletePetition, getGroups, saveOffSet } from '../../../actions';
 import FeedActivity from '../../../components/Feed/FeedActivity';
 import ContentPlaceholder from '../../../components/ContentPlaceholder';
 import styles from './styles'
@@ -20,11 +20,6 @@ import styles from './styles'
 import { Dimensions } from 'react-native';
 
 class Newsfeed extends Component {
-
-    static propTypes = {
-        token: React.PropTypes.string,
-    }
-
     constructor(props) {
         super(props);
         this.state = {

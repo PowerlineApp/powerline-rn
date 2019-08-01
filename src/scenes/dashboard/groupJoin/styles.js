@@ -1,5 +1,5 @@
 import React from 'react';
-var PLColors = require('PLColors');
+import PLColors from '../../../common/PLColors'
 
 const styles = {
     container: {

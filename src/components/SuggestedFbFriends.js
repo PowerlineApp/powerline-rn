@@ -2,7 +2,7 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { ListItem, Icon, Body, Text, Right, Thumbnail } from 'native-base';
 import { View, StyleSheet } from 'react-native';
-import PLColors from 'PLColors';
+import PLColors from '../common/PLColors';
 
 type Friend = {
   id: number;
@@ -17,9 +17,6 @@ type Friend = {
 
 class SuggestedFbFriends extends PureComponent {
   static propTypes = {
-    friends: PropTypes.string,
-    onPress: PropTypes.function,
-    onAddPress: PropTypes.function,
   };
 
   static defaultProps = {

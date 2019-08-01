@@ -18,7 +18,7 @@ import {
 import { View, Text, ActivityIndicator } from 'react-native';
 import { Label, Input, PopupLabel } from '../components';
 import { Actions } from 'react-native-router-flux';
-import { groupGetBankAccounts, groupCreateBankAccount, groupDeleteBankAccount } from 'PLActions';
+import { groupGetBankAccounts, groupCreateBankAccount, groupDeleteBankAccount } from '../../../../actions';
 
 import styles from '../styles';
 import { showToast } from '../../../../utils/toast';

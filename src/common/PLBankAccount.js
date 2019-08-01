@@ -25,7 +25,7 @@ import {
 import HyperLink from 'react-native-hyperlink';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import PLColors from 'PLColors';
+import PLColors from './PLColors';
 import DatePicker from 'react-native-datepicker';
 
 import { Actions } from 'react-native-router-flux';

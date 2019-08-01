@@ -21,17 +21,17 @@ import {
     Thumbnail,
     Toast
 } from 'native-base';
-const PLColors = require('PLColors');
+const PLColors = require('../../../common/PLColors');
 import SuggestionBox from '../../../common/suggestionBox';
 import styles from './styles';
 import {
     Dimensions,
     ScrollView
 } from 'react-native';
-import { showToast } from 'PLToast';
+import { showToast } from '../../../utils/toast';
 
 const { width, height } = Dimensions.get('window');
-import { inviteUpvotersToGroup } from 'PLActions';
+import { inviteUpvotersToGroup } from '../../../actions';
 import randomPlaceholder from '../../../utils/placeholder';
 import CommunityView from '../../../components/CommunityView';
 const POST_MAX_LENGTH = 5000;

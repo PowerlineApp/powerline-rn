@@ -20,12 +20,12 @@ import {
     Text,
     Card
 } from 'native-base';
-import PLColors from 'PLColors';
-import { findByUsernameEmailOrPhone, updateUserProfile, loadUserProfileById, verifyNumber, verifyCode, sendCode } from 'PLActions';
+import PLColors from '../../common/PLColors';
+import { findByUsernameEmailOrPhone, updateUserProfile, loadUserProfileById, verifyNumber, verifyCode, sendCode } from '../../actions';
 
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import ImageSelector from '../../common/PLImageSelector'
-import PLButton from 'PLButton';
+import PLButton from '../../common/PLButton';
 import DatePicker from 'react-native-datepicker';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Form from 'react-native-form';

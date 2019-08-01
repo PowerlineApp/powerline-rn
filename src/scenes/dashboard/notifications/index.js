@@ -20,13 +20,13 @@ import Menu, {
     MenuOption,
     renderers
 } from 'react-native-popup-menu';
-import PLOverlayLoader from 'PLOverlayLoader';
+import PLOverlayLoader from '../../../common/PLOverlayLoader';
 
-var TimeAgo = require('react-native-timeago');
+import TimeAgo from '../../../components/TimeAgo';
 
-const PLColors = require('PLColors');
-const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
-var { getActivities, unFollowers, acceptFollowers, putSocialActivity, getInvites, joinGroup,getGroupDetails } = require('PLActions');
+const PLColors = require('../../../common/PLColors');
+const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('../../../common/PLConstants');
+var { getActivities, unFollowers, acceptFollowers, putSocialActivity, getInvites, joinGroup,getGroupDetails } = require('../../../actions');
 
 import HTMLView from 'react-native-htmlview';
 

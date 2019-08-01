@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { View } from 'react-native';
 import {ListItem, Button, Text, Icon, Input, Picker, Item} from 'native-base'
-import PLColors from 'PLColors'
+import PLColors from '../../../common/PLColors'
 import DatePicker from 'react-native-datepicker'
 class Fields extends Component {
     constructor(props) {

@@ -16,7 +16,7 @@ import {
   Label as NSLabel
 } from 'native-base';
 import { View, Text, ActivityIndicator } from 'react-native';
-import { getUserContentSettings, updateUserContentSettings } from 'PLActions';
+import { getUserContentSettings, updateUserContentSettings } from '../../../../actions';
 
 import { Label, Input, PopupLabel } from '../components';
 import styles from '../styles';

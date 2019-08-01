@@ -5,7 +5,7 @@
 
 var React = require('React');
 var StyleSheet = require('StyleSheet');
-var { Text } = require('PLText');
+var { Text } = require('../../common/PLText');
 var View = require('View');
 
 class Section extends React.Component {

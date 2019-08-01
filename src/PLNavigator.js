@@ -7,7 +7,6 @@
 "use strict";
 import React, { Component } from "React";
 import Platform from "Platform";
-import BackAndroid from "BackAndroid";
 import StyleSheet from "StyleSheet";
 import { Router, Scene } from "react-native-router-flux";
 import { connect } from "react-redux";
@@ -73,8 +72,6 @@ class PLNavigator extends React.Component {
     this.state = { isCustom: false };
   }
   static propTypes = {
-    drawerState: React.PropTypes.string,
-    closeDrawer: React.PropTypes.func
   };
 
   _renderScene(props) {

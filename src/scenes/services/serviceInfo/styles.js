@@ -1,5 +1,5 @@
 import commonColor from "../../../../native-base-theme/variables/commonColor";
-import PLColors from 'PLColors'
+import PLColors from '../../../common/PLColors'
 const React = require("react-native");
 
 const { Dimensions, Platform } = React;

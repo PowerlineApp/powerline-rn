@@ -6,11 +6,12 @@ import {Button, Icon} from 'native-base';
 import LinearGradient from "react-native-linear-gradient";
 import { LoginButton, AccessToken, LoginManager } from 'react-native-fbsdk';
 
-import PLButton from 'PLButton';
-import PLColors from 'PLColors';
-import PLConstants, { WINDOW_WIDTH } from 'PLConstants';
-import { logInWithFacebook, sendCode, sendRecoveryEmail, finishRecovery, login2, oauthLogin, fetchConferences, loadUserProfile }  from 'PLActions';
-import PLOverlayLoader from 'PLOverlayLoader';
+
+import PLButton from '../../common/PLButton';
+import PLColors from '../../common/PLColors';
+import PLConstants, { WINDOW_WIDTH } from '../../common/PLConstants';
+import { logInWithFacebook, sendCode, sendRecoveryEmail, finishRecovery, login2, oauthLogin, fetchConferences, loadUserProfile }  from '../../actions';
+import PLOverlayLoader from '../../common/PLOverlayLoader';
 import PhoneVerification from './PhoneVerification';
 import logo from '../../assets/logo.png';
 import { ConnectableObservable } from 'rx';

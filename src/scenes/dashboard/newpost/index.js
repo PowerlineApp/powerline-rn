@@ -34,7 +34,7 @@ import {
     Input,
     Toast
 } from 'native-base';
-const PLColors = require('PLColors');
+const PLColors = require('../../../common/PLColors');
 import SuggestionBox from '../../../common/suggestionBox';
 import ShareFloatingAction from '../../../components/ShareFloatingAction';
 import styles from './styles';
@@ -45,17 +45,17 @@ import {
     Animated
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
-import { showToast } from 'PLToast';
-const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
+import { showToast } from '../../../utils/toast';
+const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('../../../common/PLConstants');
 
 
 const { width, height } = Dimensions.get('window');
-import { loadUserData, getGroups, getUsersByGroup, createPostToGroup, getPetitionConfig, updateFeedFirstItem } from 'PLActions';
+import { loadUserData, getGroups, getUsersByGroup, createPostToGroup, getPetitionConfig, updateFeedFirstItem } from '../../../actions';
 import randomPlaceholder from '../../../utils/placeholder';
 import CommunityView from '../../../components/CommunityView';
 // import { setTimeout } from 'timers';
 const POST_MAX_LENGTH = 5000;
-import {Mixpanel} from 'PLEnv';
+import {Mixpanel} from '../../../PLEnv';
 // import { isNumber } from 'util';
 
 class NewPost extends Component {

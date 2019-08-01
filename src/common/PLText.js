@@ -9,7 +9,8 @@
 var React = require('react');
 var ReactNative = require('react-native');
 var { StyleSheet, Dimensions } = require('react-native');
-var PLColors = require('PLColors');
+import PLColors from './PLColors'
+// var PLColors = require('../../../common/PLColors');
 
 function Text({ style, ...props }: Object): ReactElement {
   return <ReactNative.Text style={[styles.font, style]} {...props} />;

@@ -5,7 +5,7 @@ import {
   Button,
   Label as NSLabel
 } from 'native-base';
-import { updateProfileSetup, getGroupAdvancedAttributes, groupAdvancedAttribsInputChange, updateGroupAdvancedAttributes } from 'PLActions';
+import { updateProfileSetup, getGroupAdvancedAttributes, groupAdvancedAttribsInputChange, updateGroupAdvancedAttributes } from '../../../../actions';
 
 import { Label, Input, PopupLabel } from '../components';
 import styles from '../styles';

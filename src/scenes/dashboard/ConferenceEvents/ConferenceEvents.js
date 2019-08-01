@@ -4,7 +4,7 @@ import { ScrollView, View, TouchableOpacity, Platform } from 'react-native'
 import Ionicon from 'react-native-vector-icons/Ionicons'
 import {
   fetchEvents
-} from "PLActions";
+} from "../../../actions";
 import {
     Container,
     Header,

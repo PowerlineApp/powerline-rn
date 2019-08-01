@@ -17,8 +17,9 @@ import {
   CheckBox
 } from 'native-base';
 import { View, Text } from 'react-native';
-import { loadGroupPermissions } from 'PLActions';
-import PLColors from 'PLColors';
+import { loadGroupPermissions } from '../../../../actions';
+import PLColors from '../../../../common/PLColors';
+
 
 import Label from './Label';
 import styles from '../styles';

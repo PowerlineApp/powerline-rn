@@ -1,7 +1,10 @@
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
+
 import { View, StyleSheet, Dimensions, TouchableOpacity, Text } from 'react-native';
 import { Label, Button } from 'native-base';
-import PLColors from 'PLColors';
+import PLColors from '../../../../common/PLColors';
+
 import LinearGradient from "react-native-linear-gradient";
 
 const { width, height } = Dimensions.get('window');

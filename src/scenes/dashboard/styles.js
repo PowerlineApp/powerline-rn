@@ -1,7 +1,7 @@
 var { Platform } = require('react-native');
 
-var PLColors = require('PLColors');
-const { WINDOW_WIDTH: viewportWidth, WINDOW_HEIGHT: viewportHeight } = require('PLConstants');
+import PLColors from '../../common/PLColors'
+const { WINDOW_WIDTH: viewportWidth, WINDOW_HEIGHT: viewportHeight } = require('../../common/PLConstants');
 
 const platform = Platform.OS;
 

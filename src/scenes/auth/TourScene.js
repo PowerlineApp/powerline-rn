@@ -15,7 +15,8 @@ var {
 } = require('react-native');
 var { connect } = require('react-redux');
 var {width, height} = Dimensions.get('window');
-var PLColors = require('PLColors');
+// var PLColors = require('../../../common/PLColors');
+import PLColors from '../../common/PLColors'
 import {Actions} from 'react-native-router-flux'
 import {CachedImage} from "react-native-img-cache";
 import GestureRecognizer from '../../components/GestureRecognizer';

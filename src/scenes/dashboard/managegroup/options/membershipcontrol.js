@@ -12,7 +12,7 @@ import {
   getMembershipFields,
   addMembershipField,
   deleteMembershipField,
-} from 'PLActions';
+} from '../../../../actions';
 
 import { Label, Input, PopupLabel } from '../components';
 import styles from '../styles';

@@ -2,7 +2,7 @@ import _ from "lodash";
 import React from "react";
 import ActionSheet from "react-native-actionsheet";
 import Ionicon from "react-native-vector-icons/Ionicons";
-import PLOverlayLoader from "PLOverlayLoader";
+import PLOverlayLoader from "../../../common/PLOverlayLoader";
 import { connect } from "react-redux";
 import { Actions } from "react-native-router-flux";
 import { Alert, ScrollView, View, Text, TouchableOpacity } from "react-native";
@@ -15,7 +15,8 @@ import {
 } from "../../../actions/users";
 
 import styles from "./styles";
-var PLColors = require("PLColors");
+import PLColors from '../../../common/PLColors'
+// var PLColors = require("PLColors");
 
 const menuContextStyles = {
   menuContextWrapper: { height: 50 },

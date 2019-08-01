@@ -19,8 +19,9 @@ import { Actions } from 'react-native-router-flux';
 import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
 import * as Animatable from 'react-native-animatable';
 import styles, { MAX_HEIGHT, MIN_HEIGHT, optionsStyles, sliderWidth, itemWidth } from './styles';
-import TimeAgo from 'react-native-timeago';
-import ImageLoad from 'react-native-image-placeholder';
+import TimeAgo from '../../../components/TimeAgo';
+import ImageLoad from '../../../components/imagePlaceholder';
+
 import Carousel from 'react-native-snap-carousel';
 import YouTube from 'react-native-youtube';
 import Menu, {
@@ -31,8 +32,8 @@ import Menu, {
     MenuOption,
     renderers
 } from 'react-native-popup-menu';
-import { getComments, getChildComments, votePost,updateFeedFirstItem, getActivities2, getUsersByGroup, addComment, editComment, deleteComment, rateComment, loadActivityByEntityId, deletePost, deletePetition, changePost, changePetition, loadPollByEntityId, markAsRead } from 'PLActions';
-import PLOverlayLoader from 'PLOverlayLoader';
+import { getComments, getChildComments, votePost,updateFeedFirstItem, getActivities2, getUsersByGroup, addComment, editComment, deleteComment, rateComment, loadActivityByEntityId, deletePost, deletePetition, changePost, changePetition, loadPollByEntityId, markAsRead } from '../../../actions';
+import PLOverlayLoader from '../../../common/PLOverlayLoader';
 import randomPlaceholder from '../../../utils/placeholder';
 import { FloatingAction } from 'react-native-floating-action';
 import {CachedImage} from "react-native-img-cache";
@@ -53,8 +54,8 @@ import { showToast } from '../../../utils/toast';
 import ParsedText from '../../../components/Feed/FeedDescription/ParsedText';
 import ParsedComment from './parsedComment';
 
-const { youTubeAPIKey } = require('PLEnv');
-const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
+const { youTubeAPIKey } = require('../../../PLEnv');
+const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('../../../common/PLConstants');
 const { SlideInMenu } = renderers;
 const numberPerPage = 5;
 

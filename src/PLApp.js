@@ -14,7 +14,7 @@ import LoginScene from './scenes/auth/LoginScene';
 import TermsPolicyScene from './scenes/auth/TermsPolicyScene';
 import ForgotPasswordScene from './scenes/auth/ForgotPasswordScene';
 import StyleSheet from 'StyleSheet';
-import PLNavigator from 'PLNavigator';
+import PLNavigator from './PLNavigator';
 import StatusBar from 'StatusBar';
 // import SplashScreen from 'react-native-splash-screen';
 import SplashScreen from 'react-native-splash-screen';
@@ -30,7 +30,7 @@ import {CachedImage} from "react-native-img-cache";
 import {
   fetchConferences,
   listServices,
-} from "PLActions";
+} from "./actions";
 
 class PLApp extends Component {
     constructor(){
@@ -61,7 +61,7 @@ class PLApp extends Component {
                 publishableKey: stripeAPIKey
             });
             // console.log('=>', SplashScreen);
-            // SplashScreen.hide();
+            SplashScreen.hide();
 
             const myGroup = 'group.ne.powerline.share';
             RNSKBucket.set('token', this.props.token, myGroup);

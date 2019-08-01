@@ -15,10 +15,11 @@ import Menu, {
     renderers
 } from 'react-native-popup-menu';
 
-const PLColors = require('PLColors');
-const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
-var { getActivities } = require('PLActions');
-var TimeAgo = require('react-native-timeago');
+const PLColors = require('../../../common/PLColors');
+const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('../../../common/PLConstants');
+var { getActivities } = require('../../../actions');
+import TimeAgo from '../../../components/TimeAgo';
+
 import {
     TouchableOpacity,
     View

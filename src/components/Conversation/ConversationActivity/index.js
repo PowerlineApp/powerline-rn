@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {View} from 'react-native';
 import styles from '../styles';
-import TimeAgo from 'react-native-timeago';
+import TimeAgo from '../../TimeAgo';
 import {Card, Text, Label, Left, Body, Right, ListItem, Thumbnail, Icon, Button} from 'native-base';
 import {Actions} from 'react-native-router-flux';
 

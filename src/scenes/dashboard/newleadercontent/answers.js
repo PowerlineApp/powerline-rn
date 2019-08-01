@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {View, Text, TextInput, Switch} from 'react-native';
 import {Button, Icon} from 'native-base';
 import styles from './styles';
-import PLColors from 'PLColors';
+import PLColors from '../../../common/PLColors';
 
 
 class Answers extends Component {

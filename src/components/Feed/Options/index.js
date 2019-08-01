@@ -5,7 +5,7 @@ import {View, ScrollView, Text, KeyboardAvoidingView, Platform, Modal, Alert} fr
 import {Actions} from 'react-native-router-flux';
 import moment from 'moment';
 import PLAddCard from '../../../common/PLAddCard';
-import { answerPoll, loadUserCards, userAddCard, answerPollPut, markAsRead } from 'PLActions';
+import { answerPoll, loadUserCards, userAddCard, answerPollPut, markAsRead } from '../../../actions';
 import {presentNewCalendarEventDialog} from 'react-native-add-calendar-event';
 import {
     Container,

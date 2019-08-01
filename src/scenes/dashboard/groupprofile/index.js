@@ -30,13 +30,12 @@ import {
     Modal
 } from 'react-native';
 import styles  from './styles';
-const PLColors = require('PLColors');
-import { getGroupDetails, inviteAllFollowers, getFollowers, unJoinGroup, joinGroup, getGroupPermissions } from 'PLActions';
+const PLColors = require('../../../common/PLColors');
+import { getGroupDetails, inviteAllFollowers, getFollowers, unJoinGroup, joinGroup, getGroupPermissions } from '../../../actions';
 
 const PERMS = ['Name', "Street Address", "City", "Country", "State", "Zip Code", "Email", "Phone Number", "Responses"] 
 class GroupProfile extends Component{
     static propTypes = {
-        token: React.PropTypes.string
     };
 // The user will be asked to share the information with group owner upon joining the group
 //GH59

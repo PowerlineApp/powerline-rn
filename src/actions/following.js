@@ -1,6 +1,6 @@
 var { API_URL } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
-import { showToast } from 'PLToast';
+import { showToast } from '../utils/toast';
 
 
 //Shows who the user is following (User A is following User B... User B returned)

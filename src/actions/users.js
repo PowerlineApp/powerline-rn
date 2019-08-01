@@ -1,6 +1,6 @@
 var { API_URL, PER_PAGE } = require("../PLEnv");
 var { Action, ThunkAction } = require("./types");
-var FacebookSDK = require("FacebookSDK");
+import FacebookSDK from '../FacebookSDK'
 import api from "../utils/api";
 
 const getAgency = token => {

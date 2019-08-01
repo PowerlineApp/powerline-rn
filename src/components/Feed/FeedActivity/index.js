@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, TouchableWithoutFeedback, PanResponder, AlertIOS } from 'react-native';
 import { Card } from 'native-base';
 
-import { showToast } from 'PLToast';
+import { showToast } from '../../../utils/toast';
 
 import FeedDescription from '../FeedDescription';
 import FeedHeader from '../FeedHeader';

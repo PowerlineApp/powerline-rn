@@ -24,8 +24,8 @@ import {
     Text,
     Picker,
 } from 'native-base';
-import { showToast } from 'PLToast';
-import PLColors from 'PLColors';
+import { showToast } from '../utils/toast';
+import PLColors from './PLColors';
 
 class PLAddCard extends Component {
     constructor(props) {

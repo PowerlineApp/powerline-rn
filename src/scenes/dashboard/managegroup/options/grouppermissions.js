@@ -17,7 +17,7 @@ import {
   CheckBox
 } from 'native-base';
 import { View, Text, ActivityIndicator } from 'react-native';
-import { loadGroupPermissions, updateGroupPermissions } from 'PLActions';
+import { loadGroupPermissions, updateGroupPermissions } from '../../../../actions';
 import { showToast } from '../../../../utils/toast';
 
 import { Label, Input, PopupLabel, CheckBoxItem } from '../components';

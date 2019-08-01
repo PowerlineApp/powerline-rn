@@ -17,11 +17,11 @@ import {
   Platform
 } from "react-native";
 
-import PLColors from "PLColors";
-import PLConstants from "PLConstants";
-import PLButton from "PLButton";
+import PLColors from "../../common/PLColors";
+import PLConstants from "../../common/PLConstants";
+import PLButton from '../../common/PLButton';
 import { connect } from "react-redux";
-import PLOverlayLoader from "PLOverlayLoader";
+import PLOverlayLoader from "../../common/PLOverlayLoader";
 import DeviceInfo from "react-native-device-info";
 import { ImageCache } from "react-native-img-cache";
 import { Button, Icon, Content, Container } from "native-base";
@@ -38,7 +38,7 @@ import {
   verifyNumber,
   getZipCode,
   fetchConferences
-} from "PLActions";
+} from "../../actions";
 import PhoneVerification from "./PhoneVerification";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 
@@ -46,11 +46,6 @@ const googlePlacesKey = "AIzaSyBQOJDsIGt-XxuSNI7Joe1KRpAOJwDAEQE";
 
 class Register extends React.Component {
   static propTypes = {
-    back: React.PropTypes.func.isRequired,
-    onLoggedIn: React.PropTypes.func.isRequired,
-    isFb: React.PropTypes.bool.isRequired,
-    fbData: React.PropTypes.object.isRequired,
-    tour: React.PropTypes.func.isRequired
   };
 
   constructor(props) {

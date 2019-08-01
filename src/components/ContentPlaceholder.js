@@ -39,8 +39,6 @@ const ContentPlaceholder = ({ empty, title, children, refreshControl, ...otherPr
 };
 
 ContentPlaceholder.propTypes = {
-    empty: PropTypes.bool,
-    title: PropTypes.string,
 };
 
 ContentPlaceholder.defaultProps = {

@@ -2,7 +2,9 @@
 import api from '../utils/api';
 var { API_URL, PER_PAGE } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
-import { showToast } from 'PLToast';
+// import { showToast } from '../utils/toast';
+import { showToast } from '../utils/toast';
+
 
 
 async function getActivities2(token, groupId, user, followed, cursor, type, id) {

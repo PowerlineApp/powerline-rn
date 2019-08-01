@@ -3,13 +3,13 @@ import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { Container, Content, Header, Left, Right, Label, Text, Button, Icon, Title, Body, Footer, Textarea, View, List, ListItem, Thumbnail, Toast} from 'native-base';
 
-const PLColors = require('PLColors');
+const PLColors = require('../../../common/PLColors');
 import styles from './styles';
 import { Dimensions, ScrollView, TextInput, FlatList } from 'react-native';
-import { showToast } from 'PLToast';
+import { showToast } from '../../../utils/toast';
 
 const { width, height } = Dimensions.get('window');
-import { loadUserData, getGroups, getUsersByGroup, createPostToGroup, getPetitionConfig } from 'PLActions';
+import { loadUserData, getGroups, getUsersByGroup, createPostToGroup, getPetitionConfig } from '../../../actions';
 import randomPlaceholder from '../../../utils/placeholder';
 import CommunityView from '../../../components/CommunityView';
 const POST_MAX_LENGTH = 5000;

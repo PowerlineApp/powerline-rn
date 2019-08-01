@@ -2,10 +2,15 @@
 var React = require('react');
 var { Component, PropTypes } = require('react');
 var { StyleSheet, View, TextInput } = require('react-native');
-var PLButton = require('PLButton');
-var { Text } = require('PLText');
-var PLColors = require('PLColors');
-var { forgotPassword } = require('PLActions');
+
+import PLButton from '../../common/PLButton'
+import {PLText} from '../../common/PLText'
+import PLColors from '../../common/PLColors'
+import {forgotPassword} from '../../actions'
+
+// var PLButton = require(../../../common/PLButton);
+// var { Text } = require('PLText');
+// var PLColors = require('../../../common/PLColors');
 
 var styles = StyleSheet.create({
     container: {

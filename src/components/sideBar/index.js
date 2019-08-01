@@ -14,12 +14,12 @@ import {
 import { Actions } from "react-native-router-flux";
 
 import { closeDrawer } from "../../actions/drawer";
-import { logOut, logOutWithPrompt, setGroup, fetchConferences } from "PLActions";
+import { logOut, logOutWithPrompt, setGroup, fetchConferences } from "../../actions";
 
 import styles from "./style";
 import OneSignal from "react-native-onesignal";
 import { AsyncStorage, Keyboard, Modal, TextInput, View } from "react-native";
-import { Mixpanel } from "PLEnv";
+import { Mixpanel } from "../../PLEnv";
 
 let datas = [
   {
@@ -142,9 +142,6 @@ class SideBar extends Component {
   }
 
   static propTypes = {
-    logOut: React.PropTypes.func,
-    closeDrawer: React.PropTypes.func,
-    navigateTo: React.PropTypes.func
   };
 
   navigateTo(route) {

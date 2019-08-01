@@ -1,7 +1,7 @@
 import React, { PureComponent, PropTypes } from 'react';
 
 import { Label as NBLabel } from 'native-base';
-import PLColors from 'PLColors';
+import PLColors from '../../../../common/PLColors';
 
 class Label extends PureComponent {
   render() {

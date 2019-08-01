@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
-import ImageLoad from 'react-native-image-placeholder';
+import ImageLoad from '../../imagePlaceholder';
 import { WebView, Platform, Image } from 'react-native';
 import YouTube from 'react-native-youtube';
 import styles from '../styles';
-import { youTubeAPIKey } from 'PLEnv';
+import { youTubeAPIKey } from '../../../PLEnv';
 
 class FeedContext extends Component {
     // If a YouTube video is attached to content or if YouTube link is included in body of item

@@ -32,12 +32,12 @@ import {
     View,
     RefreshControl
 } from 'react-native';
-import PLOverlayLoader from 'PLOverlayLoader';
+import PLOverlayLoader from '../../../common/PLOverlayLoader';
 
-const PLColors = require('PLColors');
+const PLColors = require('../../../common/PLColors');
 import styles from './styles';
 import { openDrawer } from '../../../actions/drawer';
-import { getGroups } from 'PLActions';
+import { getGroups } from '../../../actions';
 import ContentPlaceholder from '../../../components/ContentPlaceholder';
 
 class GroupList extends Component{

@@ -4,17 +4,17 @@ import { Actions } from 'react-native-router-flux';
 import { TouchableHighlight, TouchableOpacity, View, Image } from 'react-native';
 
 import { Text, Button, ActionSheet, Icon, Left, Right, Body, Thumbnail, CardItem } from 'native-base';
-import TimeAgo from 'react-native-timeago';
+import TimeAgo from '../../../components/TimeAgo';
 import Menu, {
     MenuTrigger,
     MenuOptions,
     MenuOption,
     MenuProvider
 } from 'react-native-popup-menu';
-import { showAlertOkCancel, showAlertYesNo } from 'PLAlert';
-import { showToast } from 'PLToast';
+import { showAlertOkCancel, showAlertYesNo } from '../../../utils/alert';
+import { showToast } from '../../../utils/toast';
 
-import { WINDOW_WIDTH } from 'PLConstants';
+import { WINDOW_WIDTH } from '../../../common/PLConstants';
 import {
     deletePost,
     deletePetition,
@@ -30,7 +30,7 @@ import {
     blockUser,
     unblockUser,
     getBlockedUsers
-} from 'PLActions';
+} from '../../../actions';
 import moment from 'moment';
 
 import styles from '../styles';

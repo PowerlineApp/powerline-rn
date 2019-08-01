@@ -1,8 +1,8 @@
 import api from '../utils/api';
 var { API_URL, PER_PAGE } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
-import { showToast } from 'PLToast';
-import { showAlertYesNo } from 'PLAlert';
+import { showToast } from '../utils/toast';
+import { showAlertYesNo } from '../utils/alert';
 
 async function loadPost(token: string, entityId: number): Promise<Action> {
     try {
@@ -145,11 +145,6 @@ async function ratePostComment(token: string, commentId, rateValue: string) {
     } catch (error) {
         handleError(error);
     }
-}
-
-function handleError(error) {
-    const message = error.message || error;
-    alert(message);
 }
 
 function createPostToGroup(token, groupId, content, base64image) {

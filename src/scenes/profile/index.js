@@ -33,15 +33,16 @@ import {
 import { RefreshControl, TouchableOpacity, Image, WebView, Platform, FlatList } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 import styles , { sliderWidth, itemWidth } from './styles';
-const PLColors = require('PLColors');
+const PLColors = require('../../common/PLColors');
 import Filter from '../../common/PLSegmentedControls'
 import ImageSelector from '../../common/PLImageSelector'
-import { loadUserProfileById, loadUserProfile, resetActivities, editFollowers, votePost, loadActivitiesByUserId, getUserDiscountCode, getFollowingUser, unFollowings, putFollowings } from 'PLActions';
-import TimeAgo from 'react-native-timeago';
-import ImageLoad from 'react-native-image-placeholder';
+import { updateUserProfile, loadUserProfileById, loadUserProfile, resetActivities, editFollowers, votePost, loadActivitiesByUserId, getUserDiscountCode, getFollowingUser, unFollowings, putFollowings } from '../../actions';
+import TimeAgo from '../../components/TimeAgo';
+import ImageLoad from '../../components/imagePlaceholder';
+
 import YouTube from 'react-native-youtube';
-const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
-const { youTubeAPIKey } = require('PLEnv');
+const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('../../common/PLConstants');
+const { youTubeAPIKey } = require('../../PLEnv');
 import {
     TouchableWithoutFeedback,
     Alert
@@ -58,10 +59,8 @@ import Menu, {
     renderers
 } from 'react-native-popup-menu';
 import MyInfo from './components/myInfo'
-import { updateUserProfile } from 'PLActions'
 class Profile extends Component{
     static propTypes = {
-        token: React.PropTypes.string
     };
 
     constructor(props){

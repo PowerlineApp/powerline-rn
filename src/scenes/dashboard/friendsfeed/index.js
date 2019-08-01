@@ -17,7 +17,7 @@ import {
 } from 'native-base';
 import styles from './styles';
 import FriendActivity from './activities';
-import PLOverlayLoader from 'PLOverlayLoader';
+import PLOverlayLoader from '../../../common/PLOverlayLoader';
 
 //There are two tabs 1) The feed itself, and 2) a tab that is actually a shortcut to the My Influences screen
 class Friendsfeed extends Component{
@@ -28,7 +28,6 @@ class Friendsfeed extends Component{
         }
     }
     static propTypes = {
-        token: React.PropTypes.string
     }
 
     onInfluence(){

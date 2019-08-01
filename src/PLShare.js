@@ -47,7 +47,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 
 // import Toast from 'react-native-root-toast';
 
-// const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
+// const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('../../../common/PLConstants');
 
 // const { width, height } = Dimensions.get('window');
 

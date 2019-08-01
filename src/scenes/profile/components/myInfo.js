@@ -20,9 +20,9 @@ import {
     Card
 } from 'native-base';
 import Fields from './fields';
-import PLColors from 'PLColors';
-import { updateUserProfile } from 'PLActions';
-import {showToast} from 'PLToast';
+import PLColors from '../../../common/PLColors';
+import { updateUserProfile } from '../../../actions';
+import {showToast} from '../../../utils/toast';
 class MyInfo extends Component {
     constructor(props) {
         super(props);

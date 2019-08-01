@@ -1,4 +1,4 @@
-var PLColors = require('PLColors');
+var PLColors = require('../../common/PLColors')
 var { Platform } = require('react-native');
 
 const platform = Platform.OS;

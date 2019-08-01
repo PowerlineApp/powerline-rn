@@ -9,8 +9,9 @@ import { Actions } from 'react-native-router-flux';
 import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
 import * as Animatable from 'react-native-animatable';
 import styles, { MAX_HEIGHT, MIN_HEIGHT, optionsStyles, sliderWidth, itemWidth } from './styles';
-import TimeAgo from 'react-native-timeago';
-import ImageLoad from 'react-native-image-placeholder';
+import TimeAgo from '../../../../components/TimeAgo';
+import ImageLoad from '../../../../components/imagePlaceholder';
+
 import Carousel from 'react-native-snap-carousel';
 import YouTube from 'react-native-youtube';
 import Menu, {
@@ -20,17 +21,17 @@ import Menu, {
     MenuOption,
     renderers
 } from 'react-native-popup-menu';
-import PLOverlayLoader from 'PLOverlayLoader';
+import PLOverlayLoader from '../../../../common/PLOverlayLoader';
 import randomPlaceholder from '../../../../utils/placeholder';
 
 
-import { getChildComments, addComment, rateComment } from 'PLActions';
+import { getChildComments, addComment, rateComment } from '../../../../actions';
 import SuggestionBox from '../../../../common/suggestionBox';
 import ParsedComment from '../parsedComment';
 
 
 const { SlideInMenu } = renderers;
-const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
+const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('../../../../common/PLConstants');
 
 class CommentDetail extends Component {
 

@@ -31,8 +31,8 @@ import {
 } from 'react-native';
 import styles from './styles';
 
-const PLColors = require('PLColors');
-import { getGroupMembers, followAllMembers, acceptFollower, unFollowings, putFollowings } from 'PLActions';
+const PLColors = require('../../../common/PLColors');
+import { getGroupMembers, followAllMembers, acceptFollower, unFollowings, putFollowings } from '../../../actions';
 
 class GroupMembers extends Component{
     constructor(props){

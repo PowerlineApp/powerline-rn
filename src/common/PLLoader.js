@@ -97,19 +97,6 @@ export default class PLLoader extends React.Component {
     }
 }
 
-PLLoader.propTypes = {
-    interval: React.PropTypes.number,
-    size: React.PropTypes.number,
-    pulseMaxSize: React.PropTypes.number,
-    avatarBackgroundColor: React.PropTypes.string,
-    pressInValue: React.PropTypes.number,
-    pressDuration: React.PropTypes.number,
-    borderColor: React.PropTypes.string,
-    backgroundColor: React.PropTypes.string,
-    position: React.PropTypes.oneOf(['center', 'bottom']),
-    getStyle: React.PropTypes.func,
-};
-
 PLLoader.defaultProps = {
     interval: 2000,
     size: 100,

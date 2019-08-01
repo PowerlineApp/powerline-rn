@@ -29,7 +29,7 @@ import {
     Input,
     ActionSheet
 } from 'native-base';
-const PLColors = require('PLColors');
+const PLColors = require('../../../common/PLColors');
 import ImagePicker from 'react-native-image-crop-picker';
 
 import styles from './styles';
@@ -42,8 +42,8 @@ import {
     Image,
 } from 'react-native';
 const { width, height } = Dimensions.get('window');
-import { loadUserData, getGroups, getUsersByGroup, createPetition, getPetitionConfig, updateFeedFirstItem } from 'PLActions';
-import { showToast } from 'PLToast';
+import { loadUserData, getGroups, getUsersByGroup, createPetition, getPetitionConfig, updateFeedFirstItem } from '../../../actions';
+import { showToast } from '../../../utils/toast';
 
 const PETITION_MAX_LENGTH = 7000;
 import randomPlaceholder from '../../../utils/placeholder';

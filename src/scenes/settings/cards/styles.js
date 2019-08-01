@@ -1,5 +1,5 @@
 import ScaleSheet from "react-native-scalesheet";
-const PLColors = require("PLColors");
+const PLColors = require("../../../common/PLColors");
 
 export default ScaleSheet.create({
   container: { flex: 1, backgroundColor: "white" },

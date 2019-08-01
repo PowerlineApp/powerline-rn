@@ -31,8 +31,8 @@ import {
     TouchableOpacity
 } from 'react-native';
 import styles from './styles';
-import { getGroupsBySort, searchGroup, joinGroup } from 'PLActions';
-const PLColors = require('PLColors');
+import { getGroupsBySort, searchGroup, joinGroup } from '../../../../actions';
+const PLColors = require('../../../../common/PLColors');
 
 class GroupSearch extends Component{
     constructor(props){

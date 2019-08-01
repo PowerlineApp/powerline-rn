@@ -20,7 +20,7 @@ import {
 } from "native-base";
 import {
   fetchAttendees
-} from "PLActions";
+} from "../../../actions";
 
 import styles from './styles'
 

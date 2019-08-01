@@ -1,4 +1,4 @@
-import PLColors from 'PLColors';
+import PLColors from '../../../common/PLColors';
 import { StyleSheet, PixelRatio, Dimensions } from 'react-native';
 
 import variables from '../../../../native-base-theme/variables/platform';

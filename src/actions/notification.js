@@ -2,7 +2,7 @@
 import api from '../utils/api';
 var { API_URL } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
-import { showAlertYesNo } from 'PLAlert';
+import { showToast } from '../utils/alert';
 
 
 //Called Social Activities on backend. Called Notification Feed tab on frontend

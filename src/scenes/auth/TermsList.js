@@ -8,10 +8,13 @@ var ItemsWithSeparator = require('../../common/ItemsWithSeparator');
 var LayoutAnimation = require('LayoutAnimation');
 var React = require('React');
 var Section = require('./Section');
-var StyleSheet = require('StyleSheet');
-var { Text } = require('PLText');
-var PLTouchable = require('PLTouchable');
-var View = require('View');
+import {StyleSheet, View} from 'react-native'
+// var StyleSheet = require('StyleSheet');
+import {Text} from '../../common/PLText'
+import PLTouchable from '../../common/PLTouchable'
+// var { Text } = require('PLText');
+// var PLTouchable = require('PLTouchable');
+// var View = require('View');
 
 class TermsList extends React.Component {
   render() {

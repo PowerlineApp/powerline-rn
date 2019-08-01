@@ -5,12 +5,12 @@ import {View, Text, TouchableHighlight} from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import { Button, Icon, Left, CardItem, Label, Thumbnail } from 'native-base';
 import styles from '../styles';
-import { votePost, updateActivity, loadActivityByEntityId, signUserPetition, unsignUserPetition, signLeaderPetition, undoVotePost, markAsRead } from 'PLActions';
+import { votePost, updateActivity, loadActivityByEntityId, signUserPetition, unsignUserPetition, signLeaderPetition, undoVotePost, markAsRead } from '../../../actions';
 import _ from 'lodash';
-import { showToast } from 'PLToast';
+import { showToast } from '../../../utils/toast';
 import AnimatedButton from './animatedButton';
 
-import {Mixpanel} from 'PLEnv';
+import {Mixpanel} from '../../../PLEnv';
 
 class FeedFooter extends Component {
     constructor (props) {

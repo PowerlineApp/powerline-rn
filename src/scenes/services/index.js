@@ -25,7 +25,7 @@ import styles from "./styles";
 import { setService } from "../../actions/services";
 import { listServices, offerService, removeService } from "../../actions/services";
 import commonColor from "../../configs/commonColor";
-import {loadUserCards} from 'PLActions';
+import {loadUserCards} from '../../actions';
 
 class Services extends Component {
   constructor() {

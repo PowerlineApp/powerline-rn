@@ -2,10 +2,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Label as NSLabel, Button, Spinner } from 'native-base';
 import { View, Text, Alert, TextInput, ActivityIndicator } from 'react-native';
-import { exportReports } from 'PLActions';
 import { Actions } from 'react-native-router-flux';
 import { Label, Level, Input, PopupLabel } from '../components';
-import { groupGetSubscriptions, groupUpdateSubscriptions, groupGetCards } from 'PLActions';
+import { exportReports, groupGetSubscriptions, groupUpdateSubscriptions, groupGetCards } from '../../../../actions';
 import moment from 'moment';
 
 import styles from '../styles';

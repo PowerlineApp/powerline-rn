@@ -10,8 +10,8 @@ import {
 } from "react-native";
 import PLAddCard from "../../../common/PLAddCard";
 import { Actions } from "react-native-router-flux";
-import { userAddCard } from "PLActions";
-import PLColors from "PLColors";
+import { userAddCard } from "../../../actions";
+import PLColors from "../../../common/PLColors";
 import { connect } from "react-redux";
 
 import {

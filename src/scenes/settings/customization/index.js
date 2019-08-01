@@ -1,5 +1,4 @@
 import React from "react";
-import Prompt from "react-native-prompt";
 import {
   Alert,
   FlatList,
@@ -10,6 +9,8 @@ import {
   TouchableOpacity
 } from "react-native";
 import { MenuContext } from "react-native-popup-menu";
+import Prompt from '../../../components/prompt/index'
+
 import { connect } from "react-redux";
 import { Actions } from "react-native-router-flux";
 import {
@@ -23,7 +24,6 @@ import {
   Item,
   Input
 } from "native-base";
-
 import {} from "../../../actions/users";
 
 import styles from "./styles";

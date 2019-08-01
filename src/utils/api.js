@@ -2,7 +2,7 @@
  * @providesModule PLApi
  * @flow
  */
-import { API_URL } from 'PLEnv';
+import { API_URL } from '../PLEnv';
 
 type Method = 'GET' | 'POST' | 'DELETE' | 'PUT' | 'PATCH';
 

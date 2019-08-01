@@ -1,7 +1,7 @@
-var PLColors = require('PLColors');
+import PLColors from '../../../common/PLColors'
 var { StyleSheet } = require('react-native');
 
-const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
+const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('../../../common/PLConstants');
 
 export const MAX_HEIGHT = 170;
 export const MIN_HEIGHT = 80;

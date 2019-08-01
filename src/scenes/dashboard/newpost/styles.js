@@ -1,4 +1,5 @@
-var PLColors = require('PLColors');
+import PLColors from '../../../common/PLColors'
+
 var { Platform } = require('react-native');
 import {
     Dimensions

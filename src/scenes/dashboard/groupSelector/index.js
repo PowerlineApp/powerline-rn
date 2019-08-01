@@ -10,13 +10,13 @@ import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, ListItem, Thumbnail, List, Badge } from 'native-base';
 import { View, RefreshControl, Platform } from 'react-native';
-import { loadUserGroups, clearGroupsInCache, loadActivities, resetActivities, searchGroup } from 'PLActions';
-import PLOverlayLoader from 'PLOverlayLoader';
+import { loadUserGroups, clearGroupsInCache, loadActivities, resetActivities, searchGroup } from '../../../actions';
+import PLOverlayLoader from '../../../common/PLOverlayLoader';
 
 import styles from './styles';
 
-const PLColors = require('PLColors');
-const { WINDOW_HEIGHT } = require('PLConstants');
+const PLColors = require('../../../common/PLColors');
+const { WINDOW_HEIGHT } = require('../../../common/PLConstants');
 
 class GroupSelector extends Component {
     constructor(props) {

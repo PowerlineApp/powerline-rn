@@ -26,7 +26,7 @@ import styles from './styles';
 import Stripe from 'tipsi-stripe';
 import { connect } from 'react-redux';
 import PLAddCard from '../../../../../common/PLAddCard';
-import { groupCreateCard, groupGetCards, groupDeleteCard } from 'PLActions';
+import { groupCreateCard, groupGetCards, groupDeleteCard } from '../../../../../actions';
 class GroupAddCard extends Component {
     constructor(props) {
         super(props);

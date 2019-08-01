@@ -10,12 +10,11 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
-import { searchForUsersFollowableByCurrentUser, putFollowings, getFriendsSuggestions } from 'PLActions';
+import { searchForUsersFollowableByCurrentUser, putFollowings, getFriendsSuggestions } from '../../../actions';
 import SuggestedFbFriends from '../../../components/SuggestedFbFriends';
 
 class SearchFollowing extends Component {
     static propTypes = {
-        token: React.PropTypes.string
     };
 
 

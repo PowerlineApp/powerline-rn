@@ -22,12 +22,12 @@ import {
   Icon
 } from 'native-base';
 import { Actions } from 'react-native-router-flux';
-const PLColors = require('PLColors');
-import { getFollowers, unFollowers, acceptFollowers } from 'PLActions';
+const PLColors = require('../../../common/PLColors');
+import { getFollowers, unFollowers, acceptFollowers } from '../../../actions';
 import styles from './styles';
 import ContentPlaceholder from '../../../components/ContentPlaceholder';
-import PLOverlayLoader from 'PLOverlayLoader';
-import {Mixpanel} from 'PLEnv';
+import PLOverlayLoader from '../../../common/PLOverlayLoader';
+import {Mixpanel} from '../../../PLEnv';
 
 
 class Followers extends Component {

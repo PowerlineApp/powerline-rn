@@ -8,9 +8,9 @@
 
 var React = require('react');
 var { StyleSheet, View, Image, TouchableOpacity } = require('react-native');
-var PLColors = require('PLColors');
-var PLConstants = require('PLConstants');
-var { Text } = require('PLText');
+import PLColors from './PLColors'
+import PLConstants from './PLConstants'
+import { Text } from './PLText'
 
 import LinearGradient from "react-native-linear-gradient";
 

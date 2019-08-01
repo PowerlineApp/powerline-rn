@@ -21,7 +21,7 @@ import {
 } from 'native-base';
 import { TextInput } from 'react-native';
 import { MenuContext } from 'react-native-popup-menu';
-import PLColors from 'PLColors';
+import PLColors from '../../../common/PLColors';
 import PLImageSelector from '../../../common/PLImageSelector'
 import { AccordionItem } from './components';
 import * as Options from './options';
@@ -29,7 +29,6 @@ import styles from './styles';
 import { updateGroupAvatar, updateGroupBanner } from '../../../actions/groups'
 class ManageGroup extends Component {
   static propTypes = {
-    token: React.PropTypes.string
   };
   constructor(props) {
     super(props);

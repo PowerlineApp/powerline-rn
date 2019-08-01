@@ -5,7 +5,7 @@ import {
   Button,
   Label as NSLabel
 } from 'native-base';
-import { updateProfileSetup } from 'PLActions';
+import { updateProfileSetup } from '../../../../actions';
 import { showToast } from '../../../../utils/toast';
 
 import { Label, Input, PopupLabel } from '../components';

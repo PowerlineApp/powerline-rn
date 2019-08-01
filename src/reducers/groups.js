@@ -2,7 +2,7 @@
 
 import type { Action } from '../actions/types';
 
-const { PER_PAGE } = require('PLEnv');
+const { PER_PAGE } = require('../PLEnv');
 
 export type Group = {
     avatar_file_path: ?string;

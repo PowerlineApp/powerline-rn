@@ -6,7 +6,7 @@ import {
   Label as NSLabel,
   Text
 } from 'native-base';
-import { getGroupTags, getGroupOwnTags,groupSelectTag } from 'PLActions';
+import { getGroupTags, getGroupOwnTags,groupSelectTag } from '../../../../actions';
 
 import { Label, Input, PopupLabel } from '../components';
 import styles from '../styles';

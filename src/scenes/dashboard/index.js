@@ -68,9 +68,9 @@ import {
   getGroups,
   signLeaderPetition,
   fetchConferences,
-} from "PLActions";
+} from "../../actions";
 import { ImageCache } from "react-native-img-cache";
-import PLOverlayLoader from "PLOverlayLoader";
+import PLOverlayLoader from "../../common/PLOverlayLoader";
 
 // Tab Scenes
 //GH13 - Newsfeed / Standard Item Container / Same for Group Feed
@@ -156,7 +156,6 @@ const optionsRenderer = options => (
 
 class Home extends Component {
   static propTypes = {
-    openDrawer: React.PropTypes.func
   };
 
   constructor(props) {

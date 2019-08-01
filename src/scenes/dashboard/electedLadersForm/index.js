@@ -25,12 +25,12 @@ import {
 import HyperLink from 'react-native-hyperlink';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import PLColors from 'PLColors';
+import PLColors from '../../../common/PLColors';
 import PLImageSelector from '../../../common/PLImageSelector';
 import DatePicker from 'react-native-datepicker';
 import { Actions } from 'react-native-router-flux';
 import { GiftedForm, GiftedFormManager } from 'react-native-gifted-form';
-import { createRepresentative } from 'PLActions';
+import { createRepresentative } from '../../../actions';
 import { ActionTypes } from '../../../reducers/representativesForm';
 import styles from './styles';
 class ElectedLeadersForm extends Component {

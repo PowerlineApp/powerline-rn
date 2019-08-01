@@ -1,6 +1,6 @@
 
 const React = require('react-native');
-const PLColors = require('PLColors');
+const PLColors = require('../../../common/PLColors');
 const { StyleSheet } = React;
 const { Platform } = require('react-native');
 const platform = Platform.OS;

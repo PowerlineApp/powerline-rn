@@ -26,7 +26,7 @@ import styles from './styles';
 import Stripe from 'tipsi-stripe';
 import { connect } from 'react-redux';
 import PLBankAccount from '../../../../../common/PLBankAccount';
-import { groupGetBankAccounts, groupCreateBankAccount, groupDeleteBankAccount } from 'PLActions';
+import { groupGetBankAccounts, groupCreateBankAccount, groupDeleteBankAccount } from '../../../../../actions';
 import { showToast } from '../../../../../utils/toast';
 
 class GroupBankAccount extends Component {

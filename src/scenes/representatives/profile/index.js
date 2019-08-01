@@ -29,12 +29,11 @@ import {
     Platform
 } from 'react-native';
 import styles from './styles';
-const PLColors  = require('PLColors');
-import { loadRepresentatyInfo, loadCommittees, loadSponsoredBills } from 'PLActions';
+const PLColors  = require('../../../common/PLColors');
+import { loadRepresentatyInfo, loadCommittees, loadSponsoredBills } from '../../../actions';
 
 class RepresentatyProfile extends Component{
     static propTypes = {
-        token: React.PropTypes.string
     };
 
     constructor(props){

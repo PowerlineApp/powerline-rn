@@ -8,7 +8,7 @@ import {
 
 import MapView from 'react-native-maps';
 import marker from '../../assets/icons8-marker.png'
-var PLColors = require('PLColors');
+var PLColors = require('../../common/PLColors');
 
 // style
 import commonColor from "../../configs/commonColor";

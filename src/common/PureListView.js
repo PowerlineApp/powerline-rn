@@ -3,12 +3,13 @@
  */
 'use strict';
 
-var ListView = require('ListView');
-var Dimensions = require('Dimensions');
-var Platform = require('Platform');
-var StyleSheet = require('StyleSheet');
+import {Dimensions, Platform, StyleSheet, View} from 'react-native'
+import ListView from 'deprecated-react-native-listview'
+// var Dimensions = require('Dimensions');
+// var Platform = require('Platform');
+// var StyleSheet = require('StyleSheet');
 var React = require('React');
-var View = require('View');
+// var View = require('View');
 
 type Rows = Array<Object>;
 type RowsAndSections = {

@@ -1,3 +1,26 @@
 {
-  "presets": ["react-native"]
+  "presets": ["module:metro-react-native-babel-preset"],
+    "plugins": [
+      ["babel-plugin-module-resolver", {
+        "root": ["./"],
+        "alias": {
+          "PLColors": "./common/PLColors",
+          "PLButton": "./common/PLButton",
+          "PLActions": "./actions/index",
+          "PLConstants": "./common/PLConstants",
+          "PLDrawerLayout": "./common/PLDrawerLayout",
+          "PLLoader": "./common/PLLoader",
+          "PLOverlayLoader": "./common/PLOverlayLoader",
+          "PLText": "./common/PLText",
+          "PLTouchable": "./common/PLTouchable",
+          "FacebookSDK": "./FacebookSDK",
+          "PLApp": "./PLApp",
+          "PLEnv": "./PLEnv",
+          "PLNavigator": "./PLNavigator",
+          "PLAlert": "./utils/alert",
+          "PLApi": "./utils/api",
+          "PLToast": "./utils/toast"
+        }
+      }]
+    ]
 }

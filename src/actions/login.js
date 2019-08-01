@@ -9,7 +9,7 @@ var { Platform, AsyncStorage, Keyboard  } = require('react-native');
 var Alert = require('Alert');
 var { API_URL, MixpanelToken } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
-var FacebookSDK = require('FacebookSDK');
+var FacebookSDK = require('../FacebookSDK');
 var { loadUserProfile } = require('./users');
 import Mixpanel from 'react-native-mixpanel'
 

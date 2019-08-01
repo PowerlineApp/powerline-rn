@@ -17,8 +17,8 @@ import {
     Body,
     View,
 } from 'native-base';
-import { joinGroup, unJoinGroup } from 'PLActions';
-const PLColors = require('PLColors');
+import { joinGroup, unJoinGroup } from '../../../actions';
+const PLColors = require('../../../common/PLColors');
 import styles from './styles';
 
 class SearchGroups extends Component{

@@ -1,5 +1,5 @@
 import color from 'color';
-import PLColors from 'PLColors';
+import PLColors from '../../src/common/PLColors'
 
 import { Platform, Dimensions, PixelRatio } from 'react-native';
 import { darkenHex } from './hex';

@@ -64,8 +64,6 @@ class PLDrawerLayout extends React.Component {
 }
 
 PLDrawerLayout.contextTypes = {
-  addBackButtonListener: React.PropTypes.func,
-  removeBackButtonListener: React.PropTypes.func,
 };
 
 module.exports = PLDrawerLayout;

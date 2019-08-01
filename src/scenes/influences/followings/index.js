@@ -23,11 +23,11 @@ import {
   Thumbnail
 } from 'native-base';
 import { Actions } from 'react-native-router-flux';
-const PLColors = require('PLColors');
-import { getFollowings, unFollowings } from 'PLActions';
+const PLColors = require('../../../common/PLColors');
+import { getFollowings, unFollowings } from '../../../actions';
 import styles from './styles';
 import ContentPlaceholder from '../../../components/ContentPlaceholder';
-import PLOverlayLoader from 'PLOverlayLoader';
+import PLOverlayLoader from '../../../common/PLOverlayLoader';
 
 class Followings extends Component {
 

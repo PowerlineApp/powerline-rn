@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { Label as NSLabel, Button } from 'native-base';
 import { View, Text, ActivityIndicator } from 'react-native';
-import { sendGroupInvites } from 'PLActions';
+import { sendGroupInvites } from '../../../../actions';
 
 import { Label, Input, PopupLabel } from '../components';
 import styles from '../styles';

@@ -33,7 +33,7 @@ import {
     renderers
 } from 'react-native-popup-menu';
 
-const PLColors = require('PLColors');
+const PLColors = require('../../../common/PLColors');
 import styles from './styles';
 import { openDrawer } from '../../../actions/drawer';
 import {
@@ -43,9 +43,9 @@ import {
     Picker,
     Alert
 } from 'react-native';
-import { loadUserData, createGroup, getGroups } from 'PLActions';
+import { loadUserData, createGroup, getGroups } from '../../../actions';
 import { showToast } from '../../../utils/toast';
-import { SERVICE_AGREEMENT, PRIVACY_POLICY, TERMS_OF_USE } from 'PLConstants';
+import { SERVICE_AGREEMENT, PRIVACY_POLICY, TERMS_OF_USE } from '../../../common/PLConstants';
 class CreateGroup extends Component{
     typeList = ["Educational", "Non-Profit (Not Campaign)", "Non-Profit (Campaign)", "Business", "Cooperative/Union", "Other"];
 

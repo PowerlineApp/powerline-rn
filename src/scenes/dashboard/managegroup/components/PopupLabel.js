@@ -9,7 +9,8 @@ import {
   MenuTrigger,
 } from 'react-native-popup-menu';
 
-import PLColors from 'PLColors';
+import PLColors from '../../../../common/PLColors';
+
 import styles from '../styles';
 
 class PopupLabel extends PureComponent {

@@ -10,7 +10,7 @@ import {
   Platform,
   Alert
 } from 'react-native';
-import PLColors from 'PLColors';
+import PLColors from '../../common/PLColors';
 
 
 import Frisbee from 'frisbee';
