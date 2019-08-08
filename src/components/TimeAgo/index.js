@@ -2,8 +2,8 @@ var React = require('react')
 var ReactNative = require('react-native');
 var moment = require('moment');
 var TimerMixin = require('react-timer-mixin');
+import PropTypes from 'prop-types';
 
-var { PropTypes } = React;
 var { Text } = ReactNative;
 
 class TimeAgo extends React.Component {

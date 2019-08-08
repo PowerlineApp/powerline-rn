@@ -1,4 +1,6 @@
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
+
 import { Input as NBInput, Text } from 'native-base';
 import { TextInput as NVInput, View } from 'react-native';
 

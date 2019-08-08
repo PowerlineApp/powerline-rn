@@ -1,6 +1,8 @@
 //GH2, GH3, GH4, GH5
 var React = require('react');
-var { Component, PropTypes } = require('react');
+var { Component } = require('react');
+import PropTypes from 'prop-types';
+
 var { StyleSheet, View } = require('react-native');
 var Login = require('../../components/auth/Login')
 var { connect } = require('react-redux');

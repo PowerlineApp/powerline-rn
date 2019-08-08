@@ -1,5 +1,6 @@
 import React from 'react';
-import { Component, PropTypes } from 'react';
+import { Component } from 'react';
+import PropTypes from 'prop-types';
 import { StyleSheet, View, Text, ScrollView} from 'react-native';
 import {Button, Icon, Title} from 'native-base';
 import PLButton from '../../../common/PLButton';

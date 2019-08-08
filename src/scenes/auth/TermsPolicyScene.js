@@ -1,5 +1,7 @@
 var React = require('react');
-var { Component, PropTypes } = require('react');
+var { Component } = require('react');
+import PropTypes from 'prop-types';
+
 var { StyleSheet, View, Text } = require('react-native');
 import PLButton from '../../common/PLButton'
 var TermsList = require('./TermsList');

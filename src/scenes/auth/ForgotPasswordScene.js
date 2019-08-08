@@ -1,7 +1,8 @@
 //GH5 - User has ability to reset password. Sent via e-mail.
 var React = require('react');
-var { Component, PropTypes } = require('react');
+var { Component } = require('react');
 var { StyleSheet, View, TextInput } = require('react-native');
+import PropTypes from 'prop-types';
 
 import PLButton from '../../common/PLButton'
 import {PLText} from '../../common/PLText'

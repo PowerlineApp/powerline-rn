@@ -1,4 +1,5 @@
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 
 import { Text, Label as NBLabel, Icon, Button } from 'native-base';
 import { View } from 'react-native';

@@ -1,5 +1,7 @@
-import React,  { PureComponent, PropTypes } from 'react';
+import React,  { PureComponent } from 'react';
 import { View } from 'react-native'
+import PropTypes from 'prop-types';
+
 // import Accordion from 'react-native-accordion';
 import Accordion from 'react-native-collapsible/Accordion';
 import {

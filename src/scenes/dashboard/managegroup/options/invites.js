@@ -1,4 +1,6 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
 import { Label as NSLabel, Button } from 'native-base';
 import { View, Text, ActivityIndicator } from 'react-native';
 import { sendGroupInvites } from '../../../../actions';
