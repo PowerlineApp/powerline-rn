@@ -213,24 +213,24 @@ class Home extends Component {
     // }
   }
 
-  componentWillMount() {
-    console.log('dashboard componentDidMount')
+  componentDidMount() {
+    // console.log('dashboard componentDidMount')
     const { props: { profile, token, dispatch } } = this;
     this.preCacheAgencyImages();
 
-    OneSignal.configure();
-
-    // When user logs in, the device subscription is set to True to allow for notifications. If false, device cannot receive notifications
-    OneSignal.setSubscription(true);
-    OneSignal.enableSound(true);
-    OneSignal.enableVibrate(true);
-
-    OneSignal.addEventListener("ids", this.onIds);
-
-    OneSignal.addEventListener("opened", this.onOpened);
-
-    OneSignal.addEventListener("received", this.onReceived);
-    OneSignal.addEventListener("registered", this.onRegistered);
+    try {
+      OneSignal.configure();
+      // When user logs in, the device subscription is set to True to allow for notifications. If false, device cannot receive notifications
+      OneSignal.setSubscription(true);
+      OneSignal.enableSound(true);
+      OneSignal.enableVibrate(true);
+      OneSignal.addEventListener("ids", this.onIds);
+      OneSignal.addEventListener("opened", this.onOpened);
+      OneSignal.addEventListener("received", this.onReceived);
+    } catch (error) {
+      console.log('error', error)
+    }
+    // OneSignal.addEventListener("registered", this.onRegistered);
     this.props.fetchConferences(this.props.token);
     this.props.listServices(this.props.token);
     if (!profile) {

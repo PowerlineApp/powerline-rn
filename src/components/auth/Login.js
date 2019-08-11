@@ -82,11 +82,14 @@ class Login extends React.Component {
         this.setState({ isLoading: false });
         if (data.token) {
           console.log('DATA BEING DISPATCHED FROM LOGIN WITH FACEBOOK', data)
-          dispatch({ type: 'LOGGED_IN', data: data });
-
+          
           dispatch(loadUserProfile(data.token))
           dispatch(fetchConferences(data.token, true))
           this.props.fetchConferences(data.token, true)
+
+          setTimeout(() => {
+            dispatch({ type: 'LOGGED_IN', data: data });
+          }, 200)
 
         } else {
           console.log('DATA BEING DISPATCHED FROM REGISTER WITH FACEBOOK', data)

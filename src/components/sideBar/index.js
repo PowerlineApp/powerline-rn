@@ -18,8 +18,9 @@ import { logOut, logOutWithPrompt, setGroup, fetchConferences } from "../../acti
 
 import styles from "./style";
 import OneSignal from "react-native-onesignal";
-import { AsyncStorage, Keyboard, Modal, TextInput, View } from "react-native";
+import { AsyncStorage, Keyboard, Modal, TextInput, View, FlatList, TouchableHighlight } from "react-native";
 import { Mixpanel } from "../../PLEnv";
+
 
 let datas = [
   {
@@ -254,48 +255,39 @@ class SideBar extends Component {
       data = data.concat(verifyProfile);
     }
     data = data.concat(data2);
+    console.log('data => ', data)
     return (
-      <Container style={styles.sidebar}>
-        {this.customCodeModal()}
-        <List
-          dataArray={data}
-          renderRow={data => (
-            <ListItem
-              button
-              noBorder
-              onPress={() => this.onSelectItem(data.route, data.option)}
-            >
-              <Left>
-                <Icon
-                  active
-                  name={data.icon}
-                  style={{ color: "white", fontSize: 26, width: 30 }}
-                />
-                <Text style={styles.text}>{data.name}</Text>
-              </Left>
-              {data.types && (
-                <Right style={{ flex: 1 }}>
-                  <Badge
-                    style={{
-                      borderRadius: 3,
-                      height: 25,
-                      width: 72,
-                      backgroundColor: data.bg
-                    }}
+      // <Container style={styles.sidebar}>
+      <View style={styles.sidebar}>
+
+      {this.customCodeModal()}
+      <FlatList
+          data={data}
+          renderItem={({item}) => (
+              <TouchableHighlight onPress={() => this.onSelectItem(item.route, item.option)} >
+                <View
+                  style={{height: 45, width: '100%', flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center'}}
+                  button
+                  noBorder
                   >
-                    <Text style={styles.badgeText}>{`${
-                      data.types
-                    } Types`}</Text>
-                  </Badge>
-                </Right>
-              )}
-            </ListItem>
+                  <Icon
+                    active
+                    name={item.icon}
+                    style={{ color: "white", fontSize: 26, width: 30 }}
+                    />
+                  <Text style={styles.text}>{item.name}</Text>
+                  <View />
+                </View>
+              </TouchableHighlight>
           )}
         />
-      </Container>
+      </View >
     );
   }
 }
+
+
+
 
 function bindAction(dispatch) {
   return {

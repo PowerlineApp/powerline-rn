@@ -10,10 +10,10 @@ import Platform from "Platform";
 import StyleSheet from "StyleSheet";
 import { Router, Scene } from "react-native-router-flux";
 import { connect } from "react-redux";
-import { StatusBar, View, Text } from "react-native";
+import { StatusBar, View, Text, TouchableHighlight } from "react-native";
 
 import { Drawer } from "native-base";
-import { closeDrawer } from "./actions/drawer";
+import { closeDrawer, setDrawer } from "./actions/drawer";
 import Settings from "./scenes/settings";
 import PrivacySettings from "./scenes/settings/privacy";
 import BlockedUsers from "./scenes/settings/blocking";
@@ -73,47 +73,9 @@ class PLNavigator extends React.Component {
   }
   static propTypes = {
   };
-
-  _renderScene(props) {
-    // eslint-disable-line class-methods-use-this
-    switch (props.scene.route.key) {
-      case "home":
-        return <Home />;
-      case "simpleHome":
-        return <SimpleHomeScreen />;
-      case "takeTour":
-        return <TourScene />;
-      case "myInfluences":
-        return <Influences />;
-      case "representatives":
-        return <Representatives />;
-      case "createGroup":
-        return <CreateGroup />;
-      case "myGroups":
-        return <GroupList />;
-      case "search":
-        return <Search />;
-      case "settings":
-        return <Settings />;
-      case "privacySettings":
-        return <PrivacySettings />;
-      case "blockedUsers":
-        return <BlockedUsers />;
-      case "manageCards":
-        return <ManageCards />;
-      case "customizationSettings":
-        return <CustomizationSettings />;
-      case "notificationSettings":
-        return <NotificationSettings />;
-      case "conferenceAttendees":
-        return <ConferenceAttendees />;
-      case "conferenceEvents":
-        return <ConferenceEvents />;
-      case "services":
-        return <Services />;
-      default:
-        return <Home />;
-    }
+  openDrawer = () => { this.drawer._root.open() };
+  setDrawer = (drawerRef) => {
+    setDrawer(this.openDrawer)
   }
 
   render() {
@@ -124,36 +86,38 @@ class PLNavigator extends React.Component {
         )}
       >
         <Drawer
-          ref={ref => {
-            this._drawer = ref;
-          }}
-          open={this.props.drawerState === "opened"}
-          type="overlay"
-          tweenDuration={150}
+          ref={(ref) => { this.drawer = ref; this.setDrawer(this._drawer) }} 
           content={<SideBar />}
-          tapToClose
-          acceptPan={false}
-          onClose={() => this.props.closeDrawer()}
-          openDrawerOffset={0.3}
-          panCloseMask={0.2}
-          styles={{
-            drawer: {
-              shadowColor: "#000000",
-              shadowOpacity: 0.8,
-              shadowRadius: 3
-            }
-          }}
-          tweenHandler={ratio => {
-            return {
-              drawer: { shadowRadius: ratio < 0.2 ? ratio * 5 * 5 : 5 },
-              main: {
-                opacity: (2 - ratio) / 2
-              }
-            };
-          }}
-          negotiatePan
+          // open={this.props.drawerState === "opened"}
+          // type="overlay"
+          // tweenDuration={150}
+          // tapToClose
+          // acceptPan={false}
+          // openDrawerOffset={0.3}
+          // panCloseMask={0.2}
+          // styles={{
+          //   drawer: {
+          //     shadowColor: "#000000",
+          //     shadowOpacity: 0.8,
+          //     shadowRadius: 3
+          //   }
+          // }}
+          // tweenHandler={ratio => {
+          //   return {
+          //     drawer: { shadowRadius: ratio < 0.2 ? ratio * 5 * 5 : 5 },
+          //     main: {
+          //       opacity: (2 - ratio) / 2
+          //     }
+          //   };
+          // }}
+          // negotiatePan
         >
-          <MyRouter hasConference={this.props.hasConference} />
+          {/* <TouchableHighlight onPress={() => this.openDrawer()}>
+            <View style={{width: 80, height: 80, backgroundColor: '#f0f'}}>
+              <Text>open the</Text>
+            </View>
+          </TouchableHighlight> */}
+          <MyRouter openDrawer={this.openDrawer} hasConference={this.props.hasConference} />
         </Drawer>
       </StyleProvider>
     );
@@ -165,14 +129,15 @@ class MyRouter extends Component {
     super(props);
     this.state = { isCustom: false };
   }
-  shouldComponentUpdate(nextProps) {
-    if (nextProps.hasConference !== this.props.hasConference) {
-      return true
-    }
-    return false
-    // so we keep our state when opening the drawer!!!
-    // return false;
-  }
+
+  // componentWillReceiveProps (nextProps) {
+  //   if (nextProps.drawerState === true && this.props.drawerState === false){
+  //     this._drawer.open()
+  //   } else if (nextProps.drawerState === false && this.props.drawerState === true) {
+  //     this._drawer.close()
+  //   }
+  // }
+
   onBackPress() {
     if (Actions.state.index === 0) {
       return false;
@@ -180,15 +145,12 @@ class MyRouter extends Component {
     Actions.pop();
     return true;
   }
-  componentWillReceiveProps(nextProps) {
-  }
 
   render() {
     const { hasConference } = this.props;
-    console.log('navigator hasConferences ?? ', hasConference)
     return (
-      <RouterWithRedux onBackPress={this.onBackPress} key="router">
-      <Router>
+      // <RouterWithRedux onBackPress={this.onBackPress} key="router">
+      <Router key={this.props.hasConference ? 'hasConference' : 'originalHome'}>
         <Scene key="root" hideNavBar>
           <Scene key="settings" component={Settings} />
           <Scene key="privacySettings" component={PrivacySettings} />
@@ -261,7 +223,7 @@ class MyRouter extends Component {
           <Scene key="services" component={Services} />
         </Scene>
       </Router>
-      </RouterWithRedux>
+      // </RouterWithRedux>
     );
   }
 }

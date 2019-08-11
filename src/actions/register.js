@@ -2,6 +2,7 @@ import axios from 'axios';
 import { API_URL, OAUTH_URL, clientId, clientSecret } from '../PLEnv';
 import { loadUserProfile } from './users';
 import {fetchConferences} from './conferences'
+import Geolocation from '@react-native-community/geolocation';
 
 //For checking if username taken
 function findByUsernameEmailOrPhone({username, email, phone}){
@@ -104,7 +105,7 @@ async function register2(data){
 
 async function getZipCode(GEO_KEY){
     return new Promise((fullfill, reject) => {
-        let position = navigator.geolocation.getCurrentPosition(async function (position) {
+        let position = Geolocation.getCurrentPosition(async function (position) {
             let geoInfo = fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.coords.latitude},${position.coords.longitude}&result_type=street_address&key=${GEO_KEY}`);
             geoInfo = await geoInfo.json(); 
             fullfill(geoInfo);

@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, ListItem, Thumbnail, List, Badge } from 'native-base';
-import { View, RefreshControl, Platform } from 'react-native';
+import { View, RefreshControl, Platform, FlatList } from 'react-native';
 import { loadUserGroups, clearGroupsInCache, loadActivities, resetActivities, searchGroup } from '../../../actions';
 import PLOverlayLoader from '../../../common/PLOverlayLoader';
 
@@ -42,7 +42,7 @@ class GroupSelector extends Component {
             console.log(data);
             this.setState({
                 searchResults: data.payload,
-                searching: true
+                // searching: true
             });
         })
         .catch(err => {
@@ -259,20 +259,17 @@ class GroupSelector extends Component {
                             </Button>
                         </Right>
                     </ListItem>
-                    {
-                        this.state.searching
-                        ? <List
-                            dataArray={this.state.searchResults} renderRow={(group) => this.renderGroupItem(group, false)}>
-                        </List>
-                        : <View>
-                            {this._renderTownGroup()}
-                            {this._renderStateGroup()}
-                            {this._renderCountryGroup()}
-                            <List
-                                dataArray={this.props.others} renderRow={(group) => this.renderGroupItem(group, true)}>
-                            </List>
-                        </View>
-                    }
+                    <FlatList
+                        data={this.state.searchResults} renderItem={(group) => this.renderGroupItem(group, false)}>
+                    </FlatList>
+                    <View>
+                        {this._renderTownGroup()}
+                        {this._renderStateGroup()}
+                        {this._renderCountryGroup()}
+                        <FlatList
+                            data={this.props.others} renderItem={(group) => this.renderGroupItem(group, true)}>
+                        </FlatList>
+                    </View>
                     
                 </Content>
                 {/* <PLOverlayLoader marginTop={200} visible={isLoading || isRefreshing} logo /> */}

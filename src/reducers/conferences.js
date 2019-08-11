@@ -3,7 +3,7 @@ const initialState = {
     hasConference: false
 }
 
-const payloadStack: Array<Object> = [];
+let payloadStack: Array<Object> = [];
 
 export default function conferences(state = initialState, action:Action){
     if(action.type === 'LOADED_CONFERENCES') {

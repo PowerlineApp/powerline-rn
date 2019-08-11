@@ -378,7 +378,6 @@ class Register extends React.Component {
               tour(() => {
                 onLoggedIn(ret);
                 this.props.fetchConferences(ret.token, true)
-
               });
             }, 500);
             // })

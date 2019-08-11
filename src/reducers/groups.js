@@ -44,8 +44,8 @@ const initialState = {
     country: 'Country',
 };
 
-const payloadStack: Array<Object> = [];
-const othersStack: Array<Object> = [];
+let payloadStack: Array<Object> = [];
+let othersStack: Array<Object> = [];
 
 function groups(state: State = initialState, action: Action): State {
     if (action.type === 'LOADED_GROUPS') {

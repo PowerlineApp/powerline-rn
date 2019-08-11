@@ -5,7 +5,7 @@ const initialState = {
     totalItems: 0
 }
 
-const payloadStack: Array<Object> = [];
+let payloadStack: Array<Object> = [];
 
 function notifications(state = initialState, action){
     if(action.type == 'LOAD_NOTIFICATION'){

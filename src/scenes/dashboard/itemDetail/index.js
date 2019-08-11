@@ -68,9 +68,7 @@ class ItemDetail extends Component {
 
     constructor(props) {
         super(props);
-        var ds = new ListView.DataSource({
-            rowHasChanged: (r1, r2) => r1 !== r2,
-        });
+
         this.state = {
             isLoading: false,
             isCommentsLoading: false,
@@ -80,7 +78,6 @@ class ItemDetail extends Component {
             defaultInputValue: '',
             editedCommentId: null,
             dataArray: [],
-            dataSource: ds,
             inputDescription: '',
             placeholderTitle: '',
             sharing: false,
@@ -95,7 +92,12 @@ class ItemDetail extends Component {
 
         this.onChangeComment = this.onChangeComment.bind(this);
         this.onSelectionChange = this.onSelectionChange.bind(this);
-        this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => this.onBackPress());
+        try {
+
+            this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => this.onBackPress());
+        } catch (error) {
+            console.log('error', error)
+        }
     }
 
     componentWillMount() {
@@ -208,36 +210,20 @@ class ItemDetail extends Component {
         if (!share) return;
         
         // to avoid double clicks, etc
-        // console.log(this.state.sharing);
-        // WARN('aigmentity', entity);
-        // console.log('sharing... 1');
         if (this.state.sharing) return;
         
-        // console.log('sharing... 2');
         this.setState({sharing: true});
         showToast('Generating poster now...');
-
-        // let type = 'poll';
-        // if (entity.post) {
-        //     type = 'post';
-        // }
-        // if (entity.user_petition){
-        //     type = 'user_petition'
-        // }
-
         let imgURL = entity.facebook_thumbnail //entity[type].facebook_thumbnail;
-
-        // console.log(imgURL);
+        console.log(imgURL);
 
         let imagePath = null
-        
         RNFetchBlob.config({ fileCache : true }).fetch('GET', imgURL).then((resp) => {
-            // the image is now dowloaded to device's storage
+            console.log(`the image is now dowloaded to device's storage`, resp)
             imagePath = resp.path()
             return resp.readFile('base64')
         }).then((base64Data) => {
-            // here's base64 encoded image
-            
+            console.log(`here's base64 encoded image`, base64Data)
             // will set only the base64 image, will not set title or message
             let options = {
                 url: `data:image/png;base64,` + base64Data,
@@ -247,20 +233,16 @@ class ItemDetail extends Component {
                 title: ''
             };
             Share.open(options).then(response => {
-                
+                console.log('share response', response)
             }).catch(err => {
                 console.log('err', err)
-                // alert('Failed to share');
                 this.setState({sharing: false})
             });
-            
-            // allow user to hit share again
             this.setState({sharing: false})
-            
             // remove the file from storage
             return fs.unlink(imagePath)
         }).catch(e => {
-            // console.log(e, entity, imgURL)
+            console.log(e, entity, imgURL)
             if (!imgURL) {
                 alert('Poster not available')
             } else {
@@ -354,9 +336,6 @@ class ItemDetail extends Component {
         } finally {
             this.setState({ isCommentsLoading: false });
         }
-        this.setState({
-            dataSource: this.state.dataSource.cloneWithRows(this.state.dataArray),
-        });
     }
 
     async loadNextComments() {
@@ -394,9 +373,6 @@ class ItemDetail extends Component {
                 this.setState({ isCommentsLoading: false });
             }
         }
-        this.setState({
-            dataSource: this.state.dataSource.cloneWithRows(this.state.dataArray),
-        });
     }
 
     //GH17

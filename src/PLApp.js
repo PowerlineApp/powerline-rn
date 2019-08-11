@@ -21,7 +21,7 @@ import SplashScreen from 'react-native-splash-screen';
 
 import { connect } from 'react-redux';
 import { version, stripeAPIKey } from './PLEnv.js';
-import { StackNavigator } from 'react-navigation';
+// import { createStackNavigator } from 'react-navigation';
 import RegisterScene  from './scenes/auth/RegisterScene';
 import TourScene from './scenes/auth/TourScene';
 import {Root} from 'native-base';
@@ -67,7 +67,7 @@ class PLApp extends Component {
             RNSKBucket.set('token', this.props.token, myGroup);
             
             // this.props.fetchConferences(this.props.token);
-            AppState.addEventListener('change', this.handleAppStateChange);
+            // AppState.addEventListener('change', this.handleAppStateChange);
         } catch (error) {
             console.log('error ', error)   
         }
@@ -139,7 +139,7 @@ var styles = StyleSheet.create({
     },
 });
 
-var LoginStack = StackNavigator({
+var LoginStack = createStackNavigator({
     initialRouteName: { screen: LoginScene },
     Login: { screen: LoginScene },
     TermsAndPolicy: { screen: TermsPolicyScene },

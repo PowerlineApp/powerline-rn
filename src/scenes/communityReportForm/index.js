@@ -14,6 +14,7 @@ var PLColors = require('../../common/PLColors');
 import commonColor from "../../configs/commonColor";
 import { Actions } from 'react-native-router-flux';
 import CommunityView from '../../components/CommunityView';
+import Geolocation from '@react-native-community/geolocation';
 
 const styles = {
     headerStyle: {
@@ -198,13 +199,13 @@ class CommunityReportForm extends Component {
 
     getCoordinates () {
         return new Promise((resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(() => {}, () => {}, {}); // Dummy call
-            navigator.geolocation.getCurrentPosition(
+            Geolocation.getCurrentPosition(() => {}, () => {}, {}); // Dummy call
+            Geolocation.getCurrentPosition(
                 (position) => {
                     resolve(position.coords)
             }, (error) => {
                 reject(error)
-            }, { enableHighAccuracy: true, distanceFilter: 1 })
+            }, { })
         })
     }
 
@@ -295,7 +296,6 @@ class CommunityReportForm extends Component {
             headerStyle, leftBtnStyle, containerStyle, contentStyle, headerTitleStyle,
             community_container, avatar_container, avatar_wrapper, avatar_img, avatar_subfix, community_text_container, community_text, communicty_icon_container
         } = styles
-        console.log(this.props, this.state)
         return (
             <Container style={containerStyle}>
                 <Modal onRequestClose={this.closeMapModal} visible={this.state.showMap} animationType='slide'>
@@ -315,13 +315,11 @@ class CommunityReportForm extends Component {
                         </H3>
                     </Button>
                 </Modal>
-                {/* <Modal transparent onRequestClose={this.closeCommunityModal} visible={this.state.showCommunity} animationType='slide'> */}
                     {this.state.showCommunity && <CommunityView
                         grouplist={this.props.grouplist}
                         onPress={this.selectGroupList}
                         onCancel={() => this.selectGroupList(this.state.selectedGroupIndex)}
                     />}
-                {/* </Modal> */}
                 <Header style={headerStyle}>
                     <Left>
                         <Button transparent onPress={this.onBack} style={leftBtnStyle}>
@@ -394,7 +392,6 @@ class CommunityReportForm extends Component {
                         </H3>
                     </Button>
                 </View>
-
             </Container>
         )
     }

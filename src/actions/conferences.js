@@ -46,9 +46,7 @@ const updateHomeScreen = hasConference => dispatch => {
         type: 'SET_HAS_CONFERENCE',
         payload: hasConference
     })
-    Actions.reset(hasConference ? 'simpleHome' : 'originalHome')
-
-    // navigateTo(hasConference ? 'simpleHome' : 'originalHome')
+    Actions.reset('home')
 }
 
 module.exports = {

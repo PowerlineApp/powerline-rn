@@ -37,7 +37,7 @@ const initialState = {
     newsfeedUnreadCount: 0,
 };
 
-const payloadStack: Array<Object> = [];
+let payloadStack: Array<Object> = [];
 
 function activities(state: State = initialState, action: Action): State {
     // console.log('action(activities):', action);

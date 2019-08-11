@@ -43,35 +43,37 @@ class FeedActivity extends Component {
     _renderPostOrPetition(item) {
         // console.log(this.props.profile);
         return (
-        [<Card key='mainCard' style={styles.container}>
-            <FeedHeader 
-                ref={ref => { this.header = ref; }}
-                item={item}
-                token={this.props.token}
-                userId={this.props.profile && this.props.profile.id} 
-                   />
-            <FeedDescription item={item} profile={this.props.profile} />
-            <FeedMetaData item={item} />
-            <View style={styles.borderContainer} />
-            <FeedFooter ref={ref => { this.footer = ref; }} item={item} profile={this.props.profile} token={this.props.token} showAnalytics={this.props.showAnalytics} />
-        </Card>,
-            <FeedCommentPreview key='commentPreview' item={item} />
-        ]
+            <React.Fragment>
+                <Card key='mainCard' style={styles.container}>
+                    <FeedHeader 
+                        ref={ref => { this.header = ref; }}
+                        item={item}
+                        token={this.props.token}
+                        userId={this.props.profile && this.props.profile.id} 
+                        />
+                    <FeedDescription item={item} profile={this.props.profile} />
+                    <FeedMetaData item={item} />
+                    <View style={styles.borderContainer} />
+                    <FeedFooter ref={ref => { this.footer = ref; }} item={item} profile={this.props.profile} token={this.props.token} showAnalytics={this.props.showAnalytics} />
+                </Card>
+                <FeedCommentPreview key='commentPreview' item={item} />
+            </React.Fragment>
         );
     }
 
     _renderGroupCard(item) {
         // console.log('Feed activity render group card', item);
         return (
-            
-        [<Card key='mainCard' style={styles.container}>
-            <FeedHeader item={item} token={this.props.token} />
-            <FeedDescription item={item} profile={this.props.profile} />
-            <FeedCarousel item={item} />
-            <View style={styles.borderContainer} />
-            <FeedFooter item={item} profile={this.props.profile} token={this.props.token} showAnalytics={this.props.showAnalytics} />
-        </Card>,
-            <FeedCommentPreview key='commentPreview' item={item} />]
+            <React.Fragment>
+                <Card key='mainCard' style={styles.container}>
+                    <FeedHeader item={item} token={this.props.token} />
+                    <FeedDescription item={item} profile={this.props.profile} />
+                    <FeedCarousel item={item} />
+                    <View style={styles.borderContainer} />
+                    <FeedFooter item={item} profile={this.props.profile} token={this.props.token} showAnalytics={this.props.showAnalytics} />
+                </Card>
+                <FeedCommentPreview key='commentPreview' item={item} />
+            </React.Fragment>
         );
     }
 
@@ -84,7 +86,6 @@ class FeedActivity extends Component {
         case 'user-petition':
             return this._renderPostOrPetition(item, displayCommentPreview);
         default:
-            // return null;
             return this._renderGroupCard(item, displayCommentPreview);
         }
     }

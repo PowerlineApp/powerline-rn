@@ -36,6 +36,7 @@ class FeedDescription extends Component {
   }
 
   _renderAttachedImage(item){
+    console.log('this.props, item', this.props, item)
     if (this.props.isInDetail) return null;
     // console.log(item, item.user.id, item.owner.id, this.props.profile.id);
     let imgURL = item.image;
@@ -48,7 +49,7 @@ class FeedDescription extends Component {
 
     if (item.user.follow_status === 'active'){
       blur = '0';
-    } else if (Number(item.user.id) !== Number(this.props.profile.id)){
+    } else if (!this.props.profile || Number(item.user.id) !== Number(this.props.profile.id)){
       blur = '1000';
     }
     return (

@@ -5,7 +5,7 @@ const initialState = {
     totalItems: 0
 }
 
-const payloadStack: Array<Object> = [];
+let payloadStack: Array<Object> = [];
 
 function followers(state = initialState, action){
     if(action.type == 'LOAD_FOLLOWERS'){

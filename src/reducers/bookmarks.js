@@ -16,7 +16,7 @@ const initialState = {
     totalItems: 0,
 };
 
-const itemsStack: Array<Object> = [];
+let itemsStack: Array<Object> = [];
 
 //I believe this is Favorites, but it is not clear
 //GH56

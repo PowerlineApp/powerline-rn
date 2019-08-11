@@ -2,7 +2,7 @@ const initialState = {
     data: [],
 }
 
-const payloadStack: Array<Object> = [];
+let payloadStack: Array<Object> = [];
 
 export default function conciergeServices(state = initialState, action:Action){
     switch(action.type) {

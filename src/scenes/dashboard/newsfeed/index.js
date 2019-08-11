@@ -35,7 +35,7 @@ class Newsfeed extends Component {
     }
 
     shouldComponentUpdate(nextProps, nextState){
-        // console.warn('should component update', nextProps)
+        console.warn('should component update', nextProps)
         if (this.state !== nextState){
             return true;
         }
@@ -51,12 +51,12 @@ class Newsfeed extends Component {
         }
         // console.log('????????????????????????')
         return false;
-        // if (this.props.lastOffset !== nextProps.lastOffset){
-        //     return false;
-        // }
+        if (this.props.lastOffset !== nextProps.lastOffset){
+            return false;
+        }
     }
 
-    componentWillMount(){
+    componentDidMount(){
         // console.log(this.props)
         // alert(JSON.stringify(this.props.selectedGroup))
         if (!this.props.selectedGroup || !this.props.selectedGroup.id){
@@ -66,23 +66,25 @@ class Newsfeed extends Component {
         setTimeout(() => {
             this.props.dispatch({type: 'SET_LOADING', payload: false})
         }, 15000)
-    }
-    
-    componentDidMount() {
-        // this.flatListRef.scrollToOffset({offset: this.props.lastOffset, animated: false})
-        // console.warn('componentDidMount', this.props.payload.length)
-        console.warn('last offset: ====>', this.props.lastOffset, this.props.payload.length)
+
+        // console.warn('last offset: ====>', this.props.lastOffset, this.props.payload.length)
         setTimeout(() => {
             this.flatListRef && this.flatListRef.scrollToOffset({offset: this.props.lastOffset, animated: true})
-        }, 1000)       
-
+        }, 1000)     
     }
     
-    componentWillReceiveProps(nextProps) {
-        this.setState({
-            dataArray: nextProps.payload,
-        });
-    }
+    // componentDidMount() {
+    //     // this.flatListRef.scrollToOffset({offset: this.props.lastOffset, animated: false})
+    //     // console.warn('componentDidMount', this.props.payload.length)
+          
+
+    // }
+    
+    // componentWillReceiveProps(nextProps) {
+    //     this.setState({
+    //         dataArray: nextProps.payload,
+    //     });
+    // }
 
     async loadInitialActivities(nextProps) {
         this.setState({ isRefreshing: true });
@@ -238,7 +240,7 @@ class Newsfeed extends Component {
 
     render() {
         const { isRefreshing, isLoading, isLoadingTail } = this.state;
-
+        console.log('state.user', this.props['state.user'])
         // console.log('selected group', this.props)
         let loading =  (
             this.props.loadingActions ||
@@ -313,6 +315,7 @@ const mapStateToProps = state =>
 {
     // console.log('activities state', state.activities)
     return ({
+        'state.user': state.user,
     token: state.user.token,
     page: state.activities.page,
     totalItems: state.activities.totalItems,

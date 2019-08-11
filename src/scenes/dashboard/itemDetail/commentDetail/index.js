@@ -41,9 +41,6 @@ class CommentDetail extends Component {
 
     constructor(props) {
         super(props);
-        var ds = new ListView.DataSource({
-            rowHasChanged: (r1, r2) => r1 !== r2,
-        });
         this.state = {
             isLoading: false,
             isCommentsLoading: false,
@@ -51,7 +48,6 @@ class CommentDetail extends Component {
             visibleHeight: 50,
             commentText: '',
             dataArray: [],
-            dataSource: ds,
         };
         this.isLoadedAll = false;
         this.nextCursor = null;
@@ -102,9 +98,6 @@ class CommentDetail extends Component {
         } finally {
             this.setState({ isRefreshing: false });
         }
-        this.setState({
-            dataSource: this.state.dataSource.cloneWithRows(this.state.dataArray),
-        });
     }
 
     async loadNextComments() {
@@ -509,13 +502,8 @@ class CommentDetail extends Component {
     }
 
     _onCommentBody(comment) {
-        var ds = new ListView.DataSource({
-            rowHasChanged: (r1, r2) => r1 !== r2,
-        });
         this.rootComment = comment;
-        this.setState({
-            dataSource: this.state.dataSource.cloneWithRows([]),
-        });
+        
         this.loadComments();
     }
 
