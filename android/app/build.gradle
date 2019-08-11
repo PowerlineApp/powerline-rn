@@ -220,7 +220,6 @@ dependencies {
     compile project(':react-native-onesignal')
     compile project(':react-native-youtube')
 
-
     implementation(project(':react-native-maps')){
        exclude group: 'com.google.android.gms', module: 'play-services-base'
        exclude group: 'com.google.android.gms', module: 'play-services-maps'
@@ -244,6 +243,7 @@ dependencies {
     // compile ('com.google.android.gms:play-services-gcm:+') {
     //     force = true
     // }
+    implementation project(':react-native-community-geolocation')
 
     compile ('androidx.legacy:legacy-support-v4:1.0.0-beta01') {
         force = true
@@ -256,6 +256,7 @@ dependencies {
         force = true
     }
     // compile 'com.stripe:stripe-android:6.0.0'
+
 
     implementation("com.squareup.okhttp3:okhttp:3.8.1")
     implementation("com.google.zxing:core:3.3.3")

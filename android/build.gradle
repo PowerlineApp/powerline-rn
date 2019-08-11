@@ -64,6 +64,7 @@ subprojects {
 
 ext {
     googlePlayServicesVersion = '16.+'
+    supportLibVersion           = "27.0.0"
 }
 project.ext.react = [
     enableHermes: true,  // clean and rebuild if changing
