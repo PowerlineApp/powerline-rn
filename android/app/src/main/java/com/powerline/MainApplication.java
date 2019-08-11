@@ -3,6 +3,7 @@ package ne.powerli;
 import android.app.Application;
 
 import com.facebook.react.ReactInstanceManager;
+import com.reactnativecommunity.geolocation.GeolocationPackage;
 
 import com.crashlytics.android.Crashlytics;
 import com.facebook.react.ReactApplication;
@@ -64,7 +65,8 @@ public class MainApplication extends Application implements ReactApplication {
         new FBSDKPackage(),
         // new SplashScreenReactPackage(),
         new LinearGradientPackage(),
-        new MapsPackage()
+        new MapsPackage(),
+        new GeolocationPackage()
       );
     }
   };
