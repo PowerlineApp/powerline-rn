@@ -39,6 +39,7 @@ import {
   getZipCode,
   fetchConferences
 } from "../../actions";
+import {Actions} from 'react-native-router-flux'
 import PhoneVerification from "./PhoneVerification";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 
@@ -378,6 +379,7 @@ class Register extends React.Component {
               tour(() => {
                 onLoggedIn(ret);
                 this.props.fetchConferences(ret.token, true)
+                Actions.reset('home')
               });
             }, 500);
             // })
@@ -674,7 +676,7 @@ class Register extends React.Component {
       email: this.state.email,
       country: this.state.country,
       zip: this.state.zip,
-      code: this.state.code === '0000' ? 'CODE1234' : this.state.code,
+      code: __DEV__ ? 'CODE1234' : this.state.code,
       agency: this.state.agency,
       password: this.state.password,
       phone: this.state.countryCode + this.state.phone,
@@ -689,6 +691,7 @@ class Register extends React.Component {
           setTimeout(() => {
             tour(() => {
               onLoggedIn(r);
+              Actions.reset('home')
               this.props.fetchConferences(r.token, true)
             });
           }, 500);
