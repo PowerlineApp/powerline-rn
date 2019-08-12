@@ -192,12 +192,12 @@ class Home extends Component {
 
   componentWillReceiveProps(nextProps) {
     console.log("componentWillReceiveProps at dashboard---", nextProps);
-    if (nextProps.shouldResetHome) {
-      this.props.dispatch({ type: "HOME_WAS_RESET" });
-      const data = { id: "all", group: "all", header: "all" };
-      this.props.setGroup(data, this.props.token, "all");
-      this.setState({ tab1: true, tab2: false, tab3: false, tab4: false });
-    } 
+    // if (nextProps.shouldResetHome) {
+    //   this.props.dispatch({ type: "HOME_WAS_RESET" });
+    //   const data = { id: "all", group: "all", header: "all" };
+    //   this.props.setGroup(data, this.props.token, "all");
+    //   this.setState({ tab1: true, tab2: false, tab3: false, tab4: false });
+    // } 
     // if(this.state.isSet === null) {
     //   if (nextProps.conferences && nextProps.conferences.data && nextProps.conferences.data.length > 0) {
     //     this.setState({ isSet: true }, () => {
