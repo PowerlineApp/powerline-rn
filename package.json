@@ -13,6 +13,7 @@
   "dependencies": {
     "@babel/runtime": "^7.5.5",
     "@jumpn/react-native-jetifier": "^0.1.4",
+    "@react-native-community/async-storage": "^1.6.1",
     "@react-native-community/geolocation": "^1.4.2",
     "axios": "0.17.1",
     "babel-plugin-module-resolver": "^3.2.0",

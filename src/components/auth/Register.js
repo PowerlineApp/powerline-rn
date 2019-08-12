@@ -10,12 +10,12 @@ import {
   Dimensions,
   Switch,
   Alert,
-  AsyncStorage,
   PermissionsAndroid,
   KeyboardAvoidingView,
   Keyboard,
   Platform
 } from "react-native";
+import AsyncStorage from '@react-native-community/async-storage';
 
 import PLColors from "../../common/PLColors";
 import PLConstants from "../../common/PLConstants";

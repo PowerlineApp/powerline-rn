@@ -6,10 +6,11 @@
 'use strict';
 
 import React, {Component} from 'React';
-import {View, Text, Image, AsyncStorage} from 'react-native';
+import {View, Text, Image} from 'react-native';
 import Stripe from 'tipsi-stripe';
 import AppState from 'AppState';
 import Platform from 'Platform';
+import AsyncStorage from '@react-native-community/async-storage';
 
 
 import StyleSheet from 'StyleSheet';
@@ -49,6 +50,7 @@ class PLApp extends Component {
             if (this.props.token){
                 this.props.fetchConferences(this.props.token);
                 let splash = await AsyncStorage.getItem('splashScreen');
+                console.log('found splash > ', splash)
                 if (splash){
                     this.setState({splash}, () => setTimeout(() => this.setState({splash: false}), 1500) );
                 } else {

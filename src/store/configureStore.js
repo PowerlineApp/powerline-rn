@@ -14,7 +14,8 @@ var promise = require("./promise");
 var array = require("./array");
 var analytics = require("./analytics");
 var reducers = require("../reducers");
-var { AsyncStorage } = require("react-native");
+import AsyncStorage from '@react-native-community/async-storage';
+
 
 var isDebuggingInChrome = __DEV__ && !!window.navigator.userAgent;
 

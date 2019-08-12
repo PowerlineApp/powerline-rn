@@ -5,7 +5,9 @@
 'use strict';
 
 var ActionSheetIOS = require('ActionSheetIOS');
-var { Platform, AsyncStorage, Keyboard  } = require('react-native');
+var { Platform, Keyboard  } = require('react-native');
+import AsyncStorage from '@react-native-community/async-storage';
+
 var Alert = require('Alert');
 var { API_URL, MixpanelToken } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');

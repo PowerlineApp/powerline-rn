@@ -1,7 +1,8 @@
 import React from "react";
 import Ionicon from "react-native-vector-icons/Ionicons";
 import { connect } from "react-redux";
-import { Text, View, TouchableHighlight, Alert, AsyncStorage } from "react-native";
+import { Text, View, TouchableHighlight, Alert } from "react-native";
+import AsyncStorage from '@react-native-community/async-storage';
 import { Actions } from "react-native-router-flux";
 import { MenuContext } from "react-native-popup-menu";
 import { Header, Left, Title, Body, Button, Icon, Item } from "native-base";

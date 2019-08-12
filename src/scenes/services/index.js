@@ -1,5 +1,7 @@
 import React, { Component } from "react";
-import { View, Platform, SectionList, AsyncStorage, Modal, TouchableOpacity, Alert } from "react-native";
+import { View, Platform, SectionList, Modal, TouchableOpacity, Alert } from "react-native";
+import AsyncStorage from '@react-native-community/async-storage';
+
 import { connect } from "react-redux";
 import {
   Container,

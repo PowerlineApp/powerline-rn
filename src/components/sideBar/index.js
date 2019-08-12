@@ -18,8 +18,9 @@ import { logOut, logOutWithPrompt, setGroup, fetchConferences } from "../../acti
 
 import styles from "./style";
 import OneSignal from "react-native-onesignal";
-import { AsyncStorage, Keyboard, Modal, TextInput, View, FlatList, TouchableOpacity } from "react-native";
+import { Keyboard, Modal, TextInput, View, FlatList, TouchableOpacity } from "react-native";
 import { Mixpanel } from "../../PLEnv";
+import AsyncStorage from '@react-native-community/async-storage';
 
 
 let datas = [

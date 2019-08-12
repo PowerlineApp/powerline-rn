@@ -10,7 +10,6 @@ var {
     Image,
     Dimensions,
     TouchableOpacity,
-    AsyncStorage,
     Text
 } = require('react-native');
 var { connect } = require('react-redux');
@@ -20,6 +19,7 @@ import PLColors from '../../common/PLColors'
 import {Actions} from 'react-native-router-flux'
 import {CachedImage} from "react-native-img-cache";
 import GestureRecognizer from '../../components/GestureRecognizer';
+import AsyncStorage from '@react-native-community/async-storage';
 
 var styles = {
     container: {

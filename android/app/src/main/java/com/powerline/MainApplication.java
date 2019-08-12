@@ -33,7 +33,7 @@ import com.airbnb.android.react.maps.MapsPackage;
 import io.fabric.sdk.android.Fabric;
 import java.util.Arrays;
 import java.util.List;
-
+import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 // import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import com.BV.LinearGradient.LinearGradientPackage;
 
@@ -67,7 +67,8 @@ public class MainApplication extends Application implements ReactApplication {
         new SplashScreenReactPackage(),
         new LinearGradientPackage(),
         new MapsPackage(),
-        new GeolocationPackage()
+        new GeolocationPackage(),
+        new AsyncStoragePackage()
       );
     }
   };
