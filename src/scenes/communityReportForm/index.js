@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import {Platform, View, StyleSheet, Image, Modal, PermissionsAndroid} from 'react-native'
 import {
     Container, Header, Content, Button, Icon, ListItem, Text, Title,
-    Left, Right, Body, Input, Spinner, Badge, H1, H2, H3, Textarea, Form, Small, List, Thumbnail
+    Left, Right, Body, Input, Spinner, Badge, H1, H2, H3, Textarea, Form, Small, List, Thumbnail, Picker, Item
 } from "native-base";
 
 import MapView from 'react-native-maps';
@@ -47,7 +47,7 @@ const styles = {
         marginBottom: 8
     },
     categoriesContainer: {
-        flexDirection: 'row',
+        flexDirection: 'column',
         justifyContent: 'flex-start'
     },
     categoriesTitle: {
@@ -141,12 +141,25 @@ const categories = [
     {categorie: 'Safety Hazards', subCategories: ['Flooding', 'Downed Tree', 'Downed Electrical Lines', 'Rabid Animal']}
 ]
 
+// const categories = [
+//     {category: 'General', main: true},
+//     {cateogry: 'Trash'}, {cateogry: 'Pothole'}, {cateogry: 'Graffiti'}, {category: 'Lost Item'}, {category: 'Abandoned Property'},
+//     {category: 'Noise', main: true},
+//     {cateogory: 'Neighbor'}, {cateogory: 'Animal'}, {category: 'Construction'},
+//     {category: 'Professional', main: true},
+//     {category: 'Inappropriate Conduct'}, {category: 'Abuse of Authority'},
+//     {category: 'Safety Hazards', main: true},
+//     {category: 'Flooding'}, {category: 'Downed Tree'}, {category: 'Downed Electrical Lines'}, {category: 'Rabid Animal'}
+// ]
+
 const latitudeDelta = 0.00922
 const longitudeDelta = 0.00421
 
 class CommunityReportForm extends Component {
     state = {
         text: '',
+        subCategory: null,
+        category: null,
         center: {
             latitude: 0,
             longitude: 0,
@@ -304,6 +317,13 @@ class CommunityReportForm extends Component {
         console.log('attachImage', e, data)
     }
 
+    selectCategory = category => {
+        this.setState({category, subCategory: null});
+    }
+    selectSubCategory = subCategory => {
+        this.setState({subCategory});
+    }
+
     render () {
         const {addImageBtn, small, attachmentUpload, counter, card, categoriesTitlecontainer, row,
             categoriesTitle, categoriesContainer, categoriesButton, centerContainer, rightContainer, leftContainer,
@@ -366,10 +386,27 @@ class CommunityReportForm extends Component {
                     <View style={card}>
                         <View style={categoriesTitlecontainer}>
                             <H3 style={categoriesTitle}>Categories</H3>
-                            <Icon name='menu' />
+                            {/* <Icon name='menu' /> */}
                         </View>
                         <View style={categoriesContainer}>
-                            {this.renderCategories()}
+                                {/* <Item label={categories[0].categorie} value={categories[0].categorie} />)} */}
+                            <Picker iosHeader='Category'
+                                mode='dropdown' style={{height: 50, width: '100%'}}
+                                selectedValue={this.state.category} onValueChange={this.selectCategory}>
+                                    <Item disabled label={'Select a category'} value={null} />
+                                {
+                                    categories.map(({categorie}, index) => <Item key={categorie} label={categorie} value={index} />)
+                                }
+                                </Picker>
+                            <Picker iosHeader='Category'
+                                mode='dropdown' style={{height: 50, width: '100%'}}
+                                selectedValue={this.state.subCategory} onValueChange={this.selectSubCategory}>
+                                    <Item disabled label={'Select a main sub category'} value={null} />
+                                {
+                                    categories[this.state.category] &&
+                                    (categories[this.state.category]).subCategories.map(subcategory => <Item key={subcategory} label={subcategory} value={subcategory} />)
+                                }
+                                </Picker>
                         </View>
                     </View>
                     <View style={card}>
@@ -380,7 +417,7 @@ class CommunityReportForm extends Component {
                                 Open Map
                             </Text>
                         </Button>
-                        <Text style={{color: '#E33', textAlign: 'center', fontSize: 12}}>{this.state.permissionsGranted === true ? 'Powerline needs your permission to access your location.' : ''}</Text>
+                        <Text style={{color: '#E33', textAlign: 'center', fontSize: 12}}>{this.state.permissionsGranted === false ? 'Powerline needs your permission to access your location.' : ''}</Text>
                     </View>
                     <View style={card}>
                         <H3 style={categoriesTitle}>Observation</H3>
@@ -399,14 +436,14 @@ class CommunityReportForm extends Component {
                             </Button>
                         </View>
                     </View>
+                    <View style={{padding: 16}}>
+                        <Button style={{width: '100%', justifyContent: 'center', backgroundColor: commonColor.segmentBackgroundColor}}>
+                            <H3 style={{color: '#FEFEFE'}}>
+                                Submit Report
+                            </H3>
+                        </Button>
+                    </View>
                 </Content>
-                <View style={{padding: 16}}>
-                    <Button style={{width: '100%', justifyContent: 'center', backgroundColor: commonColor.segmentBackgroundColor}}>
-                        <H3 style={{color: '#FEFEFE'}}>
-                            Submit Report
-                        </H3>
-                    </Button>
-                </View>
             </Container>
         )
     }
