@@ -10,9 +10,8 @@ import {View, Text, Image, AsyncStorage} from 'react-native';
 import Stripe from 'tipsi-stripe';
 import AppState from 'AppState';
 import Platform from 'Platform';
-import LoginScene from './scenes/auth/LoginScene';
-import TermsPolicyScene from './scenes/auth/TermsPolicyScene';
-import ForgotPasswordScene from './scenes/auth/ForgotPasswordScene';
+
+
 import StyleSheet from 'StyleSheet';
 import PLNavigator from './PLNavigator';
 import StatusBar from 'StatusBar';
@@ -31,6 +30,7 @@ import {
   fetchConferences,
   listServices,
 } from "./actions";
+import { Router, Scene } from "react-native-router-flux";
 
 class PLApp extends Component {
     constructor(){
@@ -119,17 +119,10 @@ class PLApp extends Component {
             </View>;
         }
 
-        if (!this.props.isLoggedIn) {
-            return <Root>
-                <LoginStack />
-            </Root>
-        }
+            return (<Root>
+                    <PLNavigator />
+            </Root>)
 
-        return (<Root>
-            <PLNavigator />
-        </Root>)
-
-        return <Root><View /></Root>
     }
 };
 
@@ -139,24 +132,16 @@ var styles = StyleSheet.create({
     },
 });
 
-var LoginStack = createStackNavigator({
-    initialRouteName: { screen: LoginScene },
-    Login: { screen: LoginScene },
-    TermsAndPolicy: { screen: TermsPolicyScene },
-    ForgotPassword: { screen: ForgotPasswordScene },
-    Register: { screen: RegisterScene },
-    Tour: { screen: TourScene },
-});
+// var LoginStack = createStackNavigator({
+//     initialRouteName: { screen: LoginScene },
+//     Login: { screen:  },
+//     TermsAndPolicy: { screen: TermsPolicyScene },
+//     ForgotPassword: { screen: ForgotPasswordScene },
+//     Register: { screen: RegisterScene },
+//     Tour: { screen: TourScene },
+// });
 
-TermsPolicyScene.navigationOptions = props => {
-    var { navigation } = props;
-    var { state, setParams } = navigation;
-    var { params } = state;
-    var navTitle = (params.isTerms === true) ? 'Terms of Service' : 'Privacy Policy';
-    return {
-        headerTitle: `${navTitle}`,
-    };
-};
+
 
 const mapStateToProps = state => ({
     isLoggedIn: state.user.isLoggedIn,

@@ -6,7 +6,6 @@ import {Button, Icon} from 'native-base';
 import LinearGradient from "react-native-linear-gradient";
 import { LoginButton, AccessToken, LoginManager } from 'react-native-fbsdk';
 
-
 import PLButton from '../../common/PLButton';
 import PLColors from '../../common/PLColors';
 import PLConstants, { WINDOW_WIDTH } from '../../common/PLConstants';
@@ -15,6 +14,9 @@ import PLOverlayLoader from '../../common/PLOverlayLoader';
 import PhoneVerification from './PhoneVerification';
 import logo from '../../assets/logo.png';
 import { ConnectableObservable } from 'rx';
+import {Actions} from 'react-native-router-flux';
+
+
 class Login extends React.Component {
   constructor() {
     super();
@@ -47,23 +49,33 @@ class Login extends React.Component {
   };
 
   onForgotPassword = () => {
-    let { forgotPassword } = this.props;
-    forgotPassword && forgotPassword();
+    Actions.ForgotPassword()
+    // let { forgotPassword } = this.props;
+    // forgotPassword && forgotPassword();
   };
 
   onSignUp = () => {
-    let { register, tour } = this.props;
-    register && register(false, {});
+    // let { register, tour } = this.props;
+    Actions.Register(false, {})
+    // (isFb, fbData) => navigate('Register', { isFb: isFb, fbData: fbData })
+    // register && register(false, {});
   };
 
   onTermsOfService = () => {
-    let { openTerms } = this.props;
-    openTerms && openTerms();
+    Actions.TermsAndPolicy({isTerms: true})
+    // openTerms={() => navigate('TermsAndPolicy', { isTerms: true })}
+    // //     openPolicy={() => navigate('TermsAndPolicy', { isTerms: false })}
+    // let { openTerms } = this.props;
+    // openTerms && openTerms();
   };
 
   onPrivacyPolicy = () => {
-    let { openPolicy } = this.props;
-    openPolicy && openPolicy();
+    Actions.TermsAndPolicy({isTerms: false})
+    // Actions.TermsAndPolicy
+
+    
+    // let { openPolicy } = this.props;
+    // openPolicy && openPolicy();
   };
 
   async onLogIn() {
@@ -89,7 +101,8 @@ class Login extends React.Component {
 
           setTimeout(() => {
             dispatch({ type: 'LOGGED_IN', data: data });
-          }, 200)
+            Actions.reset('home')
+          }, 100)
 
         } else {
           console.log('DATA BEING DISPATCHED FROM REGISTER WITH FACEBOOK', data)
@@ -175,7 +188,7 @@ class Login extends React.Component {
     this.setState({isLoading: true});
     let { username, code } = this.state;
     this.setState({code: ''});
-    this.props.oauthLogin(username, code)
+    this.props.oauthLogin(username, __DEV__ ? 'CODE1234' : code)
       .then(() => {
         this.setState({isLoading: false})
       })
@@ -207,6 +220,7 @@ class Login extends React.Component {
       console.log(r);
       if (r.token){
         dispatch({ type: 'LOGGED_IN', data: r });
+        Actions.reset('home')
         this.props.fetchConferences(r.token, true)
       }
       this.setState({isLoading: false})

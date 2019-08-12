@@ -15,6 +15,8 @@ import Mixpanel from 'react-native-mixpanel'
 
 
 import OneSignal from 'react-native-onesignal';
+import { Actions } from 'react-native-router-flux';
+import {closeDrawer} from './drawer'
 
 async function queryFacebookAPI(path, ...args): Promise {
   return new Promise((resolve, reject) => {
@@ -113,17 +115,27 @@ function sendRecoveryEmail(data){
 
 function logOut(token): ThunkAction {
   return (dispatch) => {
-    FacebookSDK.logout();
-    OneSignal.setSubscription(false);
-    AsyncStorage.getItem('pushId', (err, pushId) => {        
-      unregisterDevice(token, pushId)          
-      AsyncStorage.setItem('pushId', '')
-    });
-    AsyncStorage.clear();
-    return dispatch({
-      type: 'LOGGED_OUT',
-    });
-    Mixpanel.track("Logout");
+    try {
+      
+      Actions.reset('Login')
+      closeDrawer()
+
+      FacebookSDK.logout();
+      OneSignal.setSubscription(false);
+      AsyncStorage.getItem('pushId', (err, pushId) => {        
+        unregisterDevice(token, pushId)          
+        AsyncStorage.setItem('pushId', '')
+      });
+      AsyncStorage.clear();
+      return dispatch({
+        type: 'LOGGED_OUT',
+      });
+      Mixpanel.track("Logout");
+      console.log('alowww') 
+
+    } catch (error) {
+      console.log('aloww', error) 
+    }
   };
 }
 

@@ -6,6 +6,12 @@ import PropTypes from 'prop-types';
 var { StyleSheet, View } = require('react-native');
 var Login = require('../../components/auth/Login')
 var { connect } = require('react-redux');
+import { Router, Scene } from "react-native-router-flux";
+// import LoginScene from './scenes/auth/LoginScene';
+import TermsPolicyScene from './TermsPolicyScene';
+import ForgotPasswordScene from './ForgotPasswordScene';
+import RegisterScene from './RegisterScene';
+import TourScene from './TourScene';
 
 var styles = StyleSheet.create({
   container: {
@@ -13,26 +19,35 @@ var styles = StyleSheet.create({
   }
 });
 
-class LoginScene extends Component {
+class LoginRouter extends Component {
   static navigationOptions = {
     title: "Login",
     header: null
   };
 
   render() {
-    var { navigate } = this.props.navigation;
-    navigate("dashboard")
+
+
     return (
-      <View style={styles.container}>
-        <Login
-          openTerms={() => navigate('TermsAndPolicy', { isTerms: true })}
-          openPolicy={() => navigate('TermsAndPolicy', { isTerms: false })}
-          forgotPassword={() => navigate('ForgotPassword')}
-          register={(isFb, fbData) => navigate('Register', { isFb: isFb, fbData: fbData })}
-        />
-      </View>
+      // <Router>
+        <React.Fragment>
+          {/* <Scene hideNavBar initial={!this.props.isLoggedIn} key="Login" component={Login} initial />        
+          <Scene key="TermsAndPolicy" component={TermsPolicyScene} />        
+          <Scene key="ForgotPassword" component={ForgotPasswordScene} />        
+          <Scene key="Register" component={RegisterScene} />        
+          <Scene key="Tour" component={TourScene} /> */}
+        </React.Fragment>
+      // </Router>
+      // <View style={styles.container}>
+      //   <Login
+      //     openTerms={() => navigate('TermsAndPolicy', { isTerms: true })}
+      //     openPolicy={() => navigate('TermsAndPolicy', { isTerms: false })}
+      //     forgotPassword={() => navigate('ForgotPassword')}
+      //     register={(isFb, fbData) => navigate('Register', { isFb: isFb, fbData: fbData })}
+      //   />
+      // </View>
     );
   }
 }
 
-module.exports = connect()(LoginScene);
+module.exports = connect()(LoginRouter);

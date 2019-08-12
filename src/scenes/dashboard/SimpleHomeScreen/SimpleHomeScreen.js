@@ -249,7 +249,6 @@ class SimpleHomeScreen extends React.Component {
 
     gotoCreatePost = () => {
       // this.gotoFeed(false)
-      setTimeout(() => {
           homeNavigator.instance.goTo(
               'newpost',
               {
@@ -264,7 +263,6 @@ class SimpleHomeScreen extends React.Component {
                   }
               }
           )
-      }, 1000)
     }
 
     requestServices = () => {

@@ -60,9 +60,14 @@ import ConferenceAttendees from "./scenes/dashboard/ConferenceAttendees/Conferen
 import ConferenceEvents from "./scenes/dashboard/ConferenceEvents/ConferenceEvents";
 import Services from "./scenes/services";
 import CommunityReportForm from './scenes/communityReportForm';
-
+import LoginScene from './scenes/auth/LoginScene';
+import TermsPolicyScene from './scenes/auth/TermsPolicyScene';
+import ForgotPasswordScene from './scenes/auth/ForgotPasswordScene';
+import RegisterScene  from './scenes/auth/RegisterScene';
+import Login from './components/auth/Login';
 import Share from "./PLShare";
 import { Actions } from "react-native-router-flux";
+import {fetchConferences} from './actions'
 
 var RouterWithRedux = connect()(Router);
 
@@ -74,12 +79,21 @@ class PLNavigator extends React.Component {
   static propTypes = {
   };
   openDrawer = () => { this.drawer._root.open() };
+  closeDrawer = () => { this.drawer._root.close() };
   setDrawer = (drawerRef) => {
-    setDrawer(this.openDrawer)
+    setDrawer(this.openDrawer, this.closeDrawer)
+  }
+
+  fetchConferences = () => {
+    this.props.fetchConferences(this.props.token, false)
   }
 
   render() {
+    console.log(
+      'confs confs', this.props
+    )
     return (
+
       <StyleProvider
         style={getTheme(
           this.props.themeState === "material" ? material : undefined
@@ -88,36 +102,8 @@ class PLNavigator extends React.Component {
         <Drawer
           ref={(ref) => { this.drawer = ref; this.setDrawer(this._drawer) }} 
           content={<SideBar />}
-          // open={this.props.drawerState === "opened"}
-          // type="overlay"
-          // tweenDuration={150}
-          // tapToClose
-          // acceptPan={false}
-          // openDrawerOffset={0.3}
-          // panCloseMask={0.2}
-          // styles={{
-          //   drawer: {
-          //     shadowColor: "#000000",
-          //     shadowOpacity: 0.8,
-          //     shadowRadius: 3
-          //   }
-          // }}
-          // tweenHandler={ratio => {
-          //   return {
-          //     drawer: { shadowRadius: ratio < 0.2 ? ratio * 5 * 5 : 5 },
-          //     main: {
-          //       opacity: (2 - ratio) / 2
-          //     }
-          //   };
-          // }}
-          // negotiatePan
         >
-          {/* <TouchableHighlight onPress={() => this.openDrawer()}>
-            <View style={{width: 80, height: 80, backgroundColor: '#f0f'}}>
-              <Text>open the</Text>
-            </View>
-          </TouchableHighlight> */}
-          <MyRouter openDrawer={this.openDrawer} hasConference={this.props.hasConference} />
+          <MyRouter fetchConferences={this.fetchConferences} isLoggedIn={this.props.isLoggedIn} openDrawer={this.openDrawer} hasConference={this.props.hasConference} />
         </Drawer>
       </StyleProvider>
     );
@@ -138,6 +124,14 @@ class MyRouter extends Component {
   //   }
   // }
 
+  shouldComponentUpdate (nextProps) {
+    console.log('this.props.hasConference', this.props.hasConference, nextProps.hasConference)
+    if (this.props.isLoggedIn !== nextProps.isLoggedIn) return true
+    if (this.props.hasConference !== nextProps.hasConference) return true
+
+    return false
+  }
+
   onBackPress() {
     if (Actions.state.index === 0) {
       return false;
@@ -146,65 +140,76 @@ class MyRouter extends Component {
     return true;
   }
 
+  fetchConferences = () => {
+    console.log('hasC 1')
+    this.props.fetchConferences()
+  }
+
   render() {
-    const { hasConference } = this.props;
+    const { hasConference, isLoggedIn } = this.props;
+    console.log('this.props.isLoggedIn', this.props.isLoggedIn)
     return (
-      // <RouterWithRedux onBackPress={this.onBackPress} key="router">
-      <Router key={this.props.hasConference ? 'hasConference' : 'originalHome'}>
-        <Scene key="root" hideNavBar>
-          <Scene key="settings" component={Settings} />
-          <Scene key="privacySettings" component={PrivacySettings} />
-          <Scene key="blockedUsers" component={BlockedUsers} />
-          <Scene key="manageCards" component={ManageCards} />
+      <Router key={this.props.isLoggedIn ? this.props.hasConference ? 'hasConference' : 'originalHome' : 'Login'}>
+        <Scene key='root'>
+          <Scene hideNavBar initial={!this.props.isLoggedIn} key="Login" component={Login} initial />        
+          <Scene hideNavBar key="TermsAndPolicy" component={TermsPolicyScene} />        
+          <Scene hideNavBar key="ForgotPassword" component={ForgotPasswordScene} />        
+          <Scene hideNavBar key="Register" component={RegisterScene} />        
+          <Scene hideNavBar key="Tour" component={TourScene} />
+
+          <Scene hideNavBar key="settings" component={Settings} />
+          <Scene hideNavBar key="privacySettings" component={PrivacySettings} />
+          <Scene hideNavBar key="blockedUsers" component={BlockedUsers} />
+          <Scene hideNavBar key="manageCards" component={ManageCards} />
           <Scene
             key="customizationSettings"
             component={CustomizationSettings}
           />
-          <Scene key="notificationSettings" component={NotificationSettings} />
-          <Scene key="analyticsView" component={AnalyticsView} hideNavBar />
-
-          <Scene key="home" component={hasConference ? SimpleHomeScreen : Home} initial hideNavBar />
-          <Scene key="originalHome" component={Home} hideNavBar />
-          <Scene key="simpleHome" component={SimpleHomeScreen} hideNavBar  />
-
-          <Scene key="conferenceAttendees" component={ConferenceAttendees} hideNavBar  />
-          <Scene key="conferenceEvents" component={ConferenceEvents} hideNavBar  />
-          <Scene key="groupSelector" component={GroupSelector} />
-          <Scene key="takeTour" component={TourScene} />
-          <Scene key="itemDetail" component={ItemDetail} animation={"fade"} />
-          <Scene key="commentDetail" component={CommentDetail} />
-          <Scene key="myInfluences" component={Influences} />
-          <Scene key="searchFollowing" component={SearchFollowing} />
-          <Scene key="representatives" component={Representatives} />
-          <Scene key="representatyprofile" component={RepresentatyProfile} />
-          <Scene key="profile" component={Profile} />
-          <Scene key="verifyProfile" component={VerifyProfile} />
-          <Scene key="createGroup" component={CreateGroup} />
-          <Scene key="groupprofile" component={GroupProfile} />
-          <Scene key="myGroups" component={GroupList} />
-          <Scene key="groupsearch" component={GroupSearch} />
-          <Scene key="groupmembers" component={GroupMembers} />
-          <Scene key="newCommunityReport" component={CommunityReportForm} animation={"fade"} />
-          <Scene key="newpost" component={NewPost} animation={"fade"} />
-          <Scene key="newpetition" component={NewPetition} animation={"fade"} />
+          <Scene hideNavBar key="notificationSettings" component={NotificationSettings} />
+          <Scene hideNavBar key="analyticsView" component={AnalyticsView} />
+          <Scene hideNavBar onEnter={this.fetchConferences} key="home" component={hasConference ? SimpleHomeScreen : Home} initial={isLoggedIn} />
+          <Scene hideNavBar onEnter={this.fetchConferences} key="originalHome" component={Home} />
+          {/* 
+          <Scene hideNavBar key="simpleHome" component={SimpleHomeScreen} hideNavBar  /> */}
+          <Scene hideNavBar key="conferenceAttendees" component={ConferenceAttendees}  />
+          <Scene hideNavBar key="conferenceEvents" component={ConferenceEvents}  />
+          <Scene hideNavBar key="groupSelector" component={GroupSelector} />
+          <Scene hideNavBar key="takeTour" component={TourScene} />
+          <Scene hideNavBar key="itemDetail" component={ItemDetail} animation={"fade"} />
+          <Scene hideNavBar key="commentDetail" component={CommentDetail} />
+          <Scene hideNavBar key="myInfluences" component={Influences} />
+          <Scene hideNavBar key="searchFollowing" component={SearchFollowing} />
+          <Scene hideNavBar key="representatives" component={Representatives} />
+          <Scene hideNavBar key="representatyprofile" component={RepresentatyProfile} />
+          <Scene hideNavBar key="profile" component={Profile} />
+          <Scene hideNavBar key="verifyProfile" component={VerifyProfile} />
+          <Scene hideNavBar key="createGroup" component={CreateGroup} />
+          <Scene hideNavBar key="groupprofile" component={GroupProfile} />
+          <Scene hideNavBar key="myGroups" component={GroupList} />
+          <Scene hideNavBar key="groupsearch" component={GroupSearch} />
+          <Scene hideNavBar key="groupmembers" component={GroupMembers} />
+          <Scene hideNavBar key="newCommunityReport" hideNavBar component={CommunityReportForm} animation={"fade"} />
+          <Scene hideNavBar key="newpost" component={NewPost} animation={"fade"} />
+          <Scene hideNavBar key="newpetition" component={NewPetition} animation={"fade"} />
           <Scene
+            hideNavBar
             key="newleadercontent"
             component={NewLeaderContent}
             animation={"fade"}
           />
-          <Scene key="search" component={Search} />
-          <Scene key="groupInvite" component={GroupInvite} />
-          <Scene key="groupJoin" component={GroupJoin} />
-          <Scene key="managegroup" component={ManageGroup} />
-          <Scene
+          <Scene hideNavBar key="search" component={Search} />
+          <Scene hideNavBar key="groupInvite" component={GroupInvite} />
+          <Scene hideNavBar key="groupJoin" component={GroupJoin} />
+          <Scene hideNavBar key="managegroup" component={ManageGroup} />
+          <Scene hideNavBar
             key="manageGroupMembers"
             component={GroupMembersManagementScene}
           />
-          <Scene
+          <Scene hideNavBar
             key="groupBankAccountScene"
             component={GroupBankAccountScene}
           />
-          <Scene key="groupAddCardScene" component={GroupAddCardScene} />
+          <Scene hideNavBar key="groupAddCardScene" component={GroupAddCardScene} />
           <Scene
             key="formModal"
             hideNavBar={false}
@@ -217,26 +222,38 @@ class MyRouter extends Component {
             component={ElectedLeadersForm}
             hideNavBar
           />
-          <Scene key="userAddCardScene" component={UserAddCard} />
-          <Scene key="share" component={Share} />
-          <Scene key="terms" component={TermsList} />
-          <Scene key="services" component={Services} />
+          <Scene hideNavBar key="userAddCardScene" component={UserAddCard} />
+          <Scene hideNavBar key="share" component={Share} />
+          <Scene hideNavBar key="terms" component={TermsList} />
+          <Scene hideNavBar key="services" component={Services} />
         </Scene>
       </Router>
-      // </RouterWithRedux>
     );
   }
 }
 
 function bindAction(dispatch) {
   return {
-    closeDrawer: () => dispatch(closeDrawer())
+    closeDrawer: () => dispatch(closeDrawer()),
+    fetchConferences: (t, b) => dispatch(fetchConferences(t, b))
   };
 }
 
+TermsPolicyScene.navigationOptions = props => {
+  var { navigation } = props;
+  var { state, setParams } = navigation;
+  var { params } = state;
+  var navTitle = (params.isTerms === true) ? 'Terms of Service' : 'Privacy Policy';
+  return {
+      headerTitle: `${navTitle}`,
+  };
+};
+
 const mapStateToProps = state => ({
   drawerState: state.drawer.drawerState,
-  hasConference: state.conferences.hasConference
+  token: state.user.token,
+  hasConference: state.conferences.hasConference,
+  isLoggedIn: state.user.isLoggedIn
 });
 
 module.exports = connect(mapStateToProps, bindAction)(PLNavigator);

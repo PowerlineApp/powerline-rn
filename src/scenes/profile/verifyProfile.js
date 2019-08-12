@@ -173,7 +173,7 @@ class VerifyProfile extends Component {
         let {phone, code, countryCode} = this.state;
         countryCode = countryCode || '+1';    
         this.setState({code: ''})
-        verifyCode({phone: countryCode + phone, code: 'CODE1234'}).then(r => {
+        verifyCode({phone: countryCode + phone, code: __DEV__ ? 'CODE1234' : code}).then(r => {
             // user successfully validated his phone, so its a real deal.
             this.setState({showPhoneScreen: false, loading: false, phone: countryCode + phone})
         }).catch(error => {
