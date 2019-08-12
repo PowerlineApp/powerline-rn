@@ -255,7 +255,6 @@ class SideBar extends Component {
       data = data.concat(verifyProfile);
     }
     data = data.concat(data2);
-    console.log('data => ', data)
     return (
       // <Container style={styles.sidebar}>
       <View style={styles.sidebar}>
@@ -266,7 +265,7 @@ class SideBar extends Component {
           renderItem={({item}) => (
               <TouchableOpacity onPress={() => this.onSelectItem(item.route, item.option)} >
                 <View
-                  style={{height: 60, width: '100%', flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center'}}
+                  style={{marginLeft: 17, paddingVertical: 15, paddingRight: 17, height: 56, width: '100%', flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center'}}
                   button
                   noBorder
                   >
