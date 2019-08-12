@@ -403,7 +403,7 @@ class CommunityReportForm extends Component {
                 <View style={{padding: 16}}>
                     <Button style={{width: '100%', justifyContent: 'center', backgroundColor: commonColor.segmentBackgroundColor}}>
                         <H3 style={{color: '#FEFEFE'}}>
-                            Publish
+                            Submit Report
                         </H3>
                     </Button>
                 </View>
