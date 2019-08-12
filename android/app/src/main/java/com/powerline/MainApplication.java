@@ -9,6 +9,7 @@ import com.crashlytics.android.Crashlytics;
 import com.facebook.react.ReactApplication;
 import com.rnfs.RNFSPackage;
 import com.github.alinz.rnsk.RNSKPackage;
+import org.devio.rn.splashscreen.SplashScreenReactPackage;
 
 import com.kevinejohn.RNMixpanel.RNMixpanel;
 import com.vonovak.AddCalendarEventPackage;
@@ -63,7 +64,7 @@ public class MainApplication extends Application implements ReactApplication {
         new SharePackage(),
         new ReactNativeYouTube(),
         new FBSDKPackage(),
-        // new SplashScreenReactPackage(),
+        new SplashScreenReactPackage(),
         new LinearGradientPackage(),
         new MapsPackage(),
         new GeolocationPackage()
