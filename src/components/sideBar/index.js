@@ -18,7 +18,7 @@ import { logOut, logOutWithPrompt, setGroup, fetchConferences } from "../../acti
 
 import styles from "./style";
 import OneSignal from "react-native-onesignal";
-import { AsyncStorage, Keyboard, Modal, TextInput, View, FlatList, TouchableHighlight } from "react-native";
+import { AsyncStorage, Keyboard, Modal, TextInput, View, FlatList, TouchableOpacity } from "react-native";
 import { Mixpanel } from "../../PLEnv";
 
 
@@ -264,9 +264,9 @@ class SideBar extends Component {
       <FlatList
           data={data}
           renderItem={({item}) => (
-              <TouchableHighlight onPress={() => this.onSelectItem(item.route, item.option)} >
+              <TouchableOpacity onPress={() => this.onSelectItem(item.route, item.option)} >
                 <View
-                  style={{height: 45, width: '100%', flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center'}}
+                  style={{height: 60, width: '100%', flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center'}}
                   button
                   noBorder
                   >
@@ -277,8 +277,9 @@ class SideBar extends Component {
                     />
                   <Text style={styles.text}>{item.name}</Text>
                   <View />
+                  <View />
                 </View>
-              </TouchableHighlight>
+              </TouchableOpacity>
           )}
         />
       </View >

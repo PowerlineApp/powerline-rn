@@ -5,25 +5,32 @@ export const OPEN_DRAWER = 'OPEN_DRAWER';
 export const CLOSE_DRAWER = 'CLOSE_DRAWER';
 
 let openDrawerGambiarra = () => {}
+let closeDrawerGambiarra = () => {}
 
 export function openDrawer():Action {
-  // return {
-  //   type: OPEN_DRAWER,
-  // };
   try {
     openDrawerGambiarra()
   } catch (error) {
     console.log(error, drawerRef)
   }
-  return {type: 'bla'}
+  return {type: 'gambiarra', open: true}
 }
-
-export function setDrawer (newDrawerRef) {
-  openDrawerGambiarra = newDrawerRef;
-}
-
 export function closeDrawer():Action {
-  return {
-    type: CLOSE_DRAWER,
-  };
+  try {
+    closeDrawerGambiarra()
+  } catch (error) {
+    console.log(error, drawerRef)
+  }
+  return {type: 'gambiarra', open: false}
 }
+
+export function setDrawer (newDrawerRefOpen, newDrawerRefClose) {
+  openDrawerGambiarra = newDrawerRefOpen;
+  closeDrawerGambiarra = newDrawerRefClose;
+}
+
+// export function closeDrawer():Action {
+//   return {
+//     type: CLOSE_DRAWER,
+//   };
+// }
