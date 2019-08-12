@@ -162,6 +162,20 @@ class CommunityReportForm extends Component {
     async componentDidMount () {
         this.tryGetCoords()
         this.setInitialGroup()
+        this.checkPermissions()
+    }
+
+    async checkPermissions () {
+        const granted = await PermissionsAndroid.check( PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION );
+        if (granted) {
+            this.setState({permissionsGranted: true})
+            // this.tryGetCoords()
+            console.log( "You can use the ACCESS_FINE_LOCATION" )
+        } 
+        else {
+            this.setState({permissionsGranted: false})
+            console.log( "ACCESS_FINE_LOCATION permission denied" )
+        }
     }
 
     setInitialGroup () {
@@ -190,16 +204,16 @@ class CommunityReportForm extends Component {
                 }})
             }
         } catch (error) {
-            console.log('Failed to get user coordinates, trying again in 5...')
+            console.log('Failed to get user coordinates, trying again in 5...', error)
             setTimeout(() => {
                 this.tryGetCoords()
-            }, 5000)
+            }, 500)
         }
     }
 
     getCoordinates () {
         return new Promise((resolve, reject) => {
-            Geolocation.getCurrentPosition(() => {}, () => {}, {}); // Dummy call
+            Geolocation.getCurrentPosition((position) => {resolve(position.coords)}, () => {}, {}); // Dummy call
             Geolocation.getCurrentPosition(
                 (position) => {
                     resolve(position.coords)
