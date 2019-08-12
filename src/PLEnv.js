@@ -40,10 +40,10 @@ const dev = __DEV__ || forceDev;
 
 let env = {
   testMenuEnabled: true,
-  API_URL: devURL, // dev && !staging ? devURL : staging ? stagingURL : prodURL,
-  OAUTH_URL: devOAuthURL, // dev && !staging ? devOAuthURL : staging ? stagingOAuthURL : prodOAuthURL,
-  clientId: devClientId, // dev && !staging ? devClientId : staging ? stagingClientId : prodClientId,
-  clientSecret: devClientSecret, // dev && !staging ? devClientSecret : staging ? stagingClientSecret : prodClientSecret,
+  API_URL: dev && !staging ? devURL : staging ? stagingURL : prodURL,
+  OAUTH_URL: dev && !staging ? devOAuthURL : staging ? stagingOAuthURL : prodOAuthURL,
+  clientId: dev && !staging ? devClientId : staging ? stagingClientId : prodClientId,
+  clientSecret: dev && !staging ? devClientSecret : staging ? stagingClientSecret : prodClientSecret,
   version: 301,
   fontFamily: undefined,
   PER_PAGE: 20,
