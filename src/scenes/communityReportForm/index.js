@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {Platform, View, StyleSheet, Image, Modal} from 'react-native'
+import {Platform, View, StyleSheet, Image, Modal, PermissionsAndroid} from 'react-native'
 import {
     Container, Header, Content, Button, Icon, ListItem, Text, Title,
     Left, Right, Body, Input, Spinner, Badge, H1, H2, H3, Textarea, Form, Small, List, Thumbnail
@@ -380,6 +380,7 @@ class CommunityReportForm extends Component {
                                 Open Map
                             </Text>
                         </Button>
+                        <Text style={{color: '#E33', textAlign: 'center', fontSize: 12}}>{this.state.permissionsGranted === true ? 'Powerline needs your permission to access your location.' : ''}</Text>
                     </View>
                     <View style={card}>
                         <H3 style={categoriesTitle}>Observation</H3>
