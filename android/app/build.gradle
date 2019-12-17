@@ -197,6 +197,7 @@ android {
 }
 
 dependencies {
+    compile project(':@react-native-community/async-storage')
     compile project(':react-native-android-sms-listener')
     compile project(':react-native-fbsdk')
 

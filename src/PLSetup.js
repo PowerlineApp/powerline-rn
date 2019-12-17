@@ -14,11 +14,6 @@ var configureStore = require("./store/configureStore");
 console.disableYellowBox = true;
 
 class Root extends React.Component {
-  state: {
-    isLoading: boolean,
-    store: any
-  };
-
   constructor() {
     super();
     this.state = {

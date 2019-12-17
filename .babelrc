@@ -1,6 +1,6 @@
 {
   "presets": ["module:metro-react-native-babel-preset"],
-    "plugins": [
+  "plugins": [
       ["babel-plugin-module-resolver", {
         "root": ["./"],
         "alias": {

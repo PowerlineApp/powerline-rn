@@ -2,13 +2,13 @@
  * @providesModule PLEnv
  * @flow
  */
-let Mixpanel = {};
+let Mixpanel = {track: () => {}};
 try {
-  Mixpanel = require("react-native-mixpanel");
-  let MixpanelToken = "41d5e20219405736fed2c133437f2953";
-  Mixpanel.sharedInstanceWithToken(MixpanelToken);
+  // Mixpanel = require("react-native-mixpanel");
+  // let MixpanelToken = "41d5e20219405736fed2c133437f2953";
+  // Mixpanel.sharedInstanceWithToken(MixpanelToken);
 } catch (error) {
-  console.warn("Somehow mixpanel import failed in PLEnv.js .");
+  console.warn("Somehow mixpanel import failed in PLEnv.js .", error);
 }
 
 const stripeTest = "pk_test_QUgSE3ZhORW9yoDuCkMjnaA2";
