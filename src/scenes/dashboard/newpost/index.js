@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import * as Animatable from 'react-native-animatable';
 
-import RNFetchBlob from 'react-native-fetch-blob';
+import RNFetchBlob from 'rn-fetch-blob';
 const fs = RNFetchBlob.fs;
 
 import {

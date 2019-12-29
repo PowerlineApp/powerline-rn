@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Share from 'react-native-share';
 
-import RNFetchBlob from 'react-native-fetch-blob'
+import RNFetchBlob from 'rn-fetch-blob'
 const fs = RNFetchBlob.fs
 
 // import {ScrollView, Modal, TouchableOpacity} from 'react-native';

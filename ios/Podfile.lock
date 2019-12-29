@@ -30,8 +30,8 @@ PODS:
     - DoubleConversion
     - glog
   - glog (0.3.5)
-  - Mixpanel (3.4.9)
-  - OneSignal (2.12.2)
+  - Mixpanel (3.5.0)
+  - OneSignal (2.12.3)
   - QBImagePickerController (3.4.0)
   - React (0.60.4):
     - React-Core (= 0.60.4)
@@ -99,17 +99,15 @@ PODS:
   - react-native-fbsdk/Share (1.1.1):
     - FBSDKShareKit (= 5.8)
     - React
-  - react-native-fetch-blob (0.10.6):
-    - React-Core
   - react-native-geolocation (1.4.2):
     - React
   - react-native-maps (0.25.0):
     - React
-  - react-native-mixpanel (0.0.6):
-    - Mixpanel (~> 3.4.5)
+  - react-native-mixpanel (1.1.14):
+    - Mixpanel (~> 3.5.0)
     - React
-  - react-native-onesignal (3.6.0):
-    - OneSignal (= 2.12.2)
+  - react-native-onesignal (3.6.1):
+    - OneSignal (= 2.12.3)
     - React (< 1.0.0, >= 0.13.0)
   - react-native-splash-screen (3.2.0):
     - React
@@ -139,11 +137,13 @@ PODS:
   - React-RCTWebSocket (0.60.4):
     - React-Core (= 0.60.4)
     - React-fishhook (= 0.60.4)
-  - RNCAsyncStorage (1.7.0):
+  - rn-fetch-blob (0.12.0):
+    - React-Core
+  - RNCAsyncStorage (1.7.1):
     - React
   - RNDeviceInfo (2.1.2):
     - React
-  - RNFS (2.15.3):
+  - RNFS (2.16.2):
     - React
   - RNImageCropPicker (0.25.0):
     - QBImagePickerController
@@ -181,7 +181,6 @@ DEPENDENCIES:
   - react-native-add-calendar-event (from `../node_modules/react-native-add-calendar-event`)
   - react-native-facebook-login (from `../node_modules/react-native-facebook-login`)
   - react-native-fbsdk (from `../node_modules/react-native-fbsdk`)
-  - react-native-fetch-blob (from `../node_modules/react-native-fetch-blob`)
   - "react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)"
   - react-native-maps (from `../node_modules/react-native-maps`)
   - react-native-mixpanel (from `../node_modules/react-native-mixpanel`)
@@ -198,6 +197,7 @@ DEPENDENCIES:
   - React-RCTText (from `../node_modules/react-native/Libraries/Text`)
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - React-RCTWebSocket (from `../node_modules/react-native/Libraries/WebSocket`)
+  - rn-fetch-blob (from `../node_modules/rn-fetch-blob`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNFS (from `../node_modules/react-native-fs`)
@@ -254,8 +254,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-facebook-login"
   react-native-fbsdk:
     :path: "../node_modules/react-native-fbsdk"
-  react-native-fetch-blob:
-    :path: "../node_modules/react-native-fetch-blob"
   react-native-geolocation:
     :path: "../node_modules/@react-native-community/geolocation"
   react-native-maps:
@@ -288,6 +286,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/Libraries/Vibration"
   React-RCTWebSocket:
     :path: "../node_modules/react-native/Libraries/WebSocket"
+  rn-fetch-blob:
+    :path: "../node_modules/rn-fetch-blob"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-community/async-storage"
   RNDeviceInfo:
@@ -316,8 +316,8 @@ SPEC CHECKSUMS:
   FBSDKShareKit: abc29e1bb4f9f59f679adf1ae191006d68455f96
   Folly: 30e7936e1c45c08d884aa59369ed951a8e68cf51
   glog: 1f3da668190260b06b429bb211bfbee5cd790c28
-  Mixpanel: 5aca6e506b34650b96dc759a208513d86650fac7
-  OneSignal: b2c1511c6b5db2d3b0ce1859f574dcf190dde5f3
+  Mixpanel: 399997670f5452de026449f9e9ecd52eccbb9ff7
+  OneSignal: 30b6e03a1f14169c4313e301a7b7bdf467b5a575
   QBImagePickerController: d54cf93db6decf26baf6ed3472f336ef35cae022
   React: ff7ee2ae5ee1c1d9ae2183b4111045b25294bb01
   React-Core: 8e0ea421cae5609d2562850f98421b15030476fa
@@ -330,11 +330,10 @@ SPEC CHECKSUMS:
   react-native-add-calendar-event: 40f26c5e9fe7cbb26f1b5370c6ccc9de662f69e3
   react-native-facebook-login: f1965a91ca7d8b641677849ede842d7e4ad9b27b
   react-native-fbsdk: b94a83971c496a35803f38b921aec6d637ba07b5
-  react-native-fetch-blob: 0cbdf9764c75d9438c162427395f4bc35a857d5a
   react-native-geolocation: 79c743ad7a2e86617811ef23f49308824e92520c
   react-native-maps: 190c02ca533fddac5bb49cf17bdece3644612107
-  react-native-mixpanel: f7ca1a4a436f1d3c19d9ca5d57aa47b848e97292
-  react-native-onesignal: 9107543bd7e4bb13a2f96b33fca7e942161852b9
+  react-native-mixpanel: ec61348bb3fecfa88b665a0ac129e37adbe71da7
+  react-native-onesignal: d029b061807f5d14eaf765293099987f942d19f8
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   react-native-youtube: c0c152b1cbc1e3f09a71b9e49636d0433e095400
   React-RCTActionSheet: 9f71d7ae3e8fb10e08d162cbf14c621349dbfab3
@@ -347,9 +346,10 @@ SPEC CHECKSUMS:
   React-RCTText: e0f224898b13af9aa036ea7cb3d438daa68c1044
   React-RCTVibration: 0bea40cd51bd089bd591a8f74c86e91fdf2666c5
   React-RCTWebSocket: 163873f4cdd5f1058a9483443404fc3801581cb6
-  RNCAsyncStorage: e9f3eb4fbd5d0d1713051ffbd60968110172d6e9
+  rn-fetch-blob: f065bb7ab7fb48dd002629f8bdcb0336602d3cba
+  RNCAsyncStorage: 8539fc80a0075fcc9c8e2dff84cd22dc5bf1dacf
   RNDeviceInfo: fd8296de6fca8b743cdc499b896f48e8a9f1faf5
-  RNFS: cf1bd19f8bf3c1400f8d3ececbe84e42aa29d2e7
+  RNFS: 0d4191b1052bef9ce70deff00a5b4169c62bbd9b
   RNImageCropPicker: 0a731d984e64ee4c28bddaa7ce52262e4b80979f
   RNShare: 8b171d4b43c1d886917fdd303bf7a4b87167b05c
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
@@ -358,6 +358,6 @@ SPEC CHECKSUMS:
   tipsi-stripe: 3e0073c7eec0b2bfd1d1d5736d843c22e3024485
   yoga: c2c050f6ae6e222534760cc82f559b89214b67e2
 
-PODFILE CHECKSUM: 08b1e542251dffe9dd9791a65f0327278003bbb3
+PODFILE CHECKSUM: 84ca8754b194902817fed72daa1d81f98580731b
 
 COCOAPODS: 1.8.4

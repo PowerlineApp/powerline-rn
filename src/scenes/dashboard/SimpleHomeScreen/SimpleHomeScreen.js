@@ -28,7 +28,8 @@ const  homeNavigator = require('./navigator');
 class SimpleHomeScreen extends React.Component {
     constructor(props) {
       super(props);
-     
+      const conference = Object.values(props.conferences.data).length > 0 ?
+        props.conferences.data[0] : null;
       this.state = {
         items: [
           {
@@ -69,6 +70,7 @@ class SimpleHomeScreen extends React.Component {
         ],
         conferences: [],
         conciergeServices: [],
+        conference
       };
     }
 
@@ -321,6 +323,7 @@ class SimpleHomeScreen extends React.Component {
     }
 
     render() {
+      console.log('this.state.conference', this.state.conference)
       return (
         <ScrollView style={styles.container}>
           {this.state.conference && this.state.conference.image && (
