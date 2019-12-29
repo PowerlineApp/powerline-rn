@@ -1121,8 +1121,7 @@ class Home extends Component {
               icon="md-people"
               title="FRIENDS"
             />
-            {/* This is the New Item Menu GH8. Only New Post and New Petition are expected to work at this time */}
-            <Button style={isIOS ? {} : { height: 75 }}>
+            <Button style={isIOS ? {height: 85} : { height: 75 }}>
               {!isIOS && <View style={[styles.fillButton, styles.borderTop]} />}
               {!isIOS && <View style={styles.fillCircle} />}
               <Menu
