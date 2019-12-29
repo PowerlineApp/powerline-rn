@@ -1,7 +1,7 @@
-import _ from 'lodash'
-import React from 'react'
-import { connect } from 'react-redux'
-import { CachedImage } from 'react-native-img-cache'
+import _ from 'lodash';
+import React from 'react';
+import { connect } from 'react-redux';
+import { CachedImage } from 'react-native-img-cache';
 import {
     Platform,
     ScrollView,
@@ -12,9 +12,9 @@ import {
     TouchableOpacity,
     TextInput,
     Image
-} from 'react-native'
-import { Actions } from 'react-native-router-flux'
-import Ionicon from 'react-native-vector-icons/Ionicons'
+} from 'react-native';
+import { Actions } from 'react-native-router-flux';
+import Ionicon from 'react-native-vector-icons/Ionicons';
 
 import {
   fetchConferences,
@@ -22,12 +22,12 @@ import {
   setGroup
 } from "../../../actions";
 
-import styles from './styles'
+import styles from './styles';
 const  homeNavigator = require('./navigator');
 
 class SimpleHomeScreen extends React.Component {
     constructor(props) {
-      super(props)
+      super(props);
      
       this.state = {
         items: [
@@ -95,8 +95,8 @@ class SimpleHomeScreen extends React.Component {
                 {
                   label: link.label,
                   onPress: () => {
-                    const url = Platform.OS === 'android' ? link.android_url : link.ios_url
-                    console.log(link, url)
+                    const url = Platform.OS === 'android' ? link.android_url : link.ios_url;
+                    console.log(link, url);
                     if(url) {
                       Linking.openURL(url);
                     } else {
@@ -105,9 +105,9 @@ class SimpleHomeScreen extends React.Component {
                   },  
                   icon: <Image source={require('img/link_icon.png')} style={styles.icon} />
                 }
-              ))
-              const newItems = [...this.state.items, ...items]
-              this.setState({items: newItems})
+              ));
+              const newItems = [...this.state.items, ...items];
+              this.setState({items: newItems});
           }
 
           
@@ -131,7 +131,7 @@ class SimpleHomeScreen extends React.Component {
         homeNavigator.instance.goTo('conferenceEvents', {
           title: 'Events',
           back: true,
-        })
+        });
       }
     }
 
@@ -145,7 +145,7 @@ class SimpleHomeScreen extends React.Component {
                 back: true,
                 id: conference.id
             }
-        )
+        );
       }
     }
 
@@ -155,18 +155,18 @@ class SimpleHomeScreen extends React.Component {
         homeNavigator.instance.goTo('profile', {
             title: 'My Profile',
             back: true
-        })
+        });
     }
 
     gotoFeed = (home = true) => {
-      const {token} = this.props
+      const {token} = this.props;
       if (!home) {
         if (this.state.conference) {
-          const groupId = this.state.conference.group_id
-          const groupObj = this.props.groupList.find(group => group.id.toString() === groupId)
+          const groupId = this.state.conference.group_id;
+          const groupObj = this.props.groupList.find(group => group.id.toString() === groupId);
           if (!groupObj) {
-            console.log(this.state.conference, groupId, this.props.groupList)
-            return
+            console.log(this.state.conference, groupId, this.props.groupList);
+            return;
           }
           let {
             id,
@@ -231,7 +231,7 @@ class SimpleHomeScreen extends React.Component {
       homeNavigator.instance.goTo('representatives', {
         title: 'Representatives',
         back: true
-      })
+      });
     }
 
     gotoServices = () => {
@@ -240,7 +240,7 @@ class SimpleHomeScreen extends React.Component {
         homeNavigator.instance.goTo('services', {
           title: 'Services',
           back: true
-        })
+        });
       } else {
         Alert.alert('Error', 'The service is not available. Please try again later');
       }
@@ -262,20 +262,20 @@ class SimpleHomeScreen extends React.Component {
                       type: 'post'
                   }
               }
-          )
+          );
     }
 
     requestServices = () => {
       if(this.props.conciergeServices) {
-        let services = Object.values(this.props.conciergeServices)
+        let services = Object.values(this.props.conciergeServices);
         if (services.length === 0) {
             return Alert.alert(
                 'Not available',
                 'There are no services available for this group.'
-            )
+            );
         }
 
-        let labels = services.map((service, index) => service.message)
+        let labels = services.map((service, index) => service.message);
 
         this.props.dispatch({
             type: 'SET_ACTIONSHEET_STATE',
@@ -285,43 +285,43 @@ class SimpleHomeScreen extends React.Component {
                 options: labels.concat('Cancel'),
                 cancelButtonIndex: labels.length,
                 onPress: async index => {
-                    if (index == null) return
-                    let service = services[index]
+                    if (index == null) return;
+                    let service = services[index];
 
                     this.props.dispatch({
                         type: 'ACTIONSHEET_STATE',
                         payload: { isVisible: false }
-                    })
+                    });
 
                     let result = await require('./').services.request(
                         service.id
-                    )
+                    );
                     if (result.success) {
                         return Alert.alert(
                             'Thanks!',
                             'Your service request has been received and we will take care of it as soon as possible.'
-                        )
+                        );
                     } else {
                         if (result.error.error.request.status === 400) {
                             return Alert.alert(
                                 'Info',
                                 'You can only request a service once every ten minutes.'
-                            )
+                            );
                         } else {
                             return Alert.alert(
                                 'Uh oh..',
                                 'An unexpected error has occured, please try again later.'
-                            )
+                            );
                         }
                     }
                 }
             }
-        })
+        });
       } 
     }
 
     render() {
-      console.log('this.state', this.state)
+      console.log('this.state', this.state);
       return (
         <ScrollView style={styles.container}>
           {this.state.conference && this.state.conference.image && (
@@ -344,11 +344,11 @@ class SimpleHomeScreen extends React.Component {
                         </View>
                         <Text style={styles.label}>{item.label}</Text>
                     </TouchableOpacity>
-                )
+                );
             })}
           </View>
         </ScrollView>
-      )
+      );
     }
 }
 
@@ -373,4 +373,4 @@ const mapStateToProps = state => ({
     groupList: state.groups.payload
 });
 
-export default connect(mapStateToProps, bindAction)(SimpleHomeScreen)
+export default connect(mapStateToProps, bindAction)(SimpleHomeScreen);
