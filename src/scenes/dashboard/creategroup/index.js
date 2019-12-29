@@ -161,7 +161,15 @@ class CreateGroup extends Component{
                     { cancelable: false }
                 );
             }else{
-                alert(data.message);
+                try {
+                    const children = data.errors.children
+                    const error = Object.keys(children).filter((currentChild) => children[currentChild].errors)[0]
+                    const errorName = error.split('_').map(lower => lower.charAt(0).toUpperCase() + lower.substring(1)).join(' ')
+                    const errorMessage = children[error].errors[0]
+                    Alert.alert(errorName, errorMessage);
+                } catch (error) {
+                    Alert.alert('Validation failed', 'It was not possible to create your group, please try again later')
+                }
             }
             
         })
