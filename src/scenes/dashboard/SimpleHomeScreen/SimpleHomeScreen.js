@@ -321,7 +321,6 @@ class SimpleHomeScreen extends React.Component {
     }
 
     render() {
-      console.log('this.state', this.state);
       return (
         <ScrollView style={styles.container}>
           {this.state.conference && this.state.conference.image && (
