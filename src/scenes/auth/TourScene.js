@@ -174,15 +174,16 @@ class TourScene extends Component{
     };
 
     onSkip = () =>{
-        console.log('=>', this.props);
-        if(this.props.navigation && this.props.navigation.state && this.props.navigation.state.params && this.props.navigation.state.params.callback){
-            let { state } = this.props.navigation;
-            let { params } = state;
-            params.callback();
-        }else{
-                this.props.navigation.state.params.onBackPress();
-           Actions.home();
-        }      
+        Actions.home();
+
+        // console.log('=>', this.props);
+        // if(this.props.navigation && this.props.navigation.state && this.props.navigation.state.params && this.props.navigation.state.params.callback){
+        //     let { state } = this.props.navigation;
+        //     let { params } = state;
+        //     params.callback();
+        // }else{
+        // this.props.navigation.state.params.onBackPress();
+        // }      
     };
 
     render(){
