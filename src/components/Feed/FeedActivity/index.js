@@ -44,7 +44,7 @@ class FeedActivity extends Component {
         // console.log(this.props.profile);
         return (
             <React.Fragment>
-                <Card key='mainCard' style={styles.container}>
+                <View key='mainCard' style={styles.container}>
                     <FeedHeader 
                         ref={ref => { this.header = ref; }}
                         item={item}
@@ -55,7 +55,7 @@ class FeedActivity extends Component {
                     <FeedMetaData item={item} />
                     <View style={styles.borderContainer} />
                     <FeedFooter ref={ref => { this.footer = ref; }} item={item} profile={this.props.profile} token={this.props.token} showAnalytics={this.props.showAnalytics} />
-                </Card>
+                </View>
                 <FeedCommentPreview key='commentPreview' item={item} />
             </React.Fragment>
         );
