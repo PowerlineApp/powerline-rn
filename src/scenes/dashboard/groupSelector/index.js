@@ -176,6 +176,7 @@ class GroupSelector extends Component {
     }
 
     renderGroupItem(group, isOwnGroup){
+        console.log(group)
         return (
             <ListItem avatar style={{ paddingVertical: 5 }} onPress={() => isOwnGroup ? this.goToGroupFeed(group, 'more') : Actions.groupprofile({id: group.id}) } badge>                                
                 <Left style={{position: 'relative'}}>                                
@@ -260,16 +261,16 @@ class GroupSelector extends Component {
                         </Right>
                     </ListItem>
                     <FlatList
-                        data={this.state.searchResults} renderItem={(group) => this.renderGroupItem(group, false)}>
+                        data={this.state.searchResults} renderItem={({item}) => this.renderGroupItem(item, false)}>
                     </FlatList>
-                    <View>
+                    {!this.state.searchTerm && <View>
                         {this._renderTownGroup()}
                         {this._renderStateGroup()}
                         {this._renderCountryGroup()}
                         <FlatList
-                            data={this.props.others} renderItem={(group) => this.renderGroupItem(group, true)}>
+                            data={this.props.others} renderItem={({item}) => this.renderGroupItem(item, true)}>
                         </FlatList>
-                    </View>
+                    </View>}
                     
                 </Content>
                 {/* <PLOverlayLoader marginTop={200} visible={isLoading || isRefreshing} logo /> */}
