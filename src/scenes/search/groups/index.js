@@ -33,11 +33,10 @@ class SearchGroups extends Component{
     }
 
     join(group){
-        console.log('group', group);
         if(group.fill_fields_required || group.membership_control === 'passcode' || group.membership_control === 'approval' && !group.joined && !group.user_role) {
-            Actions.groupJoin({data: group});
+            Actions.groupprofile({data: group});
         } else {
-            Alert.alert('Confirmation', 'Are you Sure?', [
+            Alert.alert('Confirmation', `Are you sure you wish to join ${group.official_name}?`, [
                 {text: "Ok", onPress: () => this.doJoin(group.id)}, 
                 {text: "Cancel", onPress: () => console.log('Cancel pressed'), style: 'cancel'}
             ]);

@@ -166,7 +166,6 @@ class GroupList extends Component{
                         <List style={{backgroundColor: 'white', marginTop: 17}}>
                             {
                                 this.state.groupList.map((itemGroups, index1) => {
-                                    console.log('itemGroups', itemGroups);
                                     return (
                                         <View key={index1}>
                                             <ListItem itemHeader style={styles.itemHeaderStyle}>

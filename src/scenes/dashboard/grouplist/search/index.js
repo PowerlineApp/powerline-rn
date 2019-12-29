@@ -28,7 +28,8 @@ import {
 } from 'native-base';
 import {
     View,
-    TouchableOpacity
+    TouchableOpacity,
+    Alert
 } from 'react-native';
 import styles from './styles';
 import { getGroupsBySort, searchGroup, joinGroup } from '../../../../actions';
@@ -97,9 +98,34 @@ class GroupSearch extends Component{
         Actions.groupprofile(group);
     }
 
+    // join(group){
+    //     Actions.groupprofile(group);
+    // }
     join(group){
-        console.log('group', group);
-        Actions.groupJoin({data: group});
+        if(group.fill_fields_required || group.membership_control === 'passcode' || group.membership_control === 'approval' && !group.joined && !group.user_role) {
+            Actions.groupprofile({data: group});
+        } else {
+            Alert.alert('Confirmation', `Are you sure you wish to join ${group.official_name}?`, [
+                {text: "Ok", onPress: () => this.doJoin(group.id)}, 
+                {text: "Cancel", onPress: () => console.log('Cancel pressed'), style: 'cancel'}
+            ]);
+        }
+    }
+    
+    doJoin(id){
+        var { token } = this.props;
+        if (this.state.joiningGroup) return;
+        this.setState({joiningGroup: true});
+        joinGroup(token, id).then(data => {
+            this.setState({joiningGroup: false});
+            if(data.join_status == 'active'){
+                Actions.myGroups();
+            }
+        })
+        .catch(err => {
+            this.setState({joiningGroup: false});
+    
+        });
     }
 
     render(){
