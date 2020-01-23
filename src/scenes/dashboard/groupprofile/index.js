@@ -22,18 +22,19 @@ import {
     Thumbnail,
     Text
 } from 'native-base';
-import IconVI from 'react-native-vector-icons/dist/FontAwesome'
+import IconVI from 'react-native-vector-icons/dist/FontAwesome';
 import {
     View,
     RefreshControl,
     Alert,
-    Modal
+    Modal,
+    TouchableHighlight
 } from 'react-native';
 import styles  from './styles';
 const PLColors = require('../../../common/PLColors');
-import { getGroupDetails, inviteAllFollowers, getFollowers, unJoinGroup, joinGroup, getGroupPermissions } from '../../../actions';
+import { getGroupDetails, inviteAllFollowers, getFollowers, loadActivities, unJoinGroup, joinGroup, getGroupPermissions } from '../../../actions';
 
-const PERMS = ['Name', "Street Address", "City", "Country", "State", "Zip Code", "Email", "Phone Number", "Responses"] 
+const PERMS = ['Name', "Street Address", "City", "Country", "State", "Zip Code", "Email", "Phone Number", "Responses"]; 
 class GroupProfile extends Component{
     static propTypes = {
     };
@@ -71,7 +72,7 @@ class GroupProfile extends Component{
     }
     componentWillReceiveProps(nextProps) {
         if(nextProps.shouldRefresh) {
-            this.loadGroup()
+            this.loadGroup();
         }
     }
     loadGroup(){
@@ -88,7 +89,7 @@ class GroupProfile extends Component{
             this.setState({
                 data: data,
                 refreshing: false
-            })
+            });
         })
         .catch(err => {
 
@@ -203,7 +204,7 @@ class GroupProfile extends Component{
                     });
                     return;
                 }
-                this.setState({showConfirmationModal: false})
+                this.setState({showConfirmationModal: false});
                 Actions.pop({refresh: {
                     shouldRefresh: true
                 }});
@@ -216,9 +217,9 @@ class GroupProfile extends Component{
     join(){
         if(this.state.data.fill_fields_required || this.state.data.membership_control === 'passcode' || this.state.data.membership_control === 'approval') {
             console.log(this.state.data);
-            Actions.groupJoin({data: this.state.data})
+            Actions.groupJoin({data: this.state.data});
         } else {
-            this.setState({showConfirmationModal: true})
+            this.setState({showConfirmationModal: true});
         }
     }
 
@@ -228,21 +229,21 @@ class GroupProfile extends Component{
                 <Button block style={styles.unjoinBtn} onPress={() => this.unjoin()}>
                     <Label style={{color: 'white'}}>Pending Approval</Label>
                 </Button>
-            )
+            );
         } 
         if(this.state.data.joined && this.state.data.user_role) {
             return (
                 <Button block style={styles.unjoinBtn} onPress={() => this.unjoin()}>
                     <Label style={{color: 'white'}}>Unjoin</Label>
                 </Button>
-            )
+            );
         }
         if(!this.state.data.joined && !this.state.data.user_role) {
             return (
                 <Button block style={styles.joinBtn} onPress={() => this.join()}>
                     <Label style={{color: 'white'}}>Join</Label>
                 </Button>  
-            )
+            );
         }
         
     }
@@ -261,14 +262,24 @@ class GroupProfile extends Component{
         }
     }
 
+    goToGroupFeed = () => {
+        console.log('goToGroupFeed')
+        let {id, official_name, avatar_file_path, conversation_view_limit, total_members, user_role} = this.state.data;
+        // console.log(groupId, groupName, avatar, limit)     
+        const { dispatch, token } = this.props;
+        dispatch({ type: 'RESET_ACTIVITIES' });
+        dispatch({type: 'SET_GROUP', data: {header: 'more', user_role,group: id,  id, groupName: official_name, groupAvatar: avatar_file_path, limit: conversation_view_limit, totalMembers: total_members, conversationView: total_members < conversation_view_limit}});
+        dispatch(loadActivities(token, 0, 20, id));
+        dispatch({type: 'SAVE_OFFSET', payload: 0});
+        Actions.originalHome();        
+    }
+
     render(){
-        console.log('GROUP PROFILE', this.state)
-        console.log('GROUP PROFILE', this.props)
         return (
             <Container style={styles.container}>
                 <Header style={styles.header}>
                     <Left>
-                        <Button transparent style={{width: '100%'}}  onPress={this.onBackPress} style={{width: 50, height: 50 }}  >
+                        <Button transparent onPress={this.onBackPress} style={{width: 50, height: 50 }}  >
                             <Icon active name="arrow-back" style={{color: 'white'}}/>
                         </Button>
                     </Left>
@@ -297,7 +308,9 @@ class GroupProfile extends Component{
                     <List style={{ marginTop: 17}}>
                         <ListItem style={{backgroundColor: 'white', marginLeft: 0, paddingLeft: 17}}>
                             {this.state.data.avatar_file_path?
-                            <Thumbnail style={styles.avatar} square source={{uri: this.state.data.avatar_file_path+'&w=150&h=150&auto=compress,format,q=95'}}/>:
+                            <TouchableHighlight onPress={this.goToGroupFeed}>
+                                <Thumbnail style={styles.avatar} square source={{uri: this.state.data.avatar_file_path+'&w=150&h=150&auto=compress,format,q=95'}}/>
+                            </TouchableHighlight>:
                             <View style={styles.avatar}/>
                             }
                             <Body>
@@ -379,7 +392,7 @@ class GroupProfile extends Component{
                                             <IconVI style={{ color: colorPicker(this.state.permissions, item)}} name={iconPicker(this.state.permissions, item)} />
                                             <Text style={{color: colorPicker(this.state.permissions, item), marginLeft: 20, fontSize: 18}}>{item}</Text>
                                         </View>
-                                    )
+                                    );
                                 })
                             }
                             <View style={{flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-around'}}>
@@ -396,30 +409,31 @@ class GroupProfile extends Component{
                     </View>
                 </Modal>
             </Container>
-        )
+        );
     }
 }
 
 const colorPicker = (array, item) => {
     if(array.includes(item)) {
-        return PLColors.main
+        return PLColors.main;
     } else {
-        return 'grey'
+        return 'grey';
     }
-}
+};
 const iconPicker = (array, item) => {
     if(array.includes(item)) {
-        return 'circle'
+        return 'circle';
     } else {
-        return 'circle-o'
+        return 'circle-o';
     }
-}
+};
 const mapStateToProps = state => ({
     token: state.user.token
 });
 
 const mapDispatchToProps = dispatch => ({
-    openDrawer: () => dispatch(openDrawer())
+    openDrawer: () => dispatch(openDrawer()),
+    dispatch: (action) => dispatch(action)
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(GroupProfile);
