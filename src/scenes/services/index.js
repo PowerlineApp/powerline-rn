@@ -44,7 +44,7 @@ class Services extends Component {
       errorAlertVisible: false,
       isFetching: true,
       serviceInfoEditable: true,
-    }
+    };
   }
   componentDidMount() {
     this.loadServices();
@@ -52,7 +52,7 @@ class Services extends Component {
   loadServices = () => {
     listServices(this.props.userDetails.token)
     .then(r => {
-      console.log(' r .data', r.data)
+      console.log(' r .data', r.data);
       this.setState({
         services: r.data,
         isFetching: false
@@ -197,7 +197,7 @@ class Services extends Component {
     return (
       <ListItem
         style={styles.listcustom}
-        onPress={() => {this.onSelectItem(item)}}
+        onPress={() => {this.onSelectItem(item);}}
       >
         <View style={styles.listContainer}>
           <View style={styles.lextText}>
@@ -223,105 +223,106 @@ class Services extends Component {
         Alert.alert('Choose payment form', 'This service accepts payments in cash or credit card', [
           {text: 'Cash', onPress: () => resolve('cash')},
           {text: 'Credit Card', onPress: () => resolve('cc')}
-        ], {cancelable: false, onDismiss: e => { console.log('dismissed', e); resolve('ayoo')}})
+        ], {cancelable: false, onDismiss: e => { console.log('dismissed', e); resolve('ayoo');}});
       } catch (error) {
-        console.log('lol')
+        console.log('lol');
       }
-    })
+    });
   }
 
   finishRequest = async (service, serviceInfo, payment_type) => {
-    const {token} = this.props.userDetails
+    const {token} = this.props.userDetails;
     if (!service.is_reservation) {
-      delete serviceInfo.reservation
+      delete serviceInfo.reservation;
     }
     // serviceInfo.payment_type = payment_type
     try {
-      const response = await setService(token, service.id, serviceInfo)
-      const responseJson = await response.data.json()
-      const errors = responseJson.errors
+      const response = await setService(token, service.id, serviceInfo);
+      const responseJson = await response.data.json();
+      console.log('responseJson', responseJson);
+      const errors = responseJson.errors;
       if (errors && errors.errors && errors.errors[0]) {
-        throw new Error(errors.errors[0])
+        throw new Error(errors.errors[0]);
       }
       if (response.data.status.toString()[0] === '4' || response.data.status.toString()[0] === '5') {
-        throw new Error('Failed to fetch')
+        throw new Error('Failed to fetch');
       }
-      Alert.alert('The service was requested successfully')
+      Alert.alert('The service was requested successfully');
     } catch (error) {
-      console.log('error while updatng service with params, id: ', service.id, 'body: ', serviceInfo, 'error:', error)
-      Alert.alert('Failed to request service.', error.message)
+      console.log('error while updatng service with params, id: ', service.id, 'body: ', serviceInfo, 'error:', error);
+      Alert.alert('Failed to request service.', error.message);
     }
   }
 
   showConfirmation = (service, serviceInfo, paymentType, cards) => {
-    let text = ''
+    let text = '';
       text = ` \nYou'll be charged $${service && service.price} for this service.
             \n Payment type: ${paymentType === 'cc' ? `Credit Card, ${cards[0].brand} - ${cards[0].last4}` : 'Cash'}
             ${service.is_reservation ? `\n Reservation: ${serviceInfo.reservation.date}` : ''}
-            `
+            `;
     return new Promise((resolve, reject) => {
       Alert.alert(service.title, text, [
         {text: 'Cancel', onPress: () => {}},
         {text: 'Confirm', onPress: () => this.finishRequest(service, serviceInfo, paymentType)}
-    ], {cancelable: false})
-    })
+    ], {cancelable: false});
+    });
   }
 
   certifyUserHasCreditCard = () => {
       return new Promise(async (resolve, reject) => {
-          const cards = await loadUserCards(this.props.userDetails.token)
+          const cards = await loadUserCards(this.props.userDetails.token);
           if (!cards.length) {
-              await this.setState({showLoadingModal: false})
+              await this.setState({showLoadingModal: false});
               Actions.userAddCardScene({
                   onSuccess: () => {
                       Actions.pop(); Alert.alert('Saved!', 'Your default payment method is now setup. Please try again.');
-                      resolve(this.certifyUserHasCreditCard())
+                      resolve(this.certifyUserHasCreditCard());
                   },
                   onFail: () => {
                       Actions.pop(); Alert.alert('Something went wrong', 'Something went wrong while updating your payment method. Please try again.');
-                      reject()
+                      reject();
                   }
               });
           } else {
-            resolve(cards)
+            resolve(cards);
           }
-      })
+      });
   }
 
   onContinue = async (serviceInfo) => {
-    const service = this.state.selectedService
-    this.setState({serviceOfferConfirmVisible: false})
-    if (service.type === 'bluter') return
-    console.log(serviceInfo, service)
-    await this.setState({serviceOfferConfirmVisible: false, showLoadingModal: true})
+    const service = this.state.selectedService;
+    this.setState({serviceOfferConfirmVisible: false});
+    if (service.type === 'bluter') return;
+    console.log(serviceInfo, service);
+    await this.setState({serviceOfferConfirmVisible: false, showLoadingModal: true});
 
     setTimeout(async () => {
-        let paymentType
-        let cards
+        let paymentType;
+        let cards;
         if (service.type === 'simple') { // simple type... just continue
-            this.finishRequest(service, serviceInfo)
+            this.finishRequest(service, serviceInfo);
         } else if (service.type === 'payment') {
-          paymentType = 'none'
+          paymentType = 'none';
           if (service.payment_type === 'both') { // ask if money or cc
-              paymentType = await this.choosePaymentType()
+              paymentType = await this.choosePaymentType();
           } else {
-              paymentType = service.payment_type
+              paymentType = service.payment_type;
           }
           if (paymentType === 'cc') {  // check if user has a cc setup
             try {
-              cards = await this.certifyUserHasCreditCard()
+              cards = await this.certifyUserHasCreditCard();
             } catch (error) { // something went wrong certifying user card... abort
-              console.log('error', error)
-              return 
+              console.log('error', error);
+              return; 
             }
           }
           setTimeout(async () => {
-            console.log('worked!')
-            await this.showConfirmation(service, serviceInfo, paymentType, cards)
-          }, 200)
+            console.log('worked!');
+            await this.showConfirmation(service, serviceInfo, paymentType, cards);
+          }, 200);
       } else if (service.type === 'butler') { // will not handle yet
-          alert('Butler services not available for now.')
-      }}, 200)
+          alert('Butler services not available for now.');
+      }}, 200);
   }
 
   onBack = () => {
@@ -415,7 +416,7 @@ class Services extends Component {
                   <Text style={styles.serviceOfferTryAgainTitle}>
                     {this.state.selectedService && this.state.selectedService.title}
                   </Text>
-                  <Input value={this.state.signupCode} onChangeText={(text) => {this.setState({signupCode: text})}} placeholder='Enter your signup code here' style={styles.serviceConfirmInput}/>
+                  <Input value={this.state.signupCode} onChangeText={(text) => {this.setState({signupCode: text});}} placeholder='Enter your signup code here' style={styles.serviceConfirmInput}/>
                 </View>
 
               </View>

@@ -61,15 +61,15 @@ class ServiceInfo extends Component {
     }
 
     onContinue = async () => {
-        const {memo, reservation_date, reservation_number: persons} = this.state
-        const date = moment(reservation_date).format('YYYY-MM-DD HH:mm:ss')
+        const {memo, reservation_date, reservation_number: persons} = this.state;
+        const date = moment(reservation_date).format('YYYY-MM-DD HH:mm:ss');
         const newService = {
             memo,
             reservation: {
                 date, persons
             }
-        }
-        this.props.onContinue(newService)
+        };
+        this.props.onContinue(newService);
     }
     onClose = () => {
         this.props.onClose();
@@ -92,14 +92,14 @@ class ServiceInfo extends Component {
     }
 
     addReserVationNumber = () => {
-        this.setState(p => ({reservation_number: p.reservation_number >= 10 ? p.reservation_number : (p.reservation_number + 1)}))
+        this.setState(p => ({reservation_number: p.reservation_number >= 10 ? p.reservation_number : (p.reservation_number + 1)}));
     }
     subReserVationNumber = () => {
-        this.setState(p => ({reservation_number: p.reservation_number <= 1 ? p.reservation_number : (p.reservation_number - 1)}))
+        this.setState(p => ({reservation_number: p.reservation_number <= 1 ? p.reservation_number : (p.reservation_number - 1)}));
     }
     reservationButton = ({type}) => {
-        const name = type === 'add' ? 'ios-add' : 'ios-remove'
-        const action = type === 'add' ? this.addReserVationNumber : this.subReserVationNumber
+        const name = type === 'add' ? 'ios-add' : 'ios-remove';
+        const action = type === 'add' ? this.addReserVationNumber : this.subReserVationNumber;
         return (
             <TouchableOpacity onPress={action}>
                 <View style={styles.reservationIconContainer}>
@@ -109,7 +109,7 @@ class ServiceInfo extends Component {
                         />
                 </View>
             </TouchableOpacity>
-        )
+        );
     }
     renderReservationItem = () => {
         return (
@@ -125,7 +125,7 @@ class ServiceInfo extends Component {
                     <this.reservationButton type='add' />
                 </View>
             </View>
-        )
+        );
     }
 
     renderLabel = ({label, value, type }) => {
@@ -138,7 +138,7 @@ class ServiceInfo extends Component {
                     {value}
                 </Text>
             </View>
-        )
+        );
     }
 
     alertpls () {
@@ -152,8 +152,8 @@ class ServiceInfo extends Component {
 
     render() {
         const { service } = this.props;
-        const { type, price, surcharge, third_party_name, is_reservation } = this.props.service
-        let {reservation_date} = this.state
+        const { type, price, surcharge, third_party_name, is_reservation } = this.props.service;
+        let {reservation_date} = this.state;
         // this.alertpls()
         // console.log('service json', this.props.service)
         return (
@@ -234,9 +234,9 @@ class ServiceInfo extends Component {
                         onConfirm={this._handleDatePicked}
                         onCancel={this._hideDateTimePicker}
                         mode='datetime'
-                        date={new Date(this.state.reservation_date)}
+                        date={new Date()}
                         minimumDate={new Date()}
-                        maximumDate={new Date(new Date().getFullYear + 1, new Date().getMonth, new Date().getDate)}
+                        maximumDate={new Date(new Date().setFullYear(new Date().getFullYear() + 1))}
                     />
                 </View>
             </ScrollView>
