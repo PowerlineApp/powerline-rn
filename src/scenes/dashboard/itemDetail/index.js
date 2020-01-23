@@ -1080,7 +1080,7 @@ class ItemDetail extends Component {
                             ref={(navTitleView) => { this.navTitleView = navTitleView; }}>
                                 <Header style={{ backgroundColor: 'transparent' }}>
                                     <Left>
-                                        <Button style={{width: '100%'}}  transparent onPress={this.onBackPress} style={{ width: 50, height: 50 }}  >
+                                        <Button transparent onPress={this.onBackPress} style={{ width: 50, height: 50 }}  >
                                             <Icon active name="arrow-back" style={{ color: 'white' }} />
                                         </Button>
                                     </Left>
