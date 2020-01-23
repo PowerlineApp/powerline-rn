@@ -26,7 +26,7 @@ const devClientSecret = '3nxvsvki5a2owcgk4g840ws84sgkgk8ok04cokscwcwsssww48';
 const stagingClientSecret = '3nxvsvki5a2owcgk4g840ws84sgkgk8ok04cokscwcwsssww48';
 const prodClientSecret = 'y17a6zwynk0wc04kksowowsw4o8oosowcsgcwccos08w80gss';
 const staging = false;
-const forceDev = false;
+const forceDev = true;
 
 const dev = __DEV__ || forceDev;
 
