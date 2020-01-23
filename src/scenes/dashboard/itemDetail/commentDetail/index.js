@@ -442,8 +442,6 @@ class CommentDetail extends Component {
 
     // Rendering methods
     render() {
-        console.log(this.rootComment);
-        console.log(this.state)
         // if (!this.item) return null;
         return (
             <MenuContext customStyles={menuContextStyles}>
@@ -451,7 +449,7 @@ class CommentDetail extends Component {
                 <Container style={styles.container}>
                     <Header style={styles.header}>
                         <Left>
-                            <Button style={{width: '100%'}}  transparent onPress={() => Actions.pop()} style={{width: 50, height: 50 }}  >
+                            <Button transparent onPress={() => Actions.pop()} style={{width: 50, height: 50 }}  >
                                 <Icon active name="arrow-back" style={{ color: 'white' }} />
                             </Button>
                         </Left>
