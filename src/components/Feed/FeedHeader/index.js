@@ -262,11 +262,11 @@ class FeedHeader extends Component {
         return (
             <View style={{flexDirection: 'row', paddingBottom: 0, paddingLeft:0, flex: 1, overflow: 'visible'}}>
                 {this._renderZoneIcon(item)}
-                <Left style={{flexDirection: 'row', backgroundColor: '#fff', padding: 0, backgroundColor:'#fff', overflow: 'visible',}}>
+                <Left style={{flexDirection: 'row', backgroundColor: '#fff', padding: 0, overflow: 'visible',}}>
                     <TouchableOpacity style={{backgroundColor: '#fff', overflow: 'visible',}} onPress={() => this.onPressThumbnail(item)} underlayColor={'#fff'}>
                         <View style={{overflow: 'visible',}}>
                             {
-                                <View style={{overflow: 'visible',backgroundColor:'#fff', alignItems: 'center', overflow: 'visible', justifyContent: 'center', width: 50, height: 50, backgroundColor: '#fff'}}>
+                                <View style={{overflow: 'visible', alignItems: 'center', justifyContent: 'center', width: 50, height: 50, backgroundColor: '#fff'}}>
                                     {!is_verified && (item.type === 'post' || item.type === 'user-petition') &&
                                     <Image
                                         style={{width: 60, height: 60}}
