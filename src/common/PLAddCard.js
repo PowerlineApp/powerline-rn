@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, TouchableOpacity, Image, Linking} from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Image, Linking, TextInput} from 'react-native';
 import { connect } from 'react-redux';
 import Stripe, {PaymentCardTextField} from 'tipsi-stripe';
 import {
@@ -44,7 +44,6 @@ class PLAddCard extends Component {
             expMonth: null,
             cvc: null,
             number: null,
-            addressCity: (props.user.city ? `${props.user.city}` : ''),
             currency: 'USD',
             cardValid: false,
             loading: false,
@@ -106,8 +105,9 @@ class PLAddCard extends Component {
             this.setState({loading: false, error: error.message});        
         }
     }
- //Felipe - This should not be limited to just US
-    render() {
+        // Felipe - This should not be limited to just US
+        render() {
+            console.log('render PLAddCard.js');
         let countryList = [{label:'United States', value:'us'}];
         let currencyList = {
             'us': [{label:'USD', value:'usd'}]
