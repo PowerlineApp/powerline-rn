@@ -22,8 +22,16 @@ async function listServices(token): Promise<Action> {
     }
  };
 
-async function setService(token: string, serviceId: string, service: object): Promise<Action>  {
-    console.log('setService', token, serviceId, service)
+async function setService(token, serviceId, service) {
+    console.log('set service request', {
+        url: `${API_URL}/v2.2/user/concierge-services/${serviceId}`,
+        method: 'PUT',
+        headers: {
+                'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(service)
+    });
     try {
         let response = await fetch(`${API_URL}/v2.2/user/concierge-services/${serviceId}`, {
             method: 'PUT',
@@ -33,13 +41,15 @@ async function setService(token: string, serviceId: string, service: object): Pr
             },
             body: JSON.stringify(service)
         });
-
+        // const res = await response.json();
+        // console.log('set service response', res);
         const action = {
             type: 'SET_STATUS',
             data: response
         };
         return Promise.resolve(action);
     } catch (error) {
+        console.log('set service error', error);
         return Promise.reject(error);
     }
 }
