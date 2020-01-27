@@ -191,7 +191,6 @@ class TourScene extends Component{
             return <View style={styles.container} />     
         }
 
-        console.log(this.props);
         let {pos} = this.state;
         let imgs = [];
         if (this.state.screens && this.state.screens.length > 0){

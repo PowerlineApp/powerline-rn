@@ -121,12 +121,12 @@ let data2 = [
     icon: "school",
     bg: "#3591FA"
   },
-  {
-    name: "Share this App",
-    route: "shareApp",
-    icon: "share",
-    bg: "#3591FA"
-  },
+  // {
+  //   name: "Share this App",
+  //   route: "shareApp",
+  //   icon: "share",
+  //   bg: "#3591FA"
+  // },
   {
     name: "Logout",
     route: "logout",

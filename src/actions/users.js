@@ -85,7 +85,6 @@ async function loadUserProfile(token: string): Promise<Action> {
       }
     });
     var json = await response.json();
-    console.log('user profile loaded', json)
     if (json.full_name) {
       const action = {
         type: "LOADED_USER_PROFILE",

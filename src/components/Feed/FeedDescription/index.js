@@ -36,7 +36,6 @@ class FeedDescription extends Component {
   }
 
   _renderAttachedImage(item){
-    console.log('this.props, item', this.props, item)
     if (this.props.isInDetail) return null;
     // console.log(item, item.user.id, item.owner.id, this.props.profile.id);
     let imgURL = item.image;

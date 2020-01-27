@@ -147,30 +147,23 @@ class MyRouter extends Component {
 
   render() {
     const { hasConference, isLoggedIn } = this.props;
-    console.log('this.props.isLoggedIn', this.props.isLoggedIn)
     return (
       <Router key={this.props.isLoggedIn ? this.props.hasConference ? 'hasConference' : 'originalHome' : 'Login'}>
         <Scene key='root'>
           <Scene hideNavBar initial={!this.props.isLoggedIn} key="Login" component={Login} initial />        
+          <Scene hideNavBar onEnter={this.fetchConferences} key="home" component={hasConference ? SimpleHomeScreen : Home} initial={isLoggedIn} />
+          <Scene hideNavBar onEnter={this.fetchConferences} key="originalHome" component={Home} />
           <Scene hideNavBar key="TermsAndPolicy" component={TermsPolicyScene} />        
           <Scene hideNavBar key="ForgotPassword" component={ForgotPasswordScene} />        
           <Scene hideNavBar key="Register" component={RegisterScene} />        
           <Scene hideNavBar key="Tour" component={TourScene} />
-
           <Scene hideNavBar key="settings" component={Settings} />
           <Scene hideNavBar key="privacySettings" component={PrivacySettings} />
           <Scene hideNavBar key="blockedUsers" component={BlockedUsers} />
           <Scene hideNavBar key="manageCards" component={ManageCards} />
-          <Scene
-            key="customizationSettings"
-            component={CustomizationSettings}
-          />
+          <Scene key="customizationSettings" component={CustomizationSettings} />
           <Scene hideNavBar key="notificationSettings" component={NotificationSettings} />
           <Scene hideNavBar key="analyticsView" component={AnalyticsView} />
-          <Scene hideNavBar onEnter={this.fetchConferences} key="home" component={hasConference ? SimpleHomeScreen : Home} initial={isLoggedIn} />
-          <Scene hideNavBar onEnter={this.fetchConferences} key="originalHome" component={Home} />
-          {/* 
-          <Scene hideNavBar key="simpleHome" component={SimpleHomeScreen} hideNavBar  /> */}
           <Scene hideNavBar key="conferenceAttendees" component={ConferenceAttendees}  />
           <Scene hideNavBar key="conferenceEvents" component={ConferenceEvents}  />
           <Scene hideNavBar key="groupSelector" component={GroupSelector} />
