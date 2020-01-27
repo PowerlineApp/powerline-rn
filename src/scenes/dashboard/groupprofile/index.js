@@ -177,9 +177,14 @@ class GroupProfile extends Component{
                     onPress: () => {
                         var { token, id } = this.props;
                         unJoinGroup(token, id).then(data => {
-                            this.state.data.joined = false;
-                            this.state.data.total_member = this.state.data.total_member - 1;
+                            const data2 = {
+                                ...this.state.data,
+                                joined: false,
+                                total_member: this.state.data.total_member - 1,
+                                user_role: ''
+                            };
                             this.setState({
+                                data: data2,
                                 refreshing: false
                             });
                         })
@@ -234,7 +239,7 @@ class GroupProfile extends Component{
         if(this.state.data.joined && this.state.data.user_role) {
             return (
                 <Button block style={styles.unjoinBtn} onPress={() => this.unjoin()}>
-                    <Label style={{color: 'white'}}>Unjoin</Label>
+                    <Label style={{color: 'white'}}>Leave</Label>
                 </Button>
             );
         }
@@ -263,7 +268,7 @@ class GroupProfile extends Component{
     }
 
     goToGroupFeed = () => {
-        console.log('goToGroupFeed')
+        console.log('goToGroupFeed');
         let {id, official_name, avatar_file_path, conversation_view_limit, total_members, user_role} = this.state.data;
         // console.log(groupId, groupName, avatar, limit)     
         const { dispatch, token } = this.props;
