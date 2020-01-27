@@ -143,9 +143,6 @@ class SideBar extends Component {
     };
   }
 
-  static propTypes = {
-  };
-
   navigateTo(route) {
     this.props.navigateTo(route, "home");
   }
@@ -154,25 +151,10 @@ class SideBar extends Component {
     this.setState({ enterCustomCode: true });
   }
 
-  onSelectItem(route: string, option) {
-    console.log("onSelectItem", route);
+  onSelectItem(route, option) {
     if (route === "home") {
       let data = { id: "all", group: "all", header: "all" };
-
-      // POW-151 * conferences are already fetched
-      // if (this.props.conferences.data && this.props.conferences.data) {
-      //     Actions["simpleHome"]();
-      // } else {
-      //     Actions["originalHome"]();
-      // }
-      Actions.home()
-
-      // this.props.fetchConferences(this.props.token).then(data => {
-      //   if(data && data.data && data.data.length > 0) {
-      //   } else {
-      //     Actions[""]();
-      //   }
-      // });
+      Actions.home();
       setTimeout(() => {
         this.props.setGroup(data, this.props.token, "all");
       }, 1000);
@@ -250,16 +232,13 @@ class SideBar extends Component {
   }
 
   render() {
-    console.log("drawer rendering", this.props);
-    let data = datas;
+    let data = [...datas];
     if (!this.props.is_verified) {
-      data = data.concat(verifyProfile);
+      data = [...data, ...verifyProfile]; // data.concat(verifyProfile);
     }
-    data = data.concat(data2);
+    data = [...data, ...data2];
     return (
-      // <Container style={styles.sidebar}>
       <View style={styles.sidebar}>
-
       {this.customCodeModal()}
       <FlatList
           data={data}
