@@ -65,6 +65,7 @@ function user(state: State = initialState, action: Action): State {
         id: action.data.id,
         username: action.data.username,
         is_registration_complete: action.data.is_registration_complete,
+        is_verified: action.data.is_verified,
         profile: action.data,
       };
     case 'LOGGED_OUT':
