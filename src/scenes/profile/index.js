@@ -273,7 +273,7 @@ class Profile extends Component{
                     <View style={{backgroundColor: PLColors.main}}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingTop: 12 }}>
                             <View>                            
-                                <Button transparent onPress={() => Actions.pop()}>
+                                <Button transparent onPress={Actions.pop}>
                                     <Icon active name="arrow-back" style={{color: 'white'}}/>
                                 </Button>                           
                             </View>

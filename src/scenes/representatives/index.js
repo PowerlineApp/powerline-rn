@@ -97,9 +97,9 @@ class Representatives extends Component {
               <Button
                 style={{ width: "100%" }}
                 transparent
-                onPress={this.props.openDrawer}
+                onPress={Actions.pop}
               >
-                <Icon active name="menu" style={{ color: "white" }} />
+                <Icon active name="arrow-back" style={{ color: "white" }} />
               </Button>
             </Left>
             <Body
