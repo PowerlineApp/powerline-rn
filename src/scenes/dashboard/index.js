@@ -192,33 +192,15 @@ class Home extends Component {
 
   componentWillReceiveProps(nextProps) {
     console.log("componentWillReceiveProps at dashboard---", nextProps);
-    // if (nextProps.shouldResetHome) {
-    //   this.props.dispatch({ type: "HOME_WAS_RESET" });
-    //   const data = { id: "all", group: "all", header: "all" };
-    //   this.props.setGroup(data, this.props.token, "all");
-    //   this.setState({ tab1: true, tab2: false, tab3: false, tab4: false });
-    // } 
-    // if(this.state.isSet === null) {
-    //   if (nextProps.conferences && nextProps.conferences.data && nextProps.conferences.data.length > 0) {
-    //     this.setState({ isSet: true }, () => {
-    //       Actions["simpleHome"]();
-    //     });
-    //   }
-    //   else {
-    //     this.setState({ isSet: false });
-    //   }
-    // }
-    // if (nextProps.conciergeServices && this.state.conciergeServices !== nextProps.conciergeServices.data) {
-    //   this.setState({ conciergeServices: nextProps.conciergeServices.data });
-    // }
   }
 
   componentDidMount() {
-    // console.log('dashboard componentDidMount')
+    try {
+    console.log('dashboard componentDidMount');
     const { props: { profile, token, dispatch } } = this;
     this.preCacheAgencyImages();
+    this.loadCurrentUserProfile();
 
-    try {
       OneSignal.configure();
       // When user logs in, the device subscription is set to True to allow for notifications. If false, device cannot receive notifications
       OneSignal.setSubscription(true);
@@ -228,17 +210,11 @@ class Home extends Component {
       OneSignal.addEventListener("opened", this.onOpened);
       OneSignal.addEventListener("received", this.onReceived);
     } catch (error) {
-      console.log('error', error)
+      console.log('dashboard error', error);
     }
-    // OneSignal.addEventListener("registered", this.onRegistered);
     this.props.fetchConferences(this.props.token);
     this.props.listServices(this.props.token);
-    if (!profile) {
-      this.loadCurrentUserProfile();
-    }
-  }
 
-  componentDidMount() {
     getGroups(this.props.token).then(data => {
       this.props.dispatch([
         {
@@ -590,14 +566,10 @@ class Home extends Component {
   async loadCurrentUserProfile() {
     const { props: { token, dispatch } } = this;
     try {
-      await Promise.race([dispatch(loadUserProfile(token)), timeout(15000)]);
+      const profile = await loadUserProfile(token);
+      this.props.dispatch(profile);
     } catch (e) {
       const message = e.message || e;
-      if (message !== "Timed out") {
-        alert(message);
-      } else {
-        alert("Timed out. Please check internet connection");
-      }
     } finally {
     }
   }
@@ -706,7 +678,7 @@ class Home extends Component {
     } else if (value === "petition") {
       Actions.newpetition({ group: selectedGroup.group });
     } else if (value === 'communityReport') {
-      Actions.newCommunityReport({group: selectedGroup.group})
+      Actions.newCommunityReport({group: selectedGroup.group});
     } else {
       Actions.newleadercontent({
         contentType: value,
@@ -916,7 +888,7 @@ class Home extends Component {
   }
 
   render() {
-    // console.warn('render at dashboard')
+    console.warn('render at dashboard')
     // if(this.state.isSet === null) {
     //   return <View/>;
     // }
