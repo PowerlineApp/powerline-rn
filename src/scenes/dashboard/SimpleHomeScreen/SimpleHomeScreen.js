@@ -19,6 +19,7 @@ import Ionicon from 'react-native-vector-icons/Ionicons';
 import {
   fetchConferences,
   listServices,
+  loadUserProfile,
   setGroup
 } from "../../../actions";
 
@@ -74,56 +75,55 @@ class SimpleHomeScreen extends React.Component {
       };
     }
 
-    componentWillMount() {
+    componentDidMount() {
       const { token } = this.props;
       // this.props.fetchConferences(token);
       this.props.listServices(token).then(data => {
       });
+      this.loadCurrentUserProfile();
     }
 
     componentWillReceiveProps(nextProps) {
-      console.log('conferences---', this.state);
-      console.log('nextConferences----', nextProps);
-
       const { conciergeServices, conferences } = this.state;
       if (nextProps.conferences && conferences.length === 0) {
-
         if (Object.values(nextProps.conferences.data).length > 0) {
           this.setState({ conferences: nextProps.conferences.data });
           const conference = nextProps.conferences.data[0];
           this.setState({ conference });
           if (conference && conference.links) {
-            const items = conference.links.map(link => (
-                {
+
+            const items = conference.links.map(link => {
+              const onPress = () => {
+                const url = Platform.OS === 'android' ? link.android_url : link.ios_url;
+                  if(url) {
+                    Linking.openURL(url);
+                  } else {
+                    Alert.alert("Error", "The url is invalid");
+                  }
+              };
+              return {
                   label: link.label,
-                  onPress: () => {
-                    const url = Platform.OS === 'android' ? link.android_url : link.ios_url;
-                    console.log(link, url);
-                    if(url) {
-                      Linking.openURL(url);
-                    } else {
-                      Alert.alert("Error", "The url is invalid");
-                    }
-                  },  
+                  onPress,
                   icon: <Image source={require('img/link_icon.png')} style={styles.icon} />
-                }
-              ));
+                };
+              });
               const newItems = [...this.state.items, ...items];
               this.setState({items: newItems});
           }
-
-          
-
-          // if (conference && conference.links) {
-          //     conference.links.forEach(link => {
-          //       })
-          //       const url = ;
-                
-          // }
         }
       }
       if (nextProps.conciergeServices && conciergeServices !== nextProps.conciergeServices.data) {
           this.setState({ conciergeServices: nextProps.conciergeServices.data });
+      }
+    }
+
+    async loadCurrentUserProfile() {
+      const { props: { token, dispatch } } = this;
+      try {
+        const profile = await loadUserProfile(token);
+        this.props.dispatch(profile);
+      } catch (e) {
+        console.warn(e);
       }
     }
 
@@ -323,7 +323,7 @@ class SimpleHomeScreen extends React.Component {
     }
 
     render() {
-      console.log('this.state.conference', this.state.conference)
+      console.log('this.state.conference', this.state.conference);
       return (
         <ScrollView style={styles.container}>
           {this.state.conference && this.state.conference.image && (
