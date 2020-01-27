@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, TextInput, TouchableOpacity, Alert, ScrollView, BackHandler, ActivityIndicator } from 'react-native';
+import { View, TextInput, TouchableOpacity, Alert, ScrollView, BackHandler, ActivityIndicator, SafeAreaView } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import { connect } from 'react-redux';
 import {
@@ -24,7 +24,7 @@ import PLColors from '../../common/PLColors';
 import { findByUsernameEmailOrPhone, updateUserProfile, loadUserProfileById, verifyNumber, verifyCode, sendCode } from '../../actions';
 
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
-import ImageSelector from '../../common/PLImageSelector'
+import ImageSelector from '../../common/PLImageSelector';
 import PLButton from '../../common/PLButton';
 import DatePicker from 'react-native-datepicker';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -74,7 +74,7 @@ class VerifyProfile extends Component {
             this.setState({showPhoneScreen: false});
             return true;
         } else {
-            Actions.pop()
+            Actions.pop();
             return true;
         }
         return false;
@@ -82,19 +82,19 @@ class VerifyProfile extends Component {
 
     updateUser() {
         let {image_data: avatar_file_name, zip, address1, address2, city, state, email, country, phone, birth, countryInfo: {callingCode}} = this.state;
-        this.setState({loading: true})
-        const json = {zip, address1, address2, city, state, email, country, phone: this.props.profile.phone ? undefined : ('+' + callingCode + phone), birth, avatar_file_name}
+        this.setState({loading: true});
+        const json = {zip, address1, address2, city, state, email, country, phone: this.props.profile.phone ? undefined : ('+' + callingCode + phone), birth, avatar_file_name};
         console.log('updating => ', json);
         updateUserProfile(this.props.token, json)
         .then(response => {
-            this.setState({loading: false})
-            console.log('response from updating user profile', response)
+            this.setState({loading: false});
+            console.log('response from updating user profile', response);
             Actions.pop();
             Actions.reset('home');
         })
         .catch(err => {
-            this.setState({loading: false})
-            console.log('err', err)});
+            this.setState({loading: false});
+            console.log('err', err);});
     }
 
     updateUserAvatar = (image) => {
@@ -102,7 +102,7 @@ class VerifyProfile extends Component {
         //     state.user.avatar_file_name = image.path
         //     return state
         // })
-        this.setState(s => ({image_data: image.data, mime: image.mime, user: {...s.user, avatar_file_name: image.path}}))
+        this.setState(s => ({image_data: image.data, mime: image.mime, user: {...s.user, avatar_file_name: image.path}}));
     }
 
     onAutoComplete = async (data, details) => {
@@ -123,30 +123,30 @@ class VerifyProfile extends Component {
                 //     address1: address_components[i].long_name
                 // })
             }else if(address_components[i].types.indexOf("locality") !== -1 || address_components[i].types.indexOf("neighborhood") !== -1){
-                console.log('found : city ', address_components[i].long_name)
+                console.log('found : city ', address_components[i].long_name);
                 await this.setState({
                     city: address_components[i].long_name
                 });
             }else if(address_components[i].types.indexOf("administrative_area_level_1") !== -1){
-                console.log('found : state ', address_components[i].long_name)
+                console.log('found : state ', address_components[i].long_name);
                 await this.setState({
                     state: address_components[i].long_name
                 });
             }else if(address_components[i].types.indexOf("country") !== -1){
-                console.log('found : country ', address_components[i].short_name)
+                console.log('found : country ', address_components[i].short_name);
                 await this.setState({
                     country: address_components[i].short_name
                 });
             }else if(address_components[i].types.indexOf("postal_code") !== -1){
-                console.log('found : zip ', address_components[i].long_name)
+                console.log('found : zip ', address_components[i].long_name);
                 await this.setState({
                     zip : address_components[i].long_name
                 });
             }else if(address_components[i].types.indexOf("route") !== -1){
-                console.log('found : address1 ', address_components[i].long_name)
+                console.log('found : address1 ', address_components[i].long_name);
                 await this.setState((prevState) => ({
                     address1: prevState.address1 + " " + address_components[i].long_name
-                }))
+                }));
                 // this.state.address1 +=" " + address_components[i].long_name;
             }
         }
@@ -156,11 +156,11 @@ class VerifyProfile extends Component {
     }
 
     onChange(value, key){
-        console.log('onChange', key, value)
+        console.log('onChange', key, value);
         let state = this.state;
         state[key] = value;
         console.log(state[key]);
-        this.setState(state)
+        this.setState(state);
     }
 
     validatePhone(){
@@ -172,18 +172,18 @@ class VerifyProfile extends Component {
         this.setState({loading: true});
         let {phone, code, countryCode} = this.state;
         countryCode = countryCode || '+1';    
-        this.setState({code: ''})
+        this.setState({code: ''});
         verifyCode({phone: countryCode + phone, code: __DEV__ ? 'CODE1234' : code}).then(r => {
             // user successfully validated his phone, so its a real deal.
-            this.setState({showPhoneScreen: false, loading: false, phone: countryCode + phone})
+            this.setState({showPhoneScreen: false, loading: false, phone: countryCode + phone});
         }).catch(error => {
             Alert.alert('Invalid code',
             '',
             [{text: 'Ok', onPress: () => {
-                this.setState({loading: false, phone: '', showPhoneScreen: false, enterCode: false})
+                this.setState({loading: false, phone: '', showPhoneScreen: false, enterCode: false});
             }}],
-            {cancelable: false})
-        })
+            {cancelable: false});
+        });
     }
 
     async sendCode(){
@@ -196,23 +196,23 @@ class VerifyProfile extends Component {
             let verified = await findByUsernameEmailOrPhone({phone});
             console.log('find', verified);         
             verifyNumber(phone).then(r => {
-                this.setState({loading: false, enterCode: true})
+                this.setState({loading: false, enterCode: true});
                 console.log('send code success', r);
             }).catch(e => {
-                console.log('send code fail', e)
-                this.setState({loading: false})
+                console.log('send code fail', e);
+                this.setState({loading: false});
                 setTimeout(() => {
                     alert(e.message);
-                }, 200)
+                }, 200);
                 console.log(e);
-            })
+            });
         } catch (error) {
             Alert.alert('Invalid data',
             error,
             [{text: 'Ok', onPress: () => {
-                this.setState({loading: false})
+                this.setState({loading: false});
             }}],
-            {cancelable: false})
+            {cancelable: false});
         }
     }
 
@@ -230,7 +230,7 @@ class VerifyProfile extends Component {
         enterCode={this.state.enterCode}
         setCountryCode={(code) => this.setState({countryCode: '+' + code})}
         resetForm={() => this.setState({code: '', phone: '', countryCode: '', enterCode: false})}
-      />
+      />;
     }
 
     onChangeZip = zip => {
@@ -277,7 +277,7 @@ class VerifyProfile extends Component {
                     underlineColorAndroid={'transparent'}
                     autoCapitalize={'none'}
                     autoCorrect={false}
-                    onChangeText={(value) => {this.onChange(value, 'phone')}}
+                    onChangeText={(value) => {this.onChange(value, 'phone');}}
                     placeholder={'Phone Number'}
                     value={this.state.phone}
                     keyboardType={'phone-pad'}
@@ -292,7 +292,7 @@ class VerifyProfile extends Component {
             {/* <TouchableOpacity style={styles.button} onPress={() => this._getSubmitAction()}>
                 <Text style={styles.buttonText}>{'Submit number'}</Text>
             </TouchableOpacity> */}
-        </Form>
+        </Form>;
     }
 
 
@@ -302,8 +302,8 @@ class VerifyProfile extends Component {
             return this.renderPhoneScreen();
         }
 
-        let {zip, address1, address2, city, state, email, country, phone, facebook_id, birth} = this.state
-        console.log({zip, address1, address2, city, state, email, country, phone, birth})
+        let {zip, address1, address2, city, state, email, country, phone, facebook_id, birth} = this.state;
+        console.log({zip, address1, address2, city, state, email, country, phone, birth});
             return (
             <Content contentContainerStyle={{alignItems: 'center', marginTop: 20}}>
                 <View style={{flexDirection: 'row', justifyContent: 'space-around', justifyContent: 'center'}}>
@@ -333,14 +333,14 @@ class VerifyProfile extends Component {
                         getDefaultValue={() => ''}
                         placeholder={this.state.zip}
                         textInputProps={{
-                            onChangeText: (text) => {this.onChangeZip(text); this.setState({listViewDisplayed: true})},
-                            onBlur: (a) => {this.setState({listViewDisplayed: false})},
+                            onChangeText: (text) => {this.onChangeZip(text); this.setState({listViewDisplayed: true});},
+                            onBlur: (a) => {this.setState({listViewDisplayed: false});},
                             autoFocus: false
                         }}
                         returnKeyType={'done'}
                         listViewDisplayed={this.state.listViewDisplayed}
                         fetchDetails={true}
-                        renderDescription={(row) =>{console.log('row', row); return row.description}}
+                        renderDescription={(row) =>{console.log('row', row); return row.description;}}
                         onPress={(data, details, any) => {console.log(any); this.onAutoComplete(data, details); }}                      
                         query={{
                             key: googlePlacesKey,
