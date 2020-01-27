@@ -2,7 +2,7 @@
 import api from '../utils/api';
 var { API_URL, PER_PAGE } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
-import { ActionTypes } from '../reducers/groupManagement'
+import { ActionTypes } from '../reducers/groupManagement';
 //Loads user's current joined groups
 async function loadUserGroups(token: string, page: ?number = 0, perPage: ?number = PER_PAGE): Promise<Action> {
     try {
@@ -97,7 +97,7 @@ function getGroups(token){
             }
         }).then(response => {
             if (!response.ok) {
-                reject(response)
+                reject(response);
             }
             return response;
         })
@@ -186,9 +186,9 @@ function getGroupDetails(token, id){
 
 function getGroupRequiredFields(token, id){
     return new Promise((resolve, reject) => {
-        const url = API_URL + '/v2/groups/' + id + '/fields'
-        console.log('API_URL', url)
-        console.log('API_URL', token)
+        const url = API_URL + '/v2/groups/' + id + '/fields';
+        console.log('API_URL', url);
+        console.log('API_URL', token);
         fetch(url, {
             method: 'GET',
             headers: {
@@ -250,7 +250,7 @@ function inviteAllFollowers(token, id, users){
         .catch(err => {
             console.log("InviteAllFollowers API Error", err);
             reject(err);
-        })
+        });
     });
 }
 
@@ -271,7 +271,7 @@ function followAllMembers(token, id){
         .catch(err => {
             console.log("Group Followers API Error", err);
             reject(err);
-        })
+        });
     });
 }
 
@@ -297,11 +297,11 @@ function unJoinGroup(token, id){
 }
 
 function joinGroup(token, id, passcode, answeredFields){
-    console.log('joinGroup')
-    console.log(token)
-    console.log(id)
-    console.log(passcode)
-    console.log(answeredFields)
+    console.log('joinGroup');
+    console.log(token);
+    console.log(id);
+    console.log(passcode);
+    console.log(answeredFields);
     var payload = {};
     //user must provide correct passcode if required
     if(passcode){
@@ -313,8 +313,8 @@ function joinGroup(token, id, passcode, answeredFields){
             return {
                 id: item.id,
                 value: item.answer
-            }
-        })
+            };
+        });
     }
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2/user/groups/' + id, {
@@ -333,7 +333,7 @@ function joinGroup(token, id, passcode, answeredFields){
         .catch(err => {
             console.log("Join Group API Error", err);
             reject(err);
-        })
+        });
     });
 }
 
@@ -355,7 +355,7 @@ function loadFieldsToFillOnJoin(token, groupId){
         .catch(err => {
             console.log("loadFieldToFillOnJoin API Error", data);
             reject(err);
-        })
+        });
     });
 }
 
@@ -379,7 +379,7 @@ function getGroupPermissions(token, groupId){
             console.log("get Group Permission API Error", err);
             reject(err);
         });
-    })
+    });
 }
 
 function getUsersByGroup(token, groupId, query){
@@ -401,7 +401,7 @@ function getUsersByGroup(token, groupId, query){
             // console.log("get Group Users API Error", err);
             reject(err);
         });
-    })
+    });
 }
 
 async function groupBankAccounts(token, groupId) {
@@ -411,7 +411,7 @@ async function groupBankAccounts(token, groupId) {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
         }
-    })
+    });
 }
 
 function updateGroupAvatar(token, groupId, image) {
@@ -433,7 +433,7 @@ function updateGroupAvatar(token, groupId, image) {
             // console.log("get Group Users API Error", err);
             reject(err);
         });
-    })
+    });
 }
 
 function updateGroupBanner(token, groupId, image) {
@@ -457,13 +457,13 @@ function updateGroupBanner(token, groupId, image) {
             // console.log("get Group Users API Error", err);
             reject(err);
         });
-    })
+    });
 }
 
 
 const getGroupPendingUsers = (groupId, cb) => (dispatch, getState) => {
     const token = getState().user.token;
-    dispatch({type: ActionTypes.FETCH_GROUP_MEMBERS_LOADING, payload: true})
+    dispatch({type: ActionTypes.FETCH_GROUP_MEMBERS_LOADING, payload: true});
     fetch(API_URL + '/v2/groups/' + groupId + '/users', {
         method: 'GET',
         headers: {
@@ -474,21 +474,21 @@ const getGroupPendingUsers = (groupId, cb) => (dispatch, getState) => {
     .then((res) => res.json())
     .then(data => {
         if (cb) cb.onSuccess();
-        console.log('getGroupPendingUsers', data)
-        dispatch({type: ActionTypes.FETCH_GROUP_MEMBERS_SUCCESS, payload: data.payload})
-        dispatch({type: ActionTypes.FETCH_GROUP_MEMBERS_LOADING, payload: false})
+        console.log('getGroupPendingUsers', data);
+        dispatch({type: ActionTypes.FETCH_GROUP_MEMBERS_SUCCESS, payload: data.payload});
+        dispatch({type: ActionTypes.FETCH_GROUP_MEMBERS_LOADING, payload: false});
     })
     .catch(err => {
-        if (cb) cb.onError(res)
+        if (cb) cb.onError(res);
         console.log("get Group Users API Error", err);
-        dispatch({type: ActionTypes.FETCH_GROUP_MEMBERS_LOADING, payload: false})
-        dispatch({type: ActionTypes.FETCH_GROUP_MEMBERS_ERROR, payload: err})        
+        dispatch({type: ActionTypes.FETCH_GROUP_MEMBERS_LOADING, payload: false});
+        dispatch({type: ActionTypes.FETCH_GROUP_MEMBERS_ERROR, payload: err});        
     });
-}
+};
 
 const promoteUserToManager = (groupId, userId, cb) => (dispatch, getState) => {
     const token = getState().user.token;
-    dispatch({type: ActionTypes.GROUP_PROMOTE_USER_LOADING, payload: true})
+    dispatch({type: ActionTypes.GROUP_PROMOTE_USER_LOADING, payload: true});
     fetch(API_URL + '/v2/groups/' + groupId + '/managers/' + userId, {
         method: 'PUT',
         headers: {
@@ -499,25 +499,25 @@ const promoteUserToManager = (groupId, userId, cb) => (dispatch, getState) => {
     .then((res) => res.json())
     .then(data => {
         if (cb) cb.onSuccess();
-        console.log('promoteUser', data)
+        console.log('promoteUser', data);
         if(data.code) {
-            dispatch({type: ActionTypes.GROUP_PROMOTE_USER_ERROR, payload: data.message})        
+            dispatch({type: ActionTypes.GROUP_PROMOTE_USER_ERROR, payload: data.message});        
             return;
         }
-        dispatch({type: ActionTypes.GROUP_PROMOTE_USER_SUCCESS, payload: userId})
-        dispatch({type: ActionTypes.GROUP_PROMOTE_USER_LOADING, payload: false})
+        dispatch({type: ActionTypes.GROUP_PROMOTE_USER_SUCCESS, payload: userId});
+        dispatch({type: ActionTypes.GROUP_PROMOTE_USER_LOADING, payload: false});
     })
     .catch(err => {
-        if (cb) cb.onError(res)
+        if (cb) cb.onError(res);
         console.log("promoteUser API Error", err);
-        dispatch({type: ActionTypes.GROUP_PROMOTE_USER_LOADING, payload: false})
-        dispatch({type: ActionTypes.GROUP_PROMOTE_USER_ERROR, payload: err})        
+        dispatch({type: ActionTypes.GROUP_PROMOTE_USER_LOADING, payload: false});
+        dispatch({type: ActionTypes.GROUP_PROMOTE_USER_ERROR, payload: err});        
     });
-}
+};
 
 const unPromoteUserToMember = (groupId, userId, cb) => (dispatch, getState) => {
     const token = getState().user.token;
-    dispatch({type: ActionTypes.GROUP_UNPROMOTE_USER_LOADING, payload: true})
+    dispatch({type: ActionTypes.GROUP_UNPROMOTE_USER_LOADING, payload: true});
     fetch(API_URL + '/v2/groups/' + groupId + '/managers/' + userId, {
         method: 'DELETE',
         headers: {
@@ -527,25 +527,25 @@ const unPromoteUserToMember = (groupId, userId, cb) => (dispatch, getState) => {
     })
     .then(data => {
         if (cb) cb.onSuccess();
-        console.log('promoteUser', data)
+        console.log('promoteUser', data);
         if(data.code) {
-            dispatch({type: ActionTypes.GROUP_UNPROMOTE_USER_ERROR, payload: data.message})        
+            dispatch({type: ActionTypes.GROUP_UNPROMOTE_USER_ERROR, payload: data.message});        
             return;
         }
-        dispatch({type: ActionTypes.GROUP_UNPROMOTE_USER_SUCCESS, payload: userId})
-        dispatch({type: ActionTypes.GROUP_UNPROMOTE_USER_LOADING, payload: false})
+        dispatch({type: ActionTypes.GROUP_UNPROMOTE_USER_SUCCESS, payload: userId});
+        dispatch({type: ActionTypes.GROUP_UNPROMOTE_USER_LOADING, payload: false});
     })
     .catch(err => {
-        if (cb) cb.onError(res)
+        if (cb) cb.onError(res);
         console.log("UNPROMOTEUser API Error", err);
-        dispatch({type: ActionTypes.GROUP_UNPROMOTE_USER_LOADING, payload: false})
-        dispatch({type: ActionTypes.GROUP_UNPROMOTE_USER_ERROR, payload: err})        
+        dispatch({type: ActionTypes.GROUP_UNPROMOTE_USER_LOADING, payload: false});
+        dispatch({type: ActionTypes.GROUP_UNPROMOTE_USER_ERROR, payload: err});        
     });
-}
+};
 
 const approveUserToGroup = (groupId, userId, cb) => (dispatch, getState) => {
     const token = getState().user.token;
-    dispatch({type: ActionTypes.GROUP_ACCEPT_USER_LOADING, payload: true})
+    dispatch({type: ActionTypes.GROUP_ACCEPT_USER_LOADING, payload: true});
     fetch(API_URL + '/v2/groups/' + groupId + '/users/' + userId, {
         method: 'PATCH',
         headers: {
@@ -556,21 +556,21 @@ const approveUserToGroup = (groupId, userId, cb) => (dispatch, getState) => {
     .then((res) => res.json())
     .then(data => {
         if (cb) cb.onSuccess();
-        console.log('approveUserToGroup', data)
-        dispatch({type: ActionTypes.GROUP_ACCEPT_USER_SUCCESS, payload: {data, userId}})
-        dispatch({type: ActionTypes.GROUP_ACCEPT_USER_LOADING, payload: false})
+        console.log('approveUserToGroup', data);
+        dispatch({type: ActionTypes.GROUP_ACCEPT_USER_SUCCESS, payload: {data, userId}});
+        dispatch({type: ActionTypes.GROUP_ACCEPT_USER_LOADING, payload: false});
     })
     .catch(err => {
-        if (cb) cb.onError(res)
+        if (cb) cb.onError(res);
         console.log("approveUserToGroup API Error", err);
-        dispatch({type: ActionTypes.GROUP_ACCEPT_USER_LOADING, payload: false})
-        dispatch({type: ActionTypes.GROUP_ACCEPT_USER_ERROR, payload: err})        
+        dispatch({type: ActionTypes.GROUP_ACCEPT_USER_LOADING, payload: false});
+        dispatch({type: ActionTypes.GROUP_ACCEPT_USER_ERROR, payload: err});        
     });
-}
+};
 
 const removeUserFromGroup = (groupId, userId, cb) => (dispatch, getState) => {
     const token = getState().user.token;
-    dispatch({type: ActionTypes.GROUP_REMOVE_USER_LOADING, payload: true})
+    dispatch({type: ActionTypes.GROUP_REMOVE_USER_LOADING, payload: true});
     fetch(API_URL + '/v2/groups/' + groupId + '/users/' + userId, {
         method: 'DELETE',
         headers: {
@@ -580,21 +580,21 @@ const removeUserFromGroup = (groupId, userId, cb) => (dispatch, getState) => {
     })
     .then(data => {
         if (cb) cb.onSuccess();
-        console.log('removeUserFromGroup', data)
-        dispatch({type: ActionTypes.GROUP_REMOVE_USER_SUCCESS, payload: userId})
-        dispatch({type: ActionTypes.GROUP_REMOVE_USER_LOADING, payload: false})
+        console.log('removeUserFromGroup', data);
+        dispatch({type: ActionTypes.GROUP_REMOVE_USER_SUCCESS, payload: userId});
+        dispatch({type: ActionTypes.GROUP_REMOVE_USER_LOADING, payload: false});
     })
     .catch(err => {
-        if (cb) cb.onError(res)
+        if (cb) cb.onError(res);
         console.log("removeUserFromGroup API Error", err);
-        dispatch({type: ActionTypes.GROUP_REMOVE_USER_LOADING, payload: false})
-        dispatch({type: ActionTypes.GROUP_REMOVE_USER_ERROR, payload: err})        
+        dispatch({type: ActionTypes.GROUP_REMOVE_USER_LOADING, payload: false});
+        dispatch({type: ActionTypes.GROUP_REMOVE_USER_ERROR, payload: err});        
     });
-}
+};
 
 const getGroupAdvancedAttributes = (groupId, cb) => (dispatch, getState) => {
     const token = getState().user.token;
-    dispatch({type: ActionTypes.GROUP_GET_ADVANCED_ATTRIBS_LOADING, payload: true})
+    dispatch({type: ActionTypes.GROUP_GET_ADVANCED_ATTRIBS_LOADING, payload: true});
     fetch(API_URL + '/v2/groups/' + groupId + '/advanced-attributes', {
         method: 'GET',
         headers: {
@@ -605,20 +605,20 @@ const getGroupAdvancedAttributes = (groupId, cb) => (dispatch, getState) => {
     .then(res => res.json())
     .then(data => {
         if (cb) cb.onSuccess();
-        dispatch({type: ActionTypes.GROUP_GET_ADVANCED_ATTRIBS_SUCCESS, payload: data})
-        dispatch({type: ActionTypes.GROUP_GET_ADVANCED_ATTRIBS_LOADING, payload: false})
+        dispatch({type: ActionTypes.GROUP_GET_ADVANCED_ATTRIBS_SUCCESS, payload: data});
+        dispatch({type: ActionTypes.GROUP_GET_ADVANCED_ATTRIBS_LOADING, payload: false});
     })
     .catch(err => {
-        if (cb) cb.onError(res)
+        if (cb) cb.onError(res);
         console.log("removeUserFromGroup API Error", err);
-        dispatch({type: ActionTypes.GROUP_GET_ADVANCED_ATTRIBS_LOADING, payload: false})
-        dispatch({type: ActionTypes.GROUP_GET_ADVANCED_ATTRIBS_ERROR, payload: err})        
+        dispatch({type: ActionTypes.GROUP_GET_ADVANCED_ATTRIBS_LOADING, payload: false});
+        dispatch({type: ActionTypes.GROUP_GET_ADVANCED_ATTRIBS_ERROR, payload: err});        
     });
-}
+};
 const getGroupTags = () => (dispatch, getState) => {
     const token = getState().user.token;
-    dispatch({type: ActionTypes.GROUP_TAGS_LOADING, payload: true})
-    console.log(API_URL + '/v2/group-tags')
+    dispatch({type: ActionTypes.GROUP_TAGS_LOADING, payload: true});
+    console.log(API_URL + '/v2/group-tags');
     fetch(API_URL + '/v2/group-tags', {
         method: 'GET',
         headers: {
@@ -628,20 +628,20 @@ const getGroupTags = () => (dispatch, getState) => {
     })
     .then(res => res.json())
     .then(data => {
-        dispatch({type: ActionTypes.GROUP_TAGS_SUCCESS, payload: data})
-        dispatch({type: ActionTypes.GROUP_TAGS_LOADING, payload: false})
+        dispatch({type: ActionTypes.GROUP_TAGS_SUCCESS, payload: data});
+        dispatch({type: ActionTypes.GROUP_TAGS_LOADING, payload: false});
     })
     .catch(err => {
         console.log("removeUserFromGroup API Error", err);
-        dispatch({type: ActionTypes.GROUP_TAGS_LOADING, payload: false})
-        dispatch({type: ActionTypes.GROUP_TAGS_ERROR, payload: err})        
+        dispatch({type: ActionTypes.GROUP_TAGS_LOADING, payload: false});
+        dispatch({type: ActionTypes.GROUP_TAGS_ERROR, payload: err});        
     });
-}
+};
 
 const getGroupOwnTags = (groupId, cb) => (dispatch, getState) => {
     const token = getState().user.token;
-    dispatch({type: ActionTypes.GROUP_OWN_TAGS_LOADING, payload: true})
-    console.log(API_URL + '/v2/groups/' + groupId + '/tags')
+    dispatch({type: ActionTypes.GROUP_OWN_TAGS_LOADING, payload: true});
+    console.log(API_URL + '/v2/groups/' + groupId + '/tags');
     fetch(API_URL + '/v2/groups/' + groupId + '/tags', {
         method: 'GET',
         headers: {
@@ -652,20 +652,20 @@ const getGroupOwnTags = (groupId, cb) => (dispatch, getState) => {
     .then(res => res.json())
     .then(data => {
         if (cb) cb.onSuccess();
-        dispatch({type: ActionTypes.GROUP_OWN_TAGS_SUCCESS, payload: data})
-        dispatch({type: ActionTypes.GROUP_OWN_TAGS_LOADING, payload: false})
+        dispatch({type: ActionTypes.GROUP_OWN_TAGS_SUCCESS, payload: data});
+        dispatch({type: ActionTypes.GROUP_OWN_TAGS_LOADING, payload: false});
     })
     .catch(err => {
-        if (cb) cb.onError(res)
+        if (cb) cb.onError(res);
         console.log("removeUserFromGroup API Error", err);
-        dispatch({type: ActionTypes.GROUP_OWN_TAGS_LOADING, payload: false})
-        dispatch({type: ActionTypes.GROUP_OWN_TAGS_ERROR, payload: err})        
+        dispatch({type: ActionTypes.GROUP_OWN_TAGS_LOADING, payload: false});
+        dispatch({type: ActionTypes.GROUP_OWN_TAGS_ERROR, payload: err});        
     });
-}
+};
 
 const updateGroupAdvancedAttributes = (groupId, data, cb) => (dispatch, getState) => {
     const token = getState().user.token;
-    dispatch({type: ActionTypes.GROUP_UPDATE_ADVANCED_ATTRIBS_LOADING, payload: true})
+    dispatch({type: ActionTypes.GROUP_UPDATE_ADVANCED_ATTRIBS_LOADING, payload: true});
     fetch(API_URL + '/v2/groups/' + groupId + '/advanced-attributes', {
         method: 'PUT',
         headers: {
@@ -676,21 +676,21 @@ const updateGroupAdvancedAttributes = (groupId, data, cb) => (dispatch, getState
     })
     .then(res => res.json())
     .then(response => {
-        console.log('updateGroupAdvancedAttributes', response)
-        dispatch({type: ActionTypes.GROUP_UPDATE_ADVANCED_ATTRIBS_SUCCESS, payload: response})
-        dispatch({type: ActionTypes.GROUP_UPDATE_ADVANCED_ATTRIBS_LOADING, payload: false})
+        console.log('updateGroupAdvancedAttributes', response);
+        dispatch({type: ActionTypes.GROUP_UPDATE_ADVANCED_ATTRIBS_SUCCESS, payload: response});
+        dispatch({type: ActionTypes.GROUP_UPDATE_ADVANCED_ATTRIBS_LOADING, payload: false});
     })
     .catch(err => {
-        if (cb) cb.onError(res)
+        if (cb) cb.onError(res);
         console.log("removeUserFromGroup API Error", err);
-        dispatch({type: ActionTypes.GROUP_UPDATE_ADVANCED_ATTRIBS_LOADING, payload: false})
-        dispatch({type: ActionTypes.GROUP_UPDATE_ADVANCED_ATTRIBS_ERROR, payload: err})        
+        dispatch({type: ActionTypes.GROUP_UPDATE_ADVANCED_ATTRIBS_LOADING, payload: false});
+        dispatch({type: ActionTypes.GROUP_UPDATE_ADVANCED_ATTRIBS_ERROR, payload: err});        
     });
-}
+};
 
 const groupAdvancedAttribsInputChange = ({key, prop}) => (dispatch) => {
-    dispatch({type: ActionTypes.GROUP_ADVANCED_ATTRIBS_INPUT_CHANGED, payload: {key, prop}})
-}
+    dispatch({type: ActionTypes.GROUP_ADVANCED_ATTRIBS_INPUT_CHANGED, payload: {key, prop}});
+};
 
 
 const groupSaveTag = (groupId, tagId, dispatch, getState) => {
@@ -703,15 +703,15 @@ const groupSaveTag = (groupId, tagId, dispatch, getState) => {
         },
     })
     .then(response => {
-        console.log('updateGroupAdvancedAttributes', response)
-        dispatch({type: ActionTypes.GROUP_SAVE_TAG_SUCCESS, payload: response})
+        console.log('updateGroupAdvancedAttributes', response);
+        dispatch({type: ActionTypes.GROUP_SAVE_TAG_SUCCESS, payload: response});
     })
     .catch(err => {
-        if (cb) cb.onError(res)
+        if (cb) cb.onError(res);
         console.log("removeUserFromGroup API Error", err);
-        dispatch({type: ActionTypes.GROUP_SAVE_TAG_ERROR, payload: err})        
+        dispatch({type: ActionTypes.GROUP_SAVE_TAG_ERROR, payload: err});        
     });
-}
+};
 
 const groupRemoveTag = (groupId, tagId, dispatch, getState) =>  {
     const token = getState().user.token;
@@ -723,33 +723,33 @@ const groupRemoveTag = (groupId, tagId, dispatch, getState) =>  {
         },
     })
     .then(response => {
-        console.log('updateGroupAdvancedAttributes', response)
-        dispatch({type: ActionTypes.GROUP_DELETE_TAG_SUCCESS, payload: response})
+        console.log('updateGroupAdvancedAttributes', response);
+        dispatch({type: ActionTypes.GROUP_DELETE_TAG_SUCCESS, payload: response});
     })
     .catch(err => {
-        if (cb) cb.onError(res)
+        if (cb) cb.onError(res);
         console.log("removeUserFromGroup API Error", err);
-        dispatch({type: ActionTypes.GROUP_DELETE_TAG_ERROR, payload: err})        
+        dispatch({type: ActionTypes.GROUP_DELETE_TAG_ERROR, payload: err});        
     });
-}
+};
 
 const groupSelectTag = (groupId, tag, cb) => (dispatch, getState) => {
     const tags = getState().groupManagement.groupOwnTags;
     console.log('H=~->', tags, tag);
     if(tags.map(i => i.name).includes(tag.name)) {
-        console.log('~> going to remove tag')
-        dispatch({type: ActionTypes.GROUP_DESELECT_TAG, payload: tag})
-        groupRemoveTag(groupId, tag.id, dispatch, getState)
+        console.log('~> going to remove tag');
+        dispatch({type: ActionTypes.GROUP_DESELECT_TAG, payload: tag});
+        groupRemoveTag(groupId, tag.id, dispatch, getState);
     } else {
-        console.log('~> going to add tag')
-        dispatch({type: ActionTypes.GROUP_SELECT_TAG, payload: tag})
-        groupSaveTag(groupId, tag.id, dispatch, getState)
+        console.log('~> going to add tag');
+        dispatch({type: ActionTypes.GROUP_SELECT_TAG, payload: tag});
+        groupSaveTag(groupId, tag.id, dispatch, getState);
     }
-}
+};
 
 const groupGetBankAccounts = (groupId, cb) => (dispatch, getState) => {
-    const token = getState().user.token
-    dispatch({type: ActionTypes.GROUP_GET_BANK_ACCOUNT_LOADING, payload: true})
+    const token = getState().user.token;
+    dispatch({type: ActionTypes.GROUP_GET_BANK_ACCOUNT_LOADING, payload: true});
     fetch(API_URL + '/v2/groups/' + groupId + '/bank-accounts', {
         method: 'GET',
         headers: {
@@ -759,20 +759,20 @@ const groupGetBankAccounts = (groupId, cb) => (dispatch, getState) => {
     })
     .then(response => response.json())
     .then(res => {
-        dispatch({type: ActionTypes.GROUP_GET_BANK_ACCOUNT_SUCCESS, payload: res})
-        dispatch({type: ActionTypes.GROUP_GET_BANK_ACCOUNT_LOADING, payload: false})
+        dispatch({type: ActionTypes.GROUP_GET_BANK_ACCOUNT_SUCCESS, payload: res});
+        dispatch({type: ActionTypes.GROUP_GET_BANK_ACCOUNT_LOADING, payload: false});
     })
     .catch(err => {
-        if (cb) cb.onError(res)
-        dispatch({type: ActionTypes.GROUP_GET_BANK_ACCOUNT_ERROR, payload: err})
-        dispatch({type: ActionTypes.GROUP_GET_BANK_ACCOUNT_LOADING, payload: false})
+        if (cb) cb.onError(res);
+        dispatch({type: ActionTypes.GROUP_GET_BANK_ACCOUNT_ERROR, payload: err});
+        dispatch({type: ActionTypes.GROUP_GET_BANK_ACCOUNT_LOADING, payload: false});
         
     });
-}
+};
 
 const groupCreateBankAccount = (groupId, data, cb) => (dispatch, getState) => {
-    const token = getState().user.token
-    dispatch({type: ActionTypes.GROUP_POST_BANK_ACCOUNT_LOADING, payload: true})
+    const token = getState().user.token;
+    dispatch({type: ActionTypes.GROUP_POST_BANK_ACCOUNT_LOADING, payload: true});
     fetch(API_URL + '/v2/groups/' + groupId + '/bank-accounts', {
         method: 'POST',
         headers: {
@@ -783,29 +783,29 @@ const groupCreateBankAccount = (groupId, data, cb) => (dispatch, getState) => {
     })
     .then(response => response.json())
     .then(res => {
-        console.log('RES ON CREATING BANK ACCOUNT', res)
+        console.log('RES ON CREATING BANK ACCOUNT', res);
         if(!res.code) {
-            dispatch({type: ActionTypes.GROUP_POST_BANK_ACCOUNT_SUCCESS, payload: res.bank_accounts[0]})
-            dispatch({type: ActionTypes.GROUP_POST_BANK_ACCOUNT_LOADING, payload: false})
+            dispatch({type: ActionTypes.GROUP_POST_BANK_ACCOUNT_SUCCESS, payload: res.bank_accounts[0]});
+            dispatch({type: ActionTypes.GROUP_POST_BANK_ACCOUNT_LOADING, payload: false});
             cb.onSuccess();
         } else {
             dispatch({type: ActionTypes.GROUP_POST_BANK_ACCOUNT_ERROR, payload: res});
-            cb.onError(res)
+            cb.onError(res);
         }
 
-        dispatch(groupGetBankAccounts(groupId))
+        dispatch(groupGetBankAccounts(groupId));
     })
     .catch(err => {
-        if (cb) cb.onError(res)
-        console.log('error', err)
-        dispatch({type: ActionTypes.GROUP_POST_BANK_ACCOUNT_ERROR, payload: err})
-        dispatch({type: ActionTypes.GROUP_POST_BANK_ACCOUNT_LOADING, payload: false})
+        if (cb) cb.onError(res);
+        console.log('error', err);
+        dispatch({type: ActionTypes.GROUP_POST_BANK_ACCOUNT_ERROR, payload: err});
+        dispatch({type: ActionTypes.GROUP_POST_BANK_ACCOUNT_LOADING, payload: false});
         
     });
-} 
+}; 
 const groupDeleteBankAccount = (groupId, accountId, cb) => (dispatch, getState) => {
-    const token = getState().user.token
-    dispatch({type: ActionTypes.GROUP_DELETE_BANK_ACCOUNT_LOADING, payload: true})
+    const token = getState().user.token;
+    dispatch({type: ActionTypes.GROUP_DELETE_BANK_ACCOUNT_LOADING, payload: true});
     fetch(API_URL + '/v2/groups/' + groupId + '/bank-accounts/' + accountId, {
         method: 'DELETE',
         headers: {
@@ -816,23 +816,23 @@ const groupDeleteBankAccount = (groupId, accountId, cb) => (dispatch, getState) 
     .then(response => response.json())
     .then(res => {
         if(!res.code) {
-            dispatch({type: ActionTypes.GROUP_DELETE_BANK_ACCOUNT_SUCCESS, payload: accountId})
-            dispatch({type: ActionTypes.GROUP_DELETE_BANK_ACCOUNT_LOADING, payload: false})
+            dispatch({type: ActionTypes.GROUP_DELETE_BANK_ACCOUNT_SUCCESS, payload: accountId});
+            dispatch({type: ActionTypes.GROUP_DELETE_BANK_ACCOUNT_LOADING, payload: false});
         }  else {
-            dispatch({type: ActionTypes.GROUP_DELETE_BANK_ACCOUNT_ERROR, payload: 'Something Went Wrong'})
+            dispatch({type: ActionTypes.GROUP_DELETE_BANK_ACCOUNT_ERROR, payload: 'Something Went Wrong'});
         }
     })
     .catch(err => {
-        if (cb) cb.onError(res)
-        dispatch({type: ActionTypes.GROUP_DELETE_BANK_ACCOUNT_ERROR, payload: err})
-        dispatch({type: ActionTypes.GROUP_DELETE_BANK_ACCOUNT_LOADING, payload: false})
+        if (cb) cb.onError(res);
+        dispatch({type: ActionTypes.GROUP_DELETE_BANK_ACCOUNT_ERROR, payload: err});
+        dispatch({type: ActionTypes.GROUP_DELETE_BANK_ACCOUNT_LOADING, payload: false});
         
     });
-} 
+}; 
 
 const groupDeleteCard = (groupId, cardID, cb) => (dispatch, getState) => {
-    const token = getState().user.token
-    dispatch({type: ActionTypes.GROUP_DELETE_CARD_LOADING, payload: true})
+    const token = getState().user.token;
+    dispatch({type: ActionTypes.GROUP_DELETE_CARD_LOADING, payload: true});
     fetch(API_URL + '/v2/groups/' + groupId + '/cards/' + cardID, {
         method: 'DELETE',
         headers: {
@@ -841,21 +841,21 @@ const groupDeleteCard = (groupId, cardID, cb) => (dispatch, getState) => {
         }
     })
     .then(res => {
-        dispatch({type: ActionTypes.GROUP_DELETE_CARD_SUCCESS, payload: cardID})
-        dispatch({type: ActionTypes.GROUP_DELETE_CARD_LOADING, payload: false})
+        dispatch({type: ActionTypes.GROUP_DELETE_CARD_SUCCESS, payload: cardID});
+        dispatch({type: ActionTypes.GROUP_DELETE_CARD_LOADING, payload: false});
     })
     .catch(err => {
-        if (cb) cb.onError(res)
-        dispatch({type: ActionTypes.GROUP_DELETE_CARD_ERROR, payload: err})
-        dispatch({type: ActionTypes.GROUP_DELETE_CARD_LOADING, payload: false})
+        if (cb) cb.onError(res);
+        dispatch({type: ActionTypes.GROUP_DELETE_CARD_ERROR, payload: err});
+        dispatch({type: ActionTypes.GROUP_DELETE_CARD_LOADING, payload: false});
         
     });
-} 
+}; 
 
 const groupCreateCard = (groupId, data, cb) => (dispatch, getState) => {
-    console.log(data)
-    const token = getState().user.token
-    dispatch({type: ActionTypes.GROUP_POST_CARD_LOADING, payload: true})
+    console.log(data);
+    const token = getState().user.token;
+    dispatch({type: ActionTypes.GROUP_POST_CARD_LOADING, payload: true});
     fetch(API_URL + '/v2/groups/' + groupId + '/cards', {
         method: 'POST',
         headers: {
@@ -866,25 +866,25 @@ const groupCreateCard = (groupId, data, cb) => (dispatch, getState) => {
     })
     .then(response => response.json())
     .then(res => {
-        console.log(res)
+        console.log(res);
         if(!res.code) {
-            dispatch({type: ActionTypes.GROUP_POST_CARD_SUCCESS, payload: res.cards})
-            dispatch({type: ActionTypes.GROUP_POST_CARD_LOADING, payload: false})
+            dispatch({type: ActionTypes.GROUP_POST_CARD_SUCCESS, payload: res.cards});
+            dispatch({type: ActionTypes.GROUP_POST_CARD_LOADING, payload: false});
         }  else {
-            dispatch({type: ActionTypes.GROUP_POST_CARD_ERROR, payload: res})
+            dispatch({type: ActionTypes.GROUP_POST_CARD_ERROR, payload: res});
         }
     })
     .catch(err => {
-        if (cb) cb.onError(res)
-        dispatch({type: ActionTypes.GROUP_POST_CARD_ERROR, payload: err})
-        dispatch({type: ActionTypes.GROUP_POST_CARD_LOADING, payload: false})
+        if (cb) cb.onError(res);
+        dispatch({type: ActionTypes.GROUP_POST_CARD_ERROR, payload: err});
+        dispatch({type: ActionTypes.GROUP_POST_CARD_LOADING, payload: false});
         
     });
-}
+};
 
 const groupGetCards = (groupId, cb) => (dispatch, getState) => {
-    const token = getState().user.token
-    dispatch({type: ActionTypes.GROUP_GET_CARDS_LOADING, payload: true})
+    const token = getState().user.token;
+    dispatch({type: ActionTypes.GROUP_GET_CARDS_LOADING, payload: true});
     fetch(API_URL + '/v2/groups/' + groupId + '/cards', {
         method: 'GET',
         headers: {
@@ -894,20 +894,20 @@ const groupGetCards = (groupId, cb) => (dispatch, getState) => {
     })
     .then(response => response.json())
     .then(res => {
-        dispatch({type: ActionTypes.GROUP_GET_CARDS_SUCCESS, payload: res})
-        dispatch({type: ActionTypes.GROUP_GET_CARDS_LOADING, payload: false})
+        dispatch({type: ActionTypes.GROUP_GET_CARDS_SUCCESS, payload: res});
+        dispatch({type: ActionTypes.GROUP_GET_CARDS_LOADING, payload: false});
     })
     .catch(err => {
-        if (cb) cb.onError(res)
-        dispatch({type: ActionTypes.GROUP_GET_CARDS_ERROR, payload: err})
-        dispatch({type: ActionTypes.GROUP_GET_CARDS_LOADING, payload: false})
+        if (cb) cb.onError(res);
+        dispatch({type: ActionTypes.GROUP_GET_CARDS_ERROR, payload: err});
+        dispatch({type: ActionTypes.GROUP_GET_CARDS_LOADING, payload: false});
         
     });
-}
+};
 
 const groupGetSubscriptions = (groupId, cb) => (dispatch, getState) => {
-    const token = getState().user.token
-    dispatch({type: ActionTypes.GROUP_GET_SUBSCRIPTIONS_LOADING, payload: true})
+    const token = getState().user.token;
+    dispatch({type: ActionTypes.GROUP_GET_SUBSCRIPTIONS_LOADING, payload: true});
     fetch(API_URL + '/v2/groups/' + groupId + '/subscription', {
         method: 'GET',
         headers: {
@@ -917,19 +917,19 @@ const groupGetSubscriptions = (groupId, cb) => (dispatch, getState) => {
     })
     .then(response => response.json())
     .then(res => {
-        dispatch({type: ActionTypes.GROUP_GET_SUBSCRIPTIONS_SUCCESS, payload: res})
-        dispatch({type: ActionTypes.GROUP_GET_SUBSCRIPTIONS_LOADING, payload: false})
+        dispatch({type: ActionTypes.GROUP_GET_SUBSCRIPTIONS_SUCCESS, payload: res});
+        dispatch({type: ActionTypes.GROUP_GET_SUBSCRIPTIONS_LOADING, payload: false});
     })
     .catch(err => {
-        if (cb) cb.onError(res)
-        dispatch({type: ActionTypes.GROUP_GET_SUBSCRIPTIONS_ERROR, payload: err})
-        dispatch({type: ActionTypes.GROUP_GET_SUBSCRIPTIONS_LOADING, payload: false})
+        if (cb) cb.onError(res);
+        dispatch({type: ActionTypes.GROUP_GET_SUBSCRIPTIONS_ERROR, payload: err});
+        dispatch({type: ActionTypes.GROUP_GET_SUBSCRIPTIONS_LOADING, payload: false});
         
     });
-}
+};
 
 const groupUpdateSubscriptions = (groupId, package_type, referral, cb) => (dispatch, getState) => {
-    const token = getState().user.token
+    const token = getState().user.token;
     console.log('cb', groupId, package_type, referral, cb, {
         method: 'PUT',
         headers: {
@@ -937,8 +937,8 @@ const groupUpdateSubscriptions = (groupId, package_type, referral, cb) => (dispa
                         'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({package_type, coupon: referral})
-    })
-    dispatch({type: ActionTypes.GROUP_UPDATE_SUBSCRIPTIONS_LOADING, payload: true})
+    });
+    dispatch({type: ActionTypes.GROUP_UPDATE_SUBSCRIPTIONS_LOADING, payload: true});
     fetch(API_URL + '/v2/groups/' + groupId + '/subscription', {
         method: 'PUT',
         headers: {
@@ -949,23 +949,23 @@ const groupUpdateSubscriptions = (groupId, package_type, referral, cb) => (dispa
     })
     .then(r => {
         if (!r.ok) {
-            throw Error(r.statusText)
+            throw Error(r.statusText);
         } 
-        else return r
+        else return r;
     }).then(response => response.json())
     .then(res => {
         console.log(res);
         if (cb) cb.onSuccess();
-        dispatch({type: ActionTypes.GROUP_UPDATE_SUBSCRIPTIONS_SUCCESS, payload: res})
-        dispatch({type: ActionTypes.GROUP_UPDATE_SUBSCRIPTIONS_LOADING, payload: false})
+        dispatch({type: ActionTypes.GROUP_UPDATE_SUBSCRIPTIONS_SUCCESS, payload: res});
+        dispatch({type: ActionTypes.GROUP_UPDATE_SUBSCRIPTIONS_LOADING, payload: false});
     })
     .catch(err => {
         // if (cb) cb.onError(res)
-        if (cb) cb.onFail(err)
-        dispatch({type: ActionTypes.GROUP_UPDATE_SUBSCRIPTIONS_ERROR, payload: err})
-        dispatch({type: ActionTypes.GROUP_UPDATE_SUBSCRIPTIONS_LOADING, payload: false})
+        if (cb) cb.onFail(err);
+        dispatch({type: ActionTypes.GROUP_UPDATE_SUBSCRIPTIONS_ERROR, payload: err});
+        dispatch({type: ActionTypes.GROUP_UPDATE_SUBSCRIPTIONS_LOADING, payload: false});
     });
-}
+};
 
 module.exports = {
     loadUserGroups,
@@ -1011,4 +1011,4 @@ module.exports = {
     groupDeleteCard,
     groupGetSubscriptions,
     groupUpdateSubscriptions
-}
+};
