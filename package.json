@@ -11,7 +11,7 @@
   "dependencies": {
     "native-base": "2.1.4",
     "react": "16.0.0-alpha.6",
-    "react-native": "0.44.0",
+    "react-native": "0.70.2",
     "react-native-activity-indicator-ios": "1.0.4",
     "react-native-animatable": "1.2.2",
     "react-native-device-info": "0.11.0",
@@ -27,7 +27,7 @@
     "react-native-onesignal": "3.0.6",
     "react-native-popup-menu": "0.7.5",
     "react-native-root-toast": "1.3.0",
-    "react-native-router-flux": "3.39.1",
+    "react-native-router-flux": "3.45.0",
     "react-native-share-extension": "1.2.0",
     "react-native-snap-carousel": "2.1.4",
     "react-native-splash-screen": "2.0.0",
